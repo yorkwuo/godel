@@ -1012,6 +1012,8 @@ proc chklist_new {chkitem} {
 
 # time_creation
   set clvars(time_creation) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
+  set clvars($type-$chkitem,owner) Nobody
+  set clvars($type-$chkitem,status) ""
   godel_array_save clvars chklist/$type/$chkitem/clvars.tcl
 
   cd chklist/$type/$chkitem
