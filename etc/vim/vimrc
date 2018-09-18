@@ -1,0 +1,157 @@
+set nocompatible
+"let $LANG="zh_TW.UTF-8"
+"et fileencodings=utf-8,gb18030,gbk,gb2312,big5
+"et termencoding=utf-8
+"et fileencoding=utf-8
+"et encoding=utf-8
+
+set nowrap
+"set guifont=Monospace\ 9
+set guifont=Monospace\ 12
+"set guifont=Monaco\ 10
+"set guifont=Terminus\ 12
+set completeopt=longest
+set columns=90      " width of the display
+set bs=2            "backspace
+set tw=0           "textwidth, with EOL
+set sw=2            "swapname
+set si              "simalt
+set ru              "ruler
+set sc              "showcmd
+set smd             "showmode
+set ic              "ignorecase
+set ts=2            "tabstop=2
+set expandtab
+set incsearch       " incremental search
+set hlsearch        " highlight search
+set nu              " display line number
+set iskeyword+=-
+set iskeyword-=)
+"set iskeyword+=/    " make double click select `/'
+"set isfname
+
+:filetype on        " turn on filetype detection
+:syntax on          " 
+:colorscheme koehler 
+"Change the Folder highlight color to black
+hi Folded guifg=#808080 guibg=black	ctermfg=darkgrey ctermbg=black cterm=bold term=bold
+"----------------------------------------------------------------------
+" Key-Binding Remap
+"----------------------------------------------------------------------
+func! JKL() range
+  exec "normal '<"
+  exec "normal O# {{{"
+  exec "normal '>"
+  exec "normal o# }}}"
+endfunc
+
+vnoremap ;q :call JKL()<CR>
+nnoremap ,s :source $VIM/iyo.vim<CR>
+nnoremap f <C-f>
+nnoremap b <C-b>
+nnoremap e <C-e>
+nnoremap t <C-y>
+"nnoremap <c-j> zj
+"nnoremap <c-k> zk
+nnoremap <C-J> :MBEbn<cr>
+nnoremap <C-K> :MBEbp<cr>
+nnoremap qq :qa<cr>
+inoremap <c-j> <c-o>zj
+inoremap <c-k> <c-o>zk
+noremap ;i :cal AutoInst()<cr>
+noremap ;a :cal AutoArg()<cr>
+noremap ;j :source a.vim<cr>
+noremap ;k :call Dev()<cr>
+noremap cp :call CheckPath()<cr>
+nnoremap <C-J> :MBEbn<cr>
+nnoremap <C-K> :MBEbp<cr>
+" Move the line under the cursor up/down
+nnoremap <A-j> :m .+1<CR>==
+nnoremap <A-k> :m .-2<CR>==
+inoremap <A-j> <Esc>:m .+1<CR>==gi
+inoremap <A-k> <Esc>:m .-2<CR>==gi
+vnoremap <A-j> :m '>+1<CR>gv=gv
+vnoremap <A-k> :m '<-2<CR>gv=gv
+" ==========================================================================
+" Function Key Mapping 
+" ==========================================================================
+function! SaveOrSkip()
+  if &modified == 1
+    write
+  else
+    echo '(No changes need to be saved)'
+  endif 
+endfunction!
+" ==========================================================================
+" Function Key Mapping
+" ==========================================================================
+" Alt + came from <Ctrl-v><Alt+>
+"map 翻 :QuickFontBigger<cr>
+" Alt - came from <Ctrl-v><Alt->
+"map 簫 :QuickFontSmaller<cr>
+
+"map <F1> :call SaveOrSkip()<cr>
+map <F2> :call SaveOrSkip()<cr>
+map <F3> :split<cr>
+
+" Copy full path of current editing file to xclipboard
+map <F4> :let @* = expand("%:p")<CR>
+" Changing pwd to the path of current editing file
+
+"map <F5> :lcd %:p:h<cr>
+map <F5> :Bkmark<CR>
+map <F6> :set virtualedit=<cr>
+
+" You can toggle the syntax on/off with this command
+map <F7> :if has("syntax_items") <Bar> syntax off <CR>
+         \else <Bar> syntax on <Bar>
+         \endif <CR>
+"toggle on/off highlightsearch
+map <F8> :%d<cr>
+map <F9> :set nowrap!<bar>set nowrap?<cr>
+map <F10> :bn<cr>
+map <F11> :bN<cr>
+map <F12> :set lines=70 columns=130<cr>
+
+imap <C-j> <ESC>la
+inoremap () ()<ESC>:let leavechar=")"<CR>i
+inoremap [] []<ESC>:let leavechar="]"<CR>i
+inoremap {} {}<ESC>:let leavechar="}"<CR>i
+inoremap <> <><ESC>:let leavechar=">"<CR>i
+inoremap "" ""<ESC>:let leavechar="\""<CR>i
+"
+""inoremap ( ()<ESC>:let leavechar=")"<CR>i
+""imap <C-j> <ESC>:exec "normal f" . leavechar<CR>a
+"vnoremap _/ <ESC>`>o// }}}<ESC>`<O// {{{<ESC>
+"vnoremap _( <ESC>`>a)<ESC>`<i(<ESC>
+"vnoremap _{ <ESC>`>a}<ESC>`<i{<ESC>
+iab  hml   <c-r>=strftime("%m/%d/%Y %H:%M")<cr>
+iab  idd   <c-r>=strftime("%m/%d/%Y")<cr>
+inoremap ipl #!/usr/bin/perl -w
+
+" ==========================================================================
+" For development
+" ==========================================================================
+nnoremap ,a :source a.vim<CR>
+
+fun! CheckPath ()
+  execute "normal yy"
+  let s = @"
+  let path_str = matchstr(s,'[\-0-9a-zA-Z./_]\+/[\-0-9a-zA-Z./_]\+')
+  if filereadable(path_str)
+    echohl NONE | echo "Found!"
+  else
+    echohl ErrorMsg | echo path_str." Not Found!"
+  endif
+endfun
+
+func! <SID>AdditionalSyntax()
+  let lastline = getline("$")
+  if lastline =~ 'syntax:tcl_library'
+    :source $HOME/.vim/syntax_add/tcl_library.vim
+  endif
+endfunc
+
+autocmd BufRead * call s:AdditionalSyntax()
+
+

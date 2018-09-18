@@ -1,0 +1,3 @@
+#!/usr/bin/tclsh
+source $env(GODEL_ROOT)/bin/godel.tcl
+meta_rm [lindex $argv 0]

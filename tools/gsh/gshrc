@@ -1,0 +1,6 @@
+if {$tcl_interactive} {
+  interp alias {} sc {} source $env(GODEL_ROOT)/bin/godel.tcl
+  package require tclreadline
+  ::tclreadline::Loop
+}
+

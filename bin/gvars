@@ -1,0 +1,3 @@
+#!/usr/bin/tclsh
+source $env(GODEL_ROOT)/bin/godel.tcl
+gvars [lindex $argv 0] [lindex $argv 1]

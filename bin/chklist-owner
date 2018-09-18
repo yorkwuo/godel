@@ -1,0 +1,3 @@
+#!/usr/bin/tclsh
+source $env(GODEL_ROOT)/bin/godel.tcl
+chklist_owner [lindex $argv 0]

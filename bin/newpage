@@ -1,0 +1,45 @@
+#!/usr/bin/env tclsh
+source $env(GODEL_ROOT)/bin/godel.tcl
+
+# Get path
+set path [lindex $argv 0]
+set hier_level [lindex $argv 1]
+
+if {$path == ""} {
+  puts "Example Usage:"
+  puts "1. % newpage C:\\data\\pics"
+  puts "2. % newpage ."
+  puts "3. % newpage . 1"
+  return
+}
+
+# Windows to Unix path convertion
+if {$env(GODEL_IN_CYGWIN)} {
+  set path [exec cygpath -u $path]
+}
+
+# Change directory to target path
+cd $path
+
+# 
+if [file exist .godel] {
+} else {
+  godel_draw
+}
+
+if [meta_chkin $path $hier_level] {
+  meta_indexing
+
+# Update pagelist
+  if [file exist $env(GODEL_CENTER)/pagelist/.index.htm] {
+    cd $env(GODEL_CENTER)/pagelist
+    godel_draw pagelist
+  } else {
+    cd $env(GODEL_CENTER)
+    file mkdir pagelist
+    cd pagelist
+    godel_draw pagelist
+  }
+}
+
+

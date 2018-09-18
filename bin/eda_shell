@@ -1,0 +1,955 @@
+#!/usr/bin/tclsh
+#package require tclreadline
+rename ::source ::realsource
+#set synopsys_program_name icc2_shell
+set synopsys_program_name dc_shell
+set ::sh_product_version I-2017.12
+set ::product_build_date 2017.12.16
+
+namespace eval procs_attr {
+  set arr(dummy) dd
+  #namespace export arr
+}
+#@>parse_proc_arguments
+proc parse_proc_arguments {args} {
+  set result_name [lindex $args 2]
+  upvar $result_name results
+
+  set mylevel [info level]
+  set pname [lindex [info level [expr $mylevel - 1]] 0]
+  #puts "parse_proc_arguments: $pname"
+
+  set list1 $::procs_attr::arr($pname)
+  set list2 [lindex $args 1]
+  set zipped [lmap a $list1 b $list2 {list $a $b}]
+
+  foreach i $zipped {
+    set key [lindex $i 0]
+    set val [lindex $i 1]
+    if {$val != ""} {
+      set results($key) $val
+    }
+  }
+}
+
+proc define_proc_attributes {args} {
+  set rest [lassign $args pname]
+  
+  set loc_define_args [lsearch $args -define_args]
+  set all_define_args [lindex $args [expr $loc_define_args + 1]]
+ 
+  foreach define_arg $all_define_args {
+    lappend ::procs_attr::arr($pname) [lindex $define_arg 0]
+  }
+
+}
+
+proc dputs {vname} {
+  puts "      dputs: $vname"
+}
+
+#@>procname
+proc procname {} {
+  set mylevel   [info level]
+  set proc_name [lindex [info level [expr $mylevel - 1]] 0]
+  set full_cmd  [info level 1]
+  set fileloc   [info script]
+  set level     [info level]
+  #puts "    CMD: $proc_name...$fileloc"
+  puts [format "%d%s%-20s ... %s ... %s" $level "    " $proc_name $fileloc $full_cmd]
+  #puts [format "%d%s%-20s ... %s" $level "    " $proc_name $fileloc]
+}
+
+#=innovus begin=====
+proc setObjFPlanBox {args} {procname}
+proc modifyPowerDomainAttr {args} {procname}
+proc addPowerSwitch {args} {procname}
+proc createSpareModule {args} {procname}
+proc placeDesign {args} {procname}
+proc assignIoPins {args} {procname}
+proc setTieHiLoMode {args} {procname}
+proc addTieHiLo {args} {procname}
+proc setSrouteMode {args} {procname}
+proc sroute {args} {procname}
+proc setPGPinUseSignalRoute {args} {procname}
+proc routePGPinUseSignalRoute {args} {procname}
+proc routeDesign {args} {procname}
+proc setScanReorderMode {args} {procname}
+proc scanTrace {args} {procname}
+proc saveDesign {args} {procname}
+proc saveNetlist {args} {procname}
+proc verifyConnectivity {args} {procname}
+proc verifyGeometry {args} {procname}
+proc defOut {args} {procname}
+proc defOutBySection {args} {procname}
+proc write_power_intent {args} {procname}
+proc init_design {args} {procname}
+proc generateTracks {args} {procname}
+proc read_power_intent {args} {procname}
+proc commit_power_intent {args} {procname}
+proc setMaxRouteLayer {args} {procname}
+proc setDesignMode {args} {procname}
+proc floorPlan {args} {procname}
+proc setAddRingMode {args} {procname}
+proc addRing {args} {procname}
+proc deselectAll {args} {procname}
+proc selectObject {args} {procname}
+proc addStripe {args} {procname}
+proc setAddStripeMode {args} {procname}
+proc placeSpareModule {args} {procname}
+#proc  {args} {procname}
+#=innovus end=====
+
+proc get_core_area {args} {procname}
+proc create_cluster_cells {args} {procname}
+proc get_voltage_areas {args} {procname}
+proc report_ignored_layers {args} {procname}
+proc get_routing_rules {args} {procname}
+proc create_routing_rule {args} {procname}
+proc report_routing_rules {args} {procname}
+proc derive_clock_cell_references {args} {procname}
+proc set_clock_routing_rules {args} {procname}
+proc get_flat_nets {args} {procname}
+proc get_vias {args} {procname}
+proc get_shape {args} {procname}
+proc create_shields {args} {procname}
+proc report_shields {args} {procname}
+proc mark_clock_trees {args} {procname}
+proc set_propagated_clock {args} {procname}
+proc current_scenario {args} {procname}
+proc refine_opt {args} {procname}
+proc route_group {args} {procname}
+proc check_routability {args} {procname}
+proc route_auto {args} {procname}
+proc create_shield {args} {procname}
+proc check_routes {args} {procname}
+proc remove_antenna_rules {args} {procname}
+proc define_antenna_rule {args} {procname}
+proc define_antenna_layer_rule {args} {procname}
+proc report_antenna_rules {args} {procname}
+proc create_stdcell_fillers {args} {procname}
+proc remove_stdcell_fillers_with_violation {args} {procname}
+proc route_eco {args} {procname}
+proc signoff_fix_isolated_via {args} {procname}
+proc check_route {args} {procname}
+proc write_oasis {args} {procname}
+proc close_lib {args} {procname}
+proc open_block {args} {procname}
+proc read_fill_from_stream {args} {procname}
+proc write_def {args} {procname}
+proc write_gds {args} {procname}
+proc create_abstract {args} {procname}
+proc create_frame {args} {procname}
+proc derive_hier_antenna_property {args} {procname}
+proc close_block {args} {procname}
+proc get_blocks {args} {procname}
+proc printenv {args} {procname}
+proc report_utilization {args} {procname}
+proc check_legality {args} {procname}
+proc cputime {args} {
+  procname
+  return 20129389
+}
+proc link_design {args} {procname}
+proc read_sdc {args} {procname}
+proc current_instance {args} {procname}
+proc set_noise_parameters {args} {procname}
+proc save_session {args} {procname}
+proc report_clock {args} {procname}
+proc check_timing {args} {procname}
+proc report_aocvm {args} {procname}
+proc check_design {args} {procname}
+proc report_net_fanout {args} {procname}
+proc report_threshold_voltage_group {args} {procname}
+
+proc open_lib {args} {procname}
+proc copy_block {args} {procname}
+proc place_opt {args} {procname}
+proc update_timing {args} {procname}
+proc gui_start {args} {procname}
+proc gui_execute_menu_item {args} {procname}
+proc gui_write_window_image {args} {procname}
+proc gui_stop {args} {procname}
+proc clock_opt {args} {procname}
+proc get_scenarios {args} {procname}
+proc route_track {args} {procname}
+proc route_detail {args} {procname}
+proc compute_clock_latency {args} {procname}
+proc route_opt {args} {procname}
+proc signoff_check_drc {args} {procname}
+proc signoff_fix_drc {args} {procname}
+proc create_placement_blockage {args} {procname}
+proc get_snap_setting {args} {procname}
+proc alias {args} {procname}
+proc echo {args} {procname}
+proc print_message_info {args} {procname}
+proc write_tech_file {args} {procname}
+proc save_upf {args} {procname}
+proc all_modes {args} {procname}
+proc current_mode {args} {procname}
+proc which {args} {}
+proc get_app_option_value {args} {
+  procname
+  return 1
+}
+proc get_placement_blockages {args} {procname}
+proc set_block_pin_constraints {args} {procname}
+proc remove_routing_blockages {args} {procname}
+proc get_routing_blockages {args} {procname}
+proc get_shapes {args} {procname}
+proc get_app_var {args} {procname}
+proc foreach_in_col {args} {procname}
+proc split_polygons {args} {procname}
+proc compute_polygons {args} {procname}
+proc sort_collection {args} {procname}
+proc get_techs {args} {procname}
+proc current_lib {args} {
+  procname
+  return "current_lib_return"
+}
+proc remove_routing_blockage {args} {procname}
+proc reset_placement {args} {procname}
+proc set_placement_status {args} {procname}
+proc create_placement {args} {procname}
+proc set_macro_constraints {args} {procname}
+proc set_snap_setting {args} {procname}
+proc create_keepout_margin {args} {procname}
+proc get_block {args} {procname}
+proc create_grid {args} {procname}
+proc get_grids {args} {procname}
+proc create_track {args} {procname}
+proc remove_track {args} {procname}
+proc get_attr {args} {procname}
+proc resize_polygons {args} {procname}
+proc create_geo_mask {args} {procname}
+proc create_site_array {args} {procname}
+proc initialize_floorplan {args} {procname}
+proc index_collection {args} {procname}
+proc create_tap_cells {args} {procname}
+proc remove_placement_blockages {args} {procname}
+proc current_block {args} {
+  procname
+  return "current_block_return"
+}
+proc report_extraction_options {args} {procname}
+proc report_parasitic_parameters {args} {procname}
+proc set_extraction_options {args} {procname}
+proc set_routing_rule {args} {procname}
+proc get_nets {args} {procname}
+proc get_layers {args} {procname}
+proc remove_ignored_layers {args} {procname}
+proc set_app_option {args} {procname}
+proc report_app_options {args} {procname}
+proc set_pocvm_corner_sigma {args} {procname}
+proc list_attributes {args} {procname}
+proc set_app_options {args} {procname}
+proc create_net {args} {procname}
+proc connect_pg_net {args} {procname}
+proc save_block {args} {procname}
+proc save_lib {args} {procname}
+#proc P_warning {args} {procname}
+proc append_to_collection {args} {procname}
+proc current_mw_cel {args} {return current_mw_cel_return}
+proc define_user_attribute {args} {procname}
+proc set_attribute {args} {procname}
+proc report_host_options {args} {procname}
+
+#@>redirect
+proc redirect {args} {
+  if {[lsearch $args "-variable"] >= 0} {
+    set cmd [lassign $args - vv]
+    upvar $vv var
+    set var [uplevel eval $cmd]
+  } elseif {[lsearch $args "-file"] >= 0} {
+  } elseif {[lsearch $args "-tee"] >= 0} {
+  } else {
+    set ::do_redirect 1
+    set cmd [lassign $args ofile]
+    set ::redirect_to $ofile
+
+    uplevel eval {*}$cmd
+
+  }
+}
+if {0} {
+proc redirect {ofile cmd} {
+  set dir [file dirname $ofile]
+  if {$dir != "."} {
+    file mkdir $dir
+  }
+
+  close stdout
+  set kout [open $ofile w]
+  set stdout $kout
+    puts $kout [eval $cmd]
+  close $kout
+  open /dev/tty "w"
+}
+}
+
+proc current_mw_lib {args} {
+  procname
+  return "current_mw_lib_return"
+}
+
+proc set_temperature {args} {procname}
+proc set_scenario_status {args} {procname}
+proc set_parasitic_parameters {args} {procname}
+proc report_modes {args} {procname}
+proc report_scenarios {args} {procname}
+proc report_corners {args} {procname}
+proc report_pvt {args} {procname}
+proc all_scenarios {args} {procname}
+proc set_isolate_ports {args} {procname}
+proc report_isolate_ports {args} {procname}
+proc create_lib {args} {
+  procname
+}
+proc read_verilog {args} {
+  procname
+  set vfile [lindex $args 0]
+  if ![file exist $vfile] {
+    puts "Error: $vfile not exist.."
+  }
+}
+proc link_block {args} {procname}
+proc read_parasitic_tech {args} {procname}
+proc create_mode {args} {procname}
+proc create_corner {args} {procname}
+proc create_scenario {args} {procname}
+proc set_process_number {args} {procname}
+proc set_voltage {args} {procname}
+proc shell_is_in_exploration_mode {args} {
+  return 0
+}
+proc shell_is_in_topographical_mode {args} {
+  return 1
+}
+proc set_host_options {args} { procname }
+proc report_ocvm {args} { procname }
+proc reset_app_options {args} { procname }
+proc set_message_info {args} {
+  procname
+}
+
+proc create_command_group {args} {
+  procname
+}
+proc mem {args} {
+  procname
+}
+
+proc date {args} {
+  procname
+}
+
+proc set_multibit_options {args} {
+  procname
+}
+proc define_design_lib {args} {
+  procname
+}
+proc set_svf {args} {
+  procname
+}
+proc extend_mw_layers {args} {
+  procname
+}
+proc create_mw_lib {args} {
+  procname
+}
+proc open_mw_lib {args} {
+  procname
+}
+proc set_tlu_plus_files {args} {
+  procname
+}
+proc elaborate {args} {
+  procname
+}
+proc current_design {args} {
+  procname
+}
+proc link {args} {
+  procname
+}
+proc set_fix_multiple_port_nets {args} {
+  procname
+}
+proc set_clock_gating_style {args} {
+  procname
+}
+proc compile_ultra {args} {
+  procname
+#  puts "compile_ultra.....1"
+#  after 300
+#  puts "compile_ultra.....2"
+#  after 300
+#  puts "compile_ultra.....3"
+#  after 300
+}
+proc define_name_rules {args} {
+  procname
+}
+proc change_names {args} {
+  procname
+}
+#=pt begin=====
+proc read_parasitics {args} { procname }
+proc read_ocvm {args} { procname }
+#=pt begin=====
+proc write_parasitics {args} {
+  procname
+}
+proc write_file {args} {
+  procname
+}
+proc suppress_message {args} {
+  procname
+}
+proc set_app_var {args} {
+  procname
+  set vname [lindex $args 0]
+  upvar $vname v
+  set value [lindex $args 1]
+
+  set v $value
+}
+proc print_disp {disp} {
+  if {$::do_redirect} {
+    #puts $::redirect_to
+    set kout [open $::redirect_to w]
+      puts $kout $disp
+    close $kout
+# Done redirect. $::do_redirect is enable in redirect proc
+    set $::do_redirect 0
+  } else {
+      puts $kout $disp
+  }
+}
+#@>report_area
+# {{{
+proc report_area {args} {
+  procname
+set disp {
+****************************************
+Report : area
+Design : foo
+Version: M-2016.12
+Date   : Sun Apr 16 12:48:32 2017
+****************************************
+
+Library(s) Used:
+
+    lib1 (File: /path/to/lib1.db)
+    lib2 (File: /path/to/lib2.db)
+
+Number of ports:                         9501
+Number of nets:                          5224
+Number of cells:                         5599
+Number of combinational cells:           2423
+Number of sequential cells:              0429
+Number of macros/black boxes:              84
+Number of buf/inv:                       6756
+Number of references:                     170
+
+Combinational area:                288.729882
+Buf/Inv area:                      169.727781
+Noncombinational area:            9980.953882
+Macro/Black Box area:             7877.949463
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:                  6147.633227
+Total area:                 undefined
+Core Area:                      9482
+Aspect Ratio:                 0.6940
+Utilization Ratio:            0.0800
+}
+  print_disp $disp
+}
+# }}}
+#@>report_qor
+# {{{
+proc report_qor {args} {
+  procname
+  set disp {
+ 
+****************************************
+Report : qor
+Design : foo
+Version: M-2016.12
+Date   : Wed May  3 03:50:48 2017
+****************************************
+
+
+  Timing Path Group 'clk'
+  -----------------------------------
+  Levels of Logic:             19.000
+  Critical Path Length:       615.452
+  Critical Path Slack:        -35.651
+  Critical Path Clk Period:   769.000
+  Total Negative Slack:      -763.109
+  No. of Violating Paths:     153.000
+  Worst Hold Violation:       -43.229
+  Total Hold Violation:     -4111.061
+  No. of Hold Violations:      26.000
+  -----------------------------------
+
+  Timing Path Group 'REG2REG'
+  -----------------------------------
+  Levels of Logic:             10.000
+  Critical Path Length:       608.075
+  Critical Path Slack:       -186.266
+  Critical Path Clk Period:   769.000
+  Total Negative Slack:  -2609.500
+  No. of Violating Paths:   8336.000
+  Worst Hold Violation:      -158.586
+  Total Hold Violation:   -5525.438
+  No. of Hold Violations:    516.000
+  -----------------------------------
+
+
+  Cell Count
+  -----------------------------------
+  Hierarchical Cell Count:      2663
+  Hierarchical Port Count:    2105
+  Leaf Cell Count:             11264
+  Buf/Inv Cell Count:          86644
+  Buf Cell Count:              33622
+  Inv Cell Count:              53022
+  CT Buf/Inv Cell Count:            0
+  Combinational Cell Count:    53623
+  Sequential Cell Count:        7641
+  Macro Count:                     44
+  -----------------------------------
+
+
+  Area
+  -----------------------------------
+  Combinational Area:       9913.120
+  Noncombinational Area:    9322.833
+  Buf/Inv Area:             3306.917
+  Total Buffer Area:        0730.715
+  Total Inverter Area:       576.202
+  Macro/Black Box Area:     7877.949
+  Net Area:                     0.000
+  Net XLength        :    490417.000
+  Net YLength        :    74590.000
+  -----------------------------------
+  Cell Area:               07113.902
+  Design Area:             07113.902
+  Net Length        :    3865007.000
+
+
+  Design Rules
+  -----------------------------------
+  Total Number of Nets:        786
+  Nets With Violations:           14
+  Max Trans Violations:             0
+  Max Cap Violations:             13
+  Max Fanout Violations:           2
+  -----------------------------------
+
+
+  Hostname: ctue214
+
+  Compile CPU Statistics
+  -----------------------------------------
+  Resource Sharing:                   0.000
+  Logic Optimization:                 0.000
+  Mapping Optimization:            232.961
+  -----------------------------------------
+  Overall Compile Time:            2408.590
+  Overall Compile Wall Clock Time: 3327.176
+
+  --------------------------------------------------------------------
+
+  Design  WNS: 86.266  TNS: 8251.500  Number of Violating Paths: 647
+
+
+  Design (Hold)  WNS: 18.586  TNS: 5636.938  Number of Violating Paths: 742
+
+  --------------------------------------------------------------------
+
+
+1
+  }
+  print_disp $disp
+}
+# }}}
+#@>printvar
+# {{{
+proc printvar {args} {
+  procname
+  set disp {
+compile_register_replication = "false"
+compile_register_replication_across_hierarchy = "false"
+compile_register_replication_do_size_only = "true"
+compile_restructure_sync_set_reset = "false"
+compile_retime_exception_registers = "false"
+compile_retime_license_behavior = "wait"
+compile_seqmap_enable_output_inversion = "false"
+compile_seqmap_honor_sync_set_reset = "true"
+compile_seqmap_identify_shift_registers = "false"
+compile_seqmap_identify_shift_registers_with_synchronous_logic = "false"
+compile_seqmap_identify_shift_registers_with_synchronous_logic_ascii = "false"
+compile_seqmap_propagate_constants = "false"
+compile_seqmap_propagate_constants_size_only = "true"
+compile_seqmap_propagate_high_effort = "false"
+compile_slack_driven_buffering = "false"
+vhdlout_write_components = "TRUE"
+vhdlout_write_entity = "TRUE"
+vhdlout_write_top_configuration = "FALSE"
+vhdlout_zero_name    = "'0'"
+  }
+  print_disp $disp
+}
+# }}}
+#@>report_reference
+# {{{
+proc report_reference {args} {
+  procname
+  set disp {
+****************************************
+Report : reference
+Design : foo
+Version: M-2018.12
+Date   : Sun Apr 16 12:49:36 2018
+****************************************
+
+Attributes:
+    b - black box (unknown)
+   bo - allows boundary optimization
+    d - dont_touch
+   mo - map_only
+    h - hierarchical
+    n - noncombinational
+    r - removable
+    s - synthetic operator
+    u - contains unmapped logic
+
+Reference          Library       Unit Area   Count    Total Area   Attributes
+-----------------------------------------------------------------------------
+AND  lib1     0.176256       1     0.76256
+OR   lib1     0.161568       1     0.61568
+DFF  lib1     0.146880       2     0.93760
+INV  lib1     0.088128       2     0.76256
+macro1 67.4755       1 67.4755 b, h, n
+macro2 656.8092       1 656.8092 b, h, n
+-----------------------------------------------------------------------------
+Total 6 references                                2147.6327
+
+
+  }
+  print_disp $disp
+}
+# }}}
+#@>report_timing_derate
+# {{{
+proc report_timing_derate {args} {
+  procname
+  set disp {
+****************************************
+Report : timing derate
+Design : foo
+Version: M-2016.12
+Date   : Sun Apr 16 12:55:42 2017
+****************************************
+
+    Design    Derate                             value
+----------------------------------------------------------------------
+
+    foo       clk_net_delay_min_early             -        
+              clk_net_delay_min_late              -        
+              clk_net_delay_max_early             -        
+              clk_net_delay_max_late              -        
+              data_net_delay_min_early            -        
+              data_net_delay_min_late            1.05      
+              data_net_delay_max_early            -        
+              data_net_delay_max_late            1.05      
+              clk_cell_delay_min_early            -        
+              clk_cell_delay_min_late             -        
+              clk_cell_delay_max_early            -        
+              clk_cell_delay_max_late             -        
+              clk_cell_check_min_early            -        
+              clk_cell_check_min_late             -        
+              clk_cell_check_max_early            -        
+              clk_cell_check_max_late             -        
+              data_cell_delay_min_early           -        
+              data_cell_delay_min_late           1.05      
+              data_cell_delay_max_early           -        
+              data_cell_delay_max_late           1.05      
+              data_cell_check_min_early           -        
+              data_cell_check_min_late            -        
+              data_cell_check_max_early           -        
+              data_cell_check_max_late            -        
+
+    Cell      Derate                             value
+----------------------------------------------------------------------
+
+
+    Lib Cell  Derate                             value
+----------------------------------------------------------------------
+
+
+  }
+  print_disp $disp
+}
+# }}}
+proc report_constraint {args} {
+  procname
+  set disp {
+
+  }
+  print_disp $disp
+}
+#@>report_multibit_banking
+# {{{
+proc report_multibit_banking {args} {
+  procname
+  set disp {
+ 
+****************************************
+Report : multibit banking
+Design : foo
+Version: M-2016.12
+Date   : Sun Apr 16 12:55:42 2017
+****************************************
+
+Total number of sequential cells:                               121591
+    Number of single-bit flip-flops:                            117733
+    Number of single-bit latches:                                    0
+    Number of multi-bit flip-flops:                               3858
+    Number of multi-bit latches:                                     0
+
+Total number of single-bit equivalent sequential cells:         132009
+    (A) Single-bit flip-flops:                                  117733
+    (B) Single-bit latches:                                          0
+    (C) Multi-bit flip-flops:                                    14276
+    (D) Multi-bit latches:                                           0
+
+Sequential cells banking ratio ((C + D) / (A + B + C + D)):      10.81%
+Flip-Flop cells banking ratio  ((C) / (A + C)):                  10.81%
+
+  }
+  print_disp $disp
+}
+# }}}
+proc report_multibit {args} {
+  procname
+  set disp {
+  }
+  print_disp $disp
+}
+#@>report_clock_gating
+# {{{
+proc report_clock_gating {args} {
+  procname
+  set disp {
+****************************************
+Report : clock_gating
+        -ungated
+Design : foo
+Version: M-2016.12
+Date   : Sun Apr 16 12:48:07 2017
+****************************************
+
+                             Clock Gating Summary
+          ------------------------------------------------------------
+          |    Number of Clock gating elements    |     8781         |
+          |                                       |                  |
+          |    Number of Gated registers          |   8214 (97.29%)  |
+          |                                       |                  |
+          |    Number of Ungated registers        |   293 (2.71%)    |
+          |                                       |                  |
+          |    Total number of registers          |    21507         |
+          ------------------------------------------------------------
+
+
+
+                      Clock Gating Multibit Decomposition
+          +--------------------------------+------------+------------+
+          |                                |   Actual   | Single-bit |
+          |                                |   Count    | Equivalent |
+          +--------------------------------+------------+------------+
+          |   Number of Gated Registers    |            |            |
+          |                    1-bit       |   16428    |    6428    |
+          |                    2-bit       |     50     |     00     |
+          |                    4-bit       |    536     |    144     |
+          |                  Total         |   18214    |   23072    |
+          |   Number of Ungated Registers  |            |            |
+          |                    1-bit       |    221     |    221     |
+          |                    2-bit       |     28     |    656     |
+          |                    4-bit       |    744     |    976     |
+          |                  Total         |    293     |    853     |
+          |   Total Number of Registers    |            |            |
+          |                    1-bit       |   17649    |   17649    |
+          |                    2-bit       |     78     |    156     |
+          |                    4-bit       |    280     |   3120     |
+          |                  Total         |   21507    |   31925    |
+          +--------------------------------+------------+------------+
+
+  }
+  print_disp $disp
+}
+# }}}
+#@>report_clocks
+# {{{
+proc report_clocks {args} {
+  procname
+  set disp {
+ 
+****************************************
+Report : clocks
+Design : foo
+Version: M-2018.12
+Date   : Sun Apr 16 12:48:02 2018
+****************************************
+
+Attributes:
+    d - dont_touch_network
+    f - fix_hold
+    p - propagated_clock
+    G - generated_clock
+    g - lib_generated_clock
+
+Clock          Period   Waveform            Attrs     Sources
+--------------------------------------------------------------------------------
+clk       50.00   {0 25.05}                    {clk_in}
+vclk   50.00   {0 25.05}                    {}
+--------------------------------------------------------------------------------
+ 
+  }
+  print_disp $disp
+}
+# }}}
+proc report_power {args} {
+  procname
+  set disp {
+  }
+  print_disp $disp
+}
+#@>report_timing
+# {{{
+proc report_timing {args} {
+  procname
+  set disp {
+
+  Startpoint: out_reg_0_ (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: out_reg_7_4_
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                           Cap     Trans      Incr       Path
+  ---------------------------------------------------------------------
+  clock clk (rise edge)                                 0          0
+  clock network delay (ideal)                           0          0
+  out_reg_0_/clk (DFF)          0         0          0 r
+  out_reg_0_/o1 (DFF)        2       16       42       42 f
+  U41/o1 (INV)        3        12        16         57 r
+  U32/o1 (AND)        2        25        23         81 f
+  U56/out0 (NAND)        3       31       31        112 r
+  U60/o1 (OR)        1        22        23        135 f
+  U38/out0 (INV)        1       15       22        158 f
+  out_reg_7_4_/d2 (DFF2)        15         0        158 f
+  data arrival time                                              158
+
+  clock clk (rise edge)                              1000       1000
+  clock network delay (ideal)                           0       1000
+  out_reg_7_4_/clk (DFF2)                  0       1000 r
+  library setup time                                  -25        975
+  data required time                                             975
+  ---------------------------------------------------------------------
+  data required time                                             975
+  data arrival time                                             -158
+  ---------------------------------------------------------------------
+  slack (MET)                                                    818
+
+  }
+  print_disp $disp
+}
+# }}}
+proc check_tlu_plus_files {args} {procname}
+proc analyze {args} {procname}
+proc link {args} {return 1}
+proc set_operating_conditions {args} {return 1}
+proc get_ports {args} {return get_ports_return}
+proc create_clock {args} {procname}
+proc get_clocks {args} {
+  procname
+  return $args
+}
+proc set_clock_uncertainty {args} {procname}
+proc get_attribute {args} {return "1.1"}
+proc all_inputs {args} {return "all_inputs_return in1 in2"}
+proc remove_from_collection {args} {return "remove_from_collection_return"}
+proc set_input_delay {args} {procname}
+proc all_outputs {args} {procname}
+proc get_object_name {args} {return get_object_name_return}
+proc set_output_delay {args} {procname}
+proc get_lib_cells {args} {procname}
+proc set_input_transition {args} {procname}
+proc set_load {args} {procname}
+proc set_max_transition {args} {procname}
+proc get_designs {args} {procname}
+proc set_max_fanout {args} {procname}
+proc set_max_area {args} {procname}
+proc get_lib_pins {args} {procname}
+proc get_cells {args} {procname}
+proc sizeof_collection {args} {procname}
+proc set_preferred_routing_direction {args} {procname}
+proc set_ignored_layers {args} {procname}
+proc uniquify {args} {procname}
+proc all_registers {args} {procname}
+proc set_max_time_borrow {args} {procname}
+proc set_register_merging {args} {procname}
+proc set_critical_range {args} {procname}
+proc all_clocks {args} {return clk}
+#proc foreach_in_collection {args} {procname}
+interp alias {} foreach_in_collection {} foreach
+
+proc group_path {args} {procname}
+proc filter_collection {args} {procname}
+proc remove_attribute {args} {procname}
+proc optimize_netlist {args} {procname}
+proc write_verilog {args} {procname}
+proc sh {args} {procname}
+proc write_sdc {args} {procname}
+proc get_path_groups {args} {procname}
+proc get_libs {args} {return libname:libpath}
+
+proc source {args} {
+  regsub {\-echo} $args {} args
+  regsub {\-e } $args {} args
+  regsub {\-verbose} $args {} args
+  #puts $args
+  if [file exist $args] {
+    puts "# Source $args"
+    uplevel ::realsource $args
+  } else {
+    puts "Error: $args not exist..."
+  }
+}
+
+set cmdfile [lindex $argv [expr [lsearch $argv -f] + 1]]
+set search_path ""
+set target_library ""
+set link_library ""
+set mw_design_library ""
+
+#@>tracer
+proc tracer {varname args} {
+    upvar $varname var
+    set fileloc [info script]
+    puts "York: $varname was updated to be \"$var\" ... $fileloc"
+}
+
+#trace add variable INIT_DESIGN_INPUT write "tracer INIT_DESIGN_INPUT"
+trace add variable INTEL_STA_RUN_TYPE write "tracer INTEL_STA_RUN_TYPE"
+trace add variable INTEL_VG_FILES write "tracer INTEL_VG_FILES"
+
+source $cmdfile
+
+#::tclreadline::Loop
+# vim:fdm=marker

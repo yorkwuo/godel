@@ -1,0 +1,57 @@
+#!/usr/bin/env tclsh
+source $env(GODEL_ROOT)/bin/godel.tcl
+
+# Get path
+set path       [lindex $argv 0]
+set hier_level [lindex $argv 1]
+
+if {$path == ""} {
+  puts "Example Usage:"
+  puts "1. % newgok C:\\data\\pics"
+  puts "2. % newgok ."
+  puts "3. % newgok . 1"
+  return
+}
+
+# Windows to Unix path convertion
+if {$env(GODEL_IN_CYGWIN)} {
+  set path [exec cygpath -u $path]
+}
+# Change directory to target path
+#cd $path
+
+# 
+  set mfile $env(GODEL_META_CENTER)/gok_list.tcl
+  if [file exist $mfile] {
+    source $mfile
+  }
+  set org_path [pwd]
+
+  if {$path != ""} {
+    cd $path
+  }
+
+  set fullpath [pwd]
+  set c [split $fullpath /]
+
+# pagename
+  if {$hier_level == ""} {
+    set pathelem [lrange $c end end]
+  } else {
+    set pathelem [lrange $c end-$hier_level end]
+  }
+
+  set pagename [join $pathelem ":"]
+  #puts $pagename
+
+  if [info exist meta($pagename,where)] {
+    puts "Error: `$pagename' already exist..."
+    puts "       $pagename = $meta($pagename,where)"
+  } else {
+    puts "Success: $pagename"
+    set meta($pagename,where)    $fullpath
+    set meta($pagename,keywords) $pagename
+    godel_array_save  meta $env(GODEL_META_CENTER)/gok_list.tcl
+  }
+
+

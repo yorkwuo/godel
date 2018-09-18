@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+use File::Spec;
+use File::Basename;
+use Cwd;
+my $path = shift;
+chomp $path;
+my $cwd=getcwd();
+
+my @target_dirs = File::Spec->splitdir($path);
+my @cwd_dirs = File::Spec->splitdir($cwd);
+
+# how many `..'?
+my $count = grep /\.\./, @target_dirs;
+
+if($count > 0){
+  splice(@cwd_dirs,"-$count");
+  splice(@target_dirs,0,$count);
+}
+
+my $newpath = File::Spec->catdir(@cwd_dirs,@target_dirs);
+print "$newpath\n";

@@ -1,0 +1,21 @@
+#!/usr/bin/env tclsh
+source $env(GODEL_ROOT)/bin/godel.tcl
+
+# Get path
+set pagename       [lindex $argv 0]
+set keywords       [lindex $argv 1]
+
+if {$pagename == ""} {
+  puts "Example Usage:"
+  puts "% gokak foo \"key1 key2\""
+  return
+}
+
+set mfile $env(GODEL_META_CENTER)/gok_list.tcl
+if [file exist $mfile] {
+  source $mfile
+}
+set meta($pagename,keywords) [concat $meta($pagename,keywords) {*}$keywords]
+godel_array_save  meta $env(GODEL_META_CENTER)/gok_list.tcl
+
+
