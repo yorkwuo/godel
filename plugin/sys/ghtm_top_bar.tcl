@@ -20,7 +20,9 @@ proc ghtm_top_bar {{type NA}} {
 # Values
   puts $fout "  <div><a href=.godel/vars.tcl type=text/txt class=\"w3-bar-item w3-button w3-hover-red\">Values</a></div>"
 # Save
-  puts $fout "  <button class=\"w3-button w3-hover-red\" onclick=\"do_gg()\">Save</button>"
+  #puts $fout "  <button class=\"w3-button w3-hover-red\" onclick=\"do_gg()\">Save</button>"
+# TOC
+  puts $fout "  <div><a href=.main.htm  class=\"w3-bar-item w3-button w3-hover-red\">TOC</a></div>"
 
 # asic4 path
 # {{{

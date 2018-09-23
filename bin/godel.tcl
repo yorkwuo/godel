@@ -2,7 +2,8 @@
 # {{{
 proc gmd {fname} {
   upvar fout fout
-  regsub -all { } $fname {_} fname2
+  regsub -all {\.md} $fname {} fname1
+  regsub -all { } $fname1 {_} fname2
 
 
   if [file exist $fname2.md] {
@@ -15,7 +16,7 @@ proc gmd {fname} {
       puts $kout ""
       puts $kout "</div>"
       puts $kout ""
-      puts $kout "*#. $fname"
+      puts $kout "*#. $fname1"
     close $kout
   }
 
@@ -1363,6 +1364,7 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
   upvar argv argv
   upvar just_draw just_draw
   upvar bvars bvars
+  set ::toc_list [list]
 
 
   if {$ghtm_proc == "clean"} {

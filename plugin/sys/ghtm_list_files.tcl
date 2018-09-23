@@ -13,6 +13,7 @@ proc ghtm_list_files {pattern {description ""}} {
       #puts $fout "    <p>$fname</p>"
       #puts $fout "</div>"
     } elseif [regexp -nocase {\.png} $fname] {
+    } elseif [regexp -nocase {\.md} $fname] {
       #puts $fout "<a href=\"$full\" type=text/png><img src=$full width=30% height=30%></a>"
 
     } elseif [regexp -nocase {\.docx} $fname] {
