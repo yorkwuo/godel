@@ -24,7 +24,7 @@ proc gmd {fname} {
     set content [read $fp]
   close $fp
 
-  set aa [::Markdown::convert $content]
+  set aa [::gmarkdown::convert $content]
   regsub -line -all {^<p>\*#\. (.*)</p>} $aa {<span class=keywords style=color:red>\1</span>} aa
 
   puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
@@ -131,7 +131,7 @@ proc gnotes {content} {
   upvar vars vars
   upvar count count
 
-  set aa [::Markdown::convert $content]
+  set aa [::gmarkdown::convert $content]
   regsub -line -all {^<p>\*#\. (.*)</p>} $aa {<span class=keywords style=color:red>\1</span>} aa
 
   puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
@@ -153,7 +153,7 @@ proc grow {content} {
   foreach i $cc {
     if [regexp {^\n$} $i] {
     } else {
-      set aa [::Markdown::convert $i]
+      set aa [::gmarkdown::convert $i]
       regsub -line -all {^<p>\*#\. (.*)</p>} $aa {<span class=keywords style=color:red>\1</span>} aa
       set w [lindex $grow_column_width $num]
       if {$w == ""} {
@@ -168,16 +168,6 @@ proc grow {content} {
     }
   }
   puts $fout "</div>"
-  #puts [lindex $cc 4]
-  #plist $cc
-  #set aa [::Markdown::convert $content]
-  #regsub -line -all {^<p>\*#\. (.*)</p>} $aa {<span class=keywords style=color:red>\1</span>} aa
-
-  #regsub -line -all {^<p>\*r\. (.*)</p>} $aa {<div class="w3-container w3-cell">\1</div>} aa
-
-  #puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
-  #puts $fout $aa
-  #puts $fout "</div>"
 }
 # }}}
 
@@ -1358,7 +1348,7 @@ proc gflu {virus degree {action ""}} {
 #@=godel_draw
 # {{{
 proc godel_draw {{ghtm_proc NA} {force NA}} {
-  package require Markdown
+  package require gmarkdown
   upvar vars vars
   upvar env env
   upvar argv argv

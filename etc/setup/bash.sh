@@ -1,4 +1,10 @@
 
+pp="$GODEL_ROOT/scripts/tcl $TCLLIBPATH"
+# uniquify
+pp=$(echo $pp | tr ' ' '\n' | sort -u)
+
+export TCLLIBPATH=$pp
+
 export GODEL_PLUGIN=$GODEL_ROOT/plugin
 #export GODEL_USER_PLUGIN    $dir/plugin
 
