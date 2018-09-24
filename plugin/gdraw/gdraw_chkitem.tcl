@@ -4,7 +4,9 @@ proc gdraw_chkitem {} {
   set kout [open .godel/ghtm.tcl w]
     puts $kout "set flow_name chkitem"
     puts $kout "ghtm_top_bar"
-    puts $kout "ghtm_paragraph p1"
     puts $kout "ghtm_list_files *"
+    puts $kout "gnotes {"
+    puts $kout ""
+    puts $kout "}"
   close $kout
 }

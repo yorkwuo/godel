@@ -5,6 +5,7 @@ setenv GODEL_PLUGIN         $dir/plugin
 
 setenv GODEL_CENTER         $HOME/data/CENTER
 setenv GODEL_META_CENTER    $HOME/data/META
+setenv CLCENTER             $HOME/data/CLCENTER
 
 setenv GODEL_IN_CYGWIN      1
 setenv CYGWIN_INSTALL       C:/cygwin64

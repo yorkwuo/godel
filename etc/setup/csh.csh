@@ -1,6 +1,8 @@
 
 setenv PATH ${GODEL_ROOT}/bin:${PATH}
 
+setenv TCLLIBPATH "${GODEL_ROOT}/scripts/tcl ${TCLLIBPATH}"
+
 alias gim                godel_import.tcl
 alias gc                 godel_codes.tcl
 alias gco                godel_checkout.tcl
