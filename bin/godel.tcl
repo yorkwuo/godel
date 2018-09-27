@@ -10,13 +10,14 @@ proc gmd {fname} {
 # If not exist, create it...
   } else {
     set kout [open $fname2.md w]
-      puts $kout "<div>"
+      #puts $kout "<div>"
       puts $kout "<a href=$fname2.md type=text/txt>link</a>"
 # This blank line is important. Without it the markdown processing will fail.
-      puts $kout ""
-      puts $kout "</div>"
+      #puts $kout "</div>"
       puts $kout ""
       puts $kout "*#. $fname1"
+      puts $kout ""
+      puts $kout ""
     close $kout
   }
 

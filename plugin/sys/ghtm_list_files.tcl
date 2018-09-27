@@ -22,6 +22,9 @@ proc ghtm_list_files {pattern {description ""}} {
     } elseif [regexp -nocase {\.mpg} $fname] {
       puts $fout "<a href=\"$full\">$full</a><br>"
 
+    } elseif [regexp -nocase {\.mobi} $fname] {
+      puts $fout "<a href=\"$full\">$full</a><br>"
+
     } elseif [regexp -nocase {\.pptx} $fname] {
       puts $fout "<a href=\"$full\" type=text/pptx>$full</a><br>"
 
@@ -47,7 +50,7 @@ proc ghtm_list_files {pattern {description ""}} {
       puts $fout "<a href=\"$full\" type=text/ppdf>$full</a><br>"
     } elseif [file isdirectory $fname] {
     } else {
-      puts $fout "<a href=$full type=text/txt>$full</a><br>"
+      puts $fout "<a href=\"$full\" type=text/txt>$full</a><br>"
     }
   }
 }

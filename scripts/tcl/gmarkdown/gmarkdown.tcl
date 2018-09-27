@@ -397,39 +397,41 @@ namespace eval gmarkdown {
                                     [join $list_result \n] \
                                 </$list_type>\n\n
                 }
-                {^<(?:p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|script|noscript|form|fieldset|iframe|math|ins|del)} {
+                {^<(?:p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|script|noscript|form|fieldset|iframe|math|ins|del|a|img)} {
                     dputs "HTML BLOCKS"
                     #@= HTML BLOCKS
                     set re_htmltag {<(/?)(\w+)(?:\s+\w+=(?:\"[^\"]+\"|'[^']+'))*\s*>}
                     set buffer {}
 
-                    while {$index < $no_lines} \
-                    {
-                        while {$index < $no_lines} \
-                        {
+                    while {$index < $no_lines} {
+                        #while {$index < $no_lines} \
+                        #{
                             incr index
 
                             append buffer $line \n
 
+                            #puts "   $index:$line"
                             if {[is_empty_line $line]} {
+                                #puts "      $index:break"
                                 break
                             }
 
                             set line [lindex $lines $index]
-                        }
+                        #}
 
-                        set tags [regexp -inline -all $re_htmltag  $buffer]
-                        set stack_count 0
+                        #puts $buffer
+                        #set tags [regexp -inline -all $re_htmltag  $buffer]
+                        #set stack_count 0
 
-                        foreach {match type name} $tags {
-                            if {$type eq {}} {
-                                incr stack_count +1
-                            } else {
-                                incr stack_count -1
-                            }
-                        }
+                        #foreach {match type name} $tags {
+                        #    if {$type eq {}} {
+                        #        incr stack_count +1
+                        #    } else {
+                        #        incr stack_count -1
+                        #    }
+                        #}
 
-                        if {$stack_count == 0} { break }
+                        #if {$stack_count == 0} { break }
                     }
 
                     append result $buffer
