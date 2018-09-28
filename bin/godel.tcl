@@ -25,8 +25,21 @@ proc gmd {fname} {
     set content [read $fp]
   close $fp
 
+# @)
+  set matches [regexp -all -inline {@\)(\w+)} $content]
+  foreach {g0 g1} $matches {
+    #puts $g1
+    if [info exist vars($g1)] {
+      regsub -all "@\\)$g1" $content $vars($g1) content
+    } else {
+      regsub -all "@\\)$g1" $content "<b>NA</b>($g1)" content
+    }
+  }
+
   set aa [::gmarkdown::convert $content]
   regsub -line -all {^<p>\*#\. (.*)</p>} $aa {<span class=keywords style=color:red>\1</span>} aa
+
+  regsub -all {&lt;b&gt;NA&lt;/b&gt;} $aa <b>NA</b> aa
 
   puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
   puts $fout $aa
@@ -125,6 +138,10 @@ proc gnotes_backup {content} {
 
 }
 # }}}
+
+proc rr {vv} {
+  upvar vars vars
+}
 #@> gnotes
 # {{{
 proc gnotes {content} {
@@ -132,8 +149,21 @@ proc gnotes {content} {
   upvar vars vars
   upvar count count
 
+# @)
+  set matches [regexp -all -inline {@\)(\w+)} $content]
+  foreach {g0 g1} $matches {
+    #puts $g1
+    if [info exist vars($g1)] {
+      regsub -all "@\\)$g1" $content $vars($g1) content
+    } else {
+      regsub -all "@\\)$g1" $content "<b>NA</b>($g1)" content
+    }
+  }
+
   set aa [::gmarkdown::convert $content]
   regsub -line -all {^<p>\*#\. (.*)</p>} $aa {<span class=keywords style=color:red>\1</span>} aa
+
+  regsub -all {&lt;b&gt;NA&lt;/b&gt;} $aa <b>NA</b> aa
 
   puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
   puts $fout $aa
