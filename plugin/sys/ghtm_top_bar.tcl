@@ -12,7 +12,8 @@ proc ghtm_top_bar {{type NA}} {
   set cwd [pwd]
 
   puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/godel.js]></script>"
-  puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/prism/prism.js]></script>"
+  puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js]></script>"
+  #puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/prism/prism.js]></script>"
 
   puts $fout "<div class=\"w3-bar w3-border w3-indigo w3-medium\">"
 # Edit

@@ -11,13 +11,13 @@ proc gmd {fname} {
   } else {
     set kout [open $fname2.md w]
       #puts $kout "<div>"
-      puts $kout "<a href=$fname2.md type=text/txt>link</a>"
+      puts $kout "<a href=$fname2.md type=text/txt>edit</a>"
 # This blank line is important. Without it the markdown processing will fail.
       #puts $kout "</div>"
       puts $kout ""
       puts $kout "*#. $fname1"
       puts $kout ""
-      puts $kout ""
+      puts $kout "# $fname2"
     close $kout
   }
 
@@ -764,7 +764,7 @@ proc ghtm_new_html {title} {
   puts $fout "<head>"
   puts $fout "<title>$title</title>"
   puts $fout "<link rel=\"stylesheet\" href=[tbox_cygpath $env(GODEL_ROOT)/etc/css/w3.css]>"
-  puts $fout "<link rel=\"stylesheet\" href=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/prism/themes/prism-twilight.css] data-noprefix/>"
+  #puts $fout "<link rel=\"stylesheet\" href=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/prism/themes/prism-twilight.css] data-noprefix/>"
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
   puts $fout "<body>"
@@ -1419,13 +1419,11 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
     godel_init_vars    g:keywords    ""
     godel_init_vars    g:class       ""
     godel_init_vars    g:pagename    [file tail [pwd]]
-    set vars(toc)     [list]
   } else {
     #godel_init_vars    g:where       [pwd]
     godel_init_vars    g:keywords    ""
     godel_init_vars    g:class       ""
     godel_init_vars    g:pagename    [file tail [pwd]]
-    set vars(toc)     [list]
   }
 
   file mkdir .godel
@@ -1438,9 +1436,9 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
   puts $fout "<title>$vars(g:pagename)</title>"
 
   file copy -force $env(GODEL_ROOT)/etc/css/w3.css .godel/
-  file copy -force $env(GODEL_ROOT)/scripts/js/prism/themes/prism-twilight.css .godel/
+  #file copy -force $env(GODEL_ROOT)/scripts/js/prism/themes/prism-twilight.css .godel/
   puts $fout "<link rel=\"stylesheet\" href=.godel/w3.css>"
-  puts $fout "<link rel=\"stylesheet\" href=.godel/prism-twilight.css data-noprefix/>"
+  #puts $fout "<link rel=\"stylesheet\" href=.godel/prism-twilight.css data-noprefix/>"
 
   #puts $fout "<link rel=\"stylesheet\" href=[tbox_cygpath $env(GODEL_ROOT)/etc/css/w3.css]>"
   #puts $fout "<link rel=\"stylesheet\" href=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/prism/themes/prism-twilight.css] data-noprefix/>"
@@ -2059,11 +2057,11 @@ proc gvars {pagename {vname ""}} {
   #puts $meta($pagename,where)
   source $meta($pagename,where)/.godel/vars.tcl
   set where $meta($pagename,where)
+  set vars(where) $where
   if {$vname == ""} {
     parray vars
   } else {
-    #puts $vars($vname)
-    puts [array names vars $vname]
+    puts $vars($vname)
   }
 
 }
