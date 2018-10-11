@@ -10,6 +10,50 @@ namespace eval procs_attr {
   set arr(dummy) dd
   #namespace export arr
 }
+
+#---------------
+# UPF commands begin
+#---------------
+proc set_related_supply_net {args} {procname}
+proc create_power_domain {args} {procname}
+proc create_power_domain {args} {procname}
+proc create_supply_port  {args} {procname}
+proc create_supply_net   {args} {procname}
+proc create_supply_set {args} {procname}
+proc set_level_shifter {args} {procname}
+proc add_power_state {args} {procname}
+proc create_pst {args} {procname}
+proc add_port_state {args} {procname}
+proc map_retention_cell {args} {procname}
+proc map_isolation_cell {args} {procname}
+proc map_level_shifter_cell {args} {procname}
+proc map_power_switch_cell {args} {procname}
+proc create_logic_port {args} {procname}
+proc create_logic_net {args} {procname}
+proc connect_logic_net {args} {procname}
+proc define_always_on_cell {args} {procname}
+proc define_diode_clamp {args} {procname}
+proc define_isolation_cell {args} {procname}
+proc define_level_shifter_cell {args} {procname}
+proc deinfe_power_switch_cell {args} {procname}
+proc define_retention_cell {args} {procname}
+proc set_repeater {args} {procname}
+proc set_retention_elements {args} {procname}
+proc set_retention {args} {procname}
+proc set_retention_control {args} {procname}
+proc set_isolation {args} {procname}
+proc set_isolation_control {args} {procname}
+proc set_level_shifter {args} {procname}
+proc create_power_switch {args} {procname}
+proc connect_supply_net {args} {procname}
+proc set_scope {args} {procname}
+proc set_design_top {args} {procname}
+proc add_pst_state {args} {procname}
+#---------------
+# UPF commands end
+#---------------
+
+
 #@>parse_proc_arguments
 proc parse_proc_arguments {args} {
   set result_name [lindex $args 2]

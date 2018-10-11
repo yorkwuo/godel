@@ -20,7 +20,7 @@ proc gdraw_asic4_ghtm4 {} {
 
     puts $kout "set rowlist \[glob *\]"
     puts $kout "ghtm_table_note corner .index.htm"
-    puts $kout "ghtm_table_bar  corner corner nvp"
+    #puts $kout "ghtm_table_bar  corner corner nvp"
   close $kout
 }
 # }}}

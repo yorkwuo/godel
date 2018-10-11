@@ -338,7 +338,7 @@ proc gok {keywords} {
   #puts $keywords
 
   set ilist [list]
-  foreach i [array name meta *,where] {
+  foreach i [lsort [array name meta *,where]] {
     regsub ",where" $i "" i
     lappend ilist $i
   }
@@ -386,7 +386,7 @@ proc gcd {keywords} {
   #puts $keywords
 
   set ilist [list]
-  foreach i [array name meta *,where] {
+  foreach i [lsort [array name meta *,where]] {
     regsub ",where" $i "" i
     lappend ilist $i
   }
@@ -818,6 +818,7 @@ proc ghtm_toc {{mode ""} {begin_level 4} } {
     puts $kout {<!DOCTYPE html>}
     puts $kout {<html> <head>}
     puts $kout "<title>$vars(g:pagename)</title>"
+    puts $kout {<meta charset=utf-8>}
     puts $kout {<frameset cols=25%,75%>}
     puts $kout {　　<frame src=.toc.htm name=leftFrame >}
     puts $kout {　　<frame src=.index.htm name=rightFrame >}
@@ -1386,7 +1387,6 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
   upvar just_draw just_draw
   upvar bvars bvars
   set ::toc_list [list]
-
 
   if {$ghtm_proc == "clean"} {
     file delete -force -- .godel .index.htm

@@ -62,6 +62,7 @@ namespace eval gmarkdown {
           puts $kout {<!DOCTYPE html>}
           puts $kout {<html> <head>}
           puts $kout "<title>$::vars(g:pagename)</title>"
+          puts $kout {<meta charset=utf-8>}
           puts $kout {<frameset cols=25%,75%>}
           puts $kout {　　<frame src=.toc.htm name=leftFrame >}
           puts $kout {　　<frame src=.index.htm name=rightFrame >}
