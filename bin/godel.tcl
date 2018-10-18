@@ -1435,12 +1435,24 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
   puts $fout "<head>"
   puts $fout "<title>$vars(g:pagename)</title>"
 
-  file copy -force $env(GODEL_ROOT)/etc/css/w3.css .godel/
+# Copy to local to make page sharing easier. Viwer don't need to have Godel installed.
+  #file copy -force $env(GODEL_ROOT)/etc/css/w3.css .godel/
+
   #file copy -force $env(GODEL_ROOT)/scripts/js/prism/themes/prism-twilight.css .godel/
-  puts $fout "<link rel=\"stylesheet\" href=.godel/w3.css>"
+  #puts $fout "<link rel=\"stylesheet\" href=.godel/w3.css>"
   #puts $fout "<link rel=\"stylesheet\" href=.godel/prism-twilight.css data-noprefix/>"
 
+# Link to global w3.css
   #puts $fout "<link rel=\"stylesheet\" href=[tbox_cygpath $env(GODEL_ROOT)/etc/css/w3.css]>"
+
+# Hardcode w3.css in .index.htm so that you have all in one file.
+  puts $fout "<style>"
+  set fin [open $env(GODEL_ROOT)/etc/css/w3.css r]
+    while {[gets $fin line] >= 0} {
+      puts $fout $line
+    }
+  close $fin
+  puts $fout "</style>"
   #puts $fout "<link rel=\"stylesheet\" href=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/prism/themes/prism-twilight.css] data-noprefix/>"
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
@@ -2061,17 +2073,23 @@ proc gvars {pagename {vname ""}} {
   if {$vname == ""} {
     parray vars
   } else {
-    puts $vars($vname)
+    #puts $vars($vname)
+    return $vars($vname)
   }
 
 }
 # }}}
-proc gset {key value} {
-  source .godel/vars.tcl
-  #parray vars
-  set vars($key) $value
-  godel_array_save vars .godel/vars.tcl
+proc gset {pagename key value} {
+  upvar env env
+  source $env(GODEL_META_CENTER)/meta.tcl
 
+  #puts $meta($pagename,where)
+  source $meta($pagename,where)/.godel/vars.tcl
+  set where $meta($pagename,where)
+
+  set vars($key) $value
+
+  godel_array_save vars $where/.godel/vars.tcl
 }
 #: godel_init_vars
 # {{{
@@ -2320,6 +2338,22 @@ proc godel_histogram_color_script {indata chart_name ograph} {
    close $fout
 
   godel_array_save chart .chart/$chart_name.tcl
+}
+# }}}
+#: lshift
+# {{{
+proc lshift {ls {size 1}} {
+  upvar 1 $ls LIST
+  set size [expr $size - 1]
+
+  if {[llength $LIST]} {
+    #set ret [lindex $LIST 0]
+    set ret  [lrange $LIST 0 $size]
+    set LIST [lreplace $LIST 0 $size]
+    return $ret
+  } else {
+    error "Ran out of list elements."
+  }
 }
 # }}}
 #: godel_shift

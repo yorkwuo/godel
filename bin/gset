@@ -1,3 +1,4 @@
 #!/usr/bin/tclsh
 source $env(GODEL_ROOT)/bin/godel.tcl
-gset [lindex $argv 0] [lindex $argv 1]
+#gset [lindex $argv 0] [lindex $argv 1]
+gset {*}$argv
