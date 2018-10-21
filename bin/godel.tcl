@@ -377,12 +377,12 @@ proc gok {keywords} {
 
 }
 # }}}
-# gcd
+# cdk
 # {{{
-proc gcd {keywords} {
+proc cdk {keywords} {
   upvar env env
+  source $env(GODEL_META_FILE)
   source $env(GODEL_META_CENTER)/indexing.tcl
-  source $env(GODEL_META_CENTER)/meta.tcl
   #puts $keywords
 
   set ilist [list]
@@ -434,7 +434,7 @@ proc gcd {keywords} {
 proc get_pagelist {keywords} {
   upvar env env
   source $env(GODEL_META_CENTER)/indexing.tcl
-  source $env(GODEL_META_CENTER)/meta.tcl
+  source $env(GODEL_META_FILE)
   #puts $keywords
 
   set ilist [list]
@@ -842,7 +842,7 @@ proc ghtm_chap {level title {href ""} {id ""}} {
 
 proc gpage_where {pagename} {
   upvar env env
-  source $env(GODEL_META_CENTER)/meta.tcl
+  source $env(GODEL_META_FILE)
   if {$env(GODEL_IN_CYGWIN)} {
     if [info exist meta($pagename,where)] {
       return [tbox_cygpath $meta($pagename,where)]/.index.htm
@@ -855,7 +855,7 @@ proc gpage_where {pagename} {
 }
 proc gpage_value {pagename attr} {
   upvar env env
-  source $env(GODEL_META_CENTER)/meta.tcl
+  source $env(GODEL_META_FILE)
   source $meta($pagename,where)/.godel/vars.tcl
   if [info exist vars($attr)] {
     return $vars($attr)
@@ -2044,7 +2044,7 @@ proc godel_get_vars {key} {
 # {{{
 proc gget {pagename {action ""}} {
   upvar env env
-  source $env(GODEL_META_CENTER)/meta.tcl
+  source $env(GODEL_META_FILE)
   #puts $meta($pagename,where)
   source $meta($pagename,where)/.godel/vars.tcl
   set where $meta($pagename,where)
@@ -2065,7 +2065,7 @@ proc gget {pagename {action ""}} {
 # {{{
 proc gvars {pagename {vname ""}} {
   upvar env env
-  source $env(GODEL_META_CENTER)/meta.tcl
+  source $env(GODEL_META_FILE)
   #puts $meta($pagename,where)
   source $meta($pagename,where)/.godel/vars.tcl
   set where $meta($pagename,where)
@@ -2074,14 +2074,18 @@ proc gvars {pagename {vname ""}} {
     parray vars
   } else {
     #puts $vars($vname)
-    return $vars($vname)
+    if [info exist vars($vname)] {
+      return $vars($vname)
+    } else {
+      return NA
+    }
   }
 
 }
 # }}}
 proc gset {pagename key value} {
   upvar env env
-  source $env(GODEL_META_CENTER)/meta.tcl
+  source $env(GODEL_META_FILE)
 
   #puts $meta($pagename,where)
   source $meta($pagename,where)/.godel/vars.tcl
@@ -4036,7 +4040,7 @@ proc grun_ci {{page_path .}} {
 # {{{
 proc godel_add_class {pname value} {
   upvar env env
-  set mfile $env(GODEL_META_CENTER)/meta.tcl
+  source $env(GODEL_META_FILE)
 
 # Get pname where
   source $mfile
@@ -4061,7 +4065,7 @@ proc godel_add_class {pname value} {
 # {{{
 proc godel_set_page_value {pname attr value} {
   upvar env env
-  set mfile $env(GODEL_META_CENTER)/meta.tcl
+  source $env(GODEL_META_FILE)
 
 # Get pname where
   source $mfile
@@ -4080,7 +4084,7 @@ proc godel_set_page_value {pname attr value} {
 # }}}
 proc godel_get_page_value {pname attr} {
   upvar env env
-  set mfile $env(GODEL_META_CENTER)/meta.tcl
+  source $env(GODEL_META_FILE)
 
 # Get pname where
   source $mfile
@@ -4096,7 +4100,7 @@ proc godel_get_page_value {pname attr} {
 #@=meta_get_page
 proc meta_get_pagelist {} {
   upvar env env
-  set mfile $env(GODEL_META_CENTER)/meta.tcl
+  source $env(GODEL_META_FILE)
   source $mfile
 
   set pagelist [list]
@@ -4111,8 +4115,7 @@ proc meta_get_pagelist {} {
 # {{{
 proc meta_indexing {} {
   upvar env env
-  set mfile $env(GODEL_META_CENTER)/meta.tcl
-  source $mfile
+  source $env(GODEL_META_FILE)
 
   array set vars [array get meta]
 
@@ -4144,10 +4147,7 @@ proc meta_indexing {} {
 # {{{
 proc meta_chkin {{page_path ""} {hier_level ""}} {
   upvar env env
-  set mfile $env(GODEL_META_CENTER)/meta.tcl
-  if [file exist $mfile] {
-    source $mfile
-  }
+  source $env(GODEL_META_FILE)
   set org_path [pwd]
 # meta value to be checked-in stored in .godel/vars.tcl
   if {$page_path != ""} {
@@ -4177,7 +4177,7 @@ proc meta_chkin {{page_path ""} {hier_level ""}} {
   } else {
     puts "Checkin $pagename..."
     set meta($pagename,where)    $fullpath
-    godel_array_save meta $env(GODEL_META_CENTER)/meta.tcl
+    godel_array_save meta $env(GODEL_META_FILE)
     cd $org_path
     return 1
   }
@@ -4188,22 +4188,21 @@ proc meta_chkin {{page_path ""} {hier_level ""}} {
 #@=meta_rm
 # {{{
 proc meta_rm {name} {
-# remove/delete a page in meta.tcl
   upvar env env
-  set mfile $env(GODEL_META_CENTER)/meta.tcl
+  set mfile $env(GODEL_META_FILE)
   if [file exist $mfile] {
     source $mfile
   }
 
   array unset meta $name,where
 
-  godel_array_save meta $env(GODEL_META_CENTER)/meta.tcl
+  godel_array_save meta $env(GODEL_META_FILE)
 }
 # }}}
 #@=meta_get_page_where
 proc meta_get_page_where {pname} {
   upvar env env
-  source $env(GODEL_META_CENTER)/meta.tcl
+  source $env(GODEL_META_FILE)
   if [info exist meta($pname,where)] {
     return $meta($pname,where)
   } else {

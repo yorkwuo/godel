@@ -14,7 +14,7 @@ alias glist              godel_list.tcl
 alias gd                 godel_draw.tcl
 alias gg                 gg.tcl
 
-alias cdk               'eval `gcd.tcl \!*`'
+alias cdk               'eval `cdk.tcl \!*`'
 alias gok               'eval `gok.tcl \!*`'
 alias gvi               'eval `gvi.tcl \!*`'
 
@@ -24,4 +24,6 @@ alias gdnew              gdnew.tcl
 alias gdrm               gdrm.tcl
 alias fa                 firefox .index.htm &
 alias cdg                cd $GODEL_ROOT
+
+alias mfile              `eval mfile.csh'
 
