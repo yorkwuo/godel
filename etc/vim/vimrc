@@ -1,17 +1,38 @@
 set nocompatible
-"let $LANG="zh_TW.UTF-8"
-"et fileencodings=utf-8,gb18030,gbk,gb2312,big5
-"et termencoding=utf-8
-"et fileencoding=utf-8
-"et encoding=utf-8
+
+"@>menu
+menu York.vimrc <ESC>:e $HOME/.vimrc<cr>
+menu York.func  <ESC>:e $HOME/func.vim<cr>
+" Makes bash open in the working directory
+let $CHERE_INVOKING=1
+
+" Default path for Cygwin 64-bit, change accordingly
+set shell=C:\cygwin64\bin\bash.exe
+"set shell=C:\cygwin64\bin\tcsh.exe
+
+" Without --login, Cygwin won't mount some directories such as /usr/bin/
+"set shellcmdflag=--login\ -c
+"set shellcmdflag=-c
+set shellcmdflag=--login\ -i\ -c
+
+" Default value is (, but bash needs "
+set shellxquote=\"
+
+" Paths will use / instead of \
+set shellslash
+
+set ff=unix
+
+set encoding=utf-8
+set fo+=m
+set clipboard=unnamed
 
 set nowrap
-"set guifont=Monospace\ 9
-set guifont=Monospace\ 12
+set guifont=Consolas:h12
 "set guifont=Monaco\ 10
 "set guifont=Terminus\ 12
 set completeopt=longest
-set columns=90      " width of the display
+"set columns=90      " width of the display
 set bs=2            "backspace
 set tw=0           "textwidth, with EOL
 set sw=2            "swapname
@@ -32,11 +53,12 @@ set iskeyword-=)
 
 :filetype on        " turn on filetype detection
 :syntax on          " 
-:colorscheme koehler 
+":colorscheme koehler 
+colorscheme torte
 "Change the Folder highlight color to black
 hi Folded guifg=#808080 guibg=black	ctermfg=darkgrey ctermbg=black cterm=bold term=bold
 "----------------------------------------------------------------------
-" Key-Binding Remap
+"@>Functions
 "----------------------------------------------------------------------
 func! JKL() range
   exec "normal '<"
@@ -45,8 +67,81 @@ func! JKL() range
   exec "normal o# }}}"
 endfunc
 
+"@=Gnotes
+func! Gnotes() range
+  " Get lines in range
+  let lines = getline(a:firstline,a:lastline)
+
+  " Remove lines in range
+  exec a:firstline . "," . a:lastline." delete"
+
+  let position = a:firstline - 1
+
+  let newlines = ["# kkk"]
+  call add(newlines, "# {{{")
+  call add(newlines, "gnotes {")
+  call add(newlines, "*#. kkk")
+  call add(newlines, "")
+  call add(newlines, "# kkk")
+  call add(newlines, "")
+
+  " Append original text
+  call extend(newlines, lines)
+
+  call add(newlines, "}")
+  call add(newlines, "# }}}")
+
+  " Append new text to firstline - 1
+  call append(position, newlines)
+
+  " Move cursor back to first line
+  call cursor(a:firstline,3)
+endfunc
+
+"Godel_Draw
+" {{{
+func Godel_Draw()
+
+  let cwd=getcwd()
+
+  if cwd =~ '\.godel'
+    cd ..
+    echom getcwd()
+    silent !gd
+
+  else
+    echom getcwd()
+    silent !gd
+  endif
+
+endfunc
+" }}}
+"Godel_Page
+" {{{
+func Godel_Page()
+
+  let cwd=getcwd()
+
+  if cwd =~ '\.godel'
+    cd ..
+    echom getcwd()
+    silent !fa
+
+  else
+    echom getcwd()
+    silent !fa
+  endif
+
+endfunc
+" }}}
+
+"vnoremap <a
 vnoremap ;q :call JKL()<CR>
-nnoremap ,s :source $VIM/iyo.vim<CR>
+vnoremap ;g :call Gnotes()<CR>
+
+noremap ,s :source $HOME/func.vim<CR>
+noremap ;r :call Run()<CR>
+
 nnoremap f <C-f>
 nnoremap b <C-b>
 nnoremap e <C-e>
@@ -83,7 +178,7 @@ function! SaveOrSkip()
   endif 
 endfunction!
 " ==========================================================================
-" Function Key Mapping
+"@>Function Key Mapping
 " ==========================================================================
 " Alt + came from <Ctrl-v><Alt+>
 "map 翻 :QuickFontBigger<cr>
@@ -92,11 +187,15 @@ endfunction!
 
 "map <F1> :call SaveOrSkip()<cr>
 map <F2> :call SaveOrSkip()<cr>
-map <F3> :split<cr>
+"map <F3> :split<cr>
+"map <F3> :silent !gd<cr>
+map <F3> :silent call Godel_Draw()<cr>
 
 " Copy full path of current editing file to xclipboard
-map <F4> :let @* = expand("%:p")<CR>
+"map <F4> :let @* = expand("%:p")<CR>
 " Changing pwd to the path of current editing file
+"map <F4> :silent !fa<cr>
+map <F4> :call Godel_Page()<cr>
 
 "map <F5> :lcd %:p:h<cr>
 map <F5> :Bkmark<CR>
@@ -127,12 +226,10 @@ inoremap "" ""<ESC>:let leavechar="\""<CR>i
 "vnoremap _{ <ESC>`>a}<ESC>`<i{<ESC>
 iab  hml   <c-r>=strftime("%m/%d/%Y %H:%M")<cr>
 iab  idd   <c-r>=strftime("%m/%d/%Y")<cr>
-inoremap ipl #!/usr/bin/perl -w
 
 " ==========================================================================
 " For development
 " ==========================================================================
-nnoremap ,a :source a.vim<CR>
 
 fun! CheckPath ()
   execute "normal yy"
@@ -154,4 +251,6 @@ endfunc
 
 autocmd BufRead * call s:AdditionalSyntax()
 
+"set runtimepath=c:/cygwin64/home/USER/.vim,$VIMRUNTIME
 
+" vim:fdm=marker
