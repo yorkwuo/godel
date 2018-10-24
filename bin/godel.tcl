@@ -2042,7 +2042,7 @@ proc godel_get_vars {key} {
 # }}}
 #@>gget
 # {{{
-proc gget {pagename {action ""}} {
+proc gget {pagename args} {
   upvar env env
 
 # source user plugin
@@ -2059,12 +2059,12 @@ proc gget {pagename {action ""}} {
   if [file exist $meta($pagename,where)/.godel/proc.tcl] {
     source $meta($pagename,where)/.godel/proc.tcl
   }
-  if {$action == ""} {
+  if {$args == ""} {
     foreach i $vars(gget:list) {
       puts [format "%-30s : %s" [lindex $i 0] [lindex $i 1]]
     }
   } else {
-    {*}$action
+    {*}$args
   }
 }
 # }}}
