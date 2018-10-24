@@ -2044,6 +2044,13 @@ proc godel_get_vars {key} {
 # {{{
 proc gget {pagename {action ""}} {
   upvar env env
+
+# source user plugin
+  if [info exist env(GODEL_USER_PLUGIN)] {
+    set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
+    foreach f $flist { source $f }
+  }
+
   source $env(GODEL_META_FILE)
   #puts $meta($pagename,where)
   source $meta($pagename,where)/.godel/vars.tcl
