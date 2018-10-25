@@ -644,35 +644,6 @@ namespace eval gmarkdown {
                         incr index
                     }
                 }
-                {_} -
-                {*} {
-                    dputs "EMPHASIS"
-                    #@=EMPHASIS
-                    if {[regexp $re_whitespace [string index $result end]] &&
-                        [regexp $re_whitespace [string index $text [expr $index + 1]]]} \
-                    {
-                        #do nothing
-                    } \
-                    elseif {[regexp -start $index \
-                        "\\A(\\$chr{1,3})((?:\[^\\$chr\\\\]|\\\\\\$chr)*)\\1" \
-                        $text m del sub]} \
-                    {
-                        switch [string length $del] {
-                            1 {
-                                append result "<em>[parse_inline $sub]</em>"
-                            }
-                            2 {
-                                append result "<strong>[parse_inline $sub]</strong>"
-                            }
-                            3 {
-                                append result "<strong><em>[parse_inline $sub]</em></strong>"
-                            }
-                        }
-
-                        incr index [string length $m]
-                        continue
-                    }
-                }
                 {`} {
                     dputs "CODE"
                     #@=CODE
