@@ -1195,7 +1195,7 @@ proc chklist_set {chkno_type value} {
   ##cd $path
   source $path/clvars.tcl
   set clvars($chkno_type) $value
-  set clvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
+  #set clvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
   godel_array_save clvars $path/clvars.tcl
 }
 
@@ -1492,7 +1492,7 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
 
   close $fout
 
-  set vars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
+  #set vars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
   godel_array_save vars .godel/vars.tcl
 
   godel_array_reset vars
@@ -4139,7 +4139,7 @@ proc meta_indexing {} {
 
   foreach i $ilist {
     set where $vars($i,where)
-    set meta($i,last_updated) [godel_get_vars_value last_updated $where/.godel/vars.tcl]
+    #set meta($i,last_updated) [godel_get_vars_value last_updated $where/.godel/vars.tcl]
     set meta($i,class)        [godel_get_vars_value g:class      $where/.godel/vars.tcl]
     set meta($i,keywords)     [godel_get_vars_value g:keywords   $where/.godel/vars.tcl]
     set meta($i,pagesize)     [godel_get_vars_value pagesize     $where/.godel/vars.tcl]
