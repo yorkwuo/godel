@@ -1,19 +1,27 @@
-#!/usr/bin/tclsh
+#!/usr/intel/pkgs/tcl-tk/8.6.8/bin/tclsh
 #package require tclreadline
 rename ::source ::realsource
 #set synopsys_program_name icc2_shell
 set synopsys_program_name dc_shell
 set ::sh_product_version I-2017.12
 set ::product_build_date 2017.12.16
+set ::synthetic_library ""
 
 namespace eval procs_attr {
   set arr(dummy) dd
   #namespace export arr
 }
 
+proc list_licenses {args} {procname}
+proc check_license {args} {procname}
+proc get_license {args} {procname}
+proc set_fuzzy_query_options {args} {procname}
+proc remove_pin_name_synonym {args} {procname}
+proc set_pin_name_synonym {args} {procname}
 #---------------
 # UPF commands begin
 #---------------
+proc write_app_var {args} {procname}
 proc set_related_supply_net {args} {procname}
 proc create_power_domain {args} {procname}
 proc create_power_domain {args} {procname}
@@ -61,7 +69,6 @@ proc parse_proc_arguments {args} {
 
   set mylevel [info level]
   set pname [lindex [info level [expr $mylevel - 1]] 0]
-  #puts "parse_proc_arguments: $pname"
 
   set list1 $::procs_attr::arr($pname)
   set list2 [lindex $args 1]
@@ -72,6 +79,10 @@ proc parse_proc_arguments {args} {
     set val [lindex $i 1]
     if {$val != ""} {
       set results($key) $val
+    } else {
+      if {$key == "value"} {
+        set results($key) $val
+      }
     }
   }
 }
@@ -384,7 +395,8 @@ proc mem {args} {
 }
 
 proc date {args} {
-  procname
+#  procname
+  return [exec date {*}$args]
 }
 
 proc set_multibit_options {args} {
@@ -625,28 +637,28 @@ Date   : Wed May  3 03:50:48 2017
 # {{{
 proc printvar {args} {
   procname
-  set disp {
-compile_register_replication = "false"
-compile_register_replication_across_hierarchy = "false"
-compile_register_replication_do_size_only = "true"
-compile_restructure_sync_set_reset = "false"
-compile_retime_exception_registers = "false"
-compile_retime_license_behavior = "wait"
-compile_seqmap_enable_output_inversion = "false"
-compile_seqmap_honor_sync_set_reset = "true"
-compile_seqmap_identify_shift_registers = "false"
-compile_seqmap_identify_shift_registers_with_synchronous_logic = "false"
-compile_seqmap_identify_shift_registers_with_synchronous_logic_ascii = "false"
-compile_seqmap_propagate_constants = "false"
-compile_seqmap_propagate_constants_size_only = "true"
-compile_seqmap_propagate_high_effort = "false"
-compile_slack_driven_buffering = "false"
-vhdlout_write_components = "TRUE"
-vhdlout_write_entity = "TRUE"
-vhdlout_write_top_configuration = "FALSE"
-vhdlout_zero_name    = "'0'"
-  }
-  print_disp $disp
+#  set disp {
+#compile_register_replication = "false"
+#compile_register_replication_across_hierarchy = "false"
+#compile_register_replication_do_size_only = "true"
+#compile_restructure_sync_set_reset = "false"
+#compile_retime_exception_registers = "false"
+#compile_retime_license_behavior = "wait"
+#compile_seqmap_enable_output_inversion = "false"
+#compile_seqmap_honor_sync_set_reset = "true"
+#compile_seqmap_identify_shift_registers = "false"
+#compile_seqmap_identify_shift_registers_with_synchronous_logic = "false"
+#compile_seqmap_identify_shift_registers_with_synchronous_logic_ascii = "false"
+#compile_seqmap_propagate_constants = "false"
+#compile_seqmap_propagate_constants_size_only = "true"
+#compile_seqmap_propagate_high_effort = "false"
+#compile_slack_driven_buffering = "false"
+#vhdlout_write_components = "TRUE"
+#vhdlout_write_entity = "TRUE"
+#vhdlout_write_top_configuration = "FALSE"
+#vhdlout_zero_name    = "'0'"
+#  }
+#  print_disp $disp
 }
 # }}}
 #@>report_reference
@@ -958,7 +970,11 @@ proc filter_collection {args} {procname}
 proc remove_attribute {args} {procname}
 proc optimize_netlist {args} {procname}
 proc write_verilog {args} {procname}
-proc sh {args} {procname}
+#proc sh {args} {procname}
+proc sh {args} {
+  puts $args
+  exec {*}$args
+}
 proc write_sdc {args} {procname}
 proc get_path_groups {args} {procname}
 proc get_libs {args} {return libname:libpath}
@@ -969,7 +985,7 @@ proc source {args} {
   regsub {\-verbose} $args {} args
   #puts $args
   if [file exist $args] {
-    puts "# Source $args"
+    #puts "# Source $args"
     uplevel ::realsource $args
   } else {
     puts "Error: $args not exist..."
