@@ -87,7 +87,8 @@ namespace eval gmarkdown {
           puts $kout "<a href=.index.htm#top target=rightFrame>Top</a>"
           #source .toc.tcl
           foreach i $::toc_list {
-            puts $kout "<div class=L[lindex $i 0]><a id=[lindex $i 1] href=.index.htm#[lindex $i 1] target=rightFrame><nobr>[lindex $i 0]:[lindex $i 1]</nobr></a></div>"
+            #puts $kout "<div class=L[lindex $i 0]><a id=[lindex $i 1] href=.index.htm#[lindex $i 1] target=rightFrame><nobr>[lindex $i 0]:[lindex $i 1]</nobr></a></div>"
+            puts $kout "<div class=L[lindex $i 0]><a id=[lindex $i 1] href=.index.htm#[lindex $i 1] target=rightFrame><nobr>[lindex $i 1]</nobr></a></div>"
           }
           puts $kout "</body>"
           puts $kout "</html>"

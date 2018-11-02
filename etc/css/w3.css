@@ -253,6 +253,16 @@ img {
     image-orientation: from-image;
 }
 
+.hbox {
+  font-size  :150%;
+  color      : white;
+  font-family:Verdana;
+  #background-color:DarkSlateBlue;
+  background-color:darkorange;
+  margin     :8px;
+  padding    :2px 6px;
+}
+
 .table1 {
   font-family:sans-serif;
   border-collapse: collapse;

@@ -1,4 +1,4 @@
-#!/usr/intel/pkgs/tcl-tk/8.6.8/bin/tclsh
+#!/usr/bin/tclsh
 #package require tclreadline
 rename ::source ::realsource
 #set synopsys_program_name icc2_shell
@@ -11,6 +11,7 @@ namespace eval procs_attr {
   set arr(dummy) dd
   #namespace export arr
 }
+global upfvars
 
 proc list_licenses {args} {procname}
 proc check_license {args} {procname}
@@ -21,11 +22,22 @@ proc set_pin_name_synonym {args} {procname}
 #---------------
 # UPF commands begin
 #---------------
+proc set_domain_supply_net {args} {procname}
 proc write_app_var {args} {procname}
 proc set_related_supply_net {args} {procname}
-proc create_power_domain {args} {procname}
-proc create_power_domain {args} {procname}
-proc create_supply_port  {args} {procname}
+proc create_power_domain {args} {
+  procname
+  global upfvars
+
+  set pd [lindex $args 0]
+  lappend upfvars(power_domains) $pd
+}
+proc create_supply_port  {args} {
+  procname
+
+  set port [lindex $args 0]
+  
+}
 proc create_supply_net   {args} {procname}
 proc create_supply_set {args} {procname}
 proc set_level_shifter {args} {procname}
@@ -105,13 +117,17 @@ proc dputs {vname} {
 
 #@>procname
 proc procname {} {
+  global edactrl
+
   set mylevel   [info level]
   set proc_name [lindex [info level [expr $mylevel - 1]] 0]
   set full_cmd  [info level 1]
   set fileloc   [info script]
   set level     [info level]
   #puts "    CMD: $proc_name...$fileloc"
-  puts [format "%d%s%-20s ... %s ... %s" $level "    " $proc_name $fileloc $full_cmd]
+  if {[info exist edactrl(procname_disp)] && $edactrl(procname_disp)} {
+    puts [format "%d%s%-20s ... %s ... %s" $level "    " $proc_name $fileloc $full_cmd]
+  }
   #puts [format "%d%s%-20s ... %s" $level "    " $proc_name $fileloc]
 }
 
