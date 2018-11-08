@@ -1,4 +1,4 @@
-#!/usr/bin/tclsh
+#!/usr/intel/pkgs/tcl-tk/8.6.8/bin/tclsh
 #package require tclreadline
 rename ::source ::realsource
 #set synopsys_program_name icc2_shell
@@ -6,6 +6,23 @@ set synopsys_program_name dc_shell
 set ::sh_product_version I-2017.12
 set ::product_build_date 2017.12.16
 set ::synthetic_library ""
+
+proc source {args} {
+  regsub {\-echo} $args {} args
+  regsub {\-e } $args {} args
+  regsub {\-verbose} $args {} args
+  regsub {\-encoding utf-8} $args {} args
+
+# This is to avoid space around $args
+  set sfile [lindex $args 0]
+
+  if [file exist $sfile] {
+    #puts "# Source $args"
+    uplevel ::realsource {*}$sfile
+  } else {
+    puts "Error: \"$sfile\" not exist..."
+  }
+}
 
 namespace eval procs_attr {
   set arr(dummy) dd
@@ -84,7 +101,10 @@ proc parse_proc_arguments {args} {
 
   set list1 $::procs_attr::arr($pname)
   set list2 [lindex $args 1]
-  set zipped [lmap a $list1 b $list2 {list $a $b}]
+  #set zipped [lmap a $list1 b $list2 {list $a $b}]
+  foreach a $list1 b $list2 {
+    lappend zipped [list $a $b]
+  }
 
   foreach i $zipped {
     set key [lindex $i 0]
@@ -981,6 +1001,7 @@ proc all_clocks {args} {return clk}
 #proc foreach_in_collection {args} {procname}
 interp alias {} foreach_in_collection {} foreach
 
+proc get_power_domains {args} {procname}
 proc group_path {args} {procname}
 proc filter_collection {args} {procname}
 proc remove_attribute {args} {procname}
@@ -995,18 +1016,6 @@ proc write_sdc {args} {procname}
 proc get_path_groups {args} {procname}
 proc get_libs {args} {return libname:libpath}
 
-proc source {args} {
-  regsub {\-echo} $args {} args
-  regsub {\-e } $args {} args
-  regsub {\-verbose} $args {} args
-  #puts $args
-  if [file exist $args] {
-    #puts "# Source $args"
-    uplevel ::realsource $args
-  } else {
-    puts "Error: $args not exist..."
-  }
-}
 
 set cmdfile [lindex $argv [expr [lsearch $argv -f] + 1]]
 set search_path ""
@@ -1014,16 +1023,16 @@ set target_library ""
 set link_library ""
 set mw_design_library ""
 
-#@>tracer
-proc tracer {varname args} {
-    upvar $varname var
-    set fileloc [info script]
-    puts "York: $varname was updated to be \"$var\" ... $fileloc"
-}
-
-#trace add variable INIT_DESIGN_INPUT write "tracer INIT_DESIGN_INPUT"
-trace add variable INTEL_STA_RUN_TYPE write "tracer INTEL_STA_RUN_TYPE"
-trace add variable INTEL_VG_FILES write "tracer INTEL_VG_FILES"
+##@>tracer
+#proc tracer {varname args} {
+#    upvar $varname var
+#    set fileloc [info script]
+#    puts "York: $varname was updated to be \"$var\" ... $fileloc"
+#}
+#
+##trace add variable INIT_DESIGN_INPUT write "tracer INIT_DESIGN_INPUT"
+#trace add variable INTEL_STA_RUN_TYPE write "tracer INTEL_STA_RUN_TYPE"
+#trace add variable INTEL_VG_FILES write "tracer INTEL_VG_FILES"
 
 source $cmdfile
 
