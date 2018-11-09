@@ -1,11 +1,18 @@
-#!/usr/intel/pkgs/tcl-tk/8.6.8/bin/tclsh
+#!/usr/bin/tclsh
+if [info exist env(GODEL_ROOT)] {
+  source $env(GODEL_ROOT)/bin/godel.tcl
+}
 #package require tclreadline
 rename ::source ::realsource
+
 #set synopsys_program_name icc2_shell
 set synopsys_program_name dc_shell
 set ::sh_product_version I-2017.12
 set ::product_build_date 2017.12.16
 set ::synthetic_library ""
+
+proc set_design_attributes {args} {procname}
+proc upf_version {args} {procname}
 
 proc source {args} {
   regsub {\-echo} $args {} args
@@ -51,9 +58,17 @@ proc create_power_domain {args} {
 }
 proc create_supply_port  {args} {
   procname
+  global upfvars
 
-  set port [lindex $args 0]
+  set idx_domain    [lsearch $args {-domain}]
+  set args [lreplace $args $idx_domain [expr $idx_domain + 1]]
+
+  set idx_direction [lsearch $args {-direction}]
+  set args [lreplace $args $idx_direction [expr $idx_direction + 1]]
+
+  set power_port [lindex $args 0]
   
+  lappend upfvars(power_ports) $power_port
 }
 proc create_supply_net   {args} {procname}
 proc create_supply_set {args} {procname}
@@ -82,7 +97,18 @@ proc set_isolation {args} {procname}
 proc set_isolation_control {args} {procname}
 proc set_level_shifter {args} {procname}
 proc create_power_switch {args} {procname}
-proc connect_supply_net {args} {procname}
+proc connect_supply_net {args} {
+  procname
+  global upfvars
+
+  #puts $args
+  set power_net [lindex $args 0]
+
+  set connect_ports [lindex $args [expr [lsearch $args {-ports}] + 1]]
+
+  #puts $power_net
+  set upfvars($power_net,connect_ports) $connect_ports
+}
 proc set_scope {args} {procname}
 proc set_design_top {args} {procname}
 proc add_pst_state {args} {procname}
@@ -1035,6 +1061,7 @@ set mw_design_library ""
 #trace add variable INTEL_VG_FILES write "tracer INTEL_VG_FILES"
 
 source $cmdfile
+
 
 #::tclreadline::Loop
 # vim:fdm=marker

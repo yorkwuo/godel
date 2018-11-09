@@ -25,5 +25,5 @@ alias gdrm               gdrm.tcl
 alias fa                 firefox .index.htm &
 alias cdg                cd $GODEL_ROOT
 
-alias mfile              `eval mfile.csh'
+
 
