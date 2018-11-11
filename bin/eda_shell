@@ -1,11 +1,51 @@
 #!/usr/bin/tclsh
+if [info exist env(GODEL_ROOT)] {
+  source $env(GODEL_ROOT)/bin/godel.tcl
+}
 #package require tclreadline
 rename ::source ::realsource
+
 #set synopsys_program_name icc2_shell
 set synopsys_program_name dc_shell
 set ::sh_product_version I-2017.12
 set ::product_build_date 2017.12.16
 set ::synthetic_library ""
+
+proc set_design_attributes {args} {procname}
+proc upf_version {args} {procname}
+
+proc getenv {name} {
+  upvar env env
+  return $env($name)
+}
+
+proc remove_design {args} {procname}
+proc set_vsdc {args} {procname}
+proc lminus {args} {procname}
+proc saif_map {args} {procname}
+proc current_design_name {args} {
+  procname 
+  return "foobar"
+}
+
+
+
+proc source {args} {
+  regsub {\-echo} $args {} args
+  regsub {\-e } $args {} args
+  regsub {\-verbose} $args {} args
+  regsub {\-encoding utf-8} $args {} args
+
+# This is to avoid space around $args
+  set sfile [lindex $args 0]
+
+  if [file exist $sfile] {
+    #puts "# Source $args"
+    uplevel ::realsource {*}$sfile
+  } else {
+    puts "Error: \"$sfile\" not exist..."
+  }
+}
 
 namespace eval procs_attr {
   set arr(dummy) dd
@@ -34,9 +74,17 @@ proc create_power_domain {args} {
 }
 proc create_supply_port  {args} {
   procname
+  global upfvars
 
-  set port [lindex $args 0]
+  set idx_domain    [lsearch $args {-domain}]
+  set args [lreplace $args $idx_domain [expr $idx_domain + 1]]
+
+  set idx_direction [lsearch $args {-direction}]
+  set args [lreplace $args $idx_direction [expr $idx_direction + 1]]
+
+  set power_port [lindex $args 0]
   
+  lappend upfvars(power_ports) $power_port
 }
 proc create_supply_net   {args} {procname}
 proc create_supply_set {args} {procname}
@@ -65,7 +113,18 @@ proc set_isolation {args} {procname}
 proc set_isolation_control {args} {procname}
 proc set_level_shifter {args} {procname}
 proc create_power_switch {args} {procname}
-proc connect_supply_net {args} {procname}
+proc connect_supply_net {args} {
+  procname
+  global upfvars
+
+  #puts $args
+  set power_net [lindex $args 0]
+
+  set connect_ports [lindex $args [expr [lsearch $args {-ports}] + 1]]
+
+  #puts $power_net
+  set upfvars($power_net,connect_ports) $connect_ports
+}
 proc set_scope {args} {procname}
 proc set_design_top {args} {procname}
 proc add_pst_state {args} {procname}
@@ -75,6 +134,9 @@ proc add_pst_state {args} {procname}
 
 
 #@>parse_proc_arguments
+#Usage: parse_proc_arguments    # Parse arguments to a procedure
+#        -args arg_list         (Argument list to be parsed)
+#        result_array           (Name of array to use to store parse results)
 proc parse_proc_arguments {args} {
   set result_name [lindex $args 2]
   upvar $result_name results
@@ -82,34 +144,89 @@ proc parse_proc_arguments {args} {
   set mylevel [info level]
   set pname [lindex [info level [expr $mylevel - 1]] 0]
 
-  set list1 $::procs_attr::arr($pname)
-  set list2 [lindex $args 1]
-  set zipped [lmap a $list1 b $list2 {list $a $b}]
+  #puts "$pname need_parameter $::procs_attr::arr($pname,need_parameter)"
 
-  foreach i $zipped {
-    set key [lindex $i 0]
-    set val [lindex $i 1]
-    if {$val != ""} {
-      set results($key) $val
+  if {[llength $::procs_attr::arr($pname,need_parameter)] > 0} {
+    set need_parameter   $::procs_attr::arr($pname,need_parameter)
+  } else {
+    set need_parameter   ""
+  }
+  if {[llength $::procs_attr::arr($pname,noneed_parameter)]} {
+    set noneed_parameter $::procs_attr::arr($pname,noneed_parameter)
+  } else {
+    set noneed_parameter ""
+  }
+  set ordered_attr     $::procs_attr::arr($pname,ordered_attr)
+
+  set argvalues [lindex $args 1]
+
+# need_parameter
+  foreach attr $need_parameter {
+    set idx [lsearch $argvalues $attr]
+    if {$idx == "-1"} {
     } else {
-      if {$key == "value"} {
-        set results($key) $val
-      }
+      set results($attr) [lindex $argvalues [expr $idx + 1]]
+      set argvalues [lreplace $argvalues $idx [expr $idx + 1]]
     }
+  }
+
+# noneed_parameter
+  foreach attr $noneed_parameter {
+    set idx [lsearch $argvalues $attr]
+    if {$idx == "-1"} {
+    } else {
+      set argvalues [lreplace $argvalues $idx $idx]
+      set results($attr) 1
+    }
+  }
+
+# Here, I'm assume the the command is correctly written.
+# There should be some protection to avoid incorrect syntax.
+  foreach attr $ordered_attr value $argvalues {
+    #puts "$attr $value"
+    set results($attr) $value
   }
 }
 
 proc define_proc_attributes {args} {
-  set rest [lassign $args pname]
+  # set command name to cmdname
+  set rest [lassign $args cmdname]
   
-  set loc_define_args [lsearch $args -define_args]
-  set all_define_args [lindex $args [expr $loc_define_args + 1]]
+  set idx_of_define_args [lsearch $args -define_args]
+  set all_define_args [lindex $args [expr $idx_of_define_args + 1]]
+
+  set need_parameter   [list]
+  set noneed_parameter [list]
+  set ordered_attr     [list]
  
   foreach define_arg $all_define_args {
-    lappend ::procs_attr::arr($pname) [lindex $define_arg 0]
+    set arg_name     [lindex $define_arg 0]
+    set arg_explain  [lindex $define_arg 1]
+    set arg_needpara [lindex $define_arg 2]
+    set arg_datatype [lindex $define_arg 3]
+    set arg_required [lindex $define_arg 4]
+
+    if {[string index $arg_name 0] eq "-"} {
+      if {$arg_needpara == ""} {
+        if {$arg_datatype == "one_of_string"} {
+          lappend need_parameter $arg_name
+        } else {
+          lappend noneed_parameter $arg_name
+        }
+      } else {
+        lappend need_parameter $arg_name
+      }
+    } else {
+      lappend ordered_attr $arg_name
+    }
   }
 
+  set ::procs_attr::arr($cmdname,need_parameter)   $need_parameter
+  set ::procs_attr::arr($cmdname,noneed_parameter) $noneed_parameter
+  set ::procs_attr::arr($cmdname,ordered_attr)     $ordered_attr
+  #parray ::procs_attr::arr
 }
+
 
 proc dputs {vname} {
   puts "      dputs: $vname"
@@ -981,6 +1098,7 @@ proc all_clocks {args} {return clk}
 #proc foreach_in_collection {args} {procname}
 interp alias {} foreach_in_collection {} foreach
 
+proc get_power_domains {args} {procname}
 proc group_path {args} {procname}
 proc filter_collection {args} {procname}
 proc remove_attribute {args} {procname}
@@ -995,18 +1113,6 @@ proc write_sdc {args} {procname}
 proc get_path_groups {args} {procname}
 proc get_libs {args} {return libname:libpath}
 
-proc source {args} {
-  regsub {\-echo} $args {} args
-  regsub {\-e } $args {} args
-  regsub {\-verbose} $args {} args
-  #puts $args
-  if [file exist $args] {
-    #puts "# Source $args"
-    uplevel ::realsource $args
-  } else {
-    puts "Error: $args not exist..."
-  }
-}
 
 set cmdfile [lindex $argv [expr [lsearch $argv -f] + 1]]
 set search_path ""
@@ -1014,18 +1120,19 @@ set target_library ""
 set link_library ""
 set mw_design_library ""
 
-#@>tracer
-proc tracer {varname args} {
-    upvar $varname var
-    set fileloc [info script]
-    puts "York: $varname was updated to be \"$var\" ... $fileloc"
-}
-
-#trace add variable INIT_DESIGN_INPUT write "tracer INIT_DESIGN_INPUT"
-trace add variable INTEL_STA_RUN_TYPE write "tracer INTEL_STA_RUN_TYPE"
-trace add variable INTEL_VG_FILES write "tracer INTEL_VG_FILES"
+##@>tracer
+#proc tracer {varname args} {
+#    upvar $varname var
+#    set fileloc [info script]
+#    puts "York: $varname was updated to be \"$var\" ... $fileloc"
+#}
+#
+##trace add variable INIT_DESIGN_INPUT write "tracer INIT_DESIGN_INPUT"
+#trace add variable INTEL_STA_RUN_TYPE write "tracer INTEL_STA_RUN_TYPE"
+#trace add variable INTEL_VG_FILES write "tracer INTEL_VG_FILES"
 
 source $cmdfile
+
 
 #::tclreadline::Loop
 # vim:fdm=marker

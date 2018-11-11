@@ -2402,12 +2402,12 @@ proc godel_get_column {line num} {
 #: plist
 # {{{
 proc plist {ll} {
-  foreach i $ll {
-    puts $i
-  }
-  #foreach i [lsort $ll] {
+  #foreach i $ll {
   #  puts $i
   #}
+  foreach i [lsort $ll] {
+    puts $i
+  }
 }
 # }}}
 #: pcollection_list
