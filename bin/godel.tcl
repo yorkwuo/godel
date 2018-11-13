@@ -2,6 +2,7 @@
 # {{{
 proc gmd {fname} {
   upvar fout fout
+  upvar vars vars
   regsub -all {\.md} $fname {} fname1
   regsub -all { } $fname1 {_} fname2
 
