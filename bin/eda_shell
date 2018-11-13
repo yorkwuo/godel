@@ -1,4 +1,7 @@
 #!/usr/bin/tclsh
+source $env(GODEL_ROOT)/tools/tabulate.tcl
+set edactrl(procname_disp) 0
+
 if [info exist env(GODEL_ROOT)] {
   source $env(GODEL_ROOT)/bin/godel.tcl
 }
@@ -19,6 +22,8 @@ proc getenv {name} {
   return $env($name)
 }
 
+
+proc read_verilog_outline {args} {procname}
 proc remove_design {args} {procname}
 proc set_vsdc {args} {procname}
 proc lminus {args} {procname}
@@ -62,36 +67,162 @@ proc set_pin_name_synonym {args} {procname}
 #---------------
 # UPF commands begin
 #---------------
+
 proc set_domain_supply_net {args} {procname}
 proc write_app_var {args} {procname}
 proc set_related_supply_net {args} {procname}
+
+proc upf_rp_power_domains {} {
+  global upfvars
+  puts "\n# Power Domains\n"
+  plist $upfvars(power_domains)
+
+  puts "\n# Power Doamin with elements\n"
+  foreach pd $upfvars(power_domains) {
+    puts $pd
+    if [info exist upfvars($pd,elements)] {
+      foreach e $upfvars($pd,elements) {
+        puts "    $e"
+      }
+    }
+  }
+}
 proc create_power_domain {args} {
   procname
   global upfvars
 
-  set pd [lindex $args 0]
-  lappend upfvars(power_domains) $pd
+# -include_scope
+  set idx [lsearch $args {-include_scope}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+  }
+
+# -elements
+  set idx_elements [lsearch $args {-elements}]
+  if {$idx_elements != "-1"} {
+    set elements [lindex $args [expr $idx_elements + 1]]
+    set args [lreplace $args $idx_elements [expr $idx_elements + 1]]
+  }
+  set power_domain [lindex $args 0]
+
+  lappend upfvars(power_domains) $power_domain
+  if [info exist elements] {
+    lappend upfvars($power_domain,elements) $elements
+  }
+}
+proc upf_rp_supply_ports {} {
+  global upfvars
+
+  puts "\n# Supply Ports\n"
+  foreach sp [lsort $upfvars(supply_ports)] {
+    puts [format "%-40s %s" $sp $upfvars($sp,domain)]
+  }
 }
 proc create_supply_port  {args} {
   procname
   global upfvars
 
+# -domain
   set idx_domain    [lsearch $args {-domain}]
-  set args [lreplace $args $idx_domain [expr $idx_domain + 1]]
+  if {$idx_domain != "-1"} {
+    set domain [lindex $args [expr $idx_domain + 1]]
+    set args [lreplace $args $idx_domain [expr $idx_domain + 1]]
+  }
 
+# -direction
   set idx_direction [lsearch $args {-direction}]
   set args [lreplace $args $idx_direction [expr $idx_direction + 1]]
 
-  set power_port [lindex $args 0]
+  set supply_port [lindex $args 0]
   
-  lappend upfvars(power_ports) $power_port
+  lappend upfvars(supply_ports) $supply_port
+  set upfvars($supply_port,domain) $domain
 }
-proc create_supply_net   {args} {procname}
+proc upf_rp_supply_nets {} {
+  global upfvars
+
+  puts "\n# Supply Nets\n"
+  foreach sp [lsort $upfvars(supply_nets)] {
+    puts [format "%-40s %s" $sp $upfvars($sp,domain)]
+  }
+}
+
+proc create_supply_net   {args} {
+  procname
+  global upfvars
+
+# -domain
+  set idx_domain    [lsearch $args {-domain}]
+  if {$idx_domain != "-1"} {
+    set domain [lindex $args [expr $idx_domain + 1]]
+    set args [lreplace $args $idx_domain [expr $idx_domain + 1]]
+  }
+# -reuse
+  set idx    [lsearch $args {-reuse}]
+  if {$idx != "-1"} {
+    set reuse 1
+  }
+
+  set supply_net [lindex $args 0]
+
+  lappend upfvars(supply_nets) $supply_net
+  if {[info exist reuse] && $reuse} {
+    lappend upfvars($supply_net,domain) $domain
+  } else {
+    set upfvars($supply_net,domain) $domain
+  }
+
+  set upfvars(supply_nets) [lsort -unique $upfvars(supply_nets)]
+}
 proc create_supply_set {args} {procname}
 proc set_level_shifter {args} {procname}
 proc add_power_state {args} {procname}
-proc create_pst {args} {procname}
-proc add_port_state {args} {procname}
+proc create_pst {args} {
+  procname
+  global upfvars
+# -supplies
+  set idx [lsearch $args {-supplies}]
+  if {$idx != "-1"} {
+    set pst_supplies [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+  lappend upfvars(pst_supplies) [concat "Name" $pst_supplies]
+
+}
+proc load_upf   {args} {procname}
+
+proc upf_rp_port_state {} {
+  global upfvars
+
+  puts "\n# Port States\n"
+  foreach sp [lsort $upfvars(supply_ports)] {
+    puts "$sp\n"
+    foreach state $upfvars($sp,states) {
+      puts "    $state"
+    }
+    puts ""
+  }
+}
+
+proc add_port_state {args} {
+  procname
+  global upfvars
+
+# -state
+  set idx [lsearch $args {-state}]
+  while {$idx != "-1"} {
+    lappend states [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+
+     set idx [lsearch $args {-state}]
+  }
+
+  set supply_port [lindex $args 0]
+
+  lappend upfvars($supply_port,states) $states
+
+}
 proc map_retention_cell {args} {procname}
 proc map_isolation_cell {args} {procname}
 proc map_level_shifter_cell {args} {procname}
@@ -109,25 +240,131 @@ proc set_repeater {args} {procname}
 proc set_retention_elements {args} {procname}
 proc set_retention {args} {procname}
 proc set_retention_control {args} {procname}
-proc set_isolation {args} {procname}
+
+proc upf_rp_isolation {} {
+  global upfvars
+
+  foreach isorule $upfvars(iso_rules) {
+    puts $isorule
+    puts [format "    %-20s  %s" "-domain" $upfvars($isorule,domain)]
+    puts [format "    %-20s  %s" "-isolation_power_net" $upfvars($isorule,isolation_power_net)]
+    puts [format "    %-20s  %s" "-isolation_ground_net" $upfvars($isorule,isolation_ground_net)]
+    puts [format "    %-20s  %s" "-clamp_value" $upfvars($isorule,clamp_value)]
+    puts [format "    %-20s  %s" "-elements" $upfvars($isorule,elements)]
+  }
+}
+
+proc set_isolation {args} {
+  procname
+  global upfvars
+
+# -domain
+  set idx [lsearch $args {-domain}]
+  if {$idx != "-1"} {
+    set domain [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+# -elements
+  set idx [lsearch $args {-elements}]
+  if {$idx != "-1"} {
+    set elements [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+# -isolation_power_net
+  set idx [lsearch $args {-isolation_power_net}]
+  if {$idx != "-1"} {
+    set isolation_power_net [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+# -clamp_value
+  set idx [lsearch $args {-clamp_value}]
+  if {$idx != "-1"} {
+    set clamp_value [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+# -isolation_ground_net
+  set idx [lsearch $args {-isolation_ground_net}]
+  if {$idx != "-1"} {
+    set isolation_ground_net [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+  set iso_rule_name [lindex $args 0]
+
+  lappend upfvars(iso_rules) $iso_rule_name
+  set upfvars($iso_rule_name,domain) $domain
+  set upfvars($iso_rule_name,elements) $elements
+  set upfvars($iso_rule_name,isolation_power_net) $isolation_power_net
+  set upfvars($iso_rule_name,isolation_ground_net) $isolation_ground_net
+  set upfvars($iso_rule_name,clamp_value) $clamp_value
+
+}
 proc set_isolation_control {args} {procname}
 proc set_level_shifter {args} {procname}
 proc create_power_switch {args} {procname}
+proc upf_rp_net_connects {} {
+  global upfvars
+
+  puts "\n# Supply Net Connects\n"
+
+  foreach net $upfvars(supply_nets) {
+    puts "\n$net"
+    foreach connect [lsort $upfvars($net,connects)] {
+      puts "    $connect"
+    }
+  }
+}
 proc connect_supply_net {args} {
   procname
   global upfvars
 
+# -ports
+  set idx [lsearch $args {-ports}]
+  if {$idx != "-1"} {
+    set connects [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
   #puts $args
-  set power_net [lindex $args 0]
+  set supply_net [lindex $args 0]
 
-  set connect_ports [lindex $args [expr [lsearch $args {-ports}] + 1]]
-
-  #puts $power_net
-  set upfvars($power_net,connect_ports) $connect_ports
+  if ![info exist upfvars($supply_net,connects)] {
+    set upfvars($supply_net,connects) ""
+  }
+  set upfvars($supply_net,connects) [concat $upfvars($supply_net,connects) $connects]
 }
 proc set_scope {args} {procname}
 proc set_design_top {args} {procname}
-proc add_pst_state {args} {procname}
+
+proc upf_rp_pst_states {} {
+  global upfvars
+
+  puts "\n# Power State Table\n"
+  set data [concat $upfvars(pst_supplies) $upfvars(pst_states)]
+  puts [::tabulate::tabulate -data $data]
+}
+proc add_pst_state {args} {
+  procname
+  global upfvars
+
+# -pst
+  set idx [lsearch $args {-pst}]
+  if {$idx != "-1"} {
+    set pst [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+# -state
+  set idx [lsearch $args {-state}]
+  if {$idx != "-1"} {
+    set pst_state [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+  set state_name [lindex $args 0]
+
+  lappend upfvars(pst_states) [concat $state_name $pst_state]
+}
 #---------------
 # UPF commands end
 #---------------
@@ -1131,7 +1368,10 @@ set mw_design_library ""
 #trace add variable INTEL_STA_RUN_TYPE write "tracer INTEL_STA_RUN_TYPE"
 #trace add variable INTEL_VG_FILES write "tracer INTEL_VG_FILES"
 
-source $cmdfile
+#if {$tcl_interactive} {
+#} else {
+#  source $cmdfile
+#}
 
 
 #::tclreadline::Loop
