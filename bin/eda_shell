@@ -175,7 +175,9 @@ proc create_supply_net   {args} {
   set upfvars(supply_nets) [lsort -unique $upfvars(supply_nets)]
 }
 proc create_supply_set {args} {procname}
-proc set_level_shifter {args} {procname}
+proc set_level_shifter {args} {
+  procname
+}
 proc add_power_state {args} {procname}
 proc create_pst {args} {
   procname
@@ -198,8 +200,10 @@ proc upf_rp_port_state {} {
   puts "\n# Port States\n"
   foreach sp [lsort $upfvars(supply_ports)] {
     puts "$sp\n"
-    foreach state $upfvars($sp,states) {
-      puts "    $state"
+    if [info exist upfvars($sp,states)] {
+      foreach state $upfvars($sp,states) {
+        puts "    $state"
+      }
     }
     puts ""
   }
@@ -309,8 +313,10 @@ proc upf_rp_net_connects {} {
 
   foreach net $upfvars(supply_nets) {
     puts "\n$net"
-    foreach connect [lsort $upfvars($net,connects)] {
-      puts "    $connect"
+    if [info exist upfvars($net,connects)] {
+      foreach connect [lsort $upfvars($net,connects)] {
+        puts "    $connect"
+      }
     }
   }
 }
