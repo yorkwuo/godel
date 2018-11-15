@@ -4156,7 +4156,7 @@ proc meta_indexing {} {
       }
       set meta($i,class)        $vars(g:class)
       set meta($i,keywords)     $vars(g:keywords)
-      set meta($i,pagesize)     $vars(pagesize)
+      #set meta($i,pagesize)     $vars(pagesize)
       set meta($i,keys)         [list $i $vars(g:keywords) $vars(g:class)]
     } else {
       puts "No, $i"
