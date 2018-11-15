@@ -1,3 +1,16 @@
+#----------------
+# compare list a with b
+#----------------
+proc listcomp {a b} {
+set diff {}
+foreach i $a {
+  if {[lsearch -exact $b $i]==-1} {
+    lappend diff $i
+  }
+}
+return $diff
+}
+
 # gmd
 # {{{
 proc gmd {fname} {
@@ -2080,10 +2093,10 @@ proc gget {pagename args} {
 proc gvars {pagename {vname ""}} {
   upvar env env
   source $env(GODEL_META_FILE)
-  #puts $meta($pagename,where)
   source $meta($pagename,where)/.godel/vars.tcl
   set where $meta($pagename,where)
   set vars(where) $where
+
   if {$vname == ""} {
     parray vars
   } else {
@@ -4125,7 +4138,7 @@ proc meta_get_pagelist {} {
 
   return $pagelist
 }
-#@=meta_indexing
+#@=meta-indexing
 # {{{
 proc meta_indexing {} {
   upvar env env
@@ -4156,7 +4169,7 @@ proc meta_indexing {} {
       }
       set meta($i,class)        $vars(g:class)
       set meta($i,keywords)     $vars(g:keywords)
-      set meta($i,pagesize)     $vars(pagesize)
+      #set meta($i,pagesize)     $vars(pagesize)
       set meta($i,keys)         [list $i $vars(g:keywords) $vars(g:class)]
     } else {
       puts "No, $i"

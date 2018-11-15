@@ -1,4 +1,11 @@
 #!/usr/bin/tclsh
 source $env(GODEL_ROOT)/bin/godel.tcl
 #puts [gvars [lindex $argv 0] [lindex $argv 1]]
-puts [gvars {*}$argv]
+set values [gvars {*}$argv]
+if {[llength $values] > 1} {
+  foreach v [lsort $values] {
+    puts $v
+  }
+} else {
+  puts $values
+}
