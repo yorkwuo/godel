@@ -68,20 +68,46 @@ proc set_pin_name_synonym {args} {procname}
 # UPF commands begin
 #---------------
 
-proc set_domain_supply_net {args} {procname}
+proc set_domain_supply_net {args} {
+  procname
+  global upfvars
+
+# -primary_power_net
+  set idx [lsearch $args {-primary_power_net}]
+  if {$idx != "-1"} {
+    set primary_power_net [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+# -primary_ground_net
+  set idx [lsearch $args {-primary_ground_net}]
+  if {$idx != "-1"} {
+    set primary_ground_net [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+  set pd [lindex $args 0]
+
+  set upfvars($pd,primary_power_net)  $primary_power_net
+  set upfvars($pd,primary_ground_net) $primary_ground_net
+
+}
 proc write_app_var {args} {procname}
 proc set_related_supply_net {args} {procname}
 
 proc upf_rp_power_domains {} {
   global upfvars
   puts "\n# Power Domains\n"
-  plist $upfvars(power_domains)
+  foreach pd $upfvars(power_domains) {
+    puts $pd
+    puts "                    $upfvars($pd,primary_power_net)"
+    puts "                    $upfvars($pd,primary_ground_net)"
+  }
 
   puts "\n# Power Doamin with elements\n"
   foreach pd $upfvars(power_domains) {
     puts $pd
     if [info exist upfvars($pd,elements)] {
-      foreach e $upfvars($pd,elements) {
+      foreach e {*}$upfvars($pd,elements) {
         puts "    $e"
       }
     }
@@ -115,7 +141,8 @@ proc upf_rp_supply_ports {} {
 
   puts "\n# Supply Ports\n"
   foreach sp [lsort $upfvars(supply_ports)] {
-    puts [format "%-40s %s" $sp $upfvars($sp,domain)]
+    puts $sp
+    print_list $upfvars($sp,domain)
   }
 }
 proc create_supply_port  {args} {
@@ -142,8 +169,9 @@ proc upf_rp_supply_nets {} {
   global upfvars
 
   puts "\n# Supply Nets\n"
-  foreach sp [lsort $upfvars(supply_nets)] {
-    puts [format "%-40s %s" $sp $upfvars($sp,domain)]
+  foreach sn [lsort $upfvars(supply_nets)] {
+    puts $sn
+    print_list $upfvars($sn,domain)
   }
 }
 
@@ -175,8 +203,71 @@ proc create_supply_net   {args} {
   set upfvars(supply_nets) [lsort -unique $upfvars(supply_nets)]
 }
 proc create_supply_set {args} {procname}
+
+proc upf_rp_level_shifter {} {
+  global upfvars
+
+  puts "\n# Level Shifter Rules\n"
+
+  if {[info exist upfvars(ls_rules)]} {
+    foreach lsrule $upfvars(ls_rules) {
+      puts $lsrule
+      puts [format "    %-20s  %s" "-domain"   $upfvars($lsrule,domain)]
+      puts [format "    %-20s  %s" "-rule"     $upfvars($lsrule,rule)]
+      puts [format "    %-20s  %s" "-location" $upfvars($lsrule,location)]
+      if {[llength $upfvars($lsrule,elements)] > 1} {
+        puts [format "    %-20s  %s" "-elements" ""]
+        foreach e  $upfvars($lsrule,elements) {
+          puts [format "    %-20s  %s" "" $e]
+        }
+      } else {
+        puts [format "    %-20s  %s" "-elements" $upfvars($lsrule,elements)]
+      }
+      puts ""
+    }
+  }
+}
 proc set_level_shifter {args} {
   procname
+  global upfvars
+# -domain
+  set idx [lsearch $args {-domain}]
+  if {$idx != "-1"} {
+    set domain [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+# -elements
+  set idx [lsearch $args {-elements}]
+  if {$idx != "-1"} {
+    set elements [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+# -rule
+  set idx [lsearch $args {-rule}]
+  if {$idx != "-1"} {
+    set rule [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+# -location
+  set idx [lsearch $args {-location}]
+  if {$idx != "-1"} {
+    set location [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+  set ls_rule_name [lindex $args 0]
+
+  set upfvars($ls_rule_name,domain)   ""
+  set upfvars($ls_rule_name,elements) ""
+  set upfvars($ls_rule_name,rule)     ""
+  set upfvars($ls_rule_name,location) ""
+
+  lappend upfvars(ls_rules) $ls_rule_name
+  set_if_exist upfvars($ls_rule_name,domain)   domain
+  set_if_exist upfvars($ls_rule_name,elements) elements
+  set_if_exist upfvars($ls_rule_name,rule)     rule
+  set_if_exist upfvars($ls_rule_name,location) location
+
 }
 proc add_power_state {args} {procname}
 proc create_pst {args} {
@@ -248,13 +339,30 @@ proc set_retention_control {args} {procname}
 proc upf_rp_isolation {} {
   global upfvars
 
-  foreach isorule $upfvars(iso_rules) {
-    puts $isorule
-    puts [format "    %-20s  %s" "-domain" $upfvars($isorule,domain)]
-    puts [format "    %-20s  %s" "-isolation_power_net" $upfvars($isorule,isolation_power_net)]
-    puts [format "    %-20s  %s" "-isolation_ground_net" $upfvars($isorule,isolation_ground_net)]
-    puts [format "    %-20s  %s" "-clamp_value" $upfvars($isorule,clamp_value)]
-    puts [format "    %-20s  %s" "-elements" $upfvars($isorule,elements)]
+  puts "\n# Isolatinon Rules\n"
+
+  if [info exist upfvars(iso_rules)] {
+    foreach isorule $upfvars(iso_rules) {
+      puts $isorule
+      puts [format "    %-20s  %s" "-domain" $upfvars($isorule,domain)]
+      puts [format "    %-20s  %s" "-isolation_power_net" $upfvars($isorule,isolation_power_net)]
+      puts [format "    %-20s  %s" "-isolation_ground_net" $upfvars($isorule,isolation_ground_net)]
+      puts [format "    %-20s  %s" "-clamp_value" $upfvars($isorule,clamp_value)]
+      puts [format "    %-20s  %s" "-location" $upfvars($isorule,location)]
+      puts [format "    %-20s  %s" "-isolation_signal" $upfvars($isorule,isolation_signal)]
+      puts [format "    %-20s  %s" "-isolation_sense" $upfvars($isorule,isolation_sense)]
+      puts [format "    %-20s  %s" "-applies_to" $upfvars($isorule,applies_to)]
+      if {[llength $upfvars($isorule,elements)] > 1} {
+        puts [format "    %-20s  %s" "-elements" ""]
+        foreach e  $upfvars($isorule,elements) {
+          puts [format "    %-20s  %s" "" $e]
+        }
+      } else {
+        puts [format "    %-20s  %s" "-elements" $upfvars($isorule,elements)]
+      }
+
+      puts ""
+    }
   }
 }
 
@@ -292,20 +400,162 @@ proc set_isolation {args} {
     set isolation_ground_net [lindex $args [expr $idx + 1]]
     set args [lreplace $args $idx [expr $idx + 1]]
   }
+# -applies_to
+  set idx [lsearch $args {-applies_to}]
+  if {$idx != "-1"} {
+    set applies_to [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+  set iso_rule_name [lindex $args 0]
+  set upfvars($iso_rule_name,domain)               ""
+  set upfvars($iso_rule_name,elements)             ""
+  set upfvars($iso_rule_name,isolation_power_net)  ""
+  set upfvars($iso_rule_name,isolation_ground_net) ""
+  set upfvars($iso_rule_name,clamp_value)          ""
+  set upfvars($iso_rule_name,applies_to)           ""
+
+  lappend upfvars(iso_rules) $iso_rule_name
+  set_if_exist upfvars($iso_rule_name,domain)               domain
+  set_if_exist upfvars($iso_rule_name,elements)             elements
+  set_if_exist upfvars($iso_rule_name,isolation_power_net)  isolation_power_net
+  set_if_exist upfvars($iso_rule_name,isolation_ground_net) isolation_ground_net
+  set_if_exist upfvars($iso_rule_name,clamp_value)          clamp_value
+  set_if_exist upfvars($iso_rule_name,applies_to)           applies_to
+
+}
+proc set_isolation_control {args} {
+  procname
+  global upfvars
+
+# -domain
+  set idx [lsearch $args {-domain}]
+  if {$idx != "-1"} {
+    set domain [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+# -isolation_signal
+  set idx [lsearch $args {-isolation_signal}]
+  if {$idx != "-1"} {
+    set isolation_signal [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+# -isolation_sense
+  set idx [lsearch $args {-isolation_sense}]
+  if {$idx != "-1"} {
+    set isolation_sense [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+# -location
+  set idx [lsearch $args {-location}]
+  if {$idx != "-1"} {
+    set location [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
 
   set iso_rule_name [lindex $args 0]
 
-  lappend upfvars(iso_rules) $iso_rule_name
-  set upfvars($iso_rule_name,domain) $domain
-  set upfvars($iso_rule_name,elements) $elements
-  set upfvars($iso_rule_name,isolation_power_net) $isolation_power_net
-  set upfvars($iso_rule_name,isolation_ground_net) $isolation_ground_net
-  set upfvars($iso_rule_name,clamp_value) $clamp_value
+  set upfvars($iso_rule_name,isolation_signal) $isolation_signal
+  set upfvars($iso_rule_name,isolation_sense)  $isolation_sense
+  set upfvars($iso_rule_name,location)         $location
 
 }
-proc set_isolation_control {args} {procname}
-proc set_level_shifter {args} {procname}
-proc create_power_switch {args} {procname}
+
+proc print_list {ilist} {
+  foreach i $ilist {
+      puts [format "                          %s" $i]
+  }
+}
+
+proc upf_rp_power_switch {} {
+  global upfvars
+
+  puts "\n# Power Switch Rules\n"
+
+  if [info exist upfvars(psw_rules)] {
+    foreach pswrule $upfvars(psw_rules) {
+      puts $pswrule
+      puts [format "    %-20s" "-domain"]
+      print_list $upfvars($pswrule,domain)
+      puts [format "    %-20s" "-input_supply_port"]
+      print_list $upfvars($pswrule,input_supply_port)
+      puts [format "    %-20s" "-output_supply_port"]
+      print_list $upfvars($pswrule,output_supply_port)
+      puts [format "    %-20s" "-control_port"]
+      print_list $upfvars($pswrule,control_port)
+      puts [format "    %-20s" "-on_state"]
+      print_list $upfvars($pswrule,on_state)
+      puts [format "    %-20s" "-off_state"]
+      if [info exist upfvars($pswrule,off_state)] {
+        print_list $upfvars($pswrule,off_state)
+      }
+    }
+  }
+}
+proc create_power_switch {args} {
+  procname
+  global upfvars
+
+# -domain
+  set idx [lsearch $args {-domain}]
+  if {$idx != "-1"} {
+    set domain [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+# -input_supply_port
+  set idx [lsearch $args {-input_supply_port}]
+  if {$idx != "-1"} {
+    set input_supply_port [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+# -output_supply_port
+  set idx [lsearch $args {-output_supply_port}]
+  if {$idx != "-1"} {
+    set output_supply_port [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+# -control_port
+  set idx [lsearch $args {-control_port}]
+  if {$idx != "-1"} {
+    set control_port [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+# -on_state
+  set idx [lsearch $args {-on_state}]
+  if {$idx != "-1"} {
+    set on_state [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+# -off_state
+  set idx [lsearch $args {-off_state}]
+  if {$idx != "-1"} {
+    set off_state [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+  set psw_rule_name [lindex $args 0]
+
+  lappend upfvars(psw_rules)                              $psw_rule_name
+  set_if_exist upfvars($psw_rule_name,domain)             domain
+  set_if_exist upfvars($psw_rule_name,input_supply_port)  input_supply_port
+  set_if_exist upfvars($psw_rule_name,output_supply_port) output_supply_port
+  set_if_exist upfvars($psw_rule_name,control_port)       control_port
+  set_if_exist upfvars($psw_rule_name,on_state)           on_state
+  set_if_exist upfvars($psw_rule_name,off_state)          off_state
+}
+proc set_if_exist {name value} {
+  upvar $name vname
+  upvar $value kvalue
+  if [info exist kvalue] {
+    set vname $kvalue
+  }
+}
+
 proc upf_rp_net_connects {} {
   global upfvars
 
