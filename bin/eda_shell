@@ -1,6 +1,6 @@
 #!/usr/bin/tclsh
 source $env(GODEL_ROOT)/tools/tabulate.tcl
-set edactrl(procname_disp) 0
+#set edactrl(procname_disp) 1
 
 if [info exist env(GODEL_ROOT)] {
   source $env(GODEL_ROOT)/bin/godel.tcl
@@ -14,6 +14,7 @@ set ::sh_product_version I-2017.12
 set ::product_build_date 2017.12.16
 set ::synthetic_library ""
 
+proc set_driving_cell {args} {procname}
 proc set_design_attributes {args} {procname}
 proc upf_version {args} {procname}
 
@@ -1553,15 +1554,19 @@ proc report_timing {args} {
 }
 # }}}
 proc check_tlu_plus_files {args} {procname}
+proc create_generated_clock {args} {procname}
+proc set_clock_groups {args} {procname}
+proc all_connected {args} {procname}
 proc analyze {args} {procname}
 proc link {args} {return 1}
 proc set_operating_conditions {args} {return 1}
-proc get_ports {args} {return get_ports_return}
+proc get_ports {args} {return $args}
 proc create_clock {args} {procname}
 proc get_clocks {args} {
-  procname
+  #procname
   return $args
 }
+proc get_pins {args} {return $args}
 proc set_clock_uncertainty {args} {procname}
 proc get_attribute {args} {return "1.1"}
 proc all_inputs {args} {return "all_inputs_return in1 in2"}
@@ -1624,10 +1629,10 @@ set mw_design_library ""
 #trace add variable INTEL_STA_RUN_TYPE write "tracer INTEL_STA_RUN_TYPE"
 #trace add variable INTEL_VG_FILES write "tracer INTEL_VG_FILES"
 
-#if {$tcl_interactive} {
-#} else {
-#  source $cmdfile
-#}
+if {$tcl_interactive} {
+} else {
+  source $cmdfile
+}
 
 
 #::tclreadline::Loop
