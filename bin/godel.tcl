@@ -1,7 +1,21 @@
+#----------------
+# compare list a with b
+#----------------
+proc listcomp {a b} {
+set diff {}
+foreach i $a {
+  if {[lsearch -exact $b $i]==-1} {
+    lappend diff $i
+  }
+}
+return $diff
+}
+
 # gmd
 # {{{
 proc gmd {fname} {
   upvar fout fout
+  upvar vars vars
   regsub -all {\.md} $fname {} fname1
   regsub -all { } $fname1 {_} fname2
 
@@ -335,7 +349,23 @@ proc gok {keywords} {
   } else {
     return
   }
-  #puts $keywords
+# -n 
+  set idx [lsearch $keywords {-n}]
+  if {$idx != "-1"} {
+    set serial_no [lindex $keywords [expr $idx + 1]]
+    set keywords [lreplace $keywords $idx [expr $idx + 1]]
+  } else {
+    set serial_no no
+  }
+
+# -w
+  set idx [lsearch $keywords {-w}]
+  if {$idx != "-1"} {
+    set w_yes yes
+    set keywords [lreplace $keywords $idx $idx]
+  } else {
+    set w_yes no
+  }
 
   set ilist [list]
   foreach i [lsort [array name meta *,where]] {
@@ -343,35 +373,57 @@ proc gok {keywords} {
     lappend ilist $i
   }
 
-
-  set found_names [list]
-# Search pagelist
-  foreach i $ilist {
-    set found 1
-# Is it match with keyword
-    foreach k $keywords {
-      if {[lsearch -regexp $meta($i,keywords) $k] >= 0} {
-        set found [expr $found&&1]  
-      } else {
-        set found [expr $found&&0]  
-      }
-    }
-    if {$found} {
-      #puts "$found $i"
-      lappend found_names $i
-    }
-  }
-
-  if {$found_names == ""} {
-    puts stderr "Not found... $keywords"
-  } else {
-    if {[llength $found_names] > 1} {
-      foreach i $found_names {
-        #puts stderr $i
-        puts stderr [format "%-35s %s" $i $meta($i,keywords)]
-      }
+  if {$w_yes} {
+    if [file exist $meta($keywords,where)] {
+      puts "cd $meta($keywords,where)"
     } else {
-      puts "cd $meta($found_names,where)"
+      puts stderr "Not exist... $meta($keywords,where)"
+    }
+  } else {
+    set found_names [list]
+  # Search pagelist
+    foreach i $ilist {
+      set found 1
+  # Is it match with keyword
+      foreach k $keywords {
+        if {[lsearch -regexp $meta($i,keywords) $k] >= 0} {
+          set found [expr $found&&1]  
+        } else {
+          set found [expr $found&&0]  
+        }
+      }
+      if {$found} {
+        #puts "$found $i"
+        lappend found_names $i
+      }
+    }
+  
+    if {$found_names == ""} {
+      puts stderr "Not found... $keywords"
+    } else {
+      if {[llength $found_names] > 1} {
+        if {$serial_no == "no"} {
+          set num 1
+          foreach i $found_names {
+            #puts stderr $i
+            puts stderr [format "%-3s %-35s %s" $num $i $meta($i,keywords)]
+            incr num
+          }
+        } else {
+          set name [lindex $found_names [expr $serial_no - 1]]
+          if [file exist $meta($name,where)] {
+            puts "cd $meta($name,where)"
+          } else {
+            puts stderr "Not exist... $meta($name,where)"
+          }
+        }
+      } else {
+        if [file exist $meta($found_names,where)] {
+          puts "cd $meta($found_names,where)"
+        } else {
+          puts stderr "Not exist... $meta($found_names,where)"
+        }
+      }
     }
   }
 
@@ -383,7 +435,6 @@ proc cdk {keywords} {
   upvar env env
   source $env(GODEL_META_FILE)
   source $env(GODEL_META_CENTER)/indexing.tcl
-  #puts $keywords
 
   set ilist [list]
   foreach i [lsort [array name meta *,where]] {
@@ -393,23 +444,25 @@ proc cdk {keywords} {
 
 
   set found_names [list]
+
+
 # Search pagelist
   foreach i $ilist {
     set found 1
 # Is it match with keyword
     foreach k $keywords {
-      #if [info exist meta($i,keywords)] {
-      #} else {
-      #  set meta($i,keywords) "nn"
-      #}
-      if {[lsearch -regexp $meta($i,keywords) $k] >= 0} {
-        set found [expr $found&&1]  
+      if [info exist meta($i,keys)] {
+        if {[lsearch -regexp $meta($i,keys) $k] >= 0} {
+          set found [expr $found&&1]  
+        } else {
+          set found [expr $found&&0]  
+        }
       } else {
         set found [expr $found&&0]  
       }
     }
+
     if {$found} {
-      #puts "$found $i"
       lappend found_names $i
     }
   }
@@ -420,7 +473,11 @@ proc cdk {keywords} {
     if {[llength $found_names] > 1} {
       foreach i $found_names {
         #puts stderr $i
-        puts stderr [format "%-15s %s" $i $meta($i,keywords)]
+        if [info exist meta($i,keywords)] {
+          puts stderr [format "%-35s %s" $i $meta($i,keywords)]
+        } else {
+          #puts stderr [format "%-35s %s" $i NA]
+        }
       }
     } else {
       puts "cd $meta($found_names,where)"
@@ -447,9 +504,9 @@ proc get_pagelist {keywords} {
 # Search pagelist
   foreach i $ilist {
     set found 1
-# Is it match with keyword
+# Is it match with keys
     foreach k $keywords {
-      if {[lsearch -regexp $meta($i,keywords) $k] >= 0} {
+      if {[lsearch -regexp $meta($i,keys) $k] >= 0} {
         set found [expr $found&&1]  
       } else {
         set found [expr $found&&0]  
@@ -1492,8 +1549,9 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
 
   close $fout
 
-  #set vars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
-  godel_array_save vars .godel/vars.tcl
+  set dyvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
+  godel_array_save dyvars .godel/dyvars.tcl
+  godel_array_save vars   .godel/vars.tcl
 
   godel_array_reset vars
 }
@@ -2073,10 +2131,10 @@ proc gget {pagename args} {
 proc gvars {pagename {vname ""}} {
   upvar env env
   source $env(GODEL_META_FILE)
-  #puts $meta($pagename,where)
   source $meta($pagename,where)/.godel/vars.tcl
   set where $meta($pagename,where)
   set vars(where) $where
+
   if {$vname == ""} {
     parray vars
   } else {
@@ -4118,7 +4176,7 @@ proc meta_get_pagelist {} {
 
   return $pagelist
 }
-#@=meta_indexing
+#@=meta-indexing
 # {{{
 proc meta_indexing {} {
   upvar env env
@@ -4138,13 +4196,22 @@ proc meta_indexing {} {
   parray meta
 
   foreach i $ilist {
-    set where $vars($i,where)
-    #set meta($i,last_updated) [godel_get_vars_value last_updated $where/.godel/vars.tcl]
-    set meta($i,class)        [godel_get_vars_value g:class      $where/.godel/vars.tcl]
-    set meta($i,keywords)     [godel_get_vars_value g:keywords   $where/.godel/vars.tcl]
-    set meta($i,pagesize)     [godel_get_vars_value pagesize     $where/.godel/vars.tcl]
-    lappend meta($i,keywords) $i
-    lappend meta($i,keywords) $meta($i,class)
+    set varspath   $vars($i,where)/.godel/vars.tcl
+    set dyvarspath $vars($i,where)/.godel/dyvars.tcl
+    if [file exist $varspath] {
+      source $varspath
+
+      if [file exist $dyvarspath] {
+        source $dyvarspath
+        set meta($i,last_updated) $vars(last_updated)
+      }
+      set meta($i,class)        $vars(g:class)
+      set meta($i,keywords)     $vars(g:keywords)
+      #set meta($i,pagesize)     $vars(pagesize)
+      set meta($i,keys)         [list $i $vars(g:keywords) $vars(g:class)]
+    } else {
+      puts "No, $i"
+    }
   }
 
   godel_array_save meta $env(GODEL_META_CENTER)/indexing.tcl

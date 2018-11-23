@@ -22,14 +22,23 @@ proc ghtm_pagelist {{sort_by by_updated}} {
 # vars,href
     set vars($i,href) "<a href=\"[tbox_cygpath $vars($i,where)/.index.htm]\" class=w3-text-blue>$i</a>"
 # vars,last_updated
-    regsub {^\d\d\d\d-} $vars($i,last_updated) {} vars($i,last_updated)
+    if [info exist vars($i,last_updated)] {
+      regsub {^\d\d\d\d-} $vars($i,last_updated) {} vars($i,last_updated)
+    } else {
+      set vars($i,last_updated) NA
+    }
 
     lappend pairs [list $i $vars($i,last_updated)]
 # size_pairs
-    if {$vars($i,pagesize) == "NA"} {
-      set vars($i,pagesize) 0
-      lappend size_pairs [list $i $vars($i,pagesize)]
+    if [info exist vars($i,pagesize)] {
+      if {$vars($i,pagesize) == "NA"} {
+        set vars($i,pagesize) 0
+        lappend size_pairs [list $i $vars($i,pagesize)]
+      } else {
+        lappend size_pairs [list $i $vars($i,pagesize)]
+      }
     } else {
+      set vars($i,pagesize) 0
       lappend size_pairs [list $i $vars($i,pagesize)]
     }
   }
@@ -54,7 +63,11 @@ proc ghtm_pagelist {{sort_by by_updated}} {
     } else {
       set vars($num,size)     ""
     }
-    set vars($num,keywords) $vars($name,keywords)
+    if [info exist vars($name,keywords)] {
+      set vars($num,keywords) $vars($name,keywords)
+    } else {
+      set vars($num,keywords) ""
+    }
     incr num
   }
 
