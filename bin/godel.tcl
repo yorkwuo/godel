@@ -349,7 +349,23 @@ proc gok {keywords} {
   } else {
     return
   }
-  #puts $keywords
+# -n 
+  set idx [lsearch $keywords {-n}]
+  if {$idx != "-1"} {
+    set serial_no [lindex $keywords [expr $idx + 1]]
+    set keywords [lreplace $keywords $idx [expr $idx + 1]]
+  } else {
+    set serial_no no
+  }
+
+# -w
+  set idx [lsearch $keywords {-w}]
+  if {$idx != "-1"} {
+    set w_yes yes
+    set keywords [lreplace $keywords $idx $idx]
+  } else {
+    set w_yes no
+  }
 
   set ilist [list]
   foreach i [lsort [array name meta *,where]] {
@@ -357,35 +373,57 @@ proc gok {keywords} {
     lappend ilist $i
   }
 
-
-  set found_names [list]
-# Search pagelist
-  foreach i $ilist {
-    set found 1
-# Is it match with keyword
-    foreach k $keywords {
-      if {[lsearch -regexp $meta($i,keywords) $k] >= 0} {
-        set found [expr $found&&1]  
-      } else {
-        set found [expr $found&&0]  
-      }
-    }
-    if {$found} {
-      #puts "$found $i"
-      lappend found_names $i
-    }
-  }
-
-  if {$found_names == ""} {
-    puts stderr "Not found... $keywords"
-  } else {
-    if {[llength $found_names] > 1} {
-      foreach i $found_names {
-        #puts stderr $i
-        puts stderr [format "%-35s %s" $i $meta($i,keywords)]
-      }
+  if {$w_yes} {
+    if [file exist $meta($keywords,where)] {
+      puts "cd $meta($keywords,where)"
     } else {
-      puts "cd $meta($found_names,where)"
+      puts stderr "Not exist... $meta($keywords,where)"
+    }
+  } else {
+    set found_names [list]
+  # Search pagelist
+    foreach i $ilist {
+      set found 1
+  # Is it match with keyword
+      foreach k $keywords {
+        if {[lsearch -regexp $meta($i,keywords) $k] >= 0} {
+          set found [expr $found&&1]  
+        } else {
+          set found [expr $found&&0]  
+        }
+      }
+      if {$found} {
+        #puts "$found $i"
+        lappend found_names $i
+      }
+    }
+  
+    if {$found_names == ""} {
+      puts stderr "Not found... $keywords"
+    } else {
+      if {[llength $found_names] > 1} {
+        if {$serial_no == "no"} {
+          set num 1
+          foreach i $found_names {
+            #puts stderr $i
+            puts stderr [format "%-3s %-35s %s" $num $i $meta($i,keywords)]
+            incr num
+          }
+        } else {
+          set name [lindex $found_names [expr $serial_no - 1]]
+          if [file exist $meta($name,where)] {
+            puts "cd $meta($name,where)"
+          } else {
+            puts stderr "Not exist... $meta($name,where)"
+          }
+        }
+      } else {
+        if [file exist $meta($found_names,where)] {
+          puts "cd $meta($found_names,where)"
+        } else {
+          puts stderr "Not exist... $meta($found_names,where)"
+        }
+      }
     }
   }
 

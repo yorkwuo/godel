@@ -2,16 +2,20 @@
 source $env(GODEL_ROOT)/bin/godel.tcl
 
 # Get path
-set path       [lindex $argv 0]
-set hier_level [lindex $argv 1]
+#set path       [lindex $argv 0]
+#set hier_level [lindex $argv 1]
 
-if {$path == ""} {
-  puts "Example Usage:"
-  puts "1. % newgok C:\\data\\pics"
-  puts "2. % newgok ."
-  puts "3. % newgok . 1"
-  return
-}
+set pagename    [lindex $argv 0]
+set keywords    [lrange $argv 1 end]
+
+#if {$path == ""} {
+#  puts "Example Usage:"
+#  puts "#1. % goknew C:\\data\\pics"
+#  puts "#2. % goknew ."
+#  puts "#3. % goknew . 1"
+#  puts "4. % goknew foo_bar_v1.1"
+#  return
+#}
 
 # Windows to Unix path convertion
 if {$env(GODEL_IN_CYGWIN)} {
@@ -20,28 +24,28 @@ if {$env(GODEL_IN_CYGWIN)} {
 # Change directory to target path
 #cd $path
 
-# 
+# gok_list.tcl
   set mfile $env(GODEL_META_CENTER)/gok_list.tcl
   if [file exist $mfile] {
     source $mfile
   }
-  set org_path [pwd]
-
-  if {$path != ""} {
-    cd $path
-  }
-
-  set fullpath [pwd]
-  set c [split $fullpath /]
+#  set org_path [pwd]
+#
+#  if {$path != ""} {
+#    cd $path
+#  }
+#
+#  set fullpath [pwd]
+#  set c [split $fullpath /]
 
 # pagename
-  if {$hier_level == ""} {
-    set pathelem [lrange $c end end]
-  } else {
-    set pathelem [lrange $c end-$hier_level end]
-  }
-
-  set pagename [join $pathelem ":"]
+#  if {$hier_level == ""} {
+#    set pathelem [lrange $c end end]
+#  } else {
+#    set pathelem [lrange $c end-$hier_level end]
+#  }
+#
+#  set pagename [join $pathelem ":"]
   #puts $pagename
 
   if [info exist meta($pagename,where)] {
@@ -49,8 +53,9 @@ if {$env(GODEL_IN_CYGWIN)} {
     puts "       $pagename = $meta($pagename,where)"
   } else {
     puts "Success: $pagename"
-    set meta($pagename,where)    $fullpath
-    set meta($pagename,keywords) $pagename
+    set meta($pagename,where)    [pwd]
+    #set meta($pagename,keywords) $keywords
+    set meta($pagename,keywords) $argv
     godel_array_save  meta $env(GODEL_META_CENTER)/gok_list.tcl
   }
 
