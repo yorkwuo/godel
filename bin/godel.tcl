@@ -4203,7 +4203,7 @@ proc meta_indexing {} {
 
       if [file exist $dyvarspath] {
         source $dyvarspath
-        set meta($i,last_updated) $vars(last_updated)
+        set meta($i,last_updated) $dyvars(last_updated)
       }
       set meta($i,class)        $vars(g:class)
       set meta($i,keywords)     $vars(g:keywords)
