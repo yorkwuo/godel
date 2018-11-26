@@ -1,0 +1,5 @@
+alias l4 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1200 600; xdotool windowmove $wid 1200 635'
+alias l3 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1200 600; xdotool windowmove $wid 0 635'
+alias l2 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1200 600; xdotool windowmove $wid 1200 0'
+alias l1 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1200 600; xdotool windowmove $wid 0 0'
+
