@@ -1,5 +1,18 @@
-alias l4 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1200 600; xdotool windowmove $wid 1200 635'
-alias l3 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1200 600; xdotool windowmove $wid 0 635'
-alias l2 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1200 600; xdotool windowmove $wid 1200 0'
-alias l1 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1200 600; xdotool windowmove $wid 0 0'
+# location
+alias s1 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1180 580; xdotool windowmove $wid 0 0'
+alias s2 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1180 580; xdotool windowmove $wid 1200 0'
+alias s3 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1180 580; xdotool windowmove $wid 0 660'
+alias s4 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1180 580; xdotool windowmove $wid 1200 660'
 
+alias b1 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1800 800; xdotool windowmove $wid 0 0'
+alias b2 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1800 600; xdotool windowmove $wid 1200 0'
+alias b3 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1800 600; xdotool windowmove $wid 0 635'
+alias b4 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1800 800; xdotool windowmove $wid 774 383'
+
+# window focus
+alias wf 'set wid=`xdotool search --name \!*`; xdotool windowactivate $wid'
+
+# window close
+alias wc 'set wid=`xdotool search --name \!*`; xdotool windowactivate --sync $wid ; xdotool key alt+F4'
+
+alias get-winfo 'xwininfo -id `xdotool getactivewindow`'
