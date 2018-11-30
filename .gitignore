@@ -1,1 +1,3 @@
-bin/gsh*
+gsh*
+*.o
+*.so
