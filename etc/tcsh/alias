@@ -13,6 +13,6 @@ alias b4 'set wid=`xdotool getwindowfocus`; xdotool windowsize $wid 1800 800; xd
 alias wf 'set wid=`xdotool search --name \!*`; xdotool windowactivate $wid'
 
 # window close
-alias wc 'set wid=`xdotool search --name \!*`; xdotool windowactivate --sync $wid ; xdotool key alt+F4'
+#alias wc 'set wid=`xdotool search --name \!*`; xdotool windowactivate --sync $wid ; xdotool key alt+F4'
 
-alias get-winfo 'xwininfo -id `xdotool getactivewindow`'
+#alias get-winfo 'xwininfo -id `xdotool getactivewindow`'

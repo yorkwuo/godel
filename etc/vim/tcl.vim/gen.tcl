@@ -4,12 +4,16 @@
 # You edit 'cmd.list' to add new cmd
 set kin [open "cmd.list" r]
   while {[gets $kin line] >= 0} {
-    lappend cmdlist $line
+    if {$line != ""} {
+      lappend cmdlist $line
+    }
   }
 close $kin
 set kin [open "string.list" r]
   while {[gets $kin line] >= 0} {
-    lappend stringlist $line
+    if {$line != ""} {
+      lappend stringlist $line
+    }
   }
 close $kin
 

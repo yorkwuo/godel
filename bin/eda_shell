@@ -108,7 +108,7 @@ proc upf_rp_power_domains {} {
   foreach pd $upfvars(power_domains) {
     puts $pd
     if [info exist upfvars($pd,elements)] {
-      foreach e {*}$upfvars($pd,elements) {
+      foreach e $upfvars($pd,elements) {
         puts "    $e"
       }
     }
@@ -131,10 +131,11 @@ proc create_power_domain {args} {
     set args [lreplace $args $idx_elements [expr $idx_elements + 1]]
   }
   set power_domain [lindex $args 0]
+  puts $power_domain
 
   lappend upfvars(power_domains) $power_domain
   if [info exist elements] {
-    lappend upfvars($power_domain,elements) $elements
+    lappend upfvars($power_domain,elements) {*}$elements
   }
 }
 proc upf_rp_supply_ports {} {
@@ -1629,10 +1630,10 @@ set mw_design_library ""
 #trace add variable INTEL_STA_RUN_TYPE write "tracer INTEL_STA_RUN_TYPE"
 #trace add variable INTEL_VG_FILES write "tracer INTEL_VG_FILES"
 
-if {$tcl_interactive} {
-} else {
-  source $cmdfile
-}
+#if {$tcl_interactive} {
+#} else {
+#  source $cmdfile
+#}
 
 
 #::tclreadline::Loop
