@@ -2,13 +2,13 @@
 # compare list a with b
 #----------------
 proc listcomp {a b} {
-set diff {}
-foreach i $a {
-  if {[lsearch -exact $b $i]==-1} {
-    lappend diff $i
+  set diff {}
+  foreach i $a {
+    if {[lsearch -exact $b $i]==-1} {
+      lappend diff $i
+    }
   }
-}
-return $diff
+  return $diff
 }
 
 # gmd

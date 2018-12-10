@@ -18,9 +18,9 @@ set keywords    [lrange $argv 1 end]
 #}
 
 # Windows to Unix path convertion
-if {$env(GODEL_IN_CYGWIN)} {
-  set path [exec cygpath -u $path]
-}
+#if {$env(GODEL_IN_CYGWIN)} {
+#  set path [exec cygpath -u $path]
+#}
 # Change directory to target path
 #cd $path
 

@@ -1,0 +1,14 @@
+1:
+	gen.tcl
+
+i1:
+	cp -f tcl.vim ~/.vim/syntax/tcl.vim
+i2:
+	cp -f tcl.vim ~/vimfiles/syntax/tcl.vim
+
+renew:
+	mv new.cmd.list    cmd.list
+	mv new.string.list string.list
+
+clean:
+	rm -rf tcl.vim new.cmd.list new.string.list
