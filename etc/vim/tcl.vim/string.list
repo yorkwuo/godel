@@ -12,6 +12,7 @@
 -all_violators
 -analysis_style
 -analysis_type
+-anchor
 -append
 -application
 -area
@@ -24,6 +25,7 @@
 -autofix
 -balance_points
 -below
+-borderwidth
 -boundary
 -buffer_constants
 -bus_name_notations
@@ -243,6 +245,7 @@
 -recovery
 -regexp
 -region
+-relief
 -removal
 -resistance_factor
 -retime
@@ -261,6 +264,7 @@
 -setup_margin
 -shielding_mode
 -show
+-side
 -significant_digits
 -skew
 -slack_domain
