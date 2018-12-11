@@ -1,4 +1,7 @@
 P_source_if_exists
+clipboard
+winfo
+bind
 add_buffer
 add_buffer_on_line
 add_port_state

@@ -371,6 +371,7 @@ enable_recovery_removal_arcs
 endpoint_clock_latency
 endpoint_clock_open_edge_value
 existing_dft
+exist
 full_name
 fuzzy_matching_enabled
 hdlin_preserve_sequential
