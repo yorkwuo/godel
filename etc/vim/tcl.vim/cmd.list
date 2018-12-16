@@ -1,7 +1,4 @@
 P_source_if_exists
-clipboard
-winfo
-bind
 add_buffer
 add_buffer_on_line
 add_port_state
@@ -30,8 +27,10 @@ attach_corner_name
 attach_skew
 balance_clock_groups
 begin_corner
+bind
 block_gen_summary
 build_unit_rc_table
+cdk
 change_names
 change_selection
 check_clock_as_data
@@ -51,6 +50,7 @@ chklist_new
 chklist_owner
 chklist_set
 chklist_table
+clipboard
 clkana_paths_file
 clkana_pocv_paths_file
 clock_opt
@@ -228,6 +228,7 @@ get_macro_lib
 get_nets
 get_object_name
 get_objects_by_location
+get_pagelist
 get_pin
 get_pin_names
 get_pins
@@ -384,6 +385,7 @@ godel_vars2passdown
 godel_web_index1
 godel_web_index2
 godel_write_list_to_file
+gok
 gpage_where
 group_path
 grun_begin
@@ -812,6 +814,7 @@ upfin
 verilogin
 verilogout
 where_script
+winfo
 write
 write_app_var
 write_by_id
