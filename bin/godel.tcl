@@ -4166,7 +4166,6 @@ proc godel_get_page_value {pname attr} {
 proc meta_get_pagelist {} {
   upvar env env
   source $env(GODEL_META_FILE)
-  source $mfile
 
   set pagelist [list]
   foreach i [array name meta *,where] {
