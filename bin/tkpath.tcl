@@ -12,6 +12,7 @@ set kin [open $infile r]
   }
 close $kin
 
+# up
 proc up {} {
   global col
   global tinfo
@@ -25,6 +26,7 @@ proc up {} {
     }
   }
 }
+# down
 proc down {} {
   global col
   global tinfo
@@ -38,6 +40,50 @@ proc down {} {
     }
   }
 }
+# grab
+proc grab {} {
+  global col
+  global tinfo
+
+  set items [list]
+  for {set i 1} {$i <= $tinfo(row_size)} {incr i} {
+    if [winfo exist .r$i.c$col] {
+      set tt [.r$i.c$col get 1.0 end]
+      regsub {\n} $tt {} tt
+      puts $tt
+      lappend items $tt
+    }
+  }
+  clipboard clear
+  clipboard append $items
+}
+# save
+proc save {} {
+  global col
+  global tinfo
+
+
+
+  set items [list]
+  for {set i 1} {$i <= $tinfo(row_size)} {incr i} {
+    if [winfo exist .r$i.c$col] {
+      set tt [.r$i.c$col get 1.0 end]
+      regsub {\n} $tt {} tt
+      puts $tt
+      lappend items $tt
+    }
+  }
+
+  puts "Save to...o$col.tcl"
+  set kout [open "o$col.tcl" w]
+  puts $kout "#!/usr/bin/tclsh"
+  puts $kout "set ilist {$items}"
+  puts $kout "foreach i \$ilist {"
+  puts $kout "  puts \$i"
+  puts $kout "}"
+  close $kout
+  exec chmod +x "o$col.tcl"
+}
 
 
 frame .ctrl
@@ -45,7 +91,9 @@ entry .ctrl.e -textvar col -relief sunken
 pack .ctrl.e -side left -anchor sw
 button .ctrl.b1 -text up -height 1 -command up
 button .ctrl.b2 -text down -height 1 -command down
-pack .ctrl.b1 .ctrl.b2 -side left -anchor sw
+button .ctrl.b3 -text grab -height 1 -command grab
+button .ctrl.b4 -text save -height 1 -command save
+pack .ctrl.b1 .ctrl.b2 .ctrl.b3 .ctrl.b4 -side left -anchor sw
 pack .ctrl -side top -anchor sw
 
 

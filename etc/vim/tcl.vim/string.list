@@ -1,5 +1,4 @@
 -1801
--command
 -above
 -active
 -add
@@ -55,6 +54,7 @@
 -clock_tree
 -clocks
 -combinational
+-command
 -command_group
 -compress
 -compressed
@@ -370,6 +370,7 @@ enable_presynthesis_floorplanning
 enable_recovery_removal_arcs
 endpoint_clock_latency
 endpoint_clock_open_edge_value
+exist
 existing_dft
 full_name
 fuzzy_matching_enabled
