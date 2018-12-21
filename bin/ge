@@ -1,0 +1,4 @@
+#!/usr/bin/tclsh
+source $env(GODEL_ROOT)/bin/godel.tcl
+#puts [gvars [lindex $argv 0] [lindex $argv 1]]
+ge {*}$argv
