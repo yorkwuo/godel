@@ -1,4 +1,4 @@
-#!/usr/bin/tclsh
+#!/usr/bin/env tclsh
 set infile [lindex $argv 0]
 if {$infile == ""} {
   puts "Error: No input file."

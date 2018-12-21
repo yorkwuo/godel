@@ -1,3 +1,54 @@
+proc get_srcpath {infile} {
+  set orgpath [pwd]
+  cd [file dirname $infile]
+  set srcpath [pwd]
+  cd $orgpath
+  return $srcpath
+}
+proc ge {args} {
+  global env env
+  set tool     [lindex $args 0]
+  set chktype  [lindex $args 1]
+  set infile   [lindex $args 2]
+  set pagename [lindex $args 3]
+  set prefix   [lindex $args 4]
+
+  set ilist [glob -nocomplain $env(GODEL_ROOT)/plugin/ge/*.tcl]
+  foreach i $ilist {
+    source $i
+  }
+
+  if ![file exist $infile] {
+    puts "Error: $infile not exist..."
+    return
+  }
+
+  set srcpath [get_srcpath $infile]
+  puts [pwd]
+  puts $srcpath
+
+# Call extraction script
+  set elist [${tool}_$chktype $infile]
+  
+  foreach i $elist {
+    set key   [lindex $i 0]
+    set value [lindex $i 1]
+    puts [format "%-20s %s" $key $value]
+  }
+
+  if {$pagename != "" && $prefix != ""} {
+    foreach i $elist {
+      set key   [lindex $i 0]
+      set value [lindex $i 1]
+      puts "gset $pagename $prefix,$key $value"
+      gset $pagename $prefix,$key $value
+    }
+    puts "gset $pagename $prefix,srcpath $srcpath"
+    gset $pagename $prefix,srcpath $srcpath
+  } else {
+    puts "Error: both pathname and prefix should have values."
+  }
+}
 #----------------
 # compare list a with b
 #----------------
@@ -2133,6 +2184,13 @@ proc gvars {args} {
     set args [lreplace $args $idx $idx]
     set opt(-k) 1
   }
+  # -d (delete)
+  set opt(-d) 0
+  set idx [lsearch $args {-d}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-d) 1
+  }
   
   set pagename [lindex $args 0]
   set vname    [lindex $args 1]
@@ -2152,6 +2210,7 @@ proc gvars {args} {
       foreach name [array names vars] {
         if [regexp $vname $name] {
           puts [format "%-20s = %s" $name $vars($name)]
+          lappend klist [list $name $vars($name)]
         }
       }
 # return value of query key
@@ -2162,6 +2221,14 @@ proc gvars {args} {
         return NA
       }
     }
+  }
+
+  if $opt(-d) {
+    foreach k $klist {
+      set key [lindex $k 0]
+      unset vars($key)
+    }
+    godel_array_save vars $meta($pagename,where)/.godel/vars.tcl
   }
 
 }
