@@ -1,0 +1,15 @@
+#!/usr/bin/tclsh
+set infile [lindex $argv 0]
+if {$infile == ""} {
+  puts "Error: No input file..."
+  return
+}
+set origpath [pwd]
+set fname [file tail $infile]
+cd [file dirname $infile]
+set dir [pwd]
+set fullname "$dir/$fname"
+cd $origpath
+
+set ip [exec hostname -i]
+puts "scp chihkang@$ip:$fullname ."
