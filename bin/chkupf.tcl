@@ -12,3 +12,4 @@ upf_rp_net_connects
 upf_rp_port_state
 upf_rp_pst_states
 upf_rp_isolation
+upf_rp_related_supply

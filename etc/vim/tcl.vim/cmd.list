@@ -502,6 +502,7 @@ read_aocvm
 read_ddc
 read_design
 read_file
+read_file_ret_list
 read_lib
 read_library
 read_ocvm

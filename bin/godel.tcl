@@ -91,11 +91,18 @@ proc gmd {fname} {
   close $fp
 
 # @)
-  set matches [regexp -all -inline {@\)(\w+)} $content]
+  set matches [regexp -all -inline {@\)(\S+)} $content]
   foreach {g0 g1} $matches {
-    #puts $g1
     if [info exist vars($g1)] {
-      regsub -all "@\\)$g1" $content $vars($g1) content
+      if {[llength $vars($g1)] > 1} {
+        set txt "\n"
+        foreach i $vars($g1) {
+          append txt "                  $i\n"
+        }
+        regsub -all "@\\)$g1" $content $txt content
+      } else {
+        regsub -all "@\\)$g1" $content $vars($g1) content
+      }
     } else {
       regsub -all "@\\)$g1" $content "<b>NA</b>($g1)" content
     }
@@ -2174,9 +2181,27 @@ proc gget {pagename args} {
   }
 }
 # }}}
+# and_hit
+proc and_hit {patterns target} {
+  set hit 1
+  foreach pattern $patterns {
+    if [regexp $pattern $target] {
+      set hit [expr $hit&&1]
+    } else {
+      set hit [expr $hit&&0]
+    }
+  }
+  return $hit
+}
 # gvars
 # {{{
 proc gvars {args} {
+  global env env
+# source user plugin
+  if [info exist env(GODEL_USER_PLUGIN)] {
+    set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
+    foreach f $flist { source $f }
+  }
   # -k (keyword)
   set opt(-k) 0
   set idx [lsearch $args {-k}]
@@ -2191,9 +2216,18 @@ proc gvars {args} {
     set args [lreplace $args $idx $idx]
     set opt(-d) 1
   }
+  # -t (tvars)
+  set opt(-t) 0
+  set idx [lsearch $args {-t}]
+  if {$idx != "-1"} {
+    set tvar_name [lindex $args [expr $idx + 1]]
+    set args   [lreplace $args $idx [expr $idx + 1]]
+    set opt(-t) 1
+  }
   
   set pagename [lindex $args 0]
-  set vname    [lindex $args 1]
+  set args [lreplace $args 0 0]
+  set vname    $args
 
   upvar env env
   source $env(GODEL_META_FILE)
@@ -2201,22 +2235,26 @@ proc gvars {args} {
   set where $meta($pagename,where)
   set vars(where) $where
 
+  set vlist ""
 # if no key specified, display all keys and values
   if {$vname == ""} {
     parray vars
+    return
   } else {
 # if -k enable, display all matched keys
     if {$opt(-k)} {
-      foreach name [array names vars] {
-        if [regexp $vname $name] {
+      foreach name [lsort [array names vars]] {
+        if [and_hit $vname $name] {
           puts [format "%-20s = %s" $name $vars($name)]
           lappend klist [list $name $vars($name)]
+          set vlist [concat $vlist $vars($name)]
         }
       }
 # return value of query key
     } else {
       if [info exist vars($vname)] {
-        return $vars($vname)
+        set vlist $vars($vname)
+        #return $vars($vname)
       } else {
         return NA
       }
@@ -2230,20 +2268,59 @@ proc gvars {args} {
     }
     godel_array_save vars $meta($pagename,where)/.godel/vars.tcl
   }
+  
+  if $opt(-t) {
+    eval "gset tvars $tvar_name \"$vlist\""
+  }
+  #fullpath $vlist
 
+  return $vlist
 }
 # }}}
-proc gset {pagename key value} {
+proc gset {args} {
   upvar env env
   source $env(GODEL_META_FILE)
 
-  #puts $meta($pagename,where)
+  # -p (path)
+  set opt(-p) 0
+  set idx [lsearch $args {-p}]
+  if {$idx != "-1"} {
+    set path [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-p) 1
+  }
+  # -f (file)
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
+  if {$idx != "-1"} {
+    set infile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-f) 1
+  }
+
+  set pagename [lindex $args 0]
   source $meta($pagename,where)/.godel/vars.tcl
   set where $meta($pagename,where)
-
-  set vars($key) $value
+  
+  if {$opt(-p)} {
+    set key      [file tail $path]
+    set value    $path
+    set vars($key) $value
+  } elseif {$opt(-f)} {
+    set ilist [read_file_ret_list $infile]
+    foreach i $ilist {
+      set key      [file tail $i]
+      set value    $i
+      set vars($key) $value
+    }
+  } else {
+    set key      [lindex $args 1]
+    set value    [lindex $args 2]
+    set vars($key) $value
+  }
 
   godel_array_save vars $where/.godel/vars.tcl
+
 }
 #: godel_init_vars
 # {{{

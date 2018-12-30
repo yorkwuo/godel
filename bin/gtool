@@ -1,0 +1,38 @@
+#!/usr/bin/tclsh
+#source $env(GODEL_ROOT)/bin/godel.tcl
+
+# -k (keyword)
+#set opt(-k) 0
+#set idx [lsearch $args {-k}]
+#if {$idx != "-1"} {
+#  set args [lreplace $args $idx $idx]
+#  set opt(-k) 1
+#}
+set toolname [lindex $argv 0]
+set argv [lreplace $argv 0 0]
+
+namespace eval gtool {
+}
+
+#: gtool::split
+# {{{
+proc gtool::split {delimiter} {
+  set line [exec xclip -o]
+# Remove leading space
+  regsub -all {^\s+} $line "" line
+
+  if {$delimiter == ""} {
+  # Replace space with #
+    regsub -all {\s+} $line "#" line
+    set c [::split $line #]
+  } else {
+    set c [::split $line $delimiter]
+  }
+
+  foreach i $c {
+    puts $i
+  }
+}
+# }}}
+
+eval "gtool::$toolname $argv"

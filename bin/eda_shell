@@ -8,6 +8,7 @@ if [info exist env(GODEL_ROOT)] {
 #package require tclreadline
 rename ::source ::realsource
 
+set ::upf_extension 1
 #set synopsys_program_name icc2_shell
 set synopsys_program_name dc_shell
 set ::sh_product_version I-2017.12
@@ -93,7 +94,49 @@ proc set_domain_supply_net {args} {
 
 }
 proc write_app_var {args} {procname}
-proc set_related_supply_net {args} {procname}
+
+proc upf_rp_related_supply {} {
+  global upfvars
+
+  foreach pwrnet $upfvars(supply_nets) {
+    if [info exist upfvars($pwrnet,related_supply)] {
+      puts "# $pwrnet related_supply"
+      foreach p $upfvars($pwrnet,related_supply) {
+        puts "    $p"
+      }
+    }
+    puts ""
+  }
+}
+
+proc set_related_supply_net {args} {
+#  procname
+  global upfvars
+
+# -power
+  set idx [lsearch $args {-power}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+# -ground
+  set idx [lsearch $args {-ground}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+# -object_list
+  set idx [lsearch $args {-object_list}]
+  if {$idx != "-1"} {
+    set obj_list [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  }
+
+  set upfvars($name,related_supply) $obj_list
+
+}
 
 proc upf_rp_power_domains {} {
   global upfvars
@@ -144,7 +187,7 @@ proc upf_rp_supply_ports {} {
   puts "\n# Supply Ports\n"
   foreach sp [lsort $upfvars(supply_ports)] {
     puts $sp
-    print_list $upfvars($sp,domain)
+    #print_list $upfvars($sp,domain)
   }
 }
 proc create_supply_port  {args} {
@@ -160,12 +203,14 @@ proc create_supply_port  {args} {
 
 # -direction
   set idx_direction [lsearch $args {-direction}]
-  set args [lreplace $args $idx_direction [expr $idx_direction + 1]]
+  if {$idx_direction != "-1"} {
+    set args [lreplace $args $idx_direction [expr $idx_direction + 1]]
+  }
 
   set supply_port [lindex $args 0]
   
   lappend upfvars(supply_ports) $supply_port
-  set upfvars($supply_port,domain) $domain
+  #set upfvars($supply_port,domain) $domain
 }
 proc upf_rp_supply_nets {} {
   global upfvars
@@ -570,6 +615,7 @@ proc upf_rp_net_connects {} {
         puts "    $connect"
       }
     }
+    puts ""
   }
 }
 proc connect_supply_net {args} {
