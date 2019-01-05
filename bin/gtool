@@ -1,20 +1,56 @@
 #!/usr/bin/tclsh
+source $env(GODEL_ROOT)/tools/tabulate.tcl
 #source $env(GODEL_ROOT)/bin/godel.tcl
+global opt
+global fname
+# -f (keyword)
+set opt(-f) 0
+set idx [lsearch $argv {-f}]
+if {$idx != "-1"} {
+  set fname   [lindex $argv [expr $idx + 1]]
+  set argv    [lreplace $argv $idx [expr $idx + 1]]
+  set opt(-f) 1
+}
 
-# -k (keyword)
-#set opt(-k) 0
-#set idx [lsearch $args {-k}]
-#if {$idx != "-1"} {
-#  set args [lreplace $args $idx $idx]
-#  set opt(-k) 1
-#}
 set toolname [lindex $argv 0]
 set argv [lreplace $argv 0 0]
 
 namespace eval gtool {
 }
 
-#: gtool::split
+proc gtool::table {} {
+  global fname
+  set fin [open $fname r]
+    while {[gets $fin line] >= 0} {
+      lappend lines $line
+    }
+  close $fin
+
+  puts [::tabulate::tabulate -data $lines]
+}
+
+# get_column
+proc gtool::get_column {col} {
+  global opt
+  global fname
+  if $opt(-f) {
+    set fin [open $fname r]
+      while {[gets $fin line] >= 0} {
+        lappend lines $line
+      }
+    close $fin
+  } else {
+    set line [exec xclip -o]
+  }
+
+  foreach line $lines {
+    regsub -all {\s+} $line {@} line
+    set c [::split $line @]
+    puts [lindex $c $col]
+  }
+}
+
+# split
 # {{{
 proc gtool::split {delimiter} {
   set line [exec xclip -o]

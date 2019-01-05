@@ -296,7 +296,8 @@ proc ::tabulate::formatRow args {
         set padding [expr {
             [dict get $columnWidths $i] - [string length $field] + 2 * $margins
         }]
-        set alignment [lindex $columnAlignments $i]
+        #set alignment [lindex $columnAlignments $i]
+        set alignment left
         switch -exact -- $alignment {
             {} -
             c -
