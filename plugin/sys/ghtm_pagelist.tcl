@@ -64,7 +64,7 @@ proc ghtm_pagelist {{sort_by by_updated}} {
       set vars($num,size)     ""
     }
     if [info exist vars($name,keywords)] {
-      set vars($num,keywords) [list $name $vars($name,keywords)]
+      set vars($num,keywords) [concat $name $vars($name,keywords)]
     } else {
       set vars($num,keywords) ""
     }

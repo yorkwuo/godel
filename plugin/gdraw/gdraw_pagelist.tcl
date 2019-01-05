@@ -7,7 +7,7 @@ proc gdraw_pagelist {} {
     puts $kout "ghtm_top_bar"
     puts $kout ""
     puts $kout "ghtm_filter_table pagelist 3"
-    puts $kout "ghtm_pagelist"
+    puts $kout "pagelist"
 
   close $kout
 }

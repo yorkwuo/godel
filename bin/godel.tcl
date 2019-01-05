@@ -1,3 +1,90 @@
+proc pagelist {{sort_by by_updated}} {
+# ghtm_pagelist by_updated/by_size
+  upvar env env
+  upvar fout fout
+  source $env(GODEL_META_CENTER)/meta.tcl
+  source $env(GODEL_META_CENTER)/indexing.tcl
+  array set vars [array get meta]
+# ilist = pagelist
+
+  #set ilist [lmap i [array name meta *,where] {regsub ",where" $i ""}]
+  set ilist [list]
+  foreach i [array name meta *,where] {
+    regsub ",where" $i "" i
+    lappend ilist $i
+  }
+
+#@>Foreach Pages in pagelist
+# $ilist = page name list
+  foreach i $ilist {
+    set location $vars($i,where)
+# vars,href
+    set vars($i,href) "<a href=\"[tbox_cygpath $vars($i,where)/.index.htm]\" class=w3-text-blue>$i</a>"
+# vars,last_updated
+    if [info exist vars($i,last_updated)] {
+      #regsub {^\d\d\d\d-} $vars($i,last_updated) {} vars($i,last_updated)
+    } else {
+      set vars($i,last_updated) 1111-11-11_1111
+    }
+
+    lappend pairs [list $i $vars($i,last_updated)]
+# size_pairs
+    if [info exist vars($i,pagesize)] {
+      if {$vars($i,pagesize) == "NA"} {
+        set vars($i,pagesize) 0
+        lappend size_pairs [list $i $vars($i,pagesize)]
+      } else {
+        lappend size_pairs [list $i $vars($i,pagesize)]
+      }
+    } else {
+      set vars($i,pagesize) 0
+      lappend size_pairs [list $i $vars($i,pagesize)]
+    }
+  }
+  set arr(by_updated) [lsort -index 1 -decreasing $pairs]
+  #set arr(by_size)    [lsort -index 1 -decreasing -integer $size_pairs]
+
+
+  set num 1
+  foreach pair $arr($sort_by) {
+    set name [lindex $pair 0]
+# rowlist
+    lappend rowlist $num
+    set vars($num,name)     "$vars($name,href)"
+    #puts $vars($num,name)
+    set ghtm      "$vars($name,where)/.godel/ghtm.tcl type=text/txt"
+    set vars_href "$vars($name,where)/.godel/vars.tcl type=text/txt"
+    set vars($num,ghtm)     "ghtm=>$ghtm"
+    set vars($num,vars)     "vars=>$vars_href"
+    set vars($num,last)     $vars($name,last_updated)
+    if [info exist vars($name,pagesize)] {
+      set vars($num,size)     $vars($name,pagesize)
+    } else {
+      set vars($num,size)     ""
+    }
+    if [info exist vars($name,keywords)] {
+      set vars($num,keywords) [concat $name $vars($name,keywords)]
+    } else {
+      set vars($num,keywords) ""
+    }
+    incr num
+  }
+
+# columnlist
+  set columnlist [list]
+  lappend columnlist [list name name]
+  lappend columnlist [list ghtm ghtm]
+  lappend columnlist [list vars vars]
+  lappend columnlist [list last last]
+  lappend columnlist [list size size]
+  lappend columnlist [list keywords keywords]
+
+  ghtm_table_nodir pagelist 0
+}
+proc ahbox {pname display} {
+  set aa [gpage_where $pname]
+  return "<a class=hbox2 href=$aa>$display</a>"
+}
 proc get_srcpath {infile} {
   set orgpath [pwd]
   cd [file dirname $infile]
@@ -612,7 +699,7 @@ proc ghtm_plot_line1 {name alist} {
 #@> Table
 #@=tbl_get_rows
 proc tbl_get_rows {tname} {
-  upvar vars vars
+  upvar vars global
   return $vars(gtable,$tname,rowlist)
 }
 #@=tbl_get_cols
@@ -953,7 +1040,7 @@ proc ghtm_chap {level title {href ""} {id ""}} {
 }
 
 proc gpage_where {pagename} {
-  upvar env env
+  global env env
   source $env(GODEL_META_FILE)
   if {$env(GODEL_IN_CYGWIN)} {
     if [info exist meta($pagename,where)] {
@@ -1834,13 +1921,6 @@ proc godel_proc_get_ready {infile} {
     puts "\033\[0;31m            Error: Not exist.. $infile\033\[0m"
     return 0
   }
-}
-# }}}
-# godel_fhref
-# {{{
-proc godel_fhref {number} {
-  source ~/href.tcl
-  return "<a href=$fhref($number,path)>$fhref($number,title)</a>"
 }
 # }}}
 # godel_list
@@ -4366,10 +4446,10 @@ proc meta_indexing {} {
         set meta($i,last_updated) $dyvars(last_updated)
       }
       set meta($i,class)        $vars(g:class)
-      set meta($i,keywords)     [lsort [list $vars(g:keywords) $vars(g:class)]]
+      set meta($i,keywords)     [lsort [concat $vars(g:keywords) $vars(g:class)]]
       #set meta($i,pagesize)     $vars(pagesize)
 # cdk use "keys" for searching
-      set meta($i,keys)         [lsort [list $i $vars(g:keywords) $vars(g:class)]]
+      set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class)]]
     } else {
       puts "No, $i"
     }
