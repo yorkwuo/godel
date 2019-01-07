@@ -81,10 +81,6 @@ proc pagelist {{sort_by by_updated}} {
 
   ghtm_table_nodir pagelist 0
 }
-proc ahbox {pname display} {
-  set aa [gpage_where $pname]
-  return "<a class=hbox2 href=$aa>$display</a>"
-}
 proc get_srcpath {infile} {
   set orgpath [pwd]
   cd [file dirname $infile]
@@ -152,6 +148,7 @@ proc listcomp {a b} {
 # gmd
 # {{{
 proc gmd {fname} {
+  global env
   upvar fout fout
   upvar vars vars
   regsub -all {\.md} $fname {} fname1
@@ -167,7 +164,7 @@ proc gmd {fname} {
 # This blank line is important. Without it the markdown processing will fail.
       #puts $kout "</div>"
       puts $kout ""
-      puts $kout "*#. $fname1"
+      puts $kout "@? $fname1"
       puts $kout ""
       puts $kout "# $fname2"
     close $kout
@@ -177,32 +174,7 @@ proc gmd {fname} {
     set content [read $fp]
   close $fp
 
-# @)
-  set matches [regexp -all -inline {@\)(\S+)} $content]
-  foreach {g0 g1} $matches {
-    if [info exist vars($g1)] {
-      if {[llength $vars($g1)] > 1} {
-        set txt "\n"
-        foreach i $vars($g1) {
-          append txt "                  $i\n"
-        }
-        regsub -all "@\\)$g1" $content $txt content
-      } else {
-        regsub -all "@\\)$g1" $content $vars($g1) content
-      }
-    } else {
-      regsub -all "@\\)$g1" $content "<b>NA</b>($g1)" content
-    }
-  }
-
-  set aa [::gmarkdown::convert $content]
-  regsub -line -all {^<p>\*#\. (.*)</p>} $aa {<span class=keywords style=color:red>\1</span>} aa
-
-  regsub -all {&lt;b&gt;NA&lt;/b&gt;} $aa <b>NA</b> aa
-
-  puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
-  puts $fout $aa
-  puts $fout "</div>"
+  gnotes $content
 }
 # }}}
 
@@ -298,34 +270,65 @@ proc gnotes_backup {content} {
 }
 # }}}
 
-proc rr {vv} {
-  upvar vars vars
-}
 #@> gnotes
 # {{{
 proc gnotes {content} {
+  global env
   upvar fout fout
   upvar vars vars
   upvar count count
 
-# @)
-  set matches [regexp -all -inline {@\)(\w+)} $content]
+# @) Get vars values
+  set matches [regexp -all -inline {@\)(\S+)} $content]
   foreach {g0 g1} $matches {
-    #puts $g1
     if [info exist vars($g1)] {
-      regsub -all "@\\)$g1" $content $vars($g1) content
+      if {[llength $vars($g1)] > 1} {
+        set txt "\n"
+        foreach i $vars($g1) {
+          append txt "                  $i\n"
+        }
+        regsub -all "@\\)$g1" $content $txt content
+      } else {
+        regsub -all "@\\)$g1" $content $vars($g1) content
+      }
     } else {
       regsub -all "@\\)$g1" $content "<b>NA</b>($g1)" content
     }
   }
 
-  set aa [::gmarkdown::convert $content]
-  regsub -line -all {^<p>\*#\. (.*)</p>} $aa {<span class=keywords style=color:red>\1</span>} aa
+# Markdown convertion
+  set aftermd [::gmarkdown::convert $content]
 
-  regsub -all {&lt;b&gt;NA&lt;/b&gt;} $aa <b>NA</b> aa
+  regsub -line -all {^<p>@\? (.*)</p>} $aftermd {<span class=keywords style=color:red>\1</span>} aftermd
+
+  regsub -all {&lt;b&gt;NA&lt;/b&gt;} $aftermd <b>NA</b> aftermd
+
+# @~ Link to gpage
+  set matches [regexp -all -inline {@~(\S+)} $aftermd]
+  foreach {whole iname} $matches {
+# Tidy iname likes `richard_dawkins</p>'
+    regsub {<\/p>} $iname {} iname
+
+    set addr [gpage_where $iname]
+    set pagename [gvars $iname g:pagename]
+    set atxt "<a href=$addr>$pagename</a>"
+    regsub -all "@~$iname" $aftermd $atxt aftermd
+  }
+
+# @! Link to gpage as badge
+  set matches [regexp -all -inline {@!(\S+)} $aftermd]
+  foreach {whole iname} $matches {
+# Tidy iname likes `richard_dawkins</p>'
+    regsub {<\/p>} $iname {} iname
+
+    set addr [gpage_where $iname]
+    set pagename [gvars $iname g:pagename]
+    set atxt "<a class=hbox2 href=$addr>$pagename</a>"
+    regsub -all "@!$iname" $aftermd $atxt aftermd
+  }
 
   puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
-  puts $fout $aa
+  puts $fout $aftermd
   puts $fout "</div>"
 }
 # }}}

@@ -254,13 +254,13 @@ img {
 }
 
 .hbox2 {
-  font-size  :100%;
+  font-size  :120%;
   color      : white;
   font-family:Verdana;
   #background-color:DarkSlateBlue;
   background-color:darkorange;
   margin     :4px;
-  padding    :2px 6px;
+  padding    :0px 6px;
 }
 .hbox {
   font-size  :150%;
