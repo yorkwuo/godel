@@ -1,6 +1,6 @@
 proc pagelist {{sort_by by_updated}} {
 # ghtm_pagelist by_updated/by_size
-  upvar env env
+  global env
   upvar fout fout
   source $env(GODEL_META_CENTER)/meta.tcl
   source $env(GODEL_META_CENTER)/indexing.tcl
@@ -220,56 +220,6 @@ proc img_resize {pattern} {
   }
 }
 # }}}
-# gnotes2
-# {{{
-proc gnotes2 {content} {
-  upvar fout fout
-  upvar vars vars
-  upvar count count
-
-  puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
-
-  set content [string trim $content]
-# *#
-  regexp -line -all {^\*#\. (.*$)} $content whole match
-
-  puts $fout "<pre>$match</pre>"
-
-  puts $fout "</div>"
-
-}
-# }}}
-# gnotes_backup
-# {{{
-proc gnotes_backup {content} {
-  upvar fout fout
-  upvar vars vars
-  upvar count count
-
-  puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
-
-  set content [string trim $content]
-# Keywords
-# *#
-  regsub -line -all {^\*#\. (.*$)} $content {<span class=keywords style=color:red>\1</span>} content
-
-# Title
-#  *18. text to be highlight
-  regsub -line -all {^\*(\d+)\. (.*$)} $content {<font style="color:blue; font-size:\1px"><b>\2</b><
-/font>} content
-  regsub -line -all {^\*\. (.*$)} $content {<font style="color:blue; font-size:14px"><b>\1</b></font
->} content
-# Text color
-#  *c-red. text to be highlight
-  regsub -line -all {^\*c-(\w+)\. (.*$)} $content {<font style="color:\1;">\2</font>} content
-
-  puts $fout "<pre>$content</pre>"
-
-  puts $fout "</div>"
-
-}
-# }}}
-
 #@> gnotes
 # {{{
 proc gnotes {content} {
@@ -283,11 +233,12 @@ proc gnotes {content} {
   foreach {g0 g1} $matches {
     if [info exist vars($g1)] {
       if {[llength $vars($g1)] > 1} {
-        set txt "\n"
-        foreach i $vars($g1) {
-          append txt "                  $i\n"
-        }
-        regsub -all "@\\)$g1" $content $txt content
+        #set txt "\n"
+        #foreach i $vars($g1) {
+        #  append txt "                  $i\n"
+        #}
+        #regsub -all "@\\)$g1" $content $txt content
+        regsub -all "@\\)$g1" $content $vars($g1) content
       } else {
         regsub -all "@\\)$g1" $content $vars($g1) content
       }
@@ -365,7 +316,7 @@ proc grow {content} {
 # }}}
 
 proc plant {pp} {
-  upvar env env
+  global env
   puts $pp
   set org_path [pwd]
   cd $pp
@@ -438,7 +389,7 @@ proc lcount {list} {
 # gvi
 # {{{
 proc gvi {keywords} {
-  upvar env env
+  global env
   if [file exist $env(GODEL_META_CENTER)/gvi_list.tcl] {
     source       $env(GODEL_META_CENTER)/gvi_list.tcl
   } else {
@@ -491,7 +442,7 @@ proc gvi {keywords} {
 # gok
 # {{{
 proc gok {keywords} {
-  upvar env env
+  global env
   if [file exist $env(GODEL_META_CENTER)/gok_list.tcl] {
     source       $env(GODEL_META_CENTER)/gok_list.tcl
   } else {
@@ -580,7 +531,7 @@ proc gok {keywords} {
 # cdk
 # {{{
 proc cdk {keywords} {
-  upvar env env
+  global env
   source $env(GODEL_META_FILE)
   source $env(GODEL_META_CENTER)/indexing.tcl
 
@@ -637,7 +588,7 @@ proc cdk {keywords} {
 # get_pagelist
 # {{{
 proc get_pagelist {keywords} {
-  upvar env env
+  global env
   source $env(GODEL_META_FILE)
   source $env(GODEL_META_CENTER)/indexing.tcl
 
@@ -959,7 +910,7 @@ proc lpop {stack} {
 
 # ghtm_new_html
 proc ghtm_new_html {title} {
-  upvar env env
+  global env
   set fout [open .toc.htm w]
   puts $fout "<!DOCTYPE html>"
   puts $fout "<html>"
@@ -981,7 +932,7 @@ proc ghtm_new_html {title} {
 # ghtm_toc
 proc ghtm_toc {{mode ""} {begin_level 4} } {
 # 
-  upvar env env
+  global env
   upvar vars vars
 
   #upvar fout fout
@@ -1044,7 +995,10 @@ proc ghtm_chap {level title {href ""} {id ""}} {
 
 proc gpage_where {pagename} {
   global env env
-  source $env(GODEL_META_FILE)
+  foreach f $env(GODEL_META_FILE) {
+    source $f
+  }
+  #source $env(GODEL_META_FILE)
   if {$env(GODEL_IN_CYGWIN)} {
     if [info exist meta($pagename,where)] {
       return [tbox_cygpath $meta($pagename,where)]/.index.htm
@@ -1056,7 +1010,7 @@ proc gpage_where {pagename} {
   }
 }
 proc gpage_value {pagename attr} {
-  upvar env env
+  global env
   source $env(GODEL_META_FILE)
   source $meta($pagename,where)/.godel/vars.tcl
   if [info exist vars($attr)] {
@@ -1192,7 +1146,7 @@ proc tmu {tagname attr args} {
 
 
 proc chklist_co {type} {
-  upvar env env
+  global env
 
   if {$type == ""} {
     set ilist [glob -nocomplain $env(CLCENTER)/*]
@@ -1219,7 +1173,7 @@ proc godel_touch {fname} {
   }
 }
 proc chklist_new {chkitem} {
-  upvar env env
+  global env
   #puts $chkitem
   if {$chkitem == ""} {
     puts "Usage: chklist-new `APR-01'"
@@ -1247,7 +1201,7 @@ proc chklist_new {chkitem} {
   godel_draw chklist
 }
 proc chklist_ci {} {
-  upvar env env
+  global env
   if ![file exist chklist] {
     puts "Error: there is no chklist directory..."
     return
@@ -1268,7 +1222,7 @@ proc chklist_ci {} {
 
 proc chklist_owner {owner} {
   upvar fout fout
-  upvar env env
+  global env
   set flist [glob $env(CLCENTER)/*/*/clvars.tcl]
   foreach f $flist {
     source $f
@@ -1521,12 +1475,12 @@ proc math_sum {alist} {
 }
 # {{{
 proc gdnew {name} {
-  upvar env env
+  global env
   puts $name
   set kout [open $env(GODEL_ROOT)/plugin/gdraw/gdraw_$name.tcl w]
     puts $kout "lappend define(installed_flow) $name"
     puts $kout "proc gdraw_${name} \{\} \{"
-      puts $kout "  upvar env env"
+      puts $kout "  global env
       puts $kout "  set kout \[open .godel/ghtm.tcl w\]"
       puts $kout "    puts \$kout \"set flow_name $name\""
       puts $kout "    puts \$kout \"ghtm_top_bar\""
@@ -1536,7 +1490,7 @@ proc gdnew {name} {
 }
 # }}}
 proc gdrm {name} {
-  upvar env env
+  global env
   puts $name
   if [file exist $env(GODEL_ROOT)/plugin/gdraw/gdraw_$name.tcl] {
     puts "Delete `$name'"
@@ -1584,7 +1538,7 @@ proc gflu {virus degree {action ""}} {
 proc godel_draw {{ghtm_proc NA} {force NA}} {
   package require gmarkdown
   upvar vars vars
-  upvar env env
+  global env
   upvar argv argv
   upvar just_draw just_draw
   upvar bvars bvars
@@ -1733,7 +1687,7 @@ proc godel_re_import {gpath} {
 # {{{
 proc godel_import {} {
 # {{{
-  upvar env env
+  global env
   upvar argv argv
 
   # source plugin script
@@ -1826,7 +1780,7 @@ proc godel_import {} {
 #@=godel_redraw
 # {{{
 proc godel_redraw {pp} {
-  upvar env env
+  global env
 
   # source plugin script
   set flist [glob $env(GODEL_PLUGIN)/*/*.tcl]
@@ -1929,7 +1883,7 @@ proc godel_proc_get_ready {infile} {
 # godel_list
 # {{{
 proc godel_list {pp {prefix ""} {postfix ""}} {
-  upvar env env
+  global env
   regsub -all {\/} $pp { } pplist
   cd $env(GODEL_CENTER)/$pp
   if {[llength $pplist] == "3"} {
@@ -1961,7 +1915,7 @@ proc godel_remove_list_element {alist elename} {
 # {{{
 proc godel_delete {} {
 # under construction...
-  upvar env env
+  global env
   upvar argv argv
   set pp [lindex $argv 0]
   cd $env(GODEL_CENTER)/$pp/..
@@ -2038,7 +1992,7 @@ proc godel_index4_corner_td {cornerlist color} {
 # godel_evolve
 # {{{
 proc godel_evolve {ver} {
-  upvar env env
+  global env
   source $env(GODEL_CENTER)/.godel/vars.tcl
 
   regsub -all {\/} $ver { } new
@@ -2076,7 +2030,7 @@ proc godel_get_parent {module son} {
 # godel_checkout
 # {{{
 proc godel_checkout {ipath} {
-  upvar env env 
+  global env
 
   set backup_dir [pwd]
   cd $env(GODEL_CENTER)
@@ -2236,10 +2190,126 @@ proc godel_get_vars {key} {
   }
 }
 # }}}
+
+proc todo_set {args} {
+  set todopath [gvars todo where]
+# Go to todo directory
+  cd $todopath
+
+  set gpage [lindex $args 0]
+  set attr  [lindex $args 1]
+  set value [lindex $args 2]
+
+  set env(GODEL_META_FILE) ./localmeta.tcl
+# Create localmeta.tcl/indexing.tcl
+  #exec genmeta.tcl > localmeta.tcl
+  #meta_indexing indexing.tcl
+
+# Set title/keywords
+  gset $gpage $attr $value
+  #gset $todonum g:keywords $keywords
+}
+
+proc todo_create {args} {
+  set todopath [gvars todo where]
+  # -k (keyword)
+  set opt(-k) 0
+  set idx [lsearch $args {-k}]
+  if {$idx != "-1"} {
+    set keywords [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-k) 1
+  }
+
+  set title [lindex $args 0]
+
+  set todonum [clock format [clock seconds] -format {%Y-%m-%d_%H-%M_%S}]
+  puts $todonum
+  file mkdir $todopath/$todonum
+  cd $todopath/$todonum
+  godel_draw todo
+
+# Go to todo directory
+  cd $todopath
+
+  set env(GODEL_META_FILE) ./localmeta.tcl
+# Create localmeta.tcl/indexing.tcl
+  exec genmeta.tcl > localmeta.tcl
+  meta_indexing indexing.tcl
+
+# Set title/keywords
+  gset $todonum title $title
+  gset $todonum g:keywords $keywords
+  
+# Create localmeta.tcl/indexing.tcl
+  exec genmeta.tcl > localmeta.tcl
+  meta_indexing indexing.tcl
+}
+
+proc todo_list {args} {
+  global env
+  set todo_path [gvars todo where]
+  source $todo_path/localmeta.tcl
+  source $todo_path/indexing.tcl
+
+  set ilist [list]
+  foreach i [lsort [array name meta *,where]] {
+    regsub ",where" $i "" i
+    lappend ilist $i
+  }
+
+  set found_names [list]
+
+  set keywords $args
+
+# Search pagelist
+  foreach i $ilist {
+    set found 1
+# Is it match with keyword
+    foreach k $keywords {
+      if [info exist meta($i,keys)] {
+        if {[lsearch -regexp $meta($i,keys) $k] >= 0} {
+          set found [expr $found&&1]  
+        } else {
+          set found [expr $found&&0]  
+        }
+      } else {
+        set found [expr $found&&0]  
+      }
+    }
+
+    if {$found} {
+      lappend found_names $i
+    }
+  }
+
+  if {$found_names == ""} {
+    puts stderr "Not found... $keywords"
+  } else {
+# If more than 1 page found, display them
+    if {[llength $found_names] > 1} {
+      foreach i $found_names {
+        if [info exist meta($i,keywords)] {
+          set pagename [gvars $i g:pagename]
+          set priority [gvars $i priority]
+          set keywords [gvars $i g:keywords]
+          set title    [gvars $i title]
+          puts stderr  [format "%s (%s) %s. (%s)" $pagename $priority $title $keywords]
+        } else {
+        }
+      }
+# If only 1 page found, cd to it
+    } else {
+      puts "cd $meta($found_names,where)"
+      #puts "found $found_names"
+    }
+  }
+
+}
 #@>gget
 # {{{
 proc gget {pagename args} {
-  upvar env env
+  global env
 
 # source user plugin
   if [info exist env(GODEL_USER_PLUGIN)] {
@@ -2264,6 +2334,7 @@ proc gget {pagename args} {
   }
 }
 # }}}
+
 # and_hit
 proc and_hit {patterns target} {
   set hit 1
@@ -2279,6 +2350,7 @@ proc and_hit {patterns target} {
 # gvars
 # {{{
 proc gvars {args} {
+  upvar meta meta
   global env env
 # source user plugin
   if [info exist env(GODEL_USER_PLUGIN)] {
@@ -2312,8 +2384,14 @@ proc gvars {args} {
   set args [lreplace $args 0 0]
   set vname    $args
 
-  upvar env env
-  source $env(GODEL_META_FILE)
+  foreach f $env(GODEL_META_FILE) {
+    source $f
+  }
+  if [info exist meta($pagename,where)] {
+  } else {
+    puts "Error: meta($pagename,where) not exist..."
+    return
+  }
   source $meta($pagename,where)/.godel/vars.tcl
   set where $meta($pagename,where)
   set vars(where) $where
@@ -2432,7 +2510,7 @@ proc godel_puts {key} {
 # {{{
 proc godel_version_trend_chart {} {
 # Executed in Version Level
-  upvar env env
+  global env
   #source $env(DQI_ROOT)/custom/trend.tcl
   set index2_files [glob */index2.htm]
 
@@ -4005,7 +4083,7 @@ proc tbox_grep_filelist {re filelist} {
 # tbox_cygpath
 # {{{
 proc tbox_cygpath {pp} {
-  upvar env env
+  global env
   if {$env(GODEL_IN_CYGWIN)} {
     if [regexp {^\/} $pp] {
       if [regexp {\/cygdrive\/\w} $pp] {
@@ -4027,7 +4105,7 @@ proc tbox_cygpath {pp} {
 # tbox_cyg2unix
 # {{{
 proc tbox_cyg2unix {pp} {
-  upvar env env
+  global env
   if {$env(GODEL_IN_CYGWIN)} {
     regsub {file:///} $pp {} pp
     set path [exec tcsh -fc "cygpath -u $pp"]
@@ -4189,7 +4267,7 @@ proc set_bvars {name defalt_value} {
 #@=create_run
 proc create_run {path flowname} {
   upvar bvars bvars
-  upvar env env
+  global env
   set orgpath [pwd]
   file mkdir $path
   cd $path
@@ -4199,7 +4277,7 @@ proc create_run {path flowname} {
 }
 #@=grun_rm
 proc grun_rm {{pattern NA} {action NA}} {
-  upvar env env
+  global env
   puts $action
   set mfile $env(GODEL_META_CENTER)/runlist.tcl
   if [file exist $mfile] {
@@ -4236,7 +4314,7 @@ proc grun_rm {{pattern NA} {action NA}} {
 # {{{
 proc grun_ls {{pattern .*}} {
 # Create vv.tcl, vv.tcl is to be used to draw ghtm table
-  upvar env env
+  global env
   set mfile $env(GODEL_META_CENTER)/runlist.tcl
   if [file exist $mfile] {
 # get array `runlist'
@@ -4325,7 +4403,7 @@ proc grun_status {text} {
 #@=grun_ci
 # {{{
 proc grun_ci {{page_path .}} {
-  upvar env env
+  global env
   set metafile $env(GODEL_META_CENTER)/runlist.tcl
   if [file exist $metafile] {
     source $metafile
@@ -4349,7 +4427,7 @@ proc grun_ci {{page_path .}} {
 #@=godel_add_class
 # {{{
 proc godel_add_class {pname value} {
-  upvar env env
+  global env
   source $env(GODEL_META_FILE)
 
 # Get pname where
@@ -4374,7 +4452,7 @@ proc godel_add_class {pname value} {
 #@=godel_set_page_value
 # {{{
 proc godel_set_page_value {pname attr value} {
-  upvar env env
+  global env
   source $env(GODEL_META_FILE)
 
 # Get pname where
@@ -4393,7 +4471,7 @@ proc godel_set_page_value {pname attr value} {
 }
 # }}}
 proc godel_get_page_value {pname attr} {
-  upvar env env
+  global env
   source $env(GODEL_META_FILE)
 
 # Get pname where
@@ -4409,7 +4487,7 @@ proc godel_get_page_value {pname attr} {
 #@>META
 #@=meta_get_page
 proc meta_get_pagelist {} {
-  upvar env env
+  global env
   source $env(GODEL_META_FILE)
 
   set pagelist [list]
@@ -4422,9 +4500,11 @@ proc meta_get_pagelist {} {
 }
 #@=meta-indexing
 # {{{
-proc meta_indexing {} {
+proc meta_indexing {{ofile NA}} {
   upvar env env
-  source $env(GODEL_META_FILE)
+  foreach f $env(GODEL_META_FILE) {
+    source $f
+  }
 
   array set vars [array get meta]
 
@@ -4454,17 +4534,21 @@ proc meta_indexing {} {
 # cdk use "keys" for searching
       set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class)]]
     } else {
-      puts "No, $i"
+      puts "Error: not exist.. $varspath"
     }
   }
 
-  godel_array_save meta $env(GODEL_META_CENTER)/indexing.tcl
+  if {$ofile == "NA"} {
+    godel_array_save meta $env(GODEL_META_CENTER)/indexing.tcl
+  } else {
+    godel_array_save meta $ofile
+  }
 }
 # }}}
 #@=meta_chkin
 # {{{
 proc meta_chkin {{page_path ""} {hier_level ""}} {
-  upvar env env
+  global env
   source $env(GODEL_META_FILE)
   set org_path [pwd]
 # meta value to be checked-in stored in .godel/vars.tcl
@@ -4506,7 +4590,7 @@ proc meta_chkin {{page_path ""} {hier_level ""}} {
 #@=meta_rm
 # {{{
 proc meta_rm {name} {
-  upvar env env
+  global env
   set mfile $env(GODEL_META_FILE)
   if [file exist $mfile] {
     source $mfile
@@ -4519,7 +4603,7 @@ proc meta_rm {name} {
 # }}}
 #@=meta_get_page_where
 proc meta_get_page_where {pname} {
-  upvar env env
+  global env
   source $env(GODEL_META_FILE)
   if [info exist meta($pname,where)] {
     return $meta($pname,where)
@@ -4530,7 +4614,7 @@ proc meta_get_page_where {pname} {
 #@=godel_set_page_vars
 proc godel_set_page_vars {pname key value} {
   upvar vars vars
-  upvar env env
+  global env
 
   set where [meta_get_page_where $pname]
   if {$where == "NA"} {
@@ -4662,7 +4746,7 @@ proc getdocument {name {confirm nogo}} {
   }
 }
 proc a4_rm_module {module} {
-  upvar env env
+  global env
   source $env(GODEL_ROOT)/bin/gsh_cmds.tcl
   regsub {CENTER\/} $module {} module
 
@@ -4678,7 +4762,7 @@ proc a4_rm_module {module} {
   godel_array_reset vars
 }
 proc a4_rm_version {a4path} {
-  upvar env env
+  global env
   source $env(GODEL_ROOT)/bin/gsh_cmds.tcl
   regsub {CENTER\/} $a4path {} a4path
 
@@ -4716,7 +4800,7 @@ proc a4_rm_version {a4path} {
 }
 
 proc godel_load_vars {vpath} {
-  upvar env env
+  global env
   upvar vars vars
 
   set vpath [tbox_cyg2unix $vpath]
@@ -4729,7 +4813,7 @@ proc godel_load_vars {vpath} {
 }
 
 proc godel_copy_vars {vpath} {
-  upvar env env
+  global env
   upvar vars vars
 
   set vpath [tbox_cyg2unix $vpath]
