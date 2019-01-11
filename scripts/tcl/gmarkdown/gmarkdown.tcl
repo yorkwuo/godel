@@ -46,6 +46,7 @@ namespace eval gmarkdown {
     #
 #@>convert
     proc convert {markdown} {
+      upvar vars vars
         set markdown [regsub {\r\n?} $markdown {\n}]
         set markdown [::textutil::untabify2 $markdown 4]
         set markdown [string trimright $markdown]
@@ -61,7 +62,7 @@ namespace eval gmarkdown {
         set kout [open .main.htm w]
           puts $kout {<!DOCTYPE html>}
           puts $kout {<html> <head>}
-          puts $kout "<title>$::vars(g:pagename)</title>"
+          puts $kout "<title>$vars(g:pagename)</title>"
           puts $kout {<meta charset=utf-8>}
           puts $kout {<frameset cols=25%,75%>}
           puts $kout {　　<frame src=.toc.htm name=leftFrame >}

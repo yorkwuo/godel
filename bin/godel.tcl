@@ -2423,11 +2423,14 @@ proc gvars {args} {
   }
 
   if $opt(-d) {
-    foreach k $klist {
-      set key [lindex $k 0]
-      unset vars($key)
+    if [info exist klist] {
+      foreach k $klist {
+        set key [lindex $k 0]
+        unset vars($key)
+      }
+      unset vars(where)
+      godel_array_save vars $meta($pagename,where)/.godel/vars.tcl
     }
-    godel_array_save vars $meta($pagename,where)/.godel/vars.tcl
   }
   
   if $opt(-t) {
