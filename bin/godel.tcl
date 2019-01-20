@@ -257,7 +257,7 @@ proc gnotes {content} {
 # @~ Link to gpage
   set matches [regexp -all -inline {@~(\S+)} $aftermd]
   foreach {whole iname} $matches {
-# Tidy iname likes `richard_dawkins</p>'
+# Tidy up iname likes `richard_dawkins</p>'
     regsub {<\/p>} $iname {} iname
 
     set addr [gpage_where $iname]

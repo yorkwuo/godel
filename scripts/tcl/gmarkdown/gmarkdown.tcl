@@ -83,13 +83,13 @@ namespace eval gmarkdown {
           puts $kout "<meta charset=utf-8>"
           puts $kout "</head>"
           puts $kout "<body>"
-          #puts $kout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/godel.js]></script>"
           puts $kout "<a href=.index.htm target=_top>Remove</a>"
           puts $kout "<a href=.index.htm#top target=rightFrame>Top</a>"
-          #source .toc.tcl
           foreach i $::toc_list {
-            #puts $kout "<div class=L[lindex $i 0]><a id=[lindex $i 1] href=.index.htm#[lindex $i 1] target=rightFrame><nobr>[lindex $i 0]:[lindex $i 1]</nobr></a></div>"
-            puts $kout "<div class=L[lindex $i 0]><a id=[lindex $i 1] href=.index.htm#[lindex $i 1] target=rightFrame><nobr>[lindex $i 1]</nobr></a></div>"
+            set level    [lindex $i 0]
+            set id       [lindex $i 1]
+            set css_ctrl [lindex $i 2]
+            puts $kout "<div class=L$level style=$css_ctrl><a id=$id href=.index.htm#$id target=rightFrame><nobr>$id</nobr></a></div>"
           }
           puts $kout "</body>"
           puts $kout "</html>"
@@ -190,7 +190,7 @@ namespace eval gmarkdown {
                 }
                 {^[ ]{0,3}#{1,6}} {
                     dputs "ATX STYLE HEADINGS"
-                    #@=ATX STYLE HEADINGS
+                    #@=ATX STYLE HEADINGS, Header, York
                     set h_level 0
                     set h_result {}
 
@@ -213,8 +213,12 @@ namespace eval gmarkdown {
                         ]\
                     ]
 
-                    append result "<h$h_level id=$h_result>$h_result</h$h_level>"
-                    lappend ::toc_list [list $h_level $h_result]
+                    set css_ctrl {}
+                    regexp {@\((\S*)\)} $h_result whole css_ctrl
+                    regsub { @\(\S*\)} $h_result {} h_result
+
+                    append result "<h$h_level id=$h_result style=$css_ctrl>$h_result</h$h_level>"
+                    lappend ::toc_list [list $h_level $h_result $css_ctrl]
                 }
                 {^[ ]{0,3}\>} {
                     dputs "BLOCK QUOTES"
