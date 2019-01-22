@@ -2296,10 +2296,22 @@ proc todo_list {args} {
           set priority [gvars $i priority]
           set keywords [gvars $i g:keywords]
           set title    [gvars $i title]
-          puts stderr  [format "%s (%s) %s. (%s)" $pagename $priority $title $keywords]
+          #puts stderr  [format "%s (%s) %s. (%s)" $pagename $priority $title $keywords]
+          lappend dlist [list $pagename $priority $keywords $title]
         } else {
         }
       }
+
+      set klist [lsort -index 1 $dlist]
+      foreach i $klist {
+        set pagename [lindex $i 0]
+        set priority [lindex $i 1]
+        set keywords [lindex $i 2]
+        set title    [lindex $i 3]
+        puts stderr  [format "%s (%s) (%-25s) (%s)" $pagename $priority $keywords $title]
+        #puts stderr $i
+      }
+      #puts stderr $dlist
 # If only 1 page found, cd to it
     } else {
       puts "cd $meta($found_names,where)"
@@ -4537,7 +4549,11 @@ proc meta_indexing {{ofile NA}} {
       set meta($i,keywords)     [lsort [concat $vars(g:keywords) $vars(g:class)]]
       #set meta($i,pagesize)     $vars(pagesize)
 # cdk use "keys" for searching
-      set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class)]]
+      if [info exist vars(title)] {
+        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class) $vars(title)]]
+      } else {
+        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class)]]
+      }
     } else {
       puts "Error: not exist.. $varspath"
     }
