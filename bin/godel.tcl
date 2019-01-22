@@ -1575,11 +1575,13 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
     godel_init_vars    g:keywords    ""
     godel_init_vars    g:class       ""
     godel_init_vars    g:pagename    [file tail [pwd]]
+    godel_init_vars    g:iname       [file tail [pwd]]
   } else {
     #godel_init_vars    g:where       [pwd]
     godel_init_vars    g:keywords    ""
     godel_init_vars    g:class       ""
     godel_init_vars    g:pagename    [file tail [pwd]]
+    godel_init_vars    g:iname       [file tail [pwd]]
   }
 
   file mkdir .godel
