@@ -26,24 +26,27 @@ alias gaset='setenv GA_ROOT `pwd`; echo $GA_ROOT'
 #alias gacd='cd $GA_ROOT/\!*'
 
 #alias gcd='set k = `echo \!* | sed "s/CENTER//"`; eval cd $GODEL_CENTER/$k'
-#alias cdk='eval `gcd.tcl \!*`'
-tlist () {
+tlist  () { 
   eval `tdolist $*` 
 }
-cdk () {
-  eval `cdk.tcl $*`
+cdk    () { 
+  eval `cdk.tcl $*` 
 }
-
-gok () {
-  eval `gok.tcl $*`
+gok    () { 
+  eval `gok.tcl $*` 
 }
-
-#alias gvi='eval `gvi.tcl \!*`'
-gvi () {
-  eval `gvi.tcl $*`
+gvi    () { 
+  eval `gvi.tcl $*` 
 }
-tdoset () {
-  gget todo todo_set $*
+mscope () { 
+  export GODEL_META_SCOPE=`mscope.tcl $*` 
+}
+tdoset () { 
+  gget todo todo_set $* 
+}
+mt () {
+  genmeta.tcl > .godel/lmeta.tcl
+  lind.tcl
 }
 
 alias gpa=godel_pa.tcl

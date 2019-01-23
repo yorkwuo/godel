@@ -1,7 +1,7 @@
 #!/usr/bin/tclsh
 
 set pwd [pwd]
-set flist [exec find $pwd -name ".godel"]
+set flist [exec find $pwd -mindepth 2 -name ".godel"]
 foreach f $flist {
   set where [file dirname $f]
   set fname [file tail [file dirname $f]]
