@@ -2323,7 +2323,8 @@ proc gget {pagename args} {
     foreach f $flist { source $f }
   }
 
-  source $env(GODEL_META_FILE)
+  #source $env(GODEL_META_FILE)
+  foreach i $env(GODEL_META_SCOPE) { mload $i }
   #puts $meta($pagename,where)
   source $meta($pagename,where)/.godel/vars.tcl
   set where $meta($pagename,where)
@@ -2332,9 +2333,10 @@ proc gget {pagename args} {
     source $meta($pagename,where)/.godel/proc.tcl
   }
   if {$args == ""} {
-    foreach i $vars(gget:list) {
-      puts [format "%-30s : %s" [lindex $i 0] [lindex $i 1]]
-    }
+    help
+    #foreach i $vars(gget:list) {
+    #  puts [format "%-30s : %s" [lindex $i 0] [lindex $i 1]]
+    #}
   } else {
     {*}$args
   }
@@ -2428,6 +2430,7 @@ proc mload {args} {
 proc gvars {args} {
   upvar meta meta
   global env env
+  foreach i $env(GODEL_META_SCOPE) { mload $i }
 # source user plugin
   if [info exist env(GODEL_USER_PLUGIN)] {
     set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
@@ -2521,7 +2524,7 @@ proc gvars {args} {
 # }}}
 proc gset {args} {
   upvar env env
-  source $env(GODEL_META_FILE)
+  #source $env(GODEL_META_FILE)
 
   # -p (path)
   set opt(-p) 0
