@@ -2227,8 +2227,10 @@ proc todo_create {args} {
   cd $todopath
 
   set env(GODEL_META_FILE) ./localmeta.tcl
+  godel_array_reset meta
 # Create localmeta.tcl/indexing.tcl
   exec genmeta.tcl > localmeta.tcl
+  source ./localmeta.tcl
   meta_indexing indexing.tcl
 
 # Set title/keywords
@@ -2243,6 +2245,7 @@ proc todo_create {args} {
 proc todo_list {args} {
   global env
   set todo_path [gvars todo where]
+  godel_array_reset meta
   source $todo_path/localmeta.tcl
   source $todo_path/indexing.tcl
 
@@ -2316,6 +2319,10 @@ proc todo_list {args} {
 # {{{
 proc gget {pagename args} {
   global env
+  upvar meta meta
+  if ![info exist meta] {
+    foreach i $env(GODEL_META_SCOPE) { mload $i }
+  }
 
 # source user plugin
   if [info exist env(GODEL_USER_PLUGIN)] {
@@ -2428,9 +2435,11 @@ proc mload {args} {
 # gvars
 # {{{
 proc gvars {args} {
-  upvar meta meta
   global env env
-  foreach i $env(GODEL_META_SCOPE) { mload $i }
+  upvar meta meta
+  if ![info exist meta] {
+    foreach i $env(GODEL_META_SCOPE) { mload $i }
+  }
 # source user plugin
   if [info exist env(GODEL_USER_PLUGIN)] {
     set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
@@ -2525,6 +2534,10 @@ proc gvars {args} {
 proc gset {args} {
   upvar env env
   #source $env(GODEL_META_FILE)
+  upvar meta meta
+  if ![info exist meta] {
+    foreach i $env(GODEL_META_SCOPE) { mload $i }
+  }
 
   # -p (path)
   set opt(-p) 0
@@ -4582,7 +4595,7 @@ proc meta_get_pagelist {} {
 
   return $pagelist
 }
-#@=meta-indexing
+#@=mindex
 # {{{
 proc mindex {metafile} {
   source $metafile
