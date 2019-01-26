@@ -2195,6 +2195,7 @@ proc todo_set {args} {
   set value [lindex $args 2]
 
   set env(GODEL_META_FILE) ./localmeta.tcl
+  source ./localmeta.tcl
 # Create localmeta.tcl/indexing.tcl
   #exec genmeta.tcl > localmeta.tcl
   #meta_indexing indexing.tcl
@@ -2303,8 +2304,14 @@ proc todo_list {args} {
         set priority [lindex $i 1]
         set keywords [lindex $i 2]
         set title    [lindex $i 3]
-        puts stderr  [format "%s (%s) (%-25s) (%s)" $pagename $priority $keywords $title]
-        #puts stderr $i
+        set txt  [format "%s (%25s) (%s) (%s)" $pagename $keywords $priority $title]
+        if {$priority == "1"} {
+          puts stderr "\033\[0;35m$txt\033\[0m"
+        } elseif {$priority == "2"} {
+          puts stderr "\033\[0;36m$txt\033\[0m"
+        } else {
+          puts stderr $txt
+        }
       }
       #puts stderr $dlist
 # If only 1 page found, cd to it
