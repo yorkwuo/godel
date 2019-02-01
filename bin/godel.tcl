@@ -1,3 +1,92 @@
+# glist
+# {{{
+proc glist {args} {
+  global env
+
+  # -l (local)
+  set opt(-l) 0
+  set idx [lsearch $args {-l}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-l) 1
+  }
+
+  # -del (local)
+  set opt(-del) 0
+  set idx [lsearch $args {-del}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-del) 1
+  }
+  
+  set keywords $args
+
+  if {$opt(-l)} {
+    if [file exist .godel/indexing.tcl] {
+      source .godel/indexing.tcl
+    } else {
+      puts "Error: Not exist... .godel/indexing.tcl "
+    }
+  }
+
+  if ![info exist meta] {
+    foreach i $env(GODEL_META_SCOPE) { mload $i }
+  }
+
+  set ilist [list]
+  foreach i [lsort [array name meta *,where]] {
+    regsub ",where" $i "" i
+    lappend ilist $i
+  }
+
+  set found_names [list]
+# Search pagelist
+  foreach i $ilist {
+    set found 1
+# Is it match with keyword
+    foreach k $keywords {
+      if [info exist meta($i,keys)] {
+        if {[lsearch -regexp $meta($i,keys) $k] >= 0} {
+          set found [expr $found&&1]  
+        } else {
+          set found [expr $found&&0]  
+        }
+      } else {
+        set found [expr $found&&0]  
+      }
+    }
+
+    if {$found} {
+      lappend found_names $i
+    }
+  }
+
+  if {$found_names == ""} {
+    puts stderr "Not found... $keywords"
+  } else {
+# If more than 1 page found, display them
+    if {[llength $found_names] > 1} {
+      foreach i $found_names {
+        if [info exist meta($i,keywords)] {
+          puts stderr [format "%-35s = %s" $i $meta($i,keywords)]
+        } else {
+        }
+      }
+# If only 1 page found, cd to it
+    } else {
+      #puts "cd $meta($found_names,where)"
+      set i $found_names
+      puts stderr [format "%-35s = %s" $i $meta($i,keywords)]
+
+      if {$opt(-del)} {
+        puts $meta($i,where)
+        file delete -force $meta($i,where)
+      }
+    }
+  }
+}
+
+# }}}
 proc pagelist {{sort_by by_updated}} {
 # ghtm_pagelist by_updated/by_size
   global env
@@ -279,6 +368,20 @@ proc gnotes {content} {
     regsub -all "@!$iname" $aftermd $atxt aftermd
   }
 
+# @img() img
+  set matches [regexp -all -inline {@img\((\S+)\)} $aftermd]
+  puts $matches
+  foreach {whole iname} $matches {
+# Tidy iname likes `richard_dawkins</p>'
+    regsub {<\/p>} $iname {} iname
+
+#    set addr [gpage_where $iname]
+#    set pagename [gvars $iname g:pagename]
+    set atxt "<a href=$iname.PNG><img src=$iname.PNG style=\"float:right;width:30%\"></a>"
+    #regsub -all {@img\(pmos} $aftermd $atxt aftermd
+    regsub -all "@img\\($iname\\)" $aftermd $atxt aftermd
+  }
+
   puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
   puts $fout $aftermd
   puts $fout "</div>"
@@ -299,7 +402,7 @@ proc grow {content} {
     if [regexp {^\n$} $i] {
     } else {
       set aa [::gmarkdown::convert $i]
-      regsub -line -all {^<p>\*#\. (.*)</p>} $aa {<span class=keywords style=color:red>\1</span>} aa
+      regsub -line -all {<p>@\? (.*)</p>} $aa {<span class=keywords style=color:red>\1</span>} aa
       set w [lindex $grow_column_width $num]
       if {$w == ""} {
         puts $fout "<div class=\"w3-container w3-cell w3-rightbar\">"
@@ -532,9 +635,30 @@ proc gok {keywords} {
 # }}}
 # cdk
 # {{{
-proc cdk {keywords} {
+proc cdk {args} {
   global env
-  foreach i $env(GODEL_META_SCOPE) { mload $i }
+
+  # -l (local)
+  set opt(-l) 0
+  set idx [lsearch $args {-l}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-l) 1
+  }
+  
+  set keywords $args
+
+  if {$opt(-l)} {
+    if [file exist .godel/indexing.tcl] {
+      source .godel/indexing.tcl
+    } else {
+      puts "Error: Not exist... .godel/indexing.tcl "
+    }
+  }
+
+  if ![info exist meta] {
+    foreach i $env(GODEL_META_SCOPE) { mload $i }
+  }
 
   set ilist [list]
   foreach i [lsort [array name meta *,where]] {
@@ -2476,6 +2600,11 @@ proc gvars {args} {
   }
   
   set pagename [lindex $args 0]
+  if {$pagename == ""} {
+    source .godel/vars.tcl
+    parray vars
+    return
+  }
   set args [lreplace $args 0 0]
   set vname    $args
 
@@ -2540,7 +2669,6 @@ proc gvars {args} {
 # }}}
 proc gset {args} {
   upvar env env
-  #source $env(GODEL_META_FILE)
   upvar meta meta
   if ![info exist meta] {
     foreach i $env(GODEL_META_SCOPE) { mload $i }
