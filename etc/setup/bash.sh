@@ -48,6 +48,12 @@ mt () {
   genmeta.tcl > .godel/lmeta.tcl
   lind.tcl
 }
+gl () {
+  gl.tcl $*
+}
+gll () {
+  gl.tcl -l $*
+}
 
 alias gpa=godel_pa.tcl
 alias gevo=godel_evolve.tcl
