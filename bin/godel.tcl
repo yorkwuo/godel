@@ -118,20 +118,20 @@ proc pagelist {{sort_by by_updated}} {
 
     lappend pairs [list $i $vars($i,last_updated)]
 # size_pairs
-    if [info exist vars($i,pagesize)] {
-      if {$vars($i,pagesize) == "NA"} {
-        set vars($i,pagesize) 0
-        lappend size_pairs [list $i $vars($i,pagesize)]
+    if [info exist vars($i,page_size)] {
+      if {$vars($i,page_size) == "NA"} {
+        set vars($i,page_size) 0
+        lappend size_pairs [list $i $vars($i,page_size)]
       } else {
-        lappend size_pairs [list $i $vars($i,pagesize)]
+        lappend size_pairs [list $i $vars($i,page_size)]
       }
     } else {
-      set vars($i,pagesize) 0
-      lappend size_pairs [list $i $vars($i,pagesize)]
+      set vars($i,page_size) 0
+      lappend size_pairs [list $i $vars($i,page_size)]
     }
   }
   set arr(by_updated) [lsort -index 1 -decreasing $pairs]
-  #set arr(by_size)    [lsort -index 1 -decreasing -integer $size_pairs]
+  set arr(by_size)    [lsort -index 1 -decreasing -integer $size_pairs]
 
 
   set num 1
@@ -146,8 +146,8 @@ proc pagelist {{sort_by by_updated}} {
     set vars($num,ghtm)     "ghtm=>$ghtm"
     set vars($num,vars)     "vars=>$vars_href"
     set vars($num,last)     $vars($name,last_updated)
-    if [info exist vars($name,pagesize)] {
-      set vars($num,size)     $vars($name,pagesize)
+    if [info exist vars($name,page_size)] {
+      set vars($num,size)     $vars($name,page_size)
     } else {
       set vars($num,size)     ""
     }
@@ -370,7 +370,6 @@ proc gnotes {content} {
 
 # @img() img
   set matches [regexp -all -inline {@img\((\S+)\)} $aftermd]
-  puts $matches
   foreach {whole iname} $matches {
 # Tidy iname likes `richard_dawkins</p>'
     regsub {<\/p>} $iname {} iname
@@ -1766,6 +1765,9 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
 
   close $fout
 
+  if [file exist .godel/dyvars.tcl] {
+    source .godel/dyvars.tcl
+  }
   set dyvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
   godel_array_save dyvars .godel/dyvars.tcl
   godel_array_save vars   .godel/vars.tcl
@@ -2512,14 +2514,14 @@ proc mscope {args} {
 proc mload {args} {
   global env env
   upvar meta meta
-  # -w
+  # -w overwrite
   set opt(-w) 0
   set idx [lsearch $args {-w}]
   if {$idx != "-1"} {
     set args [lreplace $args $idx $idx]
     set opt(-w) 1
   }
-  # -g
+  # -g global
   set opt(-g) 0
   set idx [lsearch $args {-g}]
   if {$idx != "-1"} {
@@ -4798,12 +4800,17 @@ proc meta_indexing {{ofile NA}} {
       source $varspath
 
       if [file exist $dyvarspath] {
+        godel_array_reset dyvars
         source $dyvarspath
+        if [info exist dyvars(last_updated)] {
         set meta($i,last_updated) $dyvars(last_updated)
+        }
+        if [info exist dyvars(page_size)] {
+        set meta($i,page_size)    $dyvars(page_size)
+        }
       }
       set meta($i,class)        $vars(g:class)
       set meta($i,keywords)     [lsort [concat $vars(g:keywords) $vars(g:class)]]
-      #set meta($i,pagesize)     $vars(pagesize)
 # cdk use "keys" for searching
       if [info exist vars(title)] {
         set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class) $vars(title)]]
