@@ -1114,6 +1114,11 @@ proc ghtm_chap {level title {href ""} {id ""}} {
 proc gpage_where {pagename} {
   global env env
   upvar meta meta
+
+  if [info exist meta] {
+  } else {
+    mload default
+  }
   if {$env(GODEL_IN_CYGWIN)} {
     if [info exist meta($pagename,where)] {
       return [tbox_cygpath $meta($pagename,where)]/.index.htm
@@ -2447,7 +2452,7 @@ proc todo_list {args} {
     }
   }
 
-}
+} ;# todo_list
 #@>gget
 # {{{
 proc gget {pagename args} {

@@ -1,4 +1,6 @@
-#!/usr/bin/tclsh
+#!/bin/sh
+# the next line restarts using tclsh \
+exec tclsh "$0" ${1+"$@"}
 
 set pwd [pwd]
 set flist [exec find $pwd -mindepth 2 -name ".godel"]

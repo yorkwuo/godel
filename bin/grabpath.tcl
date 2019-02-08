@@ -1,4 +1,6 @@
-#!/usr/bin/env tclsh
+#!/bin/sh
+# the next line restarts using tclsh \
+exec tclsh "$0" ${1+"$@"}
 set infile [lindex $argv 0]
 if {$infile == ""} {
   puts "Error: No input file."

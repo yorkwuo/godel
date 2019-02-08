@@ -1,4 +1,6 @@
-#!/usr/bin/env tclsh
+#!/bin/sh
+# the next line restarts using tclsh \
+exec tclsh "$0" ${1+"$@"}
 
 set fname [lindex $argv 0]
 
