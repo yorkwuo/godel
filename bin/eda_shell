@@ -98,9 +98,10 @@ proc write_app_var {args} {procname}
 proc upf_rp_related_supply {} {
   global upfvars
 
+  puts "#@> Related Supply Nets"
   foreach pwrnet $upfvars(supply_nets) {
     if [info exist upfvars($pwrnet,related_supply)] {
-      puts "# $pwrnet related_supply"
+      puts "#@=$pwrnet related_supply"
       foreach p $upfvars($pwrnet,related_supply) {
         puts "    $p"
       }
@@ -147,7 +148,7 @@ proc upf_rp_power_domains {} {
     puts "                    $upfvars($pd,primary_ground_net)"
   }
 
-  puts "\n# Power Doamin with elements\n"
+  puts "\n#@>Power Doamin with elements\n"
   foreach pd $upfvars(power_domains) {
     puts $pd
     if [info exist upfvars($pd,elements)] {
@@ -184,7 +185,7 @@ proc create_power_domain {args} {
 proc upf_rp_supply_ports {} {
   global upfvars
 
-  puts "\n# Supply Ports\n"
+  puts "\n#@>Supply Ports\n"
   foreach sp [lsort $upfvars(supply_ports)] {
     puts $sp
     #print_list $upfvars($sp,domain)
@@ -215,7 +216,7 @@ proc create_supply_port  {args} {
 proc upf_rp_supply_nets {} {
   global upfvars
 
-  puts "\n# Supply Nets\n"
+  puts "\n#@>Supply Nets\n"
   foreach sn [lsort $upfvars(supply_nets)] {
     puts $sn
     print_list $upfvars($sn,domain)
@@ -386,10 +387,20 @@ proc set_retention_control {args} {procname}
 proc upf_rp_isolation {} {
   global upfvars
 
+  lappend ilist location
+  lappend ilist isolation_signal
+  lappend ilist isolation_sense
+
   puts "\n# Isolatinon Rules\n"
+
 
   if [info exist upfvars(iso_rules)] {
     foreach isorule $upfvars(iso_rules) {
+      foreach i $ilist {
+        if ![info exist upfvars($isorule,$i)] {
+          set upfvars($isorule,$i) NA
+        }
+      }
       puts $isorule
       puts [format "    %-20s  %s" "-domain" $upfvars($isorule,domain)]
       puts [format "    %-20s  %s" "-isolation_power_net" $upfvars($isorule,isolation_power_net)]

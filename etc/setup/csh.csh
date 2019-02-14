@@ -17,6 +17,10 @@ alias gd                 godel_draw.tcl
 alias cdk               'eval `cdk.tcl \!*`'
 alias gok               'eval `gok.tcl \!*`'
 alias gvi               'eval `gvi.tcl \!*`'
+alias gl                'eval `gl.tcl  \!*`'
+alias gll               'eval `gl.tcl -l \!*`'
+alias mt                'genmeta.tcl > .godel/lmeta.tcl; lind.tcl'
+alias mscope            'setenv GODEL_META_SCOPE `mscope.tcl \!*`'
 
 #alias gpa                godel_pa.tcl
 #alias gevo               godel_evolve.tcl
