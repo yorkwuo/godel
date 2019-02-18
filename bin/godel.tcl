@@ -84,6 +84,7 @@ proc glist {args} {
       }
     }
   }
+  return $found_names
 }
 
 # }}}
@@ -4347,6 +4348,7 @@ proc tbox_cyg2unix {pp} {
   global env
   if {$env(GODEL_IN_CYGWIN)} {
     regsub {file:///} $pp {} pp
+    regsub {file:/} $pp {} pp
     set path [exec tcsh -fc "cygpath -u $pp"]
   } else {
     regsub {file://} $pp {} pp

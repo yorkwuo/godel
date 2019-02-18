@@ -65,3 +65,5 @@ alias mfile=". mfile.sh"
 #alias tlist=tbox_list.tcl
 #alias tcygpath=tbox_cygpath.tcl
 
+export GODEL_GVIM=/cygdrive/c/Program\ Files\ \(x86\)/Vim/vim81/gvim.exe
+export GODEL_FIREFOX=/cygdrive/c/Program\ Files/Mozilla\ Firefox/firefox.exe
