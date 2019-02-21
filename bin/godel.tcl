@@ -2419,14 +2419,20 @@ proc todo_list {args} {
 # If more than 1 page found, display them
     if {[llength $found_names] > 1} {
       foreach i $found_names {
-        if [info exist meta($i,keywords)] {
-          set pagename [gvars $i g:pagename]
-          set priority [gvars $i priority]
-          set keywords [gvars $i g:keywords]
-          set title    [gvars $i title]
-          #puts stderr  [format "%s (%s) %s. (%s)" $pagename $priority $title $keywords]
-          lappend dlist [list $pagename $priority $keywords $title]
+        set done [gvars $i done]
+        if {$done == ""} {set done 0}
+        if {!$done} {
+          if [info exist meta($i,keywords)] {
+            set pagename [gvars $i g:pagename]
+            set priority [gvars $i priority]
+            set keywords [gvars $i g:keywords]
+            set title    [gvars $i title]
+            #puts stderr  [format "%s (%s) %s. (%s)" $pagename $priority $title $keywords]
+            lappend dlist [list $pagename $priority $keywords $title]
+          } else {
+          }
         } else {
+          continue
         }
       }
 
@@ -2453,7 +2459,7 @@ proc todo_list {args} {
     }
   }
 
-} ;# todo_list
+} ;# todo_list end
 #@>gget
 # {{{
 proc gget {pagename args} {
