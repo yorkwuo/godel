@@ -6,7 +6,19 @@ set input_keywords [lindex $argv 0]
 
 global colnames
 lappend colnames g:pagename
-lappend colnames g:keywords
+if [file exist .co] {
+  lappend colnames g:keywords
+  set fin [open .co r]
+    while {[gets $fin line] >= 0} {
+      if [regexp {^#} $line] {
+      } else {
+        lappend colnames $line
+      }
+    }
+  close $fin
+} else {
+  lappend colnames g:keywords
+}
 #lappend colnames ttt
 
 #@> draw_table
@@ -193,11 +205,25 @@ pack .sysr0 -side top -anchor sw
 if {$input_keywords == ""} {
   set input_keywords 11
 }
-set paths [glist $input_keywords -l]
-#set paths [glist godel]
 
 
-#parray meta
+# paths
+set paths ""
+if [file exist .key] {
+  set fin [open .key r]
+
+  while {[gets $fin line] >= 0} {
+    if [regexp {^#} $line] {
+    } else {
+      set paths [concat $paths [glist {*}$line -l]]
+    }
+  }
+
+  close $fin
+} else {
+  set paths [glist foo -l]
+}
+
 draw_table $paths
 
 set tinfo(row_size) [llength $paths]
