@@ -3,6 +3,12 @@
 proc glist {args} {
   global env
 
+  set name_width 35
+# .gll.conf
+  if [file exist .gll.conf] {
+    source .gll.conf
+  }
+
   # -l (local)
   set opt(-l) 0
   set idx [lsearch $args {-l}]
@@ -69,12 +75,33 @@ proc glist {args} {
       foreach i $found_names {
         if [info exist meta($i,keywords)] {
           set disp ""
-          append disp [format "%-35s" $i]
-          foreach col [list g:iname g:keywords] {
-            append disp [format "%-40s" [gvars $i $col]]
+# name
+          append disp [format "%${name_width}s" $i]
+
+# cols from .co
+          set cols {}
+          if [file exist .co] {
+            set fin [open .co r]
+              while {[gets $fin line] >= 0} {
+                set width -20 ;# default width
+
+                if [regexp {^#} $line] {
+                } else {
+                  regexp {;(\S*)} $line whole width
+                  regsub {;\S*} $line {} line
+                  lappend cols "$line $width"
+                }
+              }
+            close $fin
+          } else {
+            set cols g:keywords
+          }
+          foreach col $cols {
+            set name  [lindex $col 0]
+            set width [lindex $col 1]
+            append disp [format "%${width}s" [gvars $i $name]]
           }
           puts stderr $disp
-        } else {
         }
       }
 # If only 1 page found, cd to it

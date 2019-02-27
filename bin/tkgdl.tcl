@@ -4,29 +4,39 @@ source .godel/indexing.tcl
 
 set input_keywords [lindex $argv 0]
 
-global colnames
-lappend colnames g:pagename
+global cols
+global widths
+lappend cols g:pagename
+set widths(g:pagename) 20
 if [file exist .co] {
-  #lappend colnames g:keywords
+  #lappend cols g:keywords
   set fin [open .co r]
     while {[gets $fin line] >= 0} {
+      set width 20 ;# default width
+
       if [regexp {^#} $line] {
       } else {
-        lappend colnames $line
+        regexp {;(\S*)} $line whole width
+        regsub {;\S*} $line {} line
+        regsub {\-} $width {} width
+        lappend cols $line
+        set widths($line) $width
       }
     }
   close $fin
 } else {
-  lappend colnames g:keywords
+  lappend cols g:keywords
 }
-#lappend colnames ttt
+#lappend cols ttt
+parray widths
 
 #@> draw_table
 # {{{
 proc draw_table {paths} {
   upvar meta meta
   upvar row row
-  global colnames
+  global cols
+  global widths
 
   foreach gpage $paths {
     set ilist {}
@@ -40,7 +50,7 @@ proc draw_table {paths} {
       puts ".$gpage exist..."
     } else {
 
-    foreach colname $colnames {
+    foreach colname $cols {
       if [info exist vars($colname)] {
         lappend ilist $vars($colname)
       } else {
@@ -56,8 +66,8 @@ proc draw_table {paths} {
     set column 0
     foreach i $ilist {
   # text
-        set colname [lindex $colnames $column]
-        text .$gpage.$colname -width 20 -height 1
+        set colname [lindex $cols $column]
+        text .$gpage.$colname -width $widths($colname) -height 1
         .$gpage.$colname insert 1.0 $i
         pack .$gpage.$colname -side left
         incr column
@@ -73,7 +83,7 @@ proc draw_table {paths} {
 proc open_firefox {} {
   upvar meta meta
   global env
-  global colnames
+  global cols
   set focus_text [focus]
   set c [split $focus_text .]
   set gpage [lindex $c 1]
@@ -106,7 +116,7 @@ proc clear_table {} {
 # {{{
 proc psave {} {
   upvar meta meta
-  global colnames
+  global cols
   set focus_text [focus]
   set c [split $focus_text .]
   set gpage [lindex $c 1]
@@ -115,7 +125,7 @@ proc psave {} {
   set varspath [tbox_cyg2unix $pp]
   source $varspath
 
-  foreach colname $colnames {
+  foreach colname $cols {
     if [regexp pagename $colname] {
     } else {
       set vars($colname) [string trimright [.$gpage.$colname get 1.0 end] \n]
@@ -130,7 +140,7 @@ proc psave {} {
 proc open_vars {} {
   upvar meta meta
   global env
-  global colnames
+  global cols
   set focus_text [focus]
   set c [split $focus_text .]
   set gpage [lindex $c 1]
@@ -149,7 +159,7 @@ proc open_vars {} {
 proc open_ghtm {} {
   upvar meta meta
   global env
-  global colnames
+  global cols
   set focus_text [focus]
   set c [split $focus_text .]
   set gpage [lindex $c 1]
@@ -195,8 +205,8 @@ set row 1
 frame .sysr0
 label .sysr0.c0 -width 4 -height 1 -borderwidth 2 -relief sunken
 pack .sysr0.c0 -side left
-foreach i $colnames {
-  text .sysr0.$i -width 20 -height 1
+foreach i $cols {
+  text .sysr0.$i -width $widths($i) -height 1
   .sysr0.$i insert 1.0 $i
   pack .sysr0.$i -side left
 }
