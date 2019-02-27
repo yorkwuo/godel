@@ -7,7 +7,7 @@ set input_keywords [lindex $argv 0]
 global colnames
 lappend colnames g:pagename
 if [file exist .co] {
-  lappend colnames g:keywords
+  #lappend colnames g:keywords
   set fin [open .co r]
     while {[gets $fin line] >= 0} {
       if [regexp {^#} $line] {
