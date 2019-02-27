@@ -68,7 +68,12 @@ proc glist {args} {
     if {[llength $found_names] > 1} {
       foreach i $found_names {
         if [info exist meta($i,keywords)] {
-          puts stderr [format "%-35s = %s" $i $meta($i,keywords)]
+          set disp ""
+          append disp [format "%-35s" $i]
+          foreach col [list g:iname g:keywords] {
+            append disp [format "%-40s" [gvars $i $col]]
+          }
+          puts stderr $disp
         } else {
         }
       }
@@ -711,7 +716,10 @@ proc cdk {args} {
 # {{{
 proc get_pagelist {{keywords ""}} {
   global env
-  foreach i $env(GODEL_META_SCOPE) { mload $i }
+  upvar meta meta
+  if ![info exist meta] {
+    foreach i $env(GODEL_META_SCOPE) { mload $i }
+  }
 
   set ilist [list]
   foreach i [lsort [array name meta *,where]] {
@@ -2419,14 +2427,21 @@ proc todo_list {args} {
 # If more than 1 page found, display them
     if {[llength $found_names] > 1} {
       foreach i $found_names {
-        if [info exist meta($i,keywords)] {
-          set pagename [gvars $i g:pagename]
-          set priority [gvars $i priority]
-          set keywords [gvars $i g:keywords]
-          set title    [gvars $i title]
-          #puts stderr  [format "%s (%s) %s. (%s)" $pagename $priority $title $keywords]
-          lappend dlist [list $pagename $priority $keywords $title]
+        set done [gvars $i done]
+        if {$done == ""}   {set done 0}
+        if {$done == "NA"} {set done 0}
+        if {!$done} {
+          if [info exist meta($i,keywords)] {
+            set pagename [gvars $i g:pagename]
+            set priority [gvars $i priority]
+            set keywords [gvars $i g:keywords]
+            set title    [gvars $i title]
+            #puts stderr  [format "%s (%s) %s. (%s)" $pagename $priority $title $keywords]
+            lappend dlist [list $pagename $priority $keywords $title]
+          } else {
+          }
         } else {
+          continue
         }
       }
 
@@ -2453,7 +2468,7 @@ proc todo_list {args} {
     }
   }
 
-} ;# todo_list
+} ;# todo_list end
 #@>gget
 # {{{
 proc gget {pagename args} {
@@ -2576,13 +2591,24 @@ proc mload {args} {
 proc gvars {args} {
   global env env
   upvar meta meta
-  if ![info exist meta] {
-    foreach i $env(GODEL_META_SCOPE) { mload $i }
-  }
 # source user plugin
   if [info exist env(GODEL_USER_PLUGIN)] {
     set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
     foreach f $flist { source $f }
+  }
+  # -l (local)
+  set opt(-l) 0
+  set idx [lsearch $args {-l}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-l) 1
+  }
+  if ![info exist meta] {
+    if $opt(-l) {
+      source .godel/lmeta.tcl
+    } else {
+      foreach i $env(GODEL_META_SCOPE) { mload $i }
+    }
   }
   # -k (keyword)
   set opt(-k) 0

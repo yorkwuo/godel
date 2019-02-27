@@ -5,8 +5,20 @@ source .godel/indexing.tcl
 set input_keywords [lindex $argv 0]
 
 global colnames
-#lappend colnames ttt
-
+lappend colnames g:pagename
+if [file exist .co] {
+  #lappend colnames g:keywords
+  set fin [open .co r]
+    while {[gets $fin line] >= 0} {
+      if [regexp {^#} $line] {
+      } else {
+        lappend colnames $line
+      }
+    }
+  close $fin
+} else {
+  lappend colnames g:keywords
+}
 #@> draw_table
 # {{{
 proc draw_table {paths} {
@@ -127,7 +139,26 @@ proc open_vars {} {
   #set varspath [tbox_cyg2unix $pp]
   #puts $varspath
   #catch {exec /cygdrive/c/Program\ Files\ \(x86\)/Vim/vim81/gvim.exe $pp}
-  catch {exec $env(GODEL_GVIM) $pp}
+  catch {exec $env(GODEL_GVIM) $pp &}
+}
+# }}}
+# open_ghtm
+# {{{
+proc open_ghtm {} {
+  upvar meta meta
+  global env
+  global colnames
+  set focus_text [focus]
+  set c [split $focus_text .]
+  set gpage [lindex $c 1]
+
+  set pp [file dirname [gpage_where $gpage]]/.godel/ghtm.tcl
+  regsub {file:\/} $pp {} pp
+  puts $pp
+  #set varspath [tbox_cyg2unix $pp]
+  #puts $varspath
+  #catch {exec /cygdrive/c/Program\ Files\ \(x86\)/Vim/vim81/gvim.exe $pp}
+  catch {exec $env(GODEL_GVIM) $pp &}
 }
 # }}}
 #@> Main
@@ -147,11 +178,12 @@ button .sysctrl.b1 -text Firefox -height 1 -command open_firefox
 button .sysctrl.b2 -text Save    -height 1 -command psave
 button .sysctrl.b3 -text Delete  -height 1 -command clear_table
 button .sysctrl.b4 -text vars    -height 1 -command open_vars
+button .sysctrl.ghtm -text ghtm    -height 1 -command open_ghtm
 lappend butts .sysctrl.b1
 lappend butts .sysctrl.b2
 lappend butts .sysctrl.b3
 lappend butts .sysctrl.b4
-#lappend butts .sysctrl.b5
+lappend butts .sysctrl.ghtm
 pack {*}$butts -side left -anchor sw
 pack .sysctrl -side top -anchor sw
 
@@ -171,11 +203,25 @@ pack .sysr0 -side top -anchor sw
 if {$input_keywords == ""} {
   set input_keywords 11
 }
-set paths [glist $input_keywords -l]
-#set paths [glist godel]
 
 
-#parray meta
+# paths
+set paths ""
+if [file exist .key] {
+  set fin [open .key r]
+
+  while {[gets $fin line] >= 0} {
+    if [regexp {^#} $line] {
+    } else {
+      set paths [concat $paths [glist {*}$line -l]]
+    }
+  }
+
+  close $fin
+} else {
+  set paths [glist foo -l]
+}
+
 draw_table $paths
 
 set tinfo(row_size) [llength $paths]
@@ -185,5 +231,7 @@ set tinfo(row_size) [llength $paths]
 bind . q exit
 bind . <Control-d> clear_table
 bind . <Control-s> psave
+bind . <Control-e> open_ghtm
+bind . <Control-v> open_vars
 
 # vim:fdm=marker
