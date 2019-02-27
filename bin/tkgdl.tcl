@@ -27,9 +27,6 @@ if [file exist .co] {
 } else {
   lappend cols g:keywords
 }
-#lappend cols ttt
-parray widths
-
 #@> draw_table
 # {{{
 proc draw_table {paths} {

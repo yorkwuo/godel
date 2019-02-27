@@ -2,6 +2,8 @@
 setenv PATH ${GODEL_ROOT}/bin:${PATH}
 
 setenv TCLLIBPATH "${GODEL_ROOT}/scripts/tcl ${TCLLIBPATH}"
+setenv GODEL_FIREFOX /usr/intel/bin/firefox
+setenv GODEL_GVIM    /usr/intel/bin/gvim
 
 alias gim                godel_import.tcl
 #alias gc                 godel_codes.tcl
