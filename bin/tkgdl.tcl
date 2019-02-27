@@ -5,8 +5,6 @@ source .godel/indexing.tcl
 set input_keywords [lindex $argv 0]
 
 global colnames
-lappend colnames g:pagename
-lappend colnames g:keywords
 #lappend colnames ttt
 
 #@> draw_table
