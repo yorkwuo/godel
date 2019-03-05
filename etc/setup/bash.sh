@@ -49,9 +49,6 @@ mt () {
   lind.tcl
 }
 gl () {
-  gl.tcl $*
-}
-gll () {
   gl.tcl -l $*
 }
 

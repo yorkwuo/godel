@@ -3,7 +3,8 @@
 exec tclsh "$0" ${1+"$@"}
 
 set pwd [pwd]
-set flist [exec find $pwd -mindepth 2 -name ".godel"]
+#set flist [exec find $pwd -mindepth 2 -name ".godel"]
+set flist [glob */.godel]
 foreach f $flist {
   set where [file dirname $f]
   set fname [file tail [file dirname $f]]

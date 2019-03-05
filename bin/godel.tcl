@@ -3,6 +3,23 @@
 proc glist {args} {
   global env
 
+  set name_width 35
+# .gll.conf
+  if [file exist .gl.conf] {
+    source .gl.conf
+  } elseif [file exist $env(HOME)/.gl.conf] {
+    source $env(HOME)/.gl.conf
+  }
+
+# -n 
+  set idx [lsearch $args {-n}]
+  if {$idx != "-1"} {
+    set serial_no [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  } else {
+    set serial_no no
+  }
+
   # -l (local)
   set opt(-l) 0
   set idx [lsearch $args {-l}]
@@ -66,12 +83,43 @@ proc glist {args} {
   } else {
 # If more than 1 page found, display them
     if {[llength $found_names] > 1} {
-      foreach i $found_names {
-        if [info exist meta($i,keywords)] {
-          puts stderr [format "%-35s = %s" $i $meta($i,keywords)]
-        } else {
+      if {$serial_no == "no"} {
+        set linenum 1
+        foreach i $found_names {
+          if [info exist meta($i,keywords)] {
+            set disp ""
+# name
+#          append disp [format "%${name_width}s " $i]
+
+# File `.co' specify columns wanted to display
+            set cols {}
+            if [file exist .co] {
+              set fin [open .co r]
+                while {[gets $fin line] >= 0} {
+                  set width -20 ;# default width
+
+                  if [regexp {^#} $line] {
+                  } else {
+                    regexp {;(\S*)} $line whole width
+                    regsub {;\S*} $line {} line
+                    lappend cols "$line $width"
+                  }
+                }
+              close $fin
+            } else {
+              set cols g:keywords
+            }
+# Prepare `$disp'
+            foreach col $cols {
+              set name  [lindex $col 0]
+              set width [lindex $col 1]
+              append disp [format "%${width}s " [gvars $i $name]]
+            }
+            puts [format "%-3s %s" $linenum $disp]
+          }
+          incr linenum
         }
-      }
+      } ; # End serial_no == no
 # If only 1 page found, cd to it
     } else {
       #puts "cd $meta($found_names,where)"
@@ -711,7 +759,10 @@ proc cdk {args} {
 # {{{
 proc get_pagelist {{keywords ""}} {
   global env
-  foreach i $env(GODEL_META_SCOPE) { mload $i }
+  upvar meta meta
+  if ![info exist meta] {
+    foreach i $env(GODEL_META_SCOPE) { mload $i }
+  }
 
   set ilist [list]
   foreach i [lsort [array name meta *,where]] {
@@ -2583,13 +2634,24 @@ proc mload {args} {
 proc gvars {args} {
   global env env
   upvar meta meta
-  if ![info exist meta] {
-    foreach i $env(GODEL_META_SCOPE) { mload $i }
-  }
 # source user plugin
   if [info exist env(GODEL_USER_PLUGIN)] {
     set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
     foreach f $flist { source $f }
+  }
+  # -l (local)
+  set opt(-l) 0
+  set idx [lsearch $args {-l}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-l) 1
+  }
+  if ![info exist meta] {
+    if $opt(-l) {
+      source .godel/lmeta.tcl
+    } else {
+      foreach i $env(GODEL_META_SCOPE) { mload $i }
+    }
   }
   # -k (keyword)
   set opt(-k) 0
