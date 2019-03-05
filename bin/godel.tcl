@@ -2421,6 +2421,7 @@ proc todo_list {args} {
       foreach i $found_names {
         set done [gvars $i done]
         if {$done == ""} {set done 0}
+        if {$done == "NA"} {set done 0}
         if {!$done} {
           if [info exist meta($i,keywords)] {
             set pagename [gvars $i g:pagename]
