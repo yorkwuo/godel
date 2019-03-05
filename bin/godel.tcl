@@ -5,8 +5,19 @@ proc glist {args} {
 
   set name_width 35
 # .gll.conf
-  if [file exist .gll.conf] {
-    source .gll.conf
+  if [file exist .gl.conf] {
+    source .gl.conf
+  } elseif [file exist $env(HOME)/.gl.conf] {
+    source $env(HOME)/.gl.conf
+  }
+
+# -n 
+  set idx [lsearch $args {-n}]
+  if {$idx != "-1"} {
+    set serial_no [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  } else {
+    set serial_no no
   }
 
   # -l (local)
@@ -72,38 +83,43 @@ proc glist {args} {
   } else {
 # If more than 1 page found, display them
     if {[llength $found_names] > 1} {
-      foreach i $found_names {
-        if [info exist meta($i,keywords)] {
-          set disp ""
+      if {$serial_no == "no"} {
+        set linenum 1
+        foreach i $found_names {
+          if [info exist meta($i,keywords)] {
+            set disp ""
 # name
-          append disp [format "%${name_width}s" $i]
+#          append disp [format "%${name_width}s " $i]
 
-# cols from .co
-          set cols {}
-          if [file exist .co] {
-            set fin [open .co r]
-              while {[gets $fin line] >= 0} {
-                set width -20 ;# default width
+# File `.co' specify columns wanted to display
+            set cols {}
+            if [file exist .co] {
+              set fin [open .co r]
+                while {[gets $fin line] >= 0} {
+                  set width -20 ;# default width
 
-                if [regexp {^#} $line] {
-                } else {
-                  regexp {;(\S*)} $line whole width
-                  regsub {;\S*} $line {} line
-                  lappend cols "$line $width"
+                  if [regexp {^#} $line] {
+                  } else {
+                    regexp {;(\S*)} $line whole width
+                    regsub {;\S*} $line {} line
+                    lappend cols "$line $width"
+                  }
                 }
-              }
-            close $fin
-          } else {
-            set cols g:keywords
+              close $fin
+            } else {
+              set cols g:keywords
+            }
+# Prepare `$disp'
+            foreach col $cols {
+              set name  [lindex $col 0]
+              set width [lindex $col 1]
+              append disp [format "%${width}s " [gvars $i $name]]
+            }
+            puts [format "%-3s %s" $linenum $disp]
           }
-          foreach col $cols {
-            set name  [lindex $col 0]
-            set width [lindex $col 1]
-            append disp [format "%${width}s" [gvars $i $name]]
-          }
-          puts stderr $disp
+          incr linenum
         }
-      }
+      } ; # End serial_no == no
 # If only 1 page found, cd to it
     } else {
       #puts "cd $meta($found_names,where)"
