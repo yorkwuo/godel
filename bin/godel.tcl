@@ -2426,12 +2426,14 @@ proc todo_create {args} {
   meta_indexing indexing.tcl
 }
 
+# todo_list, tlist
+# {{{
 proc todo_list {args} {
   global env
   set todo_path [gvars todo where]
   godel_array_reset meta
-  source $todo_path/localmeta.tcl
-  source $todo_path/indexing.tcl
+  source $todo_path/.godel/lmeta.tcl
+  source $todo_path/.godel/indexing.tcl
 
   set ilist [list]
   foreach i [lsort [array name meta *,where]] {
@@ -2512,6 +2514,7 @@ proc todo_list {args} {
   }
 
 } ;# todo_list end
+# }}}
 #@>gget
 # {{{
 proc gget {pagename args} {

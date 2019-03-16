@@ -2,6 +2,37 @@
 source $env(GODEL_ROOT)/bin/godel.tcl
 source .godel/indexing.tcl
 
+# save_a_row
+# {{{
+proc save_a_row {gpage} {
+  upvar meta meta
+  global cols
+
+  set pp [file dirname [gpage_where $gpage]]/.godel/vars.tcl
+  set varspath [tbox_cyg2unix $pp]
+# Get vars content
+  source $varspath
+
+  foreach colname $cols {
+    if [regexp pagename $colname] {
+    } else {
+      set value [string trimright [.$gpage.$colname get 1.0 end] \n]
+      set vars($colname) $value
+    }
+  }
+
+  godel_array_save vars $varspath
+}
+# }}}
+proc saveall {} {
+  upvar meta meta
+  upvar paths paths
+  #puts $paths
+  foreach path $paths {
+    save_a_row $path
+  }
+}
+
 set input_keywords [lindex $argv 0]
 
 global cols
@@ -73,6 +104,7 @@ proc draw_table {paths} {
     incr row
   }
   }
+
 }
 # }}}
 # open_firefox
@@ -109,6 +141,7 @@ proc clear_table {} {
   set row 1
 }
 # }}}
+
 # psave
 # {{{
 proc psave {} {
@@ -116,10 +149,12 @@ proc psave {} {
   global cols
   set focus_text [focus]
   set c [split $focus_text .]
+  #puts $c
   set gpage [lindex $c 1]
 
   set pp [file dirname [gpage_where $gpage]]/.godel/vars.tcl
   set varspath [tbox_cyg2unix $pp]
+# Get vars content
   source $varspath
 
   foreach colname $cols {
@@ -129,7 +164,7 @@ proc psave {} {
     }
   }
 
-  godel_array_save vars $varspath
+  #godel_array_save vars $varspath
 }
 # }}}
 # open_vars
@@ -199,6 +234,7 @@ pack .sysctrl -side top -anchor sw
 
 set row 1
 # Label row
+# {{{
 frame .sysr0
 label .sysr0.c0 -width 4 -height 1 -borderwidth 2 -relief sunken
 pack .sysr0.c0 -side left
@@ -208,6 +244,7 @@ foreach i $cols {
   pack .sysr0.$i -side left
 }
 pack .sysr0 -side top -anchor sw
+# }}}
 
 if {$input_keywords == ""} {
   set input_keywords 11
@@ -233,14 +270,18 @@ if [file exist .key] {
 
 draw_table $paths
 
+
+
 set tinfo(row_size) [llength $paths]
 
 #puts [winfo wid .r1.c0]
 # Bind
 bind . q exit
 bind . <Control-d> clear_table
-bind . <Control-s> psave
+#bind . <Control-s> psave
+bind . <Control-s> saveall
 bind . <Control-e> open_ghtm
 bind . <Control-v> open_vars
+
 
 # vim:fdm=marker
