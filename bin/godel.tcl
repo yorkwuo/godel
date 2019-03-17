@@ -2751,9 +2751,29 @@ proc gvars {args} {
   return $vlist
 }
 # }}}
+# gset
+# {{{
 proc gset {args} {
   upvar env env
   upvar meta meta
+  # -l (local)
+# {{{
+  set opt(-l) 0
+  set idx [lsearch $args {-l}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-l) 1
+  }
+# }}}
+
+  if {$opt(-l)} {
+    if [file exist .godel/indexing.tcl] {
+      source .godel/indexing.tcl
+    } else {
+      puts "Error: Not exist... .godel/indexing.tcl "
+    }
+  }
+
   if ![info exist meta] {
     foreach i $env(GODEL_META_SCOPE) { mload $i }
   }
@@ -2799,6 +2819,7 @@ proc gset {args} {
   godel_array_save vars $where/.godel/vars.tcl
 
 }
+# }}}
 #: godel_init_vars
 # {{{
 proc godel_init_vars {key value} {
