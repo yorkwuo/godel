@@ -5,13 +5,15 @@ proc glist {args} {
 
   set name_width 35
 # .gll.conf
+# {{{
   if [file exist .gl.conf] {
     source .gl.conf
   } elseif [file exist $env(HOME)/.gl.conf] {
     source $env(HOME)/.gl.conf
   }
-
-# -n 
+# }}}
+  # -n 
+# {{{
   set idx [lsearch $args {-n}]
   if {$idx != "-1"} {
     set serial_no [lindex $args [expr $idx + 1]]
@@ -19,23 +21,25 @@ proc glist {args} {
   } else {
     set serial_no no
   }
-
+# }}}
   # -l (local)
+# {{{
   set opt(-l) 0
   set idx [lsearch $args {-l}]
   if {$idx != "-1"} {
     set args [lreplace $args $idx $idx]
     set opt(-l) 1
   }
-
+# }}}
   # -del (local)
+# {{{
   set opt(-del) 0
   set idx [lsearch $args {-del}]
   if {$idx != "-1"} {
     set args [lreplace $args $idx $idx]
     set opt(-del) 1
   }
-  
+# }}}
   set keywords $args
 
   if {$opt(-l)} {
@@ -60,7 +64,7 @@ proc glist {args} {
 # Search pagelist
   foreach i $ilist {
     set found 1
-# Is it match with keyword
+# Is it match with $meta(keys)
     foreach k $keywords {
       if [info exist meta($i,keys)] {
         if {[lsearch -regexp $meta($i,keys) $k] >= 0} {
@@ -82,7 +86,7 @@ proc glist {args} {
     puts stderr "Not found... $keywords"
   } else {
 # If more than 1 page found, display them
-    if {[llength $found_names] > 1} {
+    if {[llength $found_names] > 0} {
       if {$serial_no == "no"} {
         set linenum 1
         foreach i $found_names {
@@ -107,7 +111,7 @@ proc glist {args} {
                 }
               close $fin
             } else {
-              set cols g:keywords
+              set cols "g:pagename g:keywords"
             }
 # Prepare `$disp'
             foreach col $cols {
@@ -121,19 +125,19 @@ proc glist {args} {
         }
       } ; # End serial_no == no
 # If only 1 page found, cd to it
-    } else {
-      #puts "cd $meta($found_names,where)"
-      set i $found_names
-      puts stderr [format "%-35s = %s" $i $meta($i,keywords)]
+    #} else {
+    #  #puts "cd $meta($found_names,where)"
+    #  set i $found_names
+    #  puts stderr [format "%-35s = %s" $i $meta($i,keywords)]
 
-      if {$opt(-del)} {
-        puts $meta($i,where)
-        file delete -force $meta($i,where)
-      }
-    }
+    #  if {$opt(-del)} {
+    #    puts $meta($i,where)
+    #    file delete -force $meta($i,where)
+    #  }
+    #}
   }
   return $found_names
-}
+} ; # End glist
 
 # }}}
 proc pagelist {{sort_by by_updated}} {
@@ -4843,7 +4847,11 @@ proc mindex {metafile} {
       #set meta($i,pagesize)     $vars(pagesize)
       set meta($i,where)        $vars($i,where)
 # cdk use "keys" for searching
-      set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class)]]
+      if [info exist vars(title)] {
+        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class) $vars(title)]]
+      } else {
+        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class)]]
+      }
     } else {
       puts "Error: not exist.. $varspath"
     }
