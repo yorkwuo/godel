@@ -42,7 +42,7 @@ proc glist {args} {
     if [file exist .godel/indexing.tcl] {
       source .godel/indexing.tcl
     } else {
-      puts "Error: Not exist... .godel/indexing.tcl "
+      puts stderr "Error: Not exist... .godel/indexing.tcl "
     }
   }
 
@@ -115,7 +115,7 @@ proc glist {args} {
               set width [lindex $col 1]
               append disp [format "%${width}s " [gvars $i $name]]
             }
-            puts [format "%-3s %s" $linenum $disp]
+            puts stderr [format "%-3s %s" $linenum $disp]
           }
           incr linenum
         }
