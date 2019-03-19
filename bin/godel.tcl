@@ -140,6 +140,43 @@ proc glist {args} {
 } ; # End glist
 
 # }}}
+proc todo_table {ilist} {
+  upvar fout fout 
+
+  foreach i $ilist {
+    source $i/.godel/vars.tcl
+    if {$vars(done)} {
+    } else {
+      lappend tlist [list $vars(g:pagename) $vars(priority) $vars(title) $vars(done)]
+    }
+    godel_array_reset vars
+  }
+
+  puts $fout "<table class=table1>"
+  foreach t [lsort -index 1 $tlist] {
+    set page [lindex $t 0]
+    set prio [lindex $t 1]
+    set done [lindex $t 3]
+    set titl [lindex $t 2]
+    if {$prio == "1"} {
+      puts $fout "<tr bgcolor=pink>"
+    } elseif {$prio == "2"} {
+      puts $fout "<tr bgcolor=cyan>"
+    } else {
+      puts $fout "<tr>"
+    }
+    puts $fout "<td><a href=$page/.index.htm>$page</a></td>"
+    puts $fout "<td>$prio</td>"
+    if {$done} {
+      puts $fout "<td>O</td>"
+    } else {
+      puts $fout "<td></td>"
+    }
+    puts $fout "<td>$titl</td>"
+    puts $fout "</tr>"
+  }
+  puts $fout "</table>"
+}
 proc pagelist {{sort_by by_updated}} {
 # ghtm_pagelist by_updated/by_size
   global env
@@ -2402,9 +2439,18 @@ proc todo_create {args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-k) 1
   }
+  # -p (priority)
+  set opt(-p) 0
+  set idx [lsearch $args {-p}]
+  if {$idx != "-1"} {
+    set priority [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-p) 1
+  }
 
   set title [lindex $args 0]
 
+# Create todo directory
   set todonum [clock format [clock seconds] -format {%Y-%m-%d_%H-%M_%S}]
   puts $todonum
   file mkdir $todopath/$todonum
@@ -2417,17 +2463,27 @@ proc todo_create {args} {
   set env(GODEL_META_FILE) ./localmeta.tcl
   godel_array_reset meta
 # Create localmeta.tcl/indexing.tcl
-  exec genmeta.tcl > localmeta.tcl
-  source ./localmeta.tcl
-  meta_indexing indexing.tcl
+  exec genmeta.tcl > .godel/lmeta.tcl
+  source .godel/lmeta.tcl
+  #meta_indexing indexing.tcl
+  #mindex .godel/lmeta.tcl
 
 # Set title/keywords
   gset $todonum title $title
+  if ![info exist keywords] {
+    set keywords ""
+  }
   gset $todonum g:keywords $keywords
+
+  if ![info exist priority] {
+    set priority 3
+  }
+  gset $todonum priority   $priority
   
 # Create localmeta.tcl/indexing.tcl
-  exec genmeta.tcl > localmeta.tcl
-  meta_indexing indexing.tcl
+  exec genmeta.tcl > .godel/lmeta.tcl
+  #exec lind.tcl
+  mindex .godel/lmeta.tcl
 }
 
 # todo_list, tlist
