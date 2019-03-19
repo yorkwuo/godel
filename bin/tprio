@@ -1,0 +1,12 @@
+#!/usr/bin/tclsh
+source $env(GODEL_ROOT)/bin/godel.tcl
+cd [file dirname [tbox_cyg2unix [gpage_where todo]]]
+
+set p [lindex $argv 0]
+set size [llength $argv]
+for {set i 1} {$i < $size} {incr i} {
+  set page [lindex $argv $i]
+  #puts $page
+  gset -l $page priority $p
+}
+

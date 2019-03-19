@@ -5,13 +5,15 @@ proc glist {args} {
 
   set name_width 35
 # .gll.conf
+# {{{
   if [file exist .gl.conf] {
     source .gl.conf
   } elseif [file exist $env(HOME)/.gl.conf] {
     source $env(HOME)/.gl.conf
   }
-
-# -n 
+# }}}
+  # -n 
+# {{{
   set idx [lsearch $args {-n}]
   if {$idx != "-1"} {
     set serial_no [lindex $args [expr $idx + 1]]
@@ -19,23 +21,25 @@ proc glist {args} {
   } else {
     set serial_no no
   }
-
+# }}}
   # -l (local)
+# {{{
   set opt(-l) 0
   set idx [lsearch $args {-l}]
   if {$idx != "-1"} {
     set args [lreplace $args $idx $idx]
     set opt(-l) 1
   }
-
+# }}}
   # -del (local)
+# {{{
   set opt(-del) 0
   set idx [lsearch $args {-del}]
   if {$idx != "-1"} {
     set args [lreplace $args $idx $idx]
     set opt(-del) 1
   }
-  
+# }}}
   set keywords $args
 
   if {$opt(-l)} {
@@ -60,7 +64,7 @@ proc glist {args} {
 # Search pagelist
   foreach i $ilist {
     set found 1
-# Is it match with keyword
+# Is it match with $meta(keys)
     foreach k $keywords {
       if [info exist meta($i,keys)] {
         if {[lsearch -regexp $meta($i,keys) $k] >= 0} {
@@ -82,7 +86,7 @@ proc glist {args} {
     puts stderr "Not found... $keywords"
   } else {
 # If more than 1 page found, display them
-    if {[llength $found_names] > 1} {
+    if {[llength $found_names] > 0} {
       if {$serial_no == "no"} {
         set linenum 1
         foreach i $found_names {
@@ -107,7 +111,7 @@ proc glist {args} {
                 }
               close $fin
             } else {
-              set cols g:keywords
+              set cols "g:pagename g:keywords"
             }
 # Prepare `$disp'
             foreach col $cols {
@@ -121,21 +125,58 @@ proc glist {args} {
         }
       } ; # End serial_no == no
 # If only 1 page found, cd to it
-    } else {
-      #puts "cd $meta($found_names,where)"
-      set i $found_names
-      puts stderr [format "%-35s = %s" $i $meta($i,keywords)]
+    #} else {
+    #  #puts "cd $meta($found_names,where)"
+    #  set i $found_names
+    #  puts stderr [format "%-35s = %s" $i $meta($i,keywords)]
 
-      if {$opt(-del)} {
-        puts $meta($i,where)
-        file delete -force $meta($i,where)
-      }
-    }
+    #  if {$opt(-del)} {
+    #    puts $meta($i,where)
+    #    file delete -force $meta($i,where)
+    #  }
+    #}
   }
   return $found_names
-}
+} ; # End glist
 
 # }}}
+proc todo_table {ilist} {
+  upvar fout fout 
+
+  foreach i $ilist {
+    source $i/.godel/vars.tcl
+    if {$vars(done)} {
+    } else {
+      lappend tlist [list $vars(g:pagename) $vars(priority) $vars(title) $vars(done)]
+    }
+    godel_array_reset vars
+  }
+
+  puts $fout "<table class=table1>"
+  foreach t [lsort -index 1 $tlist] {
+    set page [lindex $t 0]
+    set prio [lindex $t 1]
+    set done [lindex $t 3]
+    set titl [lindex $t 2]
+    if {$prio == "1"} {
+      puts $fout "<tr bgcolor=pink>"
+    } elseif {$prio == "2"} {
+      puts $fout "<tr bgcolor=cyan>"
+    } else {
+      puts $fout "<tr>"
+    }
+    puts $fout "<td><a href=$page/.index.htm>$page</a></td>"
+    puts $fout "<td>$prio</td>"
+    if {$done} {
+      puts $fout "<td>O</td>"
+    } else {
+      puts $fout "<td></td>"
+    }
+    puts $fout "<td>$titl</td>"
+    puts $fout "</tr>"
+  }
+  puts $fout "</table>"
+}
 proc pagelist {{sort_by by_updated}} {
 # ghtm_pagelist by_updated/by_size
   global env
@@ -2398,9 +2439,18 @@ proc todo_create {args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-k) 1
   }
+  # -p (priority)
+  set opt(-p) 0
+  set idx [lsearch $args {-p}]
+  if {$idx != "-1"} {
+    set priority [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-p) 1
+  }
 
   set title [lindex $args 0]
 
+# Create todo directory
   set todonum [clock format [clock seconds] -format {%Y-%m-%d_%H-%M_%S}]
   puts $todonum
   file mkdir $todopath/$todonum
@@ -2413,25 +2463,37 @@ proc todo_create {args} {
   set env(GODEL_META_FILE) ./localmeta.tcl
   godel_array_reset meta
 # Create localmeta.tcl/indexing.tcl
-  exec genmeta.tcl > localmeta.tcl
-  source ./localmeta.tcl
-  meta_indexing indexing.tcl
+  exec genmeta.tcl > .godel/lmeta.tcl
+  source .godel/lmeta.tcl
+  #meta_indexing indexing.tcl
+  #mindex .godel/lmeta.tcl
 
 # Set title/keywords
   gset $todonum title $title
+  if ![info exist keywords] {
+    set keywords ""
+  }
   gset $todonum g:keywords $keywords
+
+  if ![info exist priority] {
+    set priority 3
+  }
+  gset $todonum priority   $priority
   
 # Create localmeta.tcl/indexing.tcl
-  exec genmeta.tcl > localmeta.tcl
-  meta_indexing indexing.tcl
+  exec genmeta.tcl > .godel/lmeta.tcl
+  #exec lind.tcl
+  mindex .godel/lmeta.tcl
 }
 
+# todo_list, tlist
+# {{{
 proc todo_list {args} {
   global env
   set todo_path [gvars todo where]
   godel_array_reset meta
-  source $todo_path/localmeta.tcl
-  source $todo_path/indexing.tcl
+  source $todo_path/.godel/lmeta.tcl
+  source $todo_path/.godel/indexing.tcl
 
   set ilist [list]
   foreach i [lsort [array name meta *,where]] {
@@ -2471,7 +2533,7 @@ proc todo_list {args} {
     if {[llength $found_names] > 1} {
       foreach i $found_names {
         set done [gvars $i done]
-        if {$done == ""}   {set done 0}
+        if {$done == ""} {set done 0}
         if {$done == "NA"} {set done 0}
         if {!$done} {
           if [info exist meta($i,keywords)] {
@@ -2512,6 +2574,7 @@ proc todo_list {args} {
   }
 
 } ;# todo_list end
+# }}}
 #@>gget
 # {{{
 proc gget {pagename args} {
@@ -2744,9 +2807,29 @@ proc gvars {args} {
   return $vlist
 }
 # }}}
+# gset
+# {{{
 proc gset {args} {
   upvar env env
   upvar meta meta
+  # -l (local)
+# {{{
+  set opt(-l) 0
+  set idx [lsearch $args {-l}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-l) 1
+  }
+# }}}
+
+  if {$opt(-l)} {
+    if [file exist .godel/indexing.tcl] {
+      source .godel/indexing.tcl
+    } else {
+      puts "Error: Not exist... .godel/indexing.tcl "
+    }
+  }
+
   if ![info exist meta] {
     foreach i $env(GODEL_META_SCOPE) { mload $i }
   }
@@ -2792,6 +2875,7 @@ proc gset {args} {
   godel_array_save vars $where/.godel/vars.tcl
 
 }
+# }}}
 #: godel_init_vars
 # {{{
 proc godel_init_vars {key value} {
@@ -4840,7 +4924,11 @@ proc mindex {metafile} {
       #set meta($i,pagesize)     $vars(pagesize)
       set meta($i,where)        $vars($i,where)
 # cdk use "keys" for searching
-      set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class)]]
+      if [info exist vars(title)] {
+        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class) $vars(title)]]
+      } else {
+        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class)]]
+      }
     } else {
       puts "Error: not exist.. $varspath"
     }
