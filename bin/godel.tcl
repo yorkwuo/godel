@@ -339,13 +339,13 @@ proc gmd {fname} {
   } else {
     set kout [open $fname2.md w]
       #puts $kout "<div>"
-      puts $kout "<a href=$fname2.md type=text/txt>edit</a>"
 # This blank line is important. Without it the markdown processing will fail.
       #puts $kout "</div>"
+      puts $kout "# $fname2"
+      puts $kout ""
+      puts $kout "<a href=$fname2.md type=text/txt>edit</a>"
       puts $kout ""
       puts $kout "@? $fname1"
-      puts $kout ""
-      puts $kout "# $fname2"
     close $kout
   }
 
@@ -466,7 +466,7 @@ proc gnotes {content} {
 
 #    set addr [gpage_where $iname]
 #    set pagename [gvars $iname g:pagename]
-    set atxt "<a href=$iname.PNG><img src=$iname.PNG style=\"float:right;width:30%\"></a>"
+    set atxt "<a href=$iname><img src=$iname style=\"float:right;width:30%\"></a>"
     #regsub -all {@img\(pmos} $aftermd $atxt aftermd
     regsub -all "@img\\($iname\\)" $aftermd $atxt aftermd
   }

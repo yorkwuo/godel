@@ -8,5 +8,5 @@ set flist [glob */.godel]
 foreach f $flist {
   set where [file dirname $f]
   set fname [file tail [file dirname $f]]
-  puts [format "%-45s %s" "set meta($fname,where)" $where]
+  puts [format "%-45s %s" "set meta($fname,where)" $pwd/$where]
 }
