@@ -52,6 +52,7 @@ unset correct
 bindkey -e
 # Bind Ctrl-o to `cd ..\n'
 bindkey -s "^o" "cd ..\n"
+bindkey "^w" backward-delete-word
 
 #-----------------------------------------------
 # Alias
