@@ -1,3 +1,7 @@
+proc time_now {} {
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H-%M_%S}]
+  return $timestamp
+}
 # glist
 # {{{
 proc glist {args} {
