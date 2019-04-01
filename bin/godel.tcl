@@ -1,4 +1,63 @@
-# glist
+# list_pages
+# {{{
+proc list_pages {args} {
+  upvar fout fout
+  # -k (key)
+# {{{
+  set opt(-k) 0
+  set idx [lsearch $args {-k}]
+  if {$idx != "-1"} {
+    set key  [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-k) 1
+  }
+# }}}
+  # -t (title)
+# {{{
+  set opt(-t) 0
+  set idx [lsearch $args {-t}]
+  if {$idx != "-1"} {
+    set title [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-t) 1
+  }
+# }}}
+  # -n (newline)
+# {{{
+  set opt(-n) 0
+  set idx [lsearch $args {-n}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-n) 1
+  }
+# }}}
+
+  set nlist {*}$args
+
+  puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
+# Title
+  if {$opt(-t)} {
+    puts $fout "<h1>$title</h1>"
+  }
+# List pages
+  foreach page $nlist {
+    if {$opt(-k)} {
+      set disp [gvars -l $page $key]
+    } else {
+      set disp [gvars -l $page g:pagename]
+    }
+    if {$opt(-n)} {
+      # With newline
+      puts $fout "<a class=hbox2 href=$page/.index.htm>$disp</a><br>"
+    } else {
+      # Single line
+      puts $fout "<a class=hbox2 href=$page/.index.htm>$disp</a>"
+    }
+  }
+  puts $fout "</div>"
+}
+# }}}
+# glist, gl
 # {{{
 proc glist {args} {
   global env
@@ -145,6 +204,10 @@ proc todo_table {ilist} {
 
   foreach i $ilist {
     source $i/.godel/vars.tcl
+    if [info exist vars(done)] {
+    } else {
+      set vars(done) 0
+    }
     if {$vars(done)} {
     } else {
       lappend tlist [list $vars(g:pagename) $vars(priority) $vars(title) $vars(done)]

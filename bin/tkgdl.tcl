@@ -2,111 +2,6 @@
 source $env(GODEL_ROOT)/bin/godel.tcl
 source .godel/indexing.tcl
 
-# save_a_row
-# {{{
-proc save_a_row {gpage} {
-  upvar meta meta
-  global cols
-
-  set pp [file dirname [gpage_where $gpage]]/.godel/vars.tcl
-  set varspath [tbox_cyg2unix $pp]
-# Get vars content
-  source $varspath
-
-  foreach colname $cols {
-    if [regexp pagename $colname] {
-    } else {
-      set value [string trimright [.$gpage.$colname get 1.0 end] \n]
-      set vars($colname) $value
-    }
-  }
-
-  godel_array_save vars $varspath
-}
-# }}}
-proc saveall {} {
-  upvar meta meta
-  upvar paths paths
-  #puts $paths
-  foreach path $paths {
-    save_a_row $path
-  }
-}
-
-set input_keywords [lindex $argv 0]
-
-global cols
-global widths
-lappend cols g:pagename
-set widths(g:pagename) 20
-if [file exist .co] {
-  #lappend cols g:keywords
-  set fin [open .co r]
-    while {[gets $fin line] >= 0} {
-      set width 20 ;# default width
-
-      if [regexp {^#} $line] {
-      } else {
-        regexp {;(\S*)} $line whole width
-        regsub {;\S*} $line {} line
-        regsub {\-} $width {} width
-        lappend cols $line
-        set widths($line) $width
-      }
-    }
-  close $fin
-} else {
-  lappend cols g:keywords
-}
-#@> draw_table
-# {{{
-proc draw_table {paths} {
-  upvar meta meta
-  upvar row row
-  global cols
-  global widths
-
-  foreach gpage $paths {
-    set ilist {}
-    godel_array_reset vars
-
-    set pp [file dirname [gpage_where $gpage]]/.godel/vars.tcl
-    set varspath [tbox_cyg2unix $pp]
-    source $varspath
-
-    if [winfo exist .$gpage] {
-      puts ".$gpage exist..."
-    } else {
-
-    foreach colname $cols {
-      if [info exist vars($colname)] {
-        lappend ilist $vars($colname)
-      } else {
-        lappend ilist ""
-      }
-    }
-  # .r1
-    frame .$gpage
-  # label
-    label .$gpage.c0 -text $row -width 4 -height 1 -borderwidth 2 -relief sunken
-    pack .$gpage.c0 -side left
-
-    set column 0
-    foreach i $ilist {
-  # text
-        set colname [lindex $cols $column]
-        text .$gpage.$colname -width $widths($colname) -height 1
-        .$gpage.$colname insert 1.0 $i
-        pack .$gpage.$colname -side left
-        incr column
-    }
-    pack .$gpage -side top -anchor sw
-    incr row
-  }
-  }
-
-}
-# }}}
 # open_firefox
 # {{{
 proc open_firefox {} {
@@ -141,7 +36,6 @@ proc clear_table {} {
   set row 1
 }
 # }}}
-
 # psave
 # {{{
 proc psave {} {
@@ -205,6 +99,114 @@ proc open_ghtm {} {
   catch {exec $env(GODEL_GVIM) $pp &}
 }
 # }}}
+# save_a_row
+# {{{
+proc save_a_row {gpage} {
+  upvar meta meta
+  global cols
+
+  set pp [file dirname [gpage_where $gpage]]/.godel/vars.tcl
+  set varspath [tbox_cyg2unix $pp]
+# Get vars content
+  source $varspath
+
+  foreach colname $cols {
+    if [regexp pagename $colname] {
+    } else {
+      set value [string trimright [.$gpage.$colname get 1.0 end] \n]
+      set vars($colname) $value
+    }
+  }
+
+  godel_array_save vars $varspath
+}
+# }}}
+# saveall
+# {{{
+proc saveall {} {
+  upvar meta meta
+  upvar paths paths
+  #puts $paths
+  foreach path $paths {
+    save_a_row $path
+  }
+}
+# }}}
+#@> draw_table
+# {{{
+proc draw_table {paths} {
+  upvar meta meta
+  upvar row row
+  global cols
+  global widths
+
+  foreach gpage $paths {
+    set ilist {}
+    godel_array_reset vars
+
+    set pp [file dirname [gpage_where $gpage]]/.godel/vars.tcl
+    set varspath [tbox_cyg2unix $pp]
+    source $varspath
+
+    if [winfo exist .$gpage] {
+      puts ".$gpage exist..."
+    } else {
+
+    foreach colname $cols {
+      if [info exist vars($colname)] {
+        lappend ilist $vars($colname)
+      } else {
+        lappend ilist ""
+      }
+    }
+  # .r1
+    frame .$gpage
+  # label
+    label .$gpage.c0 -text $row -width 4 -height 1 -borderwidth 2 -relief sunken
+    pack .$gpage.c0 -side left
+
+    set column 0
+    foreach i $ilist {
+  # text
+        set colname [lindex $cols $column]
+        text .$gpage.$colname -width $widths($colname) -height 1
+        .$gpage.$colname insert 1.0 $i
+        pack .$gpage.$colname -side left
+        incr column
+    }
+    pack .$gpage -side top -anchor sw
+    incr row
+  }
+  }
+
+}
+# }}}
+set input_keywords [lindex $argv 0]
+
+global cols
+global widths
+lappend cols g:pagename
+set widths(g:pagename) 20
+if [file exist .co] {
+  #lappend cols g:keywords
+  set fin [open .co r]
+    while {[gets $fin line] >= 0} {
+      set width 20 ;# default width
+
+      if [regexp {^#} $line] {
+      } else {
+        regexp {;(\S*)} $line whole width
+        regsub {;\S*} $line {} line
+        regsub {\-} $width {} width
+        lappend cols $line
+        set widths($line) $width
+      }
+    }
+  close $fin
+} else {
+  lappend cols g:keywords
+}
+
 #@> Main
 #pack [button .sysb -text Click -command psave]
 #proc Click {widget args} {psave}
