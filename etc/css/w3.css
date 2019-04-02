@@ -277,12 +277,12 @@ img {
   border-collapse: collapse;
 }
 .table1 td, .table1 th{
-  padding: 5px;
-  font-size:14px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-  border: 1px solid black;
-  border-color: #f79646 #ccc;  
+  padding       : 5px;
+  font-size     : 14px;
+  text-align    : right;
+  border-bottom : 1px solid #ddd;
+  border        : 1px solid black;
+  border-color  : #f79646 #ccc;  
 }
 .L1 {
   padding-left: 0px;

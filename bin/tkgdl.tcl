@@ -185,7 +185,7 @@ set input_keywords [lindex $argv 0]
 
 global cols
 global widths
-lappend cols g:pagename
+#lappend cols g:pagename
 set widths(g:pagename) 20
 if [file exist .co] {
   #lappend cols g:keywords
@@ -205,6 +205,7 @@ if [file exist .co] {
   close $fin
 } else {
   lappend cols g:keywords
+  set widths(g:keywords) 20
 }
 
 #@> Main
@@ -224,7 +225,7 @@ button .sysctrl.b1 -text Firefox -height 1 -command open_firefox
 button .sysctrl.b2 -text Save    -height 1 -command psave
 button .sysctrl.b3 -text Delete  -height 1 -command clear_table
 button .sysctrl.b4 -text vars    -height 1 -command open_vars
-button .sysctrl.ghtm -text ghtm    -height 1 -command open_ghtm
+button .sysctrl.ghtm -text ghtm  -height 1 -command open_ghtm
 lappend butts .sysctrl.b1
 lappend butts .sysctrl.b2
 lappend butts .sysctrl.b3

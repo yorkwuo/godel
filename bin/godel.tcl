@@ -1,3 +1,82 @@
+
+
+
+# html_rows_sort
+proc html_rows_sort {rows args} {
+
+  # -c 
+# {{{
+  set opt(-c) 0
+  set idx [lsearch $args {-c}]
+  if {$idx != "-1"} {
+    set column_num [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-c) 1
+  } else {
+    set column_num 0
+  }
+# }}}
+
+  # -p 
+# {{{
+  set opt(-p) 0
+  set idx [lsearch $args {-p}]
+  if {$idx != "-1"} {
+    set parameter [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-p) 1
+  } else {
+    set parameter ""
+  }
+# }}}
+
+  set rows2 {}
+  foreach row $rows {
+    set data [lindex $row $column_num]
+    regsub -all {<[^>]*>} $data {} data
+    lappend rows2 [list $row $data]
+  }
+
+  if {$opt(-p)} {
+    set rows3 [lsort -index end {*}$parameter $rows2]
+  } else {
+    set rows3 [lsort -index end $rows2]
+  }
+
+  foreach r $rows3 {
+    lappend sorted_rows [lindex $r 0]
+  }
+  return $sorted_rows
+}
+
+
+# make_table
+proc make_table {rows header} {
+  upvar fout fout
+
+  puts $fout "<table class=table1>"
+  puts $fout $header
+
+  foreach row $rows {
+    set row_ctrl [lindex $row end]
+    set row [lreplace $row end end]
+
+    set col_size [llength $row]
+    puts -nonewline $fout "<tr $row_ctrl>"
+    for {set i 0} {$i < $col_size} {incr i} {
+      set data [lindex $row $i]
+# Do nothing to data if <td> already specified
+      if {[regexp {<td} $data]} {
+        puts -nonewline $fout "$data"
+      } else {
+        puts -nonewline $fout "<td>$data</td>"
+      }
+    }
+    puts $fout "</tr>"
+  }
+  puts $fout "<table>"
+}
+
 proc time_now {} {
   set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H-%M_%S}]
   return $timestamp
