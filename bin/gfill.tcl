@@ -30,7 +30,7 @@ set nlist [glob -nocomplain -type d {*}$pattern]
 
 if {$opt(-v)} {
   foreach page $nlist {
-    puts [format "gset -l %-20s %-15s \"%s\"" $page $key "$value]
+    puts [format "gset -l %-20s %-15s \"%s\"" $page $key $value]
   }
 } else {
   foreach page $nlist {
