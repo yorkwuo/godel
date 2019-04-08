@@ -9,10 +9,11 @@ if {$fname == ""} {
   return
 }
 set kout [open $fname.md w]
+puts $kout "# $fname"
+puts $kout ""
 puts $kout "<a href=$fname.md type=text/txt>edit</a>"
 puts $kout ""
-puts $kout "*#. $fname"
-puts $kout ""
-puts $kout "# $fname"
+puts $kout "@? $fname"
+
 puts $kout ""
 close $kout

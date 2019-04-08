@@ -116,7 +116,11 @@ proc list_pages {args} {
   }
 # }}}
 
-  set nlist {*}$args
+  if {$args == ""} {
+    set nlist [glob -type d *]
+  } else {
+    set nlist {*}$args
+  }
 
   puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
 # Title
