@@ -2627,7 +2627,7 @@ proc todo_create {args} {
   gset $todonum g:keywords $keywords
 
   if ![info exist priority] {
-    set priority 3
+    set priority 1
   }
   gset $todonum priority   $priority
   
