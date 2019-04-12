@@ -2629,7 +2629,11 @@ proc todo_create {args} {
   if ![info exist priority] {
     set priority 1
   }
+  if ![info exist done] {
+    set done 0
+  }
   gset $todonum priority   $priority
+  gset $todonum done       $done
   
 # Create localmeta.tcl/indexing.tcl
   exec genmeta.tcl > .godel/lmeta.tcl
