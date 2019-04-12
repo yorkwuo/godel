@@ -2748,6 +2748,9 @@ proc gget {pagename args} {
   #source $env(GODEL_META_FILE)
   foreach i $env(GODEL_META_SCOPE) { mload $i }
   #puts $meta($pagename,where)
+  if {$pagename == "."} {
+    set meta(.,where) .
+  }
   source $meta($pagename,where)/.godel/vars.tcl
   set where $meta($pagename,where)
 
@@ -2899,6 +2902,9 @@ proc gvars {args} {
     source .godel/vars.tcl
     parray vars
     return
+  } elseif {$pagename == "."} {
+    #source .godel/vars.tcl
+    set meta($pagename,where) .
   }
   set args [lreplace $args 0 0]
   set vname    $args
@@ -3007,6 +3013,9 @@ proc gset {args} {
   }
 
   set pagename [lindex $args 0]
+  if {$pagename == "."} {
+    set meta($pagename,where) .
+  }
   source $meta($pagename,where)/.godel/vars.tcl
   set where $meta($pagename,where)
   
