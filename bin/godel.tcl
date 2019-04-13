@@ -559,6 +559,9 @@ proc gnotes {content} {
   upvar count count
   upvar meta meta
 
+# To allow `\' to display in code block
+  regsub -all {\\ \n} $content "\\\n" content
+
 # @) Get vars values
   set matches [regexp -all -inline {@\)(\S+)} $content]
   foreach {g0 g1} $matches {
