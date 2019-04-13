@@ -3,17 +3,6 @@ source $env(GODEL_ROOT)/bin/godel.tcl
 #puts [gvars [lindex $argv 0] [lindex $argv 1]]
 set values [gvars {*}$argv]
 
-if {$values == ""} {
-  return
+foreach i $values {
+  puts $i
 }
-puts "\n# Values\n"
-if {[llength $values] > 1} {
-  foreach i $values {
-    puts $i
-  }
-} else {
-  foreach i {*}$values {
-    puts $i
-  }
-}
-
