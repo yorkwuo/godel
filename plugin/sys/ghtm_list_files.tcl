@@ -19,7 +19,13 @@ proc ghtm_list_files {pattern {description ""}} {
     } elseif [regexp -nocase {\.docx} $fname] {
       puts $fout "<a href=\"$full\" type=text/docx>$full</a><br>"
 
+    } elseif [regexp -nocase {\.one} $fname] {
+      puts $fout "<a href=\"$full\">$full</a><br>"
+
     } elseif [regexp -nocase {\.mpg} $fname] {
+      puts $fout "<a href=\"$full\">$full</a><br>"
+
+    } elseif [regexp -nocase {\.msg} $fname] {
       puts $fout "<a href=\"$full\">$full</a><br>"
 
     } elseif [regexp -nocase {\.mobi} $fname] {
