@@ -3,6 +3,11 @@ proc ghtm_top_bar {{type NA}} {
   upvar env env
   upvar vars vars
   upvar flow_name flow_name
+  if [file exist .godel/dyvars.tcl] {
+    source .godel/dyvars.tcl
+  } else {
+    set dyvars(last_updated) Now
+  }
 
 # default flow_name
   if ![info exist flow_name] {
@@ -66,7 +71,12 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "    <a href=\"../.index.htm\"                 class=\"w3-bar-item w3-button\">Parent</a>"
   puts $fout "  </div>"
   puts $fout "</div>"
+  
+  puts $fout "  <div><a href=../.index.htm class=\"w3-bar-item w3-button w3-hover-red w3-right\">Parent</a></div>"
+  puts $fout "  <div class=\"w3-bar-item w3-button w3-hover-red w3-right\">$dyvars(last_updated)</div>"
+
   puts $fout "</div>"
+
 
   puts $fout "<textarea rows=10 cols=70 id=\"text_board\" style=\"display:none;font-size:10px\"></textarea>"
 

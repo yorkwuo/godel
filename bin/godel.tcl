@@ -1,9 +1,30 @@
 
 
+# deln: de-link
+proc deln {args} {
+  set files [glob {*}$args]
+  foreach file $files {
+    if [file exist $file] {
+      puts $file
+      set lnpath [file readlink $file]
+      exec mv $file .$file
+      exec cp $lnpath .
+    }
+  }
+}
+proc reln {args} {
+  set files [glob {*}$args]
+  foreach file $files {
+    if [file exist .$file] {
+      puts $file
+      exec rm $file
+      exec mv .$file $file
+    }
+  }
+}
 
 # html_rows_sort
 proc html_rows_sort {rows args} {
-
   # -c 
 # {{{
   set opt(-c) 0
@@ -418,49 +439,16 @@ proc get_srcpath {infile} {
   cd $orgpath
   return $srcpath
 }
-proc ge {args} {
-  global env env
-  set tool     [lindex $args 0]
-  set chktype  [lindex $args 1]
-  set infile   [lindex $args 2]
-  set pagename [lindex $args 3]
-  set prefix   [lindex $args 4]
+proc ptses_chkver {ses_path} {
+  set fin [open $ses_path/cmd_log r]
+    set data [read $fin]
+  close $fin
 
-  set ilist [glob -nocomplain $env(GODEL_ROOT)/plugin/ge/*.tcl]
-  foreach i $ilist {
-    source $i
-  }
-
-  if ![file exist $infile] {
-    puts "Error: $infile not exist..."
-    return
-  }
-
-  set srcpath [get_srcpath $infile]
-  puts [pwd]
-  puts $srcpath
-
-# Call extraction script
-  set elist [${tool}_$chktype $infile]
-  
-  foreach i $elist {
-    set key   [lindex $i 0]
-    set value [lindex $i 1]
-    puts [format "%-20s %s" $key $value]
-  }
-
-  if {$pagename != "" && $prefix != ""} {
-    foreach i $elist {
-      set key   [lindex $i 0]
-      set value [lindex $i 1]
-      puts "gset $pagename $prefix,$key $value"
-      gset $pagename $prefix,$key $value
-    }
-    puts "gset $pagename $prefix,srcpath $srcpath"
-    gset $pagename $prefix,srcpath $srcpath
-  } else {
-    puts "Error: both pathname and prefix should have values."
-  }
+  regexp {\/(\w-\d\d\d\d\.\d\d-.*?)\/} $data whole version
+  puts $version
+}
+proc ge {cmd args} {
+  eval $cmd {*}$args
 }
 #----------------
 # compare list a with b
@@ -1953,6 +1941,7 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
 
   file mkdir .godel
   # .index.htm
+  global fout
   set fout [open ".index.htm" w]
 
   puts $fout "<!DOCTYPE html>"
@@ -2919,7 +2908,7 @@ proc gvars {args} {
   #}
   if [info exist meta($pagename,where)] {
   } else {
-    puts "Error: meta($pagename,where) not exist..."
+    #puts "Error: meta($pagename,where) not exist..."
     return
   }
   source $meta($pagename,where)/.godel/vars.tcl
