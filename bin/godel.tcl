@@ -1,4 +1,13 @@
 
+proc gdall {} {
+  set dirs [glob -type d *]
+  foreach dir $dirs {
+    puts $dir
+    cd $dir
+    godel_draw
+    cd ..
+  }
+}
 
 # deln: de-link
 proc deln {args} {
