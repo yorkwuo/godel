@@ -1,4 +1,5 @@
-
+# gdall, gd all
+# {{{
 proc gdall {} {
   set dirs [glob -type d *]
   foreach dir $dirs {
@@ -8,8 +9,9 @@ proc gdall {} {
     cd ..
   }
 }
-
+# }}}
 # deln: de-link
+# {{{
 proc deln {args} {
   set files [glob {*}$args]
   foreach file $files {
@@ -21,6 +23,9 @@ proc deln {args} {
     }
   }
 }
+# }}}
+# reln: re-link
+# {{{
 proc reln {args} {
   set files [glob {*}$args]
   foreach file $files {
@@ -31,7 +36,7 @@ proc reln {args} {
     }
   }
 }
-
+# }}}
 # html_rows_sort
 proc html_rows_sort {rows args} {
   # -c 
@@ -111,7 +116,6 @@ proc time_now {} {
   set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H-%M_%S}]
   return $timestamp
 }
-# glist
 # list_pages
 # {{{
 proc list_pages {args} {
@@ -189,7 +193,17 @@ proc glist {args} {
     source $env(HOME)/.gl.conf
   }
 # }}}
-  # -n 
+  # -f
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
+  if {$idx != "-1"} {
+    set listfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-f) 1
+  } else {
+    set listfile NA
+  }
+  # -n, use -n to select item
 # {{{
   set idx [lsearch $args {-n}]
   if {$idx != "-1"} {
@@ -232,9 +246,17 @@ proc glist {args} {
   }
 
   set ilist [list]
-  foreach i [lsort [array name meta *,where]] {
-    regsub ",where" $i "" i
-    lappend ilist $i
+  if {$opt(-f)} {
+    set kin [open $listfile r]
+      while {[gets $kin line] >= 0} {
+        lappend ilist $line
+      }
+    close $kin
+  } else {
+    foreach i [lsort [array name meta *,where]] {
+      regsub ",where" $i "" i
+      lappend ilist $i
+    }
   }
 
   set found_names [list]
@@ -317,6 +339,7 @@ proc glist {args} {
 } ; # End glist
 
 # }}}
+# todo_table
 proc todo_table {ilist} {
   upvar fout fout 
 
