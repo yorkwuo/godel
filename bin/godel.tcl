@@ -1,3 +1,10 @@
+proc datediff {d1 d2} {
+  set d1 [exec date -d $d1 +%s]
+  set d2 [exec date -d $d2 +%s]
+
+  return [expr ($d1 - $d2)/86400]
+}
+
 # gdall, gd all
 # {{{
 proc gdall {} {
@@ -1415,8 +1422,12 @@ proc num_symbol {num {symbol NA}} {
   set s(Y) 100000000
   set s(B) 1000000000
   set s(T) 1000000000000
-  regsub -all {,} $num {} num
-  return [format_3digit [expr $num/$s($symbol)]]$symbol
+  if {$num == "NA"} {
+    return "NA"
+  } else {
+    regsub -all {,} $num {} num
+    return [format_3digit [expr $num/$s($symbol)]]$symbol
+  }
 }
 
 # format_3digit
