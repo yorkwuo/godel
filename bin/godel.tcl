@@ -1955,7 +1955,7 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
   set ::toc_list [list]
 
   if {$ghtm_proc == "clean"} {
-    file delete -force -- .godel .index.htm
+    file delete -force -- .godel .index.htm .main.htm .toc.htm
     return
   }
 
