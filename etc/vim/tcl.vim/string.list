@@ -15,6 +15,7 @@
 -anchor
 -append
 -application
+-applies_to
 -area
 -as_user_default
 -async
@@ -38,6 +39,7 @@
 -cell_power
 -check
 -check_slack_consistency
+-clamp_value
 -class
 -classes
 -clock
@@ -83,9 +85,12 @@
 -derate
 -design
 -design_list
+-direction
+-domain
 -early
 -echo
 -edge_triggered
+-elements
 -enable_fast_analysis
 -enable_propagation
 -enabled_arcs_only
@@ -110,6 +115,7 @@
 -from
 -full
 -gate_clock
+-ground
 -ground_capacitance_factor
 -group
 -height
@@ -126,6 +132,7 @@
 -image
 -include
 -include_clock_gating_network
+-include_scope
 -incr
 -increasing
 -incremental
@@ -142,6 +149,10 @@
 -integer
 -internal
 -is_fixed
+-isolation_ground_net
+-isolation_power_net
+-isolation_sense
+-isolation_signal
 -keep_capacitive_coupling
 -late
 -layers
@@ -152,6 +163,7 @@
 -lib_cell
 -library
 -list_not_annotated
+-location
 -log_file
 -logical
 -low
@@ -235,10 +247,15 @@
 -pin_to_pin_nets
 -polygon
 -port
+-ports
 -positive_edge_logic
+-power
 -power_domains
 -preferred_direction_only
 -preserve_design_name
+-primary_ground_net
+-primary_power_net
+-pst
 -pt
 -q
 -quiet
@@ -256,9 +273,11 @@
 -route
 -route_nondefault_nets_first
 -row
+-rule
 -rules
 -scan
 -scan_compression
+-scope
 -sdf
 -separate_all_groups
 -setup
@@ -276,11 +295,13 @@
 -specific_variables
 -spef
 -start
+-state
 -status_details
 -stop
 -stop_propagation
 -submit_command
 -summary
+-supplies
 -synthesis_optimization
 -target_latency
 -tech

@@ -1,3 +1,5 @@
+h:
+	@gget . h
 1:
 	gen.tcl
 
