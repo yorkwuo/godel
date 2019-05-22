@@ -358,6 +358,10 @@ auto_insert_evel_shifters_on_clocks
 auto_insert_level_shifters_on_clocks
 buffer_list_for_trans_cap_noise_fanout
 bus_naming_style
+cache_dir_chmod_octal
+cache_file_chmod_octal
+cache_read
+cache_write
 cell_mapping_size_rule_for_hold
 cell_mapping_size_rule_for_setup_transition
 cell_mapping_vt_rule_for_hold
@@ -370,6 +374,7 @@ compile_clock_gating_through_hierarchy
 compile_log_format
 compile_timing_high_effort
 compile_top_all_paths
+dc_allow_rtl_pg
 def_physical_cells_to_be_ignored
 default_threshold_voltage_group
 defin_ignore_row_power_violation
@@ -414,6 +419,7 @@ link_path_per_instance
 min_layer_mode_soft_cost
 min_required_def_version
 multi_core_enable_analysis
+mv_allow_ls_on_leaf_pin_boundary
 mv_insert_level_shifters_on_ideal_nets
 mv_no_main_power_violations
 parasitics_log_file
