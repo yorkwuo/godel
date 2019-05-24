@@ -1,3 +1,27 @@
+proc cshpath {} {
+  global env
+  set ilist [split $env(PATH) :]
+  foreach i [lsort -unique $ilist] {
+    puts $i
+  }
+}
+proc lremove {target_list item} {
+  set a [lsearch -all -inline -not -exact $target_list $item]
+  return $a
+}
+proc restore_env {} {
+
+  while {[gets $kin line] >= 0} {
+    regsub {=} $line { } line
+    set value [lrange $line 1 end]
+    set name  [lindex $line 0]
+    if [regexp {LS_COLOR} $name] {
+    } else {
+      puts "setenv $name \"$value\""
+    }
+  }
+
+}
 proc gdraw_default {} {
   upvar env env
   set kout [open .godel/ghtm.tcl w]

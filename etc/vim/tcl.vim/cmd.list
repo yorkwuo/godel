@@ -216,6 +216,7 @@ get_timing_paths
 get_voltage_map
 get_vtype_value
 getenv
+getvar
 gget
 ghtm_chap
 ghtm_code_snip
@@ -380,6 +381,7 @@ insert_buffer
 insert_dft
 insert_mv_cells
 inst_catgorize
+lappend_var
 lef_library
 lefin
 legalize_placement
@@ -619,6 +621,7 @@ set_hierarchy_separator
 set_host_options
 set_ideal_network
 set_ignored_layers
+set_info_var
 set_input_delay
 set_input_noise
 set_input_transition
@@ -689,6 +692,7 @@ set_vsdc
 setop_intersection
 setop_restrict
 setop_union
+setvar
 shell_is_in_exploration_mode
 shell_is_in_topographical_mode
 shift

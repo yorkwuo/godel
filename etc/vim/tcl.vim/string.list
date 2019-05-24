@@ -86,6 +86,7 @@
 -design
 -design_list
 -direction
+-display
 -domain
 -early
 -echo
@@ -133,6 +134,7 @@
 -include
 -include_clock_gating_network
 -include_scope
+-inclusive
 -incr
 -increasing
 -incremental
@@ -271,6 +273,7 @@
 -reuse
 -rise
 -rise_frbsub
+-rise_from
 -rise_to
 -route
 -route_nondefault_nets_first
