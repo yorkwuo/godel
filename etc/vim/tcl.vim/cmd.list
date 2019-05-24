@@ -37,6 +37,7 @@ check_clock_as_data
 check_design
 check_library
 check_license
+check_mv_design
 check_noise
 check_power
 check_rp_groups
@@ -378,6 +379,7 @@ inno_timeDesign
 inno_timing_reg2reg
 insert_buffer
 insert_dft
+insert_mv_cells
 inst_catgorize
 lappend_var
 lef_library
