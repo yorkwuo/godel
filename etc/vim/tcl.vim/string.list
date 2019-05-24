@@ -266,7 +266,9 @@
 -relief
 -removal
 -resistance_factor
+-resolve
 -retime
+-reuse
 -rise
 -rise_frbsub
 -rise_to
