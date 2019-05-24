@@ -175,7 +175,7 @@ proc create_power_domain {args} {
     set args [lreplace $args $idx_elements [expr $idx_elements + 1]]
   }
   set power_domain [lindex $args 0]
-  puts $power_domain
+  #puts $power_domain
 
   lappend upfvars(power_domains) $power_domain
   if [info exist elements] {
