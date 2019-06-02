@@ -1,4 +1,9 @@
 #!/usr/bin/tclsh
 source $env(GODEL_ROOT)/bin/godel.tcl
+if [info exist env(GODEL_USER_PLUGIN)] {
+  set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
+  foreach f $flist { source $f }
+}
+
 #puts [gvars [lindex $argv 0] [lindex $argv 1]]
 ge {*}$argv

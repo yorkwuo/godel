@@ -83,6 +83,7 @@ create_lib
 create_logic_net
 create_logic_port
 create_mode
+create_module
 create_mw_lib
 create_mw_libreport_hierarchy
 create_net
@@ -137,6 +138,7 @@ define_state_retention_cell
 define_user_attribute
 defout
 deinfe_power_switch_cell
+delete
 dft_drc
 dio_get_module_inst
 dio_icc2_report_timing
@@ -191,6 +193,7 @@ get_lib_pins
 get_libs
 get_license
 get_macro_lib
+get_modules
 get_nets
 get_object_name
 get_objects_by_location
@@ -218,10 +221,12 @@ get_vtype_value
 getenv
 getvar
 gget
+ghtm_begin
 ghtm_chap
 ghtm_code_snip
 ghtm_dir_tree
 ghtm_dl
+ghtm_end
 ghtm_filter_notes
 ghtm_filter_table
 ghtm_get_file_vars
@@ -420,6 +425,7 @@ map_retention_cell
 meta_get_page_cat
 meta_get_page_where
 meta_get_pagelist
+mkdir
 money_convert
 move_object
 new_boolean

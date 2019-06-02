@@ -1,3 +1,43 @@
+
+proc clone_godel {path} {
+  puts $path/.godel
+  exec cp $path/.godel/ghtm.tcl .godel
+  exec cp $path/.godel/vars.tcl .godel
+}
+proc ghtm_begin {ofile} {
+  global fout
+  global env
+
+  set fout [open $ofile w]
+
+  puts $fout "<!DOCTYPE html>"
+  puts $fout "<html>"
+  puts $fout "<head>"
+  puts $fout "<title>$ofile</title>"
+
+  puts $fout "<style>"
+  set fin [open $env(GODEL_ROOT)/etc/css/w3.css r]
+    while {[gets $fin line] >= 0} {
+      puts $fout $line
+    }
+  close $fin
+  puts $fout "</style>"
+
+  puts $fout "<meta charset=utf-8>"
+  puts $fout "</head>"
+  puts $fout "<body>"
+}
+
+proc ghtm_end {} {
+  global fout
+
+  puts $fout "</body>"
+  puts $fout "</html>"
+
+  close $fout
+}
+
+
 proc cshpath {} {
   global env
   set ilist [split $env(PATH) :]
