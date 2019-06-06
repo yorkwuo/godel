@@ -123,6 +123,7 @@ current_scenario
 current_session
 current_test_mode
 cut_in_half_by
+debImport
 defin
 define_always_on_cell
 define_design_lib
@@ -573,6 +574,13 @@ save_session
 save_total_nvp
 save_upf
 scale_parasitics
+schCreateWindow
+schFindHierFormCreate
+schFit
+schPopViewUp
+schPushViewIn
+schSelect
+schSetScope
 schkout
 sd_stdcell_power_hookup
 sdfin
@@ -681,6 +689,7 @@ set_scan_configuration
 set_scan_element
 set_scenario_status
 set_scope
+set_sense
 set_si_delay_analysis
 set_snap_setting
 set_steady_state_resistance
@@ -739,6 +748,9 @@ split_by_space
 split_paths
 split_polygons
 split_proc
+srcDeselectAll
+srcFndSigCreate
+srcFndSignalSearch
 start_hosts
 steps_list
 suppress_message

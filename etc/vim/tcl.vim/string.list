@@ -82,6 +82,8 @@
 -delay
 -delay_offset
 -delay_type
+-delim
+-delimiter
 -derate
 -design
 -design_list
@@ -148,7 +150,9 @@
 -input_port_nets
 -input_transition_fall
 -input_transition_rise
+-inst
 -instance
+-instpin
 -integer
 -internal
 -is_fixed
@@ -251,6 +255,7 @@
 -polygon
 -port
 -ports
+-positive
 -positive_edge_logic
 -power
 -power_domains
@@ -285,12 +290,14 @@
 -scan_compression
 -scope
 -sdf
+-selected
 -separate_all_groups
 -setup
 -setup_margin
 -shielding_mode
 -show
 -side
+-signal
 -significant_digits
 -skew
 -slack_domain
@@ -341,6 +348,7 @@
 -voltage
 -waveform
 -width
+-win
 -with_ground
 -within
 -witness_limit
