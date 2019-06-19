@@ -25,8 +25,8 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "  <div><a href=.godel/ghtm.tcl type=text/txt class=\"w3-bar-item w3-button w3-hover-red\">Edit</a></div>"
 # Values
   puts $fout "  <div><a href=.godel/vars.tcl type=text/txt class=\"w3-bar-item w3-button w3-hover-red\">Values</a></div>"
-# Save
-  #puts $fout "  <button class=\"w3-button w3-hover-red\" onclick=\"do_gg()\">Save</button>"
+# Draw
+  puts $fout "  <div><button class=\"w3-bar-item w3-button w3-hover-red\" onclick=\"js_godel_draw()\">Draw</button></div>"
 # TOC
   puts $fout "  <div><a href=.main.htm  class=\"w3-bar-item w3-button w3-hover-red\">TOC</a></div>"
 
@@ -88,6 +88,13 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "    } else { "
   puts $fout "        x.className = x.className.replace(\" w3-show\", \"\");"
   puts $fout "    }"
+  puts $fout "}"
+  set server $env(GODEL_SERVER)
+  set pwd    [pwd]
+  puts $fout "function js_godel_draw() {"
+  puts $fout "  httpRequest = new XMLHttpRequest();"
+  puts $fout "  httpRequest.open('GET', 'http://$server/eval/cd $pwd;godel_draw', true);"
+  puts $fout "  httpRequest.send();"
   puts $fout "}"
   puts $fout "</script>"
 }
