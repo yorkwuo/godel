@@ -3,7 +3,9 @@ rdt_source_if_exists
 add_buffer
 add_buffer_on_line
 rdt_lib_setup
+rdt_print_info
 add_port_state
+reset_timing_derate
 add_power_state
 rdt_run_signoff
 add_pst_state
