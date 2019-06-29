@@ -55,6 +55,7 @@
 -clock_pins
 -clock_tree
 -clocks
+-combi
 -combinational
 -command
 -command_group
@@ -89,6 +90,8 @@
 -design_list
 -direction
 -display
+-div
+-divide
 -domain
 -early
 -echo
@@ -123,6 +126,7 @@
 -ground_capacitance_factor
 -group
 -height
+-hier
 -hier_separator
 -hierarchical
 -hierarchical_separators
@@ -175,6 +179,7 @@
 -logical
 -low
 -map_effort
+-master
 -master_clock
 -max
 -max_capacitance
@@ -422,6 +427,7 @@ is_clock_pin
 is_data_pin
 is_generated
 is_hierarchical
+is_sequential
 leakage_power_corner
 leakage_vt_cell_naming_rule
 link_allow_design_mismatch

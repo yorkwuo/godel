@@ -474,6 +474,7 @@ pt_index4
 pt_index5
 pulse_parse_open
 qrc_tech_file
+rdt_source_if_exists
 read_aocvm
 read_ddc
 read_design
@@ -591,9 +592,11 @@ set_attribute
 set_block_pin_constraints
 set_case_analysis
 set_cell_location
+set_clock_exclusivity
 set_clock_gating_check
 set_clock_gating_objects
 set_clock_gating_style
+set_clock_group
 set_clock_groups
 set_clock_sense
 set_clock_transition
@@ -657,7 +660,9 @@ set_max_leakage_power
 set_max_lvth_percentage
 set_max_transition
 set_message_info
+set_min_delay
 set_min_libraryset_host_options
+set_min_pulse_width
 set_mode
 set_multi_input_switching_coefficient
 set_multi_scenario_license_limit
