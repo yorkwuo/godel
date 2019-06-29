@@ -1,9 +1,13 @@
-
+# clone_godel
+# {{{
 proc clone_godel {path} {
   puts $path/.godel
   exec cp $path/.godel/ghtm.tcl .godel
   exec cp $path/.godel/vars.tcl .godel
 }
+# }}}
+# ghtm_begin
+# {{{
 proc ghtm_begin {ofile} {
   global fout
   global env
@@ -27,7 +31,9 @@ proc ghtm_begin {ofile} {
   puts $fout "</head>"
   puts $fout "<body>"
 }
-
+# }}}
+# ghtm_end
+# {{{
 proc ghtm_end {} {
   global fout
 
@@ -36,15 +42,18 @@ proc ghtm_end {} {
 
   close $fout
 }
-
-
+# }}}
+# cshpath
+# {{{
 proc cshpath {} {
+# List PATH in csh
   global env
   set ilist [split $env(PATH) :]
   foreach i [lsort -unique $ilist] {
     puts $i
   }
 }
+# }}}
 proc lremove {target_list item} {
   set a [lsearch -all -inline -not -exact $target_list $item]
   return $a
@@ -74,13 +83,17 @@ proc gdraw_default {} {
     puts $kout "}"
   close $kout
 }
+# datediff
+# {{{
 proc datediff {d1 d2} {
+# datediff 2019/3/2 2019/1/3
+
   set d1 [exec date -d $d1 +%s]
   set d2 [exec date -d $d2 +%s]
 
   return [expr ($d1 - $d2)/86400]
 }
-
+# }}}
 # gdall, gd all
 # {{{
 proc gdall {} {
@@ -121,6 +134,7 @@ proc reln {args} {
 }
 # }}}
 # html_rows_sort
+# {{{
 proc html_rows_sort {rows args} {
   # -c 
 # {{{
@@ -166,9 +180,9 @@ proc html_rows_sort {rows args} {
   }
   return $sorted_rows
 }
-
-
+# }}}
 # make_table
+# {{{
 proc make_table {rows header} {
   upvar fout fout
 
@@ -194,11 +208,14 @@ proc make_table {rows header} {
   }
   puts $fout "<table>"
 }
-
+# }}}
+# time_now
+# {{{
 proc time_now {} {
   set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H-%M_%S}]
   return $timestamp
 }
+# }}}
 # list_pages
 # {{{
 proc list_pages {args} {
@@ -321,12 +338,14 @@ proc glist {args} {
       source .godel/indexing.tcl
     } else {
       puts stderr "Error: Not exist... .godel/indexing.tcl "
+      return
     }
   }
 
-  if ![info exist meta] {
-    foreach i $env(GODEL_META_SCOPE) { mload $i }
-  }
+  # Comment out to disable global gl
+  #if ![info exist meta] {
+  #  foreach i $env(GODEL_META_SCOPE) { mload $i }
+  #}
 
   set ilist [list]
   if {$opt(-f)} {
@@ -423,6 +442,7 @@ proc glist {args} {
 
 # }}}
 # todo_table
+# {{{
 proc todo_table {ilist} {
   upvar fout fout 
 
@@ -464,6 +484,9 @@ proc todo_table {ilist} {
   }
   puts $fout "</table>"
 }
+# }}}
+# pagelist
+# {{{
 proc pagelist {{sort_by by_updated}} {
 # ghtm_pagelist by_updated/by_size
   global env
@@ -547,6 +570,7 @@ proc pagelist {{sort_by by_updated}} {
 
   ghtm_table_nodir pagelist 0
 }
+# }}}
 proc get_srcpath {infile} {
   set orgpath [pwd]
   cd [file dirname $infile]

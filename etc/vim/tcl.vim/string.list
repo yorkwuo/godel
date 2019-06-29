@@ -1,3 +1,8 @@
+direction
+exists
+-divide_by
+-ignore_clock_latency
+is_analog
 -1801
 -above
 -active
