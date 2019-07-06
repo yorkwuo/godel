@@ -27,33 +27,10 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "  <div><a href=.godel/vars.tcl type=text/txt class=\"w3-bar-item w3-button w3-hover-red\">Values</a></div>"
 # Draw
   puts $fout "  <div><button class=\"w3-bar-item w3-button w3-hover-red\" onclick=\"js_godel_draw()\">Draw</button></div>"
+# 
+  puts $fout "  <div><div id=\"div\" class=\"w3-bar-item w3-button w3-hover-red\" style=\"width:20px;height:20px;\" contenteditable=\"true\"></div></div>"
 # TOC
   puts $fout "  <div><a href=.main.htm  class=\"w3-bar-item w3-button w3-hover-red\">TOC</a></div>"
-
-# asic4 path
-# {{{
-  if {[info exist vars(module)] && [info exist vars(stage)] && [info exist vars(version)] && [info exist vars(corner)]} {
-    # detail
-    if {$type == "detail"} {
-      if [info exist vars(module)] {
-        puts $fout "<div class=\"w3-bar-item w3-hover-red\"><a href=../../../../.index.htm>CENTER/</a><a href=../../../.index.htm>$vars(module)/</a><a href=../../.index.htm>$vars(stage)/</a><a href=../.index.htm>$vars(version)/</a><a href=.index.htm>$vars(corner)</a></div>"
-      }
-    # corner
-    } elseif {$type == "corner"} {
-       puts $fout "<div class=\"w3-bar-item w3-hover-red\"><a href=../../../.index.htm>CENTER/</a><a href=../../.index.htm>$vars(module)/</a><a href=../.index.htm>$vars(stage)/</a><a href=.index.htm>$vars(version)/</a></div>"
-    # version
-    } elseif {$type == "version"} {
-       puts $fout "<div class=\"w3-bar-item w3-hover-red\"><a href=../../.index.htm>CENTER/</a><a href=../.index.htm>$vars(module)/</a><a href=.index.htm>$vars(stage)/</a></div>"
-    # stage
-    } elseif {$type == "stage"} {
-       puts $fout "<div class=\"w3-bar-item w3-hover-red\"><a href=../.index.htm>CENTER/</a><a href=.index.htm>$vars(module)/</a></div>"
-    # module
-    } elseif {$type == "module"} {
-       puts $fout "<div class=\"w3-bar-item w3-hover-red\"><a href=.index.htm>CENTER/</a></div>"
-    }
-  }
-# }}}
-  set path_define   [tbox_cygpath $env(GODEL_ROOT)/plugin/flow/define.tcl]
   set path_help     [tbox_cygpath $env(GODEL_ROOT)/docs/help/.index.htm]
   set path_pagelist [tbox_cygpath $env(GODEL_META_CENTER)/pagelist/.index.htm]
   set path_draw     [tbox_cygpath $env(GODEL_ROOT)/plugin/gdraw/gdraw_$flow_name.tcl]
@@ -62,8 +39,6 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "  <div id=\"Demo\" class=\"w3-dropdown-content w3-bar-block w3-card-4\">"
   puts $fout "    <a href=\".main.htm\"                     class=\"w3-bar-item w3-button\">Table of Content</a>"
   puts $fout "    <a href=\".index.htm\"      type=text/txt class=\"w3-bar-item w3-button\">HTML</a>"
-  puts $fout "    <a href=\".godel/w3.css\"   type=text/txt class=\"w3-bar-item w3-button\">CSS</a>"
-  puts $fout "    <a href=\"$path_define\"    type=text/txt class=\"w3-bar-item w3-button\">Define</a>"
   puts $fout "    <a href=\"$path_help\"                    class=\"w3-bar-item w3-button\">Help</a>"
   puts $fout "    <a href=\"$path_pagelist\"                class=\"w3-bar-item w3-button\">Pagelist</a>"
   puts $fout "    <a href=\"$path_draw\"      type=text/txt class=\"w3-bar-item w3-button\">Draw</a>"
@@ -96,6 +71,32 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "  httpRequest.open('GET', 'http://$server/eval/cd $pwd;godel_draw', true);"
   puts $fout "  httpRequest.send();"
   puts $fout "}"
+  puts $fout ""
+  puts $fout "var div = document.getElementById('div');"
+  puts $fout "div.addEventListener('paste', function(e) {"
+  puts $fout "  if(e.clipboardData) {"
+  puts $fout "    for(var i = 0; i < e.clipboardData.items.length; i++ ) {"
+  puts $fout "      var c = e.clipboardData.items\[i];"
+  puts $fout "      var f = c.getAsFile();"
+  puts $fout "      var reader = new FileReader();"
+  puts $fout "      reader.readAsDataURL(f);"
+  puts $fout "      reader.onload = function(e) {"
+  puts $fout "        div.innerHTML  = 'Done';"
+  puts $fout "        var imgbase64 = e.target.result;"
+  puts $fout "    $.ajax({"
+  puts $fout "        type: \"POST\","
+  puts $fout "        url: \"http://localhost:8080/image $pwd\","
+  puts $fout "        data: { "
+  puts $fout "           imgbase64"
+  puts $fout "        }"
+  puts $fout "      }).done(function(responseText) {"
+  puts $fout "        console.log('saved');"
+  puts $fout "      });"
+  puts $fout "      }"
+  puts $fout "    }"
+  puts $fout "  }"
+  puts $fout "});"
+
   puts $fout "</script>"
 }
 # vim:fdm=marker
