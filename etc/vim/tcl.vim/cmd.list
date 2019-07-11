@@ -797,6 +797,7 @@ tbox_procExists
 tbox_tcl2gdraw
 tbox_ww2date
 timing_library
+tk_getOpenFile
 tmu
 tobx_list
 tproc_dc_library_setup

@@ -1,3 +1,75 @@
+# lvars
+# {{{
+proc lvars {name key} {
+  source $name/.godel/vars.tcl
+  if [info exist vars($key)] {
+    return $vars($key)
+  } else {
+    return NA
+  }
+}
+# }}}
+# local_table
+# {{{
+proc local_table {name args} {
+  global fout
+
+  # -f (filelist name)
+# {{{
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
+  if {$idx != "-1"} {
+    set listfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-f) 1
+  } else {
+    set listfile NA
+  }
+# }}}
+  # -c (columns)
+# {{{
+  set opt(-c) 0
+  set idx [lsearch $args {-c}]
+  if {$idx != "-1"} {
+    set columns [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-c) 1
+  }
+# }}}
+  # -w (width)
+# {{{
+  set opt(-w) 0
+  set idx [lsearch $args {-w}]
+  if {$idx != "-1"} {
+    set width [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-w) 1
+  }
+# }}}
+
+  set ilist [read_file_ret_list $listfile]
+
+  puts $fout "<table class=table2 id=$name>"
+# Table Headers
+  puts $fout "<tr>"
+  puts $fout "<th width=${width}%>name</th>"
+  foreach col $columns {
+    puts $fout "<th>$col</th>"
+  }
+# Table Data
+  puts $fout "</tr>"
+  foreach i $ilist {
+    puts $fout "<tr>"
+    puts $fout "<td><a href=$i/.index.htm>$i</a></td>"
+    foreach col $columns {
+      puts $fout "<td>[lvars $i $col]</td>"
+    }
+    puts $fout "</tr>"
+  }
+  puts $fout "</table>"
+
+}
+# }}}
 # clone_godel
 # {{{
 proc clone_godel {path} {
@@ -71,18 +143,21 @@ proc restore_env {} {
   }
 
 }
+# gdraw_default
+# {{{
 proc gdraw_default {} {
   upvar env env
   set kout [open .godel/ghtm.tcl w]
     puts $kout "ghtm_top_bar"
+    puts $kout "list_img 4 100% images/*.jpg"
     puts $kout "ghtm_list_files *"
-    puts $kout "#list_img"
     puts $kout "#ghtm_filter_notes"
     puts $kout "gnotes {"
     puts $kout ""
     puts $kout "}"
   close $kout
 }
+# }}}
 # datediff
 # {{{
 proc datediff {d1 d2} {
