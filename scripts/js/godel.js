@@ -1,3 +1,20 @@
+function word_highlight (target_words) {
+  var x = document.getElementsByTagName("p");
+
+  for (i = 0; i < x.length; i++) {
+    var tmptext = x[i].innerHTML;
+
+    for (n=0; n < target_words.length; n++) {
+      var regpat  = new RegExp((target_words[n]), "g");
+      tmptext = tmptext.replace(
+        regpat, "<span style=background-color:yellow>\$&</span>"
+      );
+    }
+
+    x[i].innerHTML = tmptext;
+  }
+}
+
 // scan_table
 // {{{
 function aaa (tname) {
@@ -156,6 +173,49 @@ function filter_table(tname, column_no, e) {
       }       
     }
   }
+}
+// }}}
+// filter_table_keyword
+// {{{
+function filter_table_keyword(tname, column_no, input) {
+  var input, filter, table, tr, td, i;
+
+  //input = document.getElementById("filter_table_input");
+  //input = keyword;
+  console.log(input);
+  //filter = input.value.toUpperCase();
+  filter = input.toUpperCase();
+
+  //if(e.keyCode === 13){
+    //e.preventDefault(); // Ensure it is only this code that rusn
+
+    filter = filter.split(" ");
+    //alert("kkk");
+
+    table = document.getElementById(tname);
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[column_no];
+      if (td) {
+        var found = 1
+        for (j = 0; j < filter.length; j++) {
+          if (td.innerHTML.toUpperCase().indexOf(filter[j]) > -1) {
+            found = found && 1;
+          } else {
+            found = found && 0;
+          }
+        }
+        if (found) {
+            tr[i].style.display = "";
+        } else {
+            tr[i].style.display = "none";
+        }
+          //} else {
+          //}
+      }       
+    }
+  //}
 }
 // }}}
 // refresh

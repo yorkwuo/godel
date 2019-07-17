@@ -423,8 +423,11 @@ listcomp
 lminus
 ln_icf_icc2
 load_upf
+local_table
 ls_cell
+lsetvar
 lshift
+lvars
 map_isolation_cell
 map_level_shifter_cell
 map_power_switch_cell

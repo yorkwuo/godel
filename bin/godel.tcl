@@ -1,3 +1,19 @@
+# lsetvar
+# {{{
+proc lsetvar {name key value} {
+  set varfile $name/.godel/vars.tcl
+
+  if [file exist $varfile] {
+    puts $varfile
+    source $varfile
+    set vars($key) $value
+  } else {
+    puts "Error: not exist... $varfile"
+  }
+
+  godel_array_save vars $varfile
+}
+# }}}
 # lvars
 # {{{
 proc lvars {name key} {
@@ -46,23 +62,55 @@ proc local_table {name args} {
     set opt(-w) 1
   }
 # }}}
+  # -edit (edit)
+# {{{
+  set opt(-edit) 0
+  set idx [lsearch $args {-edit}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-edit) 1
+  }
+# }}}
 
-  set ilist [read_file_ret_list $listfile]
+  if {$opt(-f)} {
+    set ilist [read_file_ret_list $listfile]
+  } else {
+    set flist [glob -nocomplain */.index.htm]
+    foreach f $flist {
+      lappend ilist [file dirname $f]
+    }
+  }
 
+# Start creating table...
   puts $fout "<table class=table2 id=$name>"
 # Table Headers
   puts $fout "<tr>"
-  puts $fout "<th width=${width}%>name</th>"
+  if {$opt(-w)} {
+    puts $fout "<th width=${width}%>name</th>"
+  } else {
+    puts $fout "<th width=20%>name</th>"
+  }
   foreach col $columns {
     puts $fout "<th>$col</th>"
   }
-# Table Data
   puts $fout "</tr>"
+# Table Row
   foreach i $ilist {
     puts $fout "<tr>"
-    puts $fout "<td><a href=$i/.index.htm>$i</a></td>"
+    if {$opt(-edit)} {
+      puts $fout "<td><a href=$i/.godel/ghtm.tcl type=text/txt>e</a> : <a href=$i/.godel/vars.tcl type=text/txt>v</a> : <a href=$i/.index.htm>$i</a></td>"
+    } else {
+      puts $fout "<td><a href=$i/.index.htm>$i</a></td>"
+    }
+    # Table Data
     foreach col $columns {
-      puts $fout "<td>[lvars $i $col]</td>"
+      set col_data [lvars $i $col]
+      if [regexp {img:} $col] {
+        regsub {img:} $col {} col
+        puts $fout "<td><a href=$i/images/cover.jpg><img height=100px src=$i/images/cover.jpg></a></td>"
+      } else {
+        puts $fout "<td>$col_data</td>"
+      }
     }
     puts $fout "</tr>"
   }
@@ -149,7 +197,8 @@ proc gdraw_default {} {
   upvar env env
   set kout [open .godel/ghtm.tcl w]
     puts $kout "ghtm_top_bar"
-    puts $kout "list_img 4 100% images/*.jpg"
+    puts $kout "#list_img 4 100% images/*.jpg"
+    puts $kout "#local_table tbl -c {g:pagename} -w 20"
     puts $kout "ghtm_list_files *"
     puts $kout "#ghtm_filter_notes"
     puts $kout "gnotes {"
@@ -2219,6 +2268,17 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
       source .godel/ghtm.tcl
     }
   }
+  puts $fout "<script>"
+  if [info exist rwords] {
+    puts $fout "var target_words = \["
+    foreach rword $rwords {
+      puts $fout "\'$rword\',"
+    }
+    puts $fout "\];"
+    puts $fout "word_highlight(target_words)"
+  }
+
+  puts $fout "</script>"
   puts $fout "</body>"
   puts $fout "</html>"
 
