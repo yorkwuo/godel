@@ -1,3 +1,252 @@
+# lchart_linebar
+# {{{
+proc lchart_linebar {args} {
+  global fout
+  global env
+  # -f (filelist name)
+# {{{
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
+  if {$idx != "-1"} {
+    set listfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-f) 1
+  } else {
+    set listfile NA
+  }
+# }}}
+  # -c (columns)
+# {{{
+  set opt(-c) 0
+  set idx [lsearch $args {-c}]
+  if {$idx != "-1"} {
+    set columns [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-c) 1
+  }
+# }}}
+  # -colors (colors)
+# {{{
+  set opt(-colors) 0
+  set idx [lsearch $args {-colors}]
+  if {$idx != "-1"} {
+    set colors [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-colors) 1
+  } else {
+    set colors [list green orange crimson maroon cyan ]
+  }
+# }}}
+  if {$opt(-f)} {
+    set ilist [read_file_ret_list $listfile]
+  } else {
+    set flist [glob -nocomplain */.index.htm]
+    foreach f $flist {
+      lappend rowlist [file dirname $f]
+    }
+  }
+
+  puts $fout "<div style=\"width:90%;\">"
+  puts $fout "<canvas id=\"myChart\"></canvas>"
+  puts $fout "</div>"
+  if ![file exist "Chart.js"] {
+    exec cp $env(GODEL_ROOT)/scripts/js/chartjs/Chart.js .
+  }
+  puts $fout "<script src=Chart.js></script>"
+# data sets
+# {{{
+  puts $fout "<script>"
+  puts $fout "var dset = {"
+    foreach i $rowlist {
+      lappend rows   "\"$i\""
+    }
+    set x_axis   [join $rows   ,]
+
+    puts $fout "        labels: \[$x_axis\],"
+    puts $fout "        datasets: \["
+
+    set counter 0
+    foreach column $columns {
+      #puts $column
+      set values [list]
+      set rows   [list]
+      foreach i $rowlist {
+        set value [lvars $i $column]
+        lappend values $value
+        lappend rows   "\"$i\""
+      }
+      set y_axis   [join $values ,]
+      puts $fout "        {"
+      if {$counter == "0"} {
+        puts $fout "            type: \"line\","
+        puts $fout "            yAxisID: \"y-axis-2\","
+      } else {
+        puts $fout "            type: \"bar\","
+        puts $fout "            yAxisID: \"y-axis-1\","
+      }
+      puts $fout "            label: \"$column\","
+      puts $fout "            backgroundColor: '[lindex $colors $counter]',"
+      puts $fout "            borderColor: '[lindex $colors $counter]',"
+      puts $fout "            data: \[$y_axis\],"
+      puts $fout "            fill: false,"
+      puts $fout "            lineTension: 0,"
+      puts $fout "            spanGaps: true,"
+      puts $fout "        },"
+
+      incr counter
+    }
+  puts $fout "       \]"
+  puts $fout "    };"
+  puts $fout "</script>"
+# }}}
+# command file
+# {{{
+  puts $fout "<script>"
+  puts $fout "var ctx = document.getElementById('myChart').getContext('2d');"
+  puts $fout ""
+  puts $fout "var chart = new Chart(ctx, {"
+  puts $fout "    type: 'bar',"
+  puts $fout "    data: dset,"
+  puts $fout "    options: {"
+  puts $fout "        scales: {"
+  puts $fout "            xAxes: \[{"
+  puts $fout "              stacked: true"
+  puts $fout "            }],"
+  puts $fout "            yAxes: \[{"
+  puts $fout "              stacked: true,"
+  puts $fout "              position: 'left',"
+  puts $fout "              id: 'y-axis-1',"
+  puts $fout "            }, {"
+  puts $fout "              stacked: true,"
+  puts $fout "              position: 'right',"
+  puts $fout "              id: 'y-axis-2',"
+  puts $fout "            }]"
+  puts $fout "        }"
+  puts $fout "    }"
+  puts $fout "});"
+  puts $fout "</script>"
+# }}}
+
+}
+# }}}
+# lchart_bar
+# {{{
+proc lchart_bar {args} {
+  global fout
+  global env
+# -f (filelist name)
+# {{{
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
+  if {$idx != "-1"} {
+    set listfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-f) 1
+  } else {
+    set listfile NA
+  }
+# }}}
+  # -c (columns)
+# {{{
+  set opt(-c) 0
+  set idx [lsearch $args {-c}]
+  if {$idx != "-1"} {
+    set columns [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-c) 1
+  }
+# }}}
+  # -colors (colors)
+# {{{
+  set opt(-colors) 0
+  set idx [lsearch $args {-colors}]
+  if {$idx != "-1"} {
+    set colors [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-colors) 1
+  } else {
+    set colors [list green orange crimson maroon cyan ]
+  }
+# }}}
+  if {$opt(-f)} {
+    set ilist [read_file_ret_list $listfile]
+  } else {
+    set flist [glob -nocomplain */.index.htm]
+    foreach f $flist {
+      lappend rowlist [file dirname $f]
+    }
+  }
+# data sets
+# {{{
+  set kout [open ".godel/lchart_dset.js" w]
+  puts $kout "var dset = {"
+    foreach i $rowlist {
+      lappend rows   "\"$i\""
+    }
+    set x_axis   [join $rows   ,]
+
+    puts $kout "        labels: \[$x_axis\],"
+    puts $kout "        datasets: \["
+
+    set counter 0
+    foreach column $columns {
+      #puts $column
+      set values [list]
+      set rows   [list]
+      foreach i $rowlist {
+        set value [lvars $i $column]
+        lappend values $value
+        lappend rows   "\"$i\""
+      }
+      set y_axis   [join $values ,]
+      puts $kout "        {"
+      puts $kout "            label: \"$column\","
+      puts $kout "            backgroundColor: '[lindex $colors $counter]',"
+      puts $kout "            data: \[$y_axis\],"
+      puts $kout "            fill: false,"
+      puts $kout "            lineTension: 0,"
+      puts $kout "            spanGaps: true,"
+      puts $kout "        },"
+
+      incr counter
+    }
+  puts $kout "       \]"
+  puts $kout "    };"
+  close $kout
+# }}}
+# command file
+# {{{
+  set kout [open ".godel/lchart_cmd.js" w]
+  puts $kout "var ctx = document.getElementById('myChart').getContext('2d');"
+  puts $kout ""
+  puts $kout "var chart = new Chart(ctx, {"
+  puts $kout "    type: 'bar',"
+  puts $kout "    data: dset,"
+  puts $kout "    options: {"
+  puts $kout "        scales: {"
+  puts $kout "            xAxes: \[{"
+  puts $kout "              stacked: true"
+  puts $kout "            }],"
+  puts $kout "            yAxes: \[{"
+  puts $kout "              stacked: true"
+  puts $kout "            }]"
+  puts $kout "        }"
+  puts $kout "    }"
+  puts $kout "});"
+  close $kout
+# }}}
+
+  puts $fout "<div style=\"width:90%;\">"
+  puts $fout "<canvas id=\"myChart\"></canvas>"
+  puts $fout "</div>"
+  puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/chartjs/Chart.js]></script>"
+  puts $fout "<script src=.godel/lchart_dset.js></script>"
+  puts $fout "<script src=.godel/lchart_cmd.js></script>"
+
+}
+# }}}
+# lchart_line
+# {{{
 proc lchart_line {args} {
   global fout
   global env
@@ -101,7 +350,7 @@ proc lchart_line {args} {
   puts $fout "<script src=.godel/lchart_line_cmd.js></script>"
 
 }
-
+# }}}
 # lsetvar
 # {{{
 proc lsetvar {name key value} {
