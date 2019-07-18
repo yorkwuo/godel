@@ -1,3 +1,107 @@
+proc lchart_line {args} {
+  global fout
+  global env
+  set colors [list blue green orange crimson maroon cyan ]
+# -f (filelist name)
+# {{{
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
+  if {$idx != "-1"} {
+    set listfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-f) 1
+  } else {
+    set listfile NA
+  }
+# }}}
+  # -c (columns)
+# {{{
+  set opt(-c) 0
+  set idx [lsearch $args {-c}]
+  if {$idx != "-1"} {
+    set columns [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-c) 1
+  }
+# }}}
+  if {$opt(-f)} {
+    set ilist [read_file_ret_list $listfile]
+  } else {
+    set flist [glob -nocomplain */.index.htm]
+    foreach f $flist {
+      lappend rowlist [file dirname $f]
+    }
+  }
+
+# line_dset.js (data sets)
+# {{{
+  set kout [open ".godel/lchart_line_dset.js" w]
+  puts $kout "var line_dset = {"
+    foreach i $rowlist {
+      lappend rows   "\"$i\""
+    }
+    set x_axis   [join $rows   ,]
+
+    puts $kout "        labels: \[$x_axis\],"
+    puts $kout "        datasets: \["
+
+    set counter 0
+    foreach column $columns {
+      #puts $column
+      set values [list]
+      set rows   [list]
+      foreach i $rowlist {
+        set value [lvars $i $column]
+        lappend values $value
+        lappend rows   "\"$i\""
+      }
+      set y_axis   [join $values ,]
+      puts $kout "        {"
+      puts $kout "            label: \"$column\","
+      puts $kout "            borderColor: '[lindex $colors $counter]',"
+      puts $kout "            data: \[$y_axis\],"
+      puts $kout "            fill: false,"
+      puts $kout "            lineTension: 0,"
+      puts $kout "            spanGaps: true,"
+      puts $kout "        },"
+
+      incr counter
+    }
+  puts $kout "       \]"
+  puts $kout "    };"
+  close $kout
+# }}}
+# line_cmd.js (command file)
+# {{{
+  set kout [open ".godel/lchart_line_cmd.js" w]
+  puts $kout "var ctx = document.getElementById('myChart').getContext('2d');"
+  puts $kout ""
+  puts $kout "var chart = new Chart(ctx, {"
+  puts $kout "    type: 'line',"
+  puts $kout "    data: line_dset,"
+  puts $kout "    options: {"
+  puts $kout "        scales: {"
+  puts $kout "            yAxes: \[{"
+  puts $kout "                ticks: {"
+  puts $kout "                    beginAtZero: true"
+  puts $kout "                }"
+  puts $kout "            }]"
+  puts $kout "        }"
+  puts $kout "    }"
+  puts $kout "});"
+  close $kout
+# }}}
+
+  #puts $fout "<div style=\"width:$attr(ghtm_table_line,size);\">"
+  puts $fout "<div style=\"width:50%;\">"
+  puts $fout "<canvas id=\"myChart\"></canvas>"
+  puts $fout "</div>"
+  puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/chartjs/Chart.js]></script>"
+  puts $fout "<script src=.godel/lchart_line_dset.js></script>"
+  puts $fout "<script src=.godel/lchart_line_cmd.js></script>"
+
+}
+
 # lsetvar
 # {{{
 proc lsetvar {name key value} {
