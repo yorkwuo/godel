@@ -40,7 +40,7 @@ proc lchart_linebar {args} {
   if {$opt(-f)} {
     set ilist [read_file_ret_list $listfile]
   } else {
-    set flist [glob -nocomplain */.index.htm]
+    set flist [glob -nocomplain */.godel]
     foreach f $flist {
       lappend rowlist [file dirname $f]
     }
@@ -171,7 +171,7 @@ proc lchart_bar {args} {
   if {$opt(-f)} {
     set ilist [read_file_ret_list $listfile]
   } else {
-    set flist [glob -nocomplain */.index.htm]
+    set flist [glob -nocomplain */.godel]
     foreach f $flist {
       lappend rowlist [file dirname $f]
     }
@@ -276,7 +276,7 @@ proc lchart_line {args} {
   if {$opt(-f)} {
     set ilist [read_file_ret_list $listfile]
   } else {
-    set flist [glob -nocomplain */.index.htm]
+    set flist [glob -nocomplain */.godel]
     foreach f $flist {
       lappend rowlist [file dirname $f]
     }
@@ -357,7 +357,7 @@ proc lsetvar {name key value} {
   set varfile $name/.godel/vars.tcl
 
   if [file exist $varfile] {
-    puts $varfile
+ #   puts $varfile
     source $varfile
     set vars($key) $value
   } else {
@@ -428,7 +428,7 @@ proc local_table {name args} {
   if {$opt(-f)} {
     set ilist [read_file_ret_list $listfile]
   } else {
-    set flist [glob -nocomplain */.index.htm]
+    set flist [glob -nocomplain */.godel]
     foreach f $flist {
       lappend ilist [file dirname $f]
     }
