@@ -1,3 +1,12 @@
+proc hlwords {args} {
+  upvar vars vars
+  upvar rwords rwords
+
+  set rwords $args
+  set vars(hlwords) $args
+
+  godel_array_save vars .godel/vars.tcl 
+}
 # lchart_linebar
 # {{{
 proc lchart_linebar {args} {
@@ -554,6 +563,7 @@ proc gdraw_default {} {
     puts $kout "#local_table tbl -c {g:pagename} -w 20"
     puts $kout "ghtm_list_files *"
     puts $kout "#ghtm_filter_notes"
+    puts $kout "#hlwords    "
     puts $kout "gnotes {"
     puts $kout ""
     puts $kout "}"
