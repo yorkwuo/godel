@@ -1,3 +1,14 @@
+# grefresh
+# {{{
+proc grefresh {path} {
+  set org [pwd]
+  cd $path
+  godel_draw
+  cd $org
+}
+# }}}
+# hlwords
+# {{{
 proc hlwords {args} {
   upvar vars vars
   upvar rwords rwords
@@ -7,6 +18,7 @@ proc hlwords {args} {
 
   godel_array_save vars .godel/vars.tcl 
 }
+# }}}
 # lchart_linebar
 # {{{
 proc lchart_linebar {args} {
@@ -49,13 +61,13 @@ proc lchart_linebar {args} {
   if {$opt(-f)} {
     set ilist [read_file_ret_list $listfile]
   } else {
-    set flist [glob -nocomplain */.godel]
+    set flist [lsort [glob -nocomplain */.godel]]
     foreach f $flist {
       lappend rowlist [file dirname $f]
     }
   }
 
-  puts $fout "<div style=\"width:90%;\">"
+  puts $fout "<div style=\"width:95%;\">"
   puts $fout "<canvas id=\"myChart\"></canvas>"
   puts $fout "</div>"
   if ![file exist "Chart.js"] {
@@ -81,6 +93,9 @@ proc lchart_linebar {args} {
       set rows   [list]
       foreach i $rowlist {
         set value [lvars $i $column]
+        if {$value == "NA"} {
+          set value ""
+        }
         lappend values $value
         lappend rows   "\"$i\""
       }
@@ -165,6 +180,20 @@ proc lchart_bar {args} {
     set opt(-c) 1
   }
 # }}}
+  # -g (groups)
+# {{{
+  set opt(-g) 0
+  set idx [lsearch $args {-g}]
+  if {$idx != "-1"} {
+    set groups [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-g) 1
+  } else {
+    foreach c $columns {
+      lappend groups 0
+    }
+  }
+# }}}
   # -colors (colors)
 # {{{
   set opt(-colors) 0
@@ -179,26 +208,35 @@ proc lchart_bar {args} {
 # }}}
   if {$opt(-f)} {
     set ilist [read_file_ret_list $listfile]
+    set rowlist $ilist
   } else {
     set flist [glob -nocomplain */.godel]
     foreach f $flist {
       lappend rowlist [file dirname $f]
     }
   }
+
+  puts $fout "<div style=\"width:95%;\">"
+  puts $fout "<canvas id=\"myChart\"></canvas>"
+  puts $fout "</div>"
+  if ![file exist "Chart.js"] {
+    exec cp $env(GODEL_ROOT)/scripts/js/chartjs/Chart.js .
+  }
+  puts $fout "<script src=Chart.js></script>"
 # data sets
 # {{{
-  set kout [open ".godel/lchart_dset.js" w]
-  puts $kout "var dset = {"
+  puts $fout "<script>"
+  puts $fout "var dset = {"
     foreach i $rowlist {
       lappend rows   "\"$i\""
     }
     set x_axis   [join $rows   ,]
 
-    puts $kout "        labels: \[$x_axis\],"
-    puts $kout "        datasets: \["
+    puts $fout "        labels: \[$x_axis\],"
+    puts $fout "        datasets: \["
 
     set counter 0
-    foreach column $columns {
+    foreach column $columns group $groups {
       #puts $column
       set values [list]
       set rows   [list]
@@ -208,49 +246,43 @@ proc lchart_bar {args} {
         lappend rows   "\"$i\""
       }
       set y_axis   [join $values ,]
-      puts $kout "        {"
-      puts $kout "            label: \"$column\","
-      puts $kout "            backgroundColor: '[lindex $colors $counter]',"
-      puts $kout "            data: \[$y_axis\],"
-      puts $kout "            fill: false,"
-      puts $kout "            lineTension: 0,"
-      puts $kout "            spanGaps: true,"
-      puts $kout "        },"
+      puts $fout "        {"
+      puts $fout "            label: \"$column\","
+      puts $fout "            backgroundColor: '[lindex $colors $counter]',"
+      puts $fout "            data: \[$y_axis\],"
+      puts $fout "            fill: false,"
+      puts $fout "            lineTension: 0,"
+      puts $fout "            spanGaps: true,"
+      puts $fout "            stack: '$group'"
+      puts $fout "        },"
 
       incr counter
     }
-  puts $kout "       \]"
-  puts $kout "    };"
-  close $kout
+  puts $fout "       \]"
+  puts $fout "    };"
+  puts $fout "</script>"
 # }}}
 # command file
 # {{{
-  set kout [open ".godel/lchart_cmd.js" w]
-  puts $kout "var ctx = document.getElementById('myChart').getContext('2d');"
-  puts $kout ""
-  puts $kout "var chart = new Chart(ctx, {"
-  puts $kout "    type: 'bar',"
-  puts $kout "    data: dset,"
-  puts $kout "    options: {"
-  puts $kout "        scales: {"
-  puts $kout "            xAxes: \[{"
-  puts $kout "              stacked: true"
-  puts $kout "            }],"
-  puts $kout "            yAxes: \[{"
-  puts $kout "              stacked: true"
-  puts $kout "            }]"
-  puts $kout "        }"
-  puts $kout "    }"
-  puts $kout "});"
-  close $kout
+  puts $fout "<script>"
+  puts $fout "var ctx = document.getElementById('myChart').getContext('2d');"
+  puts $fout ""
+  puts $fout "var chart = new Chart(ctx, {"
+  puts $fout "    type: 'bar',"
+  puts $fout "    data: dset,"
+  puts $fout "    options: {"
+  puts $fout "        scales: {"
+  puts $fout "            xAxes: \[{"
+  puts $fout "              stacked: true"
+  puts $fout "            }],"
+  puts $fout "            yAxes: \[{"
+  puts $fout "              stacked: true"
+  puts $fout "            }]"
+  puts $fout "        }"
+  puts $fout "    }"
+  puts $fout "});"
+  puts $fout "</script>"
 # }}}
-
-  puts $fout "<div style=\"width:90%;\">"
-  puts $fout "<canvas id=\"myChart\"></canvas>"
-  puts $fout "</div>"
-  puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/chartjs/Chart.js]></script>"
-  puts $fout "<script src=.godel/lchart_dset.js></script>"
-  puts $fout "<script src=.godel/lchart_cmd.js></script>"
 
 }
 # }}}
@@ -378,12 +410,16 @@ proc lsetvar {name key value} {
 # }}}
 # lvars
 # {{{
-proc lvars {name key} {
+proc lvars {name {key ""}} {
   source $name/.godel/vars.tcl
-  if [info exist vars($key)] {
-    return $vars($key)
+  if {$key == ""} {
+    parray vars
   } else {
-    return NA
+    if [info exist vars($key)] {
+      return $vars($key)
+    } else {
+      return NA
+    }
   }
 }
 # }}}
@@ -437,7 +473,7 @@ proc local_table {name args} {
   if {$opt(-f)} {
     set ilist [read_file_ret_list $listfile]
   } else {
-    set flist [glob -nocomplain */.godel]
+    set flist [lsort -decreasing [glob -nocomplain */.godel]]
     foreach f $flist {
       lappend ilist [file dirname $f]
     }
@@ -5949,7 +5985,11 @@ proc read_file_ret_list {afile} {
     }
   close $fin
 
-  return $lines
+  if [info exist lines] {
+    return $lines
+  } else {
+    return ""
+  }
 }
 # }}}
 proc getimg {name {confirm nogo}} {

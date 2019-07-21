@@ -379,6 +379,7 @@ gui_stop
 gui_write_window_image
 gvars
 hdlin_infer_multibit
+hlwords
 icc2_route_import
 index_collection
 initialize_floorplan
@@ -394,6 +395,9 @@ insert_dft
 insert_mv_cells
 inst_catgorize
 lappend_var
+lchart_bar
+lchart_line
+lchart_linebar
 lef_library
 lefin
 legalize_placement
