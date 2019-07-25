@@ -58,8 +58,47 @@ proc lchart_linebar {args} {
     set colors [list green orange crimson maroon cyan ]
   }
 # }}}
+  # -size (size)
+# {{{
+  set opt(-size) 0
+  set idx [lsearch $args {-size}]
+  if {$idx != "-1"} {
+    set size [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-size) 1
+  }
+# }}}
+  # -name (name)
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  }
+# }}}
+  # -xnames (x axles names)
+# {{{
+  set opt(-xnames) 0
+  set idx [lsearch $args {-xnames}]
+  if {$idx != "-1"} {
+    set xnames [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-xnames) 1
+  }
+# }}}
+
   if {$opt(-f)} {
-    set ilist [read_file_ret_list $listfile]
+    set kin [open $listfile r]
+      while {[gets $kin line] >= 0} {
+        if [regexp {^#} $line] {
+        } elseif [regexp {^$} $line] {
+        } else {
+          lappend rowlist $line
+        }
+      }
+    close $kin
   } else {
     set flist [lsort [glob -nocomplain */.godel]]
     foreach f $flist {
@@ -67,8 +106,8 @@ proc lchart_linebar {args} {
     }
   }
 
-  puts $fout "<div style=\"width:95%;\">"
-  puts $fout "<canvas id=\"myChart\"></canvas>"
+  puts $fout "<div class=\"w3-col\" style=\"width:$size;\">"
+  puts $fout "<canvas id=\"$name\"></canvas>"
   puts $fout "</div>"
   if ![file exist "Chart.js"] {
     exec cp $env(GODEL_ROOT)/scripts/js/chartjs/Chart.js .
@@ -78,7 +117,7 @@ proc lchart_linebar {args} {
 # {{{
   puts $fout "<script>"
   puts $fout "var dset = {"
-    foreach i $rowlist {
+    foreach i $xnames {
       lappend rows   "\"$i\""
     }
     set x_axis   [join $rows   ,]
@@ -126,7 +165,7 @@ proc lchart_linebar {args} {
 # command file
 # {{{
   puts $fout "<script>"
-  puts $fout "var ctx = document.getElementById('myChart').getContext('2d');"
+  puts $fout "var ctx = document.getElementById('$name').getContext('2d');"
   puts $fout ""
   puts $fout "var chart = new Chart(ctx, {"
   puts $fout "    type: 'bar',"
