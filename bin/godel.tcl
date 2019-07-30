@@ -1,3 +1,6 @@
+proc get_cover {name} {
+  puts $name
+}
 # grefresh
 # {{{
 proc grefresh {path} {
@@ -245,6 +248,16 @@ proc lchart_bar {args} {
     set colors [list green orange crimson maroon cyan ]
   }
 # }}}
+  # -size (size)
+# {{{
+  set opt(-size) 0
+  set idx [lsearch $args {-size}]
+  if {$idx != "-1"} {
+    set size [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-size) 1
+  }
+# }}}
   if {$opt(-f)} {
     set ilist [read_file_ret_list $listfile]
     set rowlist $ilist
@@ -255,7 +268,7 @@ proc lchart_bar {args} {
     }
   }
 
-  puts $fout "<div style=\"width:95%;\">"
+  puts $fout "<div style=\"width:$size%;\">"
   puts $fout "<canvas id=\"myChart\"></canvas>"
   puts $fout "</div>"
   if ![file exist "Chart.js"] {
@@ -508,18 +521,34 @@ proc local_table {name args} {
     set opt(-edit) 1
   }
 # }}}
-
+  # -f(listfile)
+  # {{{
   if {$opt(-f)} {
-    set ilist [read_file_ret_list $listfile]
+    set rows [read_file_ret_list $listfile]
   } else {
-    set flist [lsort -decreasing [glob -nocomplain */.godel]]
+    set flist [lsort [glob -nocomplain */.godel]]
     foreach f $flist {
-      lappend ilist [file dirname $f]
+      lappend rows [file dirname $f]
     }
   }
+  # }}}
+  # -css (css class)
+# {{{
+  set opt(-css) 0
+  set idx [lsearch $args {-css}]
+  if {$idx != "-1"} {
+    set css_class [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-css) 1
+  }
+# }}}
 
 # Start creating table...
-  puts $fout "<table class=table2 id=$name>"
+  if {$opt(-css)} {
+    puts $fout "<table class=$css_class id=$name>"
+  } else {
+    puts $fout "<table class=table2 id=$name>"
+  }
 # Table Headers
   puts $fout "<tr>"
   if {$opt(-w)} {
@@ -532,19 +561,39 @@ proc local_table {name args} {
   }
   puts $fout "</tr>"
 # Table Row
-  foreach i $ilist {
+  foreach row $rows {
     puts $fout "<tr>"
     if {$opt(-edit)} {
-      puts $fout "<td><a href=$i/.godel/ghtm.tcl type=text/txt>e</a> : <a href=$i/.godel/vars.tcl type=text/txt>v</a> : <a href=$i/.index.htm>$i</a></td>"
+      puts $fout "<td><a href=$row/.godel/ghtm.tcl type=text/txt>e</a> : <a href=$row/.godel/vars.tcl type=text/txt>v</a> : <a href=$row/.index.htm>$row</a></td>"
     } else {
-      puts $fout "<td><a href=$i/.index.htm>$i</a></td>"
+      puts $fout "<td><a href=$row/.index.htm>$row</a></td>"
     }
     # Table Data
     foreach col $columns {
-      set col_data [lvars $i $col]
+      set col_data [lvars $row $col]
+    # img:
       if [regexp {img:} $col] {
         regsub {img:} $col {} col
-        puts $fout "<td><a href=$i/images/cover.jpg><img height=100px src=$i/images/cover.jpg></a></td>"
+        puts $fout "<td><a href=$row/images/cover.jpg><img height=100px src=$row/images/cover.jpg></a></td>"
+    # md:
+      } elseif [regexp {md:} $col] {
+        regsub {md:} $col {} col
+        set fname $row/$col.md
+        if [file exist $fname] {
+          set aftermd [gmd_file $fname]
+          puts $fout "<td>$aftermd</td>"
+        } else {
+          puts $fout "<td>Not exist...$$fname</td>"
+        }
+    # ed:
+      } elseif [regexp {ed:} $col] {
+        regsub {ed:} $col {} col
+        set fname $row/$col
+        if [file exist $fname] {
+          puts $fout "<td><a href=$fname type=text/txt>$col</a></td>"
+        } else {
+          puts $fout "<td></td>"
+        }
       } else {
         puts $fout "<td>$col_data</td>"
       }
@@ -1239,6 +1288,15 @@ proc img_resize {pattern} {
   }
 }
 # }}}
+# gmd_file
+proc gmd_file {afile} {
+  set kin [open $afile r]
+    set ftxt [read $kin]
+  close $kin
+
+  #puts $ftxt
+  return [::gmarkdown::md_convert $ftxt]
+}
 #@> gnotes
 # {{{
 proc gnotes {content} {
