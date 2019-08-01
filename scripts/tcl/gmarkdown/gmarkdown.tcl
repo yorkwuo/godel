@@ -44,6 +44,22 @@ namespace eval gmarkdown {
     # The output of this function is only a fragment, not a complete HTML
     # document. The format of the output is generic XHTML.
     #
+    proc md_convert {markdown} {
+        set markdown [regsub {\r\n?} $markdown {\n}]
+        set markdown [::textutil::untabify2 $markdown 4]
+        set markdown [string trimright $markdown]
+
+        # COLLECT REFERENCES
+        array unset ::gmarkdown::_references
+        array set ::gmarkdown::_references [collect_references markdown]
+
+        # PROCESS
+        set ret [apply_templates markdown]
+
+        array set env [array get ::env]
+        return $ret
+    }
+
 #@>convert
     proc convert {markdown} {
       upvar vars vars
