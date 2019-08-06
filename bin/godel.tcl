@@ -460,9 +460,28 @@ proc lsetvar {name key value} {
   godel_array_save vars $varfile
 }
 # }}}
+# lsetdyvar
+# {{{
+proc lsetdyvar {name key value} {
+  set varfile $name/.godel/dyvars.tcl
+
+  if [file exist $varfile] {
+ #   puts $varfile
+    source $varfile
+    set dyvars($key) $value
+  } else {
+    puts "Error: not exist... $varfile"
+  }
+
+  godel_array_save dyvars $varfile
+}
+# }}}
 # lvars
 # {{{
 proc lvars {name {key ""}} {
+  if ![file exist $name/.godel/vars.tcl] {
+    return NA
+  }
   source $name/.godel/vars.tcl
   if {$key == ""} {
     parray vars
@@ -696,13 +715,22 @@ proc gdraw_default {} {
 # }}}
 # datediff
 # {{{
-proc datediff {d1 d2} {
-# datediff 2019/3/2 2019/1/3
+proc datediff {date2 date1 {type dd}} {
+# datediff 2019/3/2 2019/1/3 hh
 
-  set d1 [exec date -d $d1 +%s]
-  set d2 [exec date -d $d2 +%s]
+  set d2 [exec date -d $date2 +%s]
+  set d1 [exec date -d $date1 +%s]
 
-  return [expr ($d1 - $d2)/86400]
+  if {$type == "ss"} {
+    return [expr ($d2 - $d1)]
+  } elseif {$type == "mm"} {
+    return [expr ($d2 - $d1)/60]
+  } elseif {$type == "hh"} {
+    return [expr ($d2 - $d1)/3600]
+  } elseif {$type == "dd"} {
+    return [expr ($d2 - $d1)/86400]
+  }
+
 }
 # }}}
 # gdall, gd all
