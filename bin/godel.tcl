@@ -1,3 +1,67 @@
+# gwaive
+# {{{
+proc gwaive {args} {
+  # -w (waive file)
+# {{{
+  set opt(-w) 0
+  set idx [lsearch $args {-w}]
+  if {$idx != "-1"} {
+    set waivefile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-w) 1
+  } else {
+    set waivefile NA
+  }
+# }}}
+
+  set fname $args
+
+# Read waiver
+  set waivers {}
+  if {$opt(-w)} {
+    set kin [open $waivefile r]
+  } else {
+    if [file exist $fname.waive] {
+      set kin [open $fname.waive r]
+    } else {
+      puts "Error: not exist $fname.waive"
+      return
+    }
+  }
+    while {[gets $kin line] >= 0} {
+      if {[regexp {^#} $line]} {
+      } elseif {[regexp {^$} $line]} {
+      } else {
+        lappend waivers $line
+      }
+    }
+  close $kin
+
+# Apply waiver
+  set kin [open $fname r]
+    while {[gets $kin line] >= 0} {
+
+      set flag_waive 0
+      foreach waiver $waivers {
+        if [regexp $waiver $line] {
+          set flag_waive 1
+          break
+        }
+      }
+
+      if {$flag_waive} {
+        incr arr($waiver)
+      } else {
+        puts $line
+      }
+    }
+  close $kin
+
+# Summary
+  parray arr
+}
+# }}}
+
 proc get_cover {name} {
   puts $name
 }
@@ -703,7 +767,7 @@ proc gdraw_default {} {
   set kout [open .godel/ghtm.tcl w]
     puts $kout "ghtm_top_bar"
     puts $kout "#list_img 4 100% images/*.jpg"
-    puts $kout "#local_table tbl -c {g:pagename} -w 20"
+    puts $kout "#local_table tbl -c {g:pagename} -css table1
     puts $kout "ghtm_list_files *"
     puts $kout "#ghtm_filter_notes"
     puts $kout "#hlwords    "
