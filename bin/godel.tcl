@@ -637,7 +637,7 @@ proc local_table {name args} {
   if {$opt(-w)} {
     puts $fout "<th width=${width}%>name</th>"
   } else {
-    puts $fout "<th width=20%>name</th>"
+    puts $fout "<th>name</th>"
   }
   foreach col $columns {
     puts $fout "<th>$col</th>"
