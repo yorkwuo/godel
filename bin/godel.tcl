@@ -767,7 +767,7 @@ proc gdraw_default {} {
   set kout [open .godel/ghtm.tcl w]
     puts $kout "ghtm_top_bar"
     puts $kout "#list_img 4 100% images/*.jpg"
-    puts $kout "#local_table tbl -c {g:pagename} -css table1
+    puts $kout "#local_table tbl -c {g:pagename} -css table1"
     puts $kout "ghtm_list_files *"
     puts $kout "#ghtm_filter_notes"
     puts $kout "#hlwords    "
