@@ -1,3 +1,9 @@
+proc dirdu {} {
+  set dirs [glob -nocomplain -type d *]
+  foreach dir [lsort $dirs] {
+    puts [exec du -sh $dir/]
+  }
+}
 # gwaive
 # {{{
 proc gwaive {args} {
@@ -981,6 +987,149 @@ proc list_pages {args} {
   }
   puts $fout "</div>"
 }
+# }}}
+# glocal
+# {{{
+proc glocal {args} {
+  global env
+
+  set name_width 35
+# .gll.conf
+# {{{
+  if [file exist .gl.conf] {
+    source .gl.conf
+  } elseif [file exist $env(HOME)/.gl.conf] {
+    source $env(HOME)/.gl.conf
+  }
+# }}}
+  # -f
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
+  if {$idx != "-1"} {
+    set listfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-f) 1
+  } else {
+    set listfile NA
+  }
+  # -n, use -n to select item
+# {{{
+  set idx [lsearch $args {-n}]
+  if {$idx != "-1"} {
+    set serial_no [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+  } else {
+    set serial_no no
+  }
+# }}}
+  # -del (local)
+# {{{
+  set opt(-del) 0
+  set idx [lsearch $args {-del}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-del) 1
+  }
+# }}}
+  set keywords $args
+
+  # Comment out to disable global gl
+  #if ![info exist meta] {
+  #  foreach i $env(GODEL_META_SCOPE) { mload $i }
+  #}
+
+  set ilist [list]
+  if {$opt(-f)} {
+    set kin [open $listfile r]
+      while {[gets $kin line] >= 0} {
+        lappend ilist $line
+      }
+    close $kin
+  } else {
+    set flist [lsort [glob -nocomplain */.godel]]
+    foreach f $flist {
+      lappend ilist [file dirname $f]
+    }
+  }
+
+  set found_names $ilist
+#  set found_names [list]
+# Search pagelist
+#  foreach i $ilist {
+#    set found 1
+## Is it match with $meta(keys)
+#    foreach k $keywords {
+#      if [info exist meta($i,keys)] {
+#        if {[lsearch -regexp $meta($i,keys) $k] >= 0} {
+#          set found [expr $found&&1]  
+#        } else {
+#          set found [expr $found&&0]  
+#        }
+#      } else {
+#        set found [expr $found&&0]  
+#      }
+#    }
+#
+#    if {$found} {
+#      lappend found_names $i
+#    }
+#  }
+
+  if {$found_names == ""} {
+    puts stderr "Not found... $keywords"
+  } else {
+# If more than 1 page found, display them
+    if {[llength $found_names] > 0} {
+      if {$serial_no == "no"} {
+        set linenum 1
+        foreach i $found_names {
+            set disp ""
+# name
+#          append disp [format "%${name_width}s " $i]
+
+# File `.co' specify columns wanted to display
+            set cols {}
+            if [file exist .co] {
+              set fin [open .co r]
+                while {[gets $fin line] >= 0} {
+                  set width -20 ;# default width
+
+                  if [regexp {^#} $line] {
+                  } else {
+                    regexp {;(\S*)} $line whole width
+                    regsub {;\S*} $line {} line
+                    lappend cols "$line $width"
+                  }
+                }
+              close $fin
+            } else {
+              set cols "g:pagename g:keywords"
+            }
+# Prepare `$disp'
+            foreach col $cols {
+              set name  [lindex $col 0]
+              set width [lindex $col 1]
+              append disp [format "%${width}s " [lvars $i $name]]
+            }
+            puts stderr [format "%-3s %s" $linenum $disp]
+          incr linenum
+        }
+      } ; # End serial_no == no
+# If only 1 page found, cd to it
+    #} else {
+    #  #puts "cd $meta($found_names,where)"
+    #  set i $found_names
+    #  puts stderr [format "%-35s = %s" $i $meta($i,keywords)]
+
+    #  if {$opt(-del)} {
+    #    puts $meta($i,where)
+    #    file delete -force $meta($i,where)
+    #  }
+    #}
+  }
+  return $found_names
+} ; # End glocal
+
 # }}}
 # glist, gl
 # {{{
