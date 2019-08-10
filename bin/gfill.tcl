@@ -48,7 +48,7 @@ if {$opt(-f)} {
   set nlist [glob -nocomplain -type d {*}$pattern]
 }
 
-  puts "#/usr/bin/tclsh"
+  puts "#!/usr/bin/tclsh"
   puts "source \$env(GODEL_ROOT)/bin/godel.tcl"
   foreach page $nlist {
     set value [lvars $page $key]
