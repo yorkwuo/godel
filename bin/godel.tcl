@@ -72,6 +72,12 @@ proc gwaive {args} {
 proc get_cover {name} {
   puts $name
 }
+proc ghtm_filter_table {tname column_no} {
+  upvar fout fout
+  puts $fout "<div class=\"w3-panel w3-pale-blue w3-leftbar w3-border-blue\">" 
+  puts $fout "<input type=text id=filter_table_input onkeyup=filter_table(\"$tname\",$column_no,event) placeholder=\"Search...\">"
+  puts $fout "</div>" 
+}
 # grefresh
 # {{{
 proc grefresh {path} {
@@ -652,7 +658,9 @@ proc local_table {name args} {
   puts $fout "</tr>"
 # Table Row
   foreach row $rows {
-    puts $fout "<tr>"
+    set bgcolor [lvars $row bgcolor]
+    set fgcolor [lvars $row fgcolor]
+    puts $fout "<tr style=\"background-color:$bgcolor;color:$fgcolor\">"
     if {$opt(-edit)} {
       puts $fout "<td><a href=$row/.godel/ghtm.tcl type=text/txt>e</a> : <a href=$row/.godel/vars.tcl type=text/txt>v</a> : <a href=$row/.index.htm>$row</a></td>"
     } else {
@@ -673,7 +681,8 @@ proc local_table {name args} {
           set aftermd [gmd_file $fname]
           puts $fout "<td>$aftermd</td>"
         } else {
-          puts $fout "<td>Not exist...$$fname</td>"
+          set kout [open $fname w]
+          close $kout
         }
     # ed:
       } elseif [regexp {ed:} $col] {
