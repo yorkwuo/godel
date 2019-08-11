@@ -20,7 +20,7 @@ if [info exist meta($pagename,where)] {
   puts "Success: $pagename"
   set meta($pagename,where)    [pwd]
   set meta($pagename,keywords) $argv
-  godel_array_save  meta $env(GODEL_META_CENTER)/gok_list.tcl
+  godel_array_save  meta $env(HOME)/.goklist.tcl
 }
 
 
