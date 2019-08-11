@@ -11,11 +11,11 @@ if {$pagename == ""} {
   return
 }
 
-set mfile $env(GODEL_META_CENTER)/gok_list.tcl
+set mfile $env(HOME)/.goklist.tcl
 if [file exist $mfile] {
   source $mfile
 }
 set meta($pagename,keywords) [concat $meta($pagename,keywords) {*}$keywords]
-godel_array_save  meta $env(GODEL_META_CENTER)/gok_list.tcl
+godel_array_save  meta $env(HOME)/.goklist.tcl
 
-
+# vim:ft=tcl

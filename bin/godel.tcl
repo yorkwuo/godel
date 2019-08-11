@@ -1,7 +1,8 @@
-proc dirdu {} {
-  set dirs [glob -nocomplain -type d *]
+proc dirdu {{pattern *}} {
+  set dirs [glob -nocomplain -type d $pattern]
   foreach dir [lsort $dirs] {
-    puts [exec du -sh $dir/]
+    catch {exec du -sh $dir/} result
+    puts $result
   }
 }
 # gwaive
@@ -1779,8 +1780,8 @@ proc gvi {keywords} {
 # {{{
 proc gok {keywords} {
   global env
-  if [file exist $env(GODEL_META_CENTER)/gok_list.tcl] {
-    source       $env(GODEL_META_CENTER)/gok_list.tcl
+  if [file exist $env(HOME)/.goklist.tcl] {
+    source       $env(HOME)/.goklist.tcl
   } else {
     return
   }

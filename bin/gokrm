@@ -1,0 +1,51 @@
+#!/usr/bin/env tclsh
+source $env(GODEL_ROOT)/bin/godel.tcl
+
+set num2del [lindex $argv 0]
+
+proc list_w_num {names} {
+  set num 0
+  upvar meta meta
+
+  foreach name $names {
+    regsub {,where} $name {} name
+    if [file exist $meta($name,where)] {
+      puts [format "%-3s %s" $num $name]
+    } else {
+      puts [format "%-3s (NA) %s" $num $name]
+    }
+    incr num
+  }
+
+}
+
+# Source .goklist.tcl
+set mfile $env(HOME)/.goklist.tcl
+
+if [file exist $mfile] {
+  source $mfile
+} else {
+  puts "Error: Not exist... $mfile"
+  return
+}
+
+if {$num2del == ""} {
+  set names [lsort [array name meta *,where]]
+  list_w_num $names
+} else {
+  set names [lsort [array name meta *,where]]
+  regsub {,where} [lindex $names $num2del] {} name2del
+
+
+  unset meta($name2del,where)
+  unset meta($name2del,keywords)
+
+  set newnames [lsort [array name meta *,where]]
+  list_w_num $newnames
+
+  puts "\nDeleted... $name2del"
+  godel_array_save meta $env(HOME)/.goklist.tcl
+
+}
+
+# vim:ft=tcl
