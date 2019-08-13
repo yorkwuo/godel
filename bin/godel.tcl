@@ -1936,7 +1936,11 @@ proc cdk {args} {
     if {[llength $found_names] > 1} {
       foreach i $found_names {
         if [info exist meta($i,keywords)] {
-          puts stderr [format "%-35s = %s" $i $meta($i,keywords)]
+          if [file exist $meta($i,where)] {
+            puts stderr [format "%-35s = %s" $i $meta($i,keywords)]
+          } else {
+            puts stderr [format "(NA)%-35s = %s" $i $meta($i,keywords)]
+          }
         } else {
         }
       }
