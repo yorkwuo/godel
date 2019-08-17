@@ -620,7 +620,12 @@ proc local_table {name args} {
   # -f(listfile)
   # {{{
   if {$opt(-f)} {
-    set rows [read_file_ret_list $listfile]
+    if [file exist $listfile] {
+      set rows [read_file_ret_list $listfile]
+    } else {
+      puts "Errors: Not exist... $listfile"
+      return
+    }
   } else {
     set flist [lsort [glob -nocomplain */.godel]]
     foreach f $flist {
