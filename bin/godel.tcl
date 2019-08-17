@@ -2,7 +2,7 @@ proc dirdu {{pattern *}} {
   set dirs [glob -nocomplain -type d $pattern]
   foreach dir [lsort $dirs] {
     catch {exec du -sh $dir/} result
-    puts $result
+    puts "	$result"
   }
 }
 # gwaive
