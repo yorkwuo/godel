@@ -658,7 +658,14 @@ proc local_table {name args} {
     puts $fout "<th>name</th>"
   }
   foreach col $columns {
-    puts $fout "<th>$col</th>"
+    set colname ""
+    regexp {;(\S+)} $col -> colname
+
+    if {$colname == ""} {
+      set colname $col
+    } 
+    puts $colname
+    puts $fout "<th>$colname</th>"
   }
   puts $fout "</tr>"
 # Table Row
@@ -673,6 +680,7 @@ proc local_table {name args} {
     }
     # Table Data
     foreach col $columns {
+      regsub {;\S+} $col {} col
       set col_data [lvars $row $col]
     # img:
       if [regexp {img:} $col] {
@@ -694,7 +702,8 @@ proc local_table {name args} {
         regsub {ed:} $col {} col
         set fname $row/$col
         if [file exist $fname] {
-          puts $fout "<td><a href=$fname type=text/txt>$col</a></td>"
+          #puts $fout "<td><a href=$fname type=text/txt>$col</a></td>"
+          puts $fout "<td><a href=$fname type=text/txt>e</a></td>"
         } else {
           puts $fout "<td></td>"
         }

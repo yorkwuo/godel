@@ -271,6 +271,15 @@ img {
   margin     :4px;
   padding    :2px 6px;
 }
+.pbox {
+  font-size  :500%;
+  color      : white;
+  font-family:Verdana;
+  #background-color:DarkSlateBlue;
+  background-color:darkorange;
+  margin     :4px;
+  padding    :2px 6px;
+}
 .table2 {
   font-family:Consolas,sans-serif;
   border-collapse: collapse;
