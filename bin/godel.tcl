@@ -1217,9 +1217,11 @@ proc glocal {args} {
             foreach col $cols {
               set name  [lindex $col 0]
               set width [lindex $col 1]
-              append disp [format "%${width}s " [lvars $i $name]]
+              append disp [mformat "%${width}s " [lvars $i $name]]
+              #append disp [mformat "%-25s " [lvars $i $name]]
             }
-            puts stderr [format "%-3s %s" $linenum $disp]
+            #puts stderr [format "%-3s %s" $linenum $disp]
+            puts [format "%-3s %s" $linenum $disp]
           incr linenum
         }
       } ; # End serial_no == no
