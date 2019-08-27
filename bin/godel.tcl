@@ -1,3 +1,87 @@
+# addspace
+# {{{
+proc addspace {txt space_count {position +}} {
+# Create space
+  for {set i 0} {$i < $space_count} {incr i} {
+    append spaces " "
+  }
+  if {$position == "-"} {
+    return "$txt${spaces}"
+  } else {
+    return "${spaces}$txt"
+  }
+}
+# }}}
+# adjust_txt
+# {{{
+proc adjust_txt {ctrl txt} {
+  set tlength 0
+
+# Calculate txt length
+  foreach word [split $txt ""] {
+    set wlength [string bytelength $word]
+    if {$wlength == "3"} {
+      set tlength [expr $tlength + 2]
+    } elseif {$wlength == "1"} {
+      set tlength [expr $tlength + 1]
+    } else {
+      puts "Error in length."
+    }
+  }
+
+  set absctrl [expr abs($ctrl)]
+  if {$absctrl > $tlength} {
+    set space_count [expr $absctrl - $tlength]
+    if {$ctrl > 0} {
+      set space_added [addspace $txt $space_count +]
+    } else {
+      set space_added [addspace $txt $space_count -]
+    }
+  } else {
+    set space_added $txt
+  }
+  return $space_added
+}
+# }}}
+# mformat
+# {{{
+proc mformat {args} {
+  set ff [lindex $args 0]
+
+  set alength [llength $args]
+
+  for {set i 1} {$i < $alength} {incr i} {
+    regexp {%(-*\d*?)s} $ff -> ctrl($i)
+    regsub {%-*\d*?s} $ff "!$i@" ff
+  }
+
+  for {set i 1} {$i < $alength} {incr i} {
+    set orig_txt [lindex $args $i]
+    set txtarr($i) [adjust_txt $ctrl($i) $orig_txt]
+  }
+
+
+
+  for {set i 1} {$i < $alength} {incr i} {
+    regsub "!$i@" $ff $txtarr($i) ff
+  }
+  return $ff
+}
+# }}}
+# p_col_num
+# {{{
+proc p_col_num {} {
+  for {set i 0} {$i <= 9} {incr i} {
+    puts -nonewline "${i}${i}${i}${i}${i}${i}${i}${i}${i}${i}"
+  }
+  puts ""
+  for {set i 0} {$i < 100} {incr i} {
+    puts -nonewline [expr $i % 10]
+  }
+  puts ""
+}
+# }}}
+
 proc dirdu {{pattern *}} {
   set dirs [glob -nocomplain -type d $pattern]
   foreach dir [lsort $dirs] {
