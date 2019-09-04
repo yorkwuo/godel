@@ -748,7 +748,6 @@ proc local_table {name args} {
     if {$colname == ""} {
       set colname $col
     } 
-    puts $colname
     puts $fout "<th>$colname</th>"
   }
   puts $fout "</tr>"
