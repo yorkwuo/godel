@@ -1,3 +1,68 @@
+# lkey
+# {{{
+proc lkey {} {
+  set dirs [glob -type d *]
+  #puts $dirs
+  foreach dir $dirs {
+    set varsfile $dir/.godel/vars.tcl
+    if {[file exist $varsfile]} {
+      source $varsfile
+      puts [format "%-10s : %s" $dir $vars(g:keywords)]
+    }
+  }
+}
+# }}}
+# lcd
+# {{{
+proc lcd {args} {
+  set keywords $args
+
+  set dirs [glob -type d *]
+  foreach dir $dirs {
+    if [file exist $dir/.godel/vars.tcl] {
+      source $dir/.godel/vars.tcl
+      lappend dir_keys [list $dir "$dir $vars(g:keywords)"]
+      unset vars
+    } else {
+      lappend dir_keys [list $dir $dir]
+    }
+  }
+
+# Search pagelist
+  set found_names ""
+  foreach dir $dir_keys {
+    set found 1
+# Is it match with keyword
+    foreach k $keywords {
+        set dir_keywords [lindex $dir 1]
+        if {[lsearch -regexp $dir_keywords $k] >= 0} {
+          set found [expr $found&&1]  
+        } else {
+          set found [expr $found&&0]  
+        }
+    }
+
+    if {$found} {
+      lappend found_names $dir
+    }
+  }
+
+  if {$found_names == ""} {
+    puts stderr "Not found... $keywords"
+  } else {
+# If more than 1 page found, display them
+    if {[llength $found_names] > 1} {
+      foreach dir $found_names {
+        puts stderr [format "%-20s %s" [lindex $dir 0] [lindex $dir 1]]
+      }
+# If only 1 page found, cd to it
+    } else {
+      puts "cd [lindex [lindex $found_names 0] 0]"
+    }
+  }
+
+}
+# }}}
 # addspace
 # {{{
 proc addspace {txt space_count {position +}} {
@@ -81,7 +146,8 @@ proc p_col_num {} {
   puts ""
 }
 # }}}
-
+# dirdu
+# {{{
 proc dirdu {{pattern *}} {
   set dirs [glob -nocomplain -type d $pattern]
   foreach dir [lsort $dirs] {
@@ -89,6 +155,7 @@ proc dirdu {{pattern *}} {
     puts "	$result"
   }
 }
+# }}}
 # gwaive
 # {{{
 proc gwaive {args} {
@@ -1649,12 +1716,27 @@ proc gmd_file {afile} {
 }
 #@> gnotes
 # {{{
-proc gnotes {content} {
+proc gnotes {args} {
   global env
   upvar fout fout
   upvar vars vars
   upvar count count
   upvar meta meta
+
+  # -qnote (quick note)
+  set opt(-qnote) 0
+  set idx [lsearch $args {-qnote}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-qnote) 1
+  }
+
+  set content [lindex $args 0]
+
+  if {$opt(-qnote)} {
+    puts $content
+  }
+  
 
 # To allow `\' to display in code block
   regsub -all {\\ \n} $content "\\\n" content
