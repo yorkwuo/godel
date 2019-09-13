@@ -28,7 +28,8 @@ set fo+=m
 set clipboard=unnamed
 
 set nowrap
-set guifont=Consolas:h12
+set guifont=Monospace
+"set guifont=Consolas:h12
 "set guifont=Monaco\ 10
 "set guifont=Terminus\ 12
 set completeopt=longest
