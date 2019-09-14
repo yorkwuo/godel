@@ -109,13 +109,13 @@ func Godel_Draw()
   if cwd =~ '\.godel'
     cd ..
     echom getcwd()
-    silent !xdotool search --name "Mozilla" key ctrl+r
     silent !godel_draw.tcl
+    silent !xdotool search --name "Mozilla" key ctrl+r
 
   else
     echom getcwd()
-    silent !xdotool search --name "Mozilla" key ctrl+r
     silent !godel_draw.tcl
+    silent !xdotool search --name "Mozilla" key ctrl+r
   endif
 
 endfunc
