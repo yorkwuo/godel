@@ -1,31 +1,20 @@
 
+#=====================================
+# TCLLIBPATH
+#=====================================
 pp="$GODEL_ROOT/scripts/tcl $TCLLIBPATH"
 # uniquify
 pp=$(echo $pp | tr ' ' '\n' | sort -u)
-
 export TCLLIBPATH=$pp
 
-export GODEL_PLUGIN=$GODEL_ROOT/plugin
-#export GODEL_USER_PLUGIN    $dir/plugin
-
+#=====================================
+# PATH
+#=====================================
 export PATH=$GODEL_ROOT/bin:$PATH
 
-alias gim=godel_import.tcl
-#alias gc=godel_codes.tcl
-#alias gco=godel_checkout.tcl
-#alias gpage=godel_page.csh
-#alias gre=godel_redraw.tcl
-#alias gdel=godel_delete.csh
-#alias ddg=godel_delete_ghtm.tcl
-#alias glist=godel_list.tcl
-#alias greset=godel_chart_reset.csh
-alias gd=godel_draw.tcl
-#alias gg=gg.tcl
-#alias ga=godel_gather.tcl
-#alias gaset='setenv GA_ROOT `pwd`; echo $GA_ROOT'
-#alias gacd='cd $GA_ROOT/\!*'
 
-#alias gcd='set k = `echo \!* | sed "s/CENTER//"`; eval cd $GODEL_CENTER/$k'
+export GODEL_PLUGIN=$GODEL_ROOT/plugin
+
 tlist  () { 
   eval `tdolist $*` 
 }
@@ -49,15 +38,23 @@ mt () {
   lind.tcl
 }
 
-alias gpa=godel_pa.tcl
-alias gevo=godel_evolve.tcl
-alias gdnew=gdnew.tcl
-alias gdrm=gdrm.tcl
+alias gd=godel_draw.tcl
 alias cdg='cd $GODEL_ROOT'
-alias mfile=". mfile.sh"
+alias mci=meta_chkin.tcl
+alias mind=meta-indexing
+alias mfile='. mfile.sh'
+alias tkg="tkgdl.tcl &"
+alias fa="firefox .index.htm&"
+alias f1="gvim .godel/ghtm.tcl"
+alias f2="gvim .godel/vars.tcl"
+alias f3="gvim .godel/proc.tcl"
 
-#alias tlist=tbox_list.tcl
-#alias tcygpath=tbox_cygpath.tcl
+gmkdir () {
+  echo $1
+  path=`pwd`
+  godel_draw.tcl
+  cd ..
+}
 
-export GODEL_GVIM=/cygdrive/c/Program\ Files\ \(x86\)/Vim/vim81/gvim.exe
-export GODEL_FIREFOX=/cygdrive/c/Program\ Files/Mozilla\ Firefox/firefox.exe
+#export GODEL_GVIM=/cygdrive/c/Program\ Files\ \(x86\)/Vim/vim81/gvim.exe
+#export GODEL_FIREFOX=/cygdrive/c/Program\ Files/Mozilla\ Firefox/firefox.exe
