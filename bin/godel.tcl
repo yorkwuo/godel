@@ -1635,7 +1635,8 @@ proc pagelist {{sort_by by_updated}} {
 # ghtm_pagelist by_updated/by_size
   global env
   upvar fout fout
-  source $env(GODEL_META_CENTER)/meta.tcl
+  #source $env(GODEL_META_CENTER)/meta.tcl
+  source $env(HOME)/meta.tcl
   source $env(GODEL_META_CENTER)/indexing.tcl
   array set vars [array get meta]
 # ilist = pagelist

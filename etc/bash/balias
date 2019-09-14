@@ -1,0 +1,9 @@
+alias gitcm="git commit -m n -a"
+alias gitst="git status"
+
+alias s1='xdotool getactivewindow windowmove 5   5   windowsize 960 500'
+alias s2='xdotool getactivewindow windowmove 990 5   windowsize 910 500'
+alias s3='xdotool getactivewindow windowmove 5   540 windowsize 960 500'
+alias s4='xdotool getactivewindow windowmove 990 540 windowsize 910 500'
+
+# vim:ft=sh
