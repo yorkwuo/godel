@@ -326,16 +326,15 @@ proc gwaive {args} {
   parray arr
 }
 # }}}
-
-proc get_cover {name} {
-  puts $name
-}
+# ghtm_filter_table
+# {{{
 proc ghtm_filter_table {tname column_no} {
   upvar fout fout
   puts $fout "<div class=\"w3-panel w3-pale-blue w3-leftbar w3-border-blue\">" 
   puts $fout "<input type=text id=filter_table_input onkeyup=filter_table(\"$tname\",$column_no,event) placeholder=\"Search...\">"
   puts $fout "</div>" 
 }
+# }}}
 # grefresh
 # {{{
 proc grefresh {path} {
@@ -1030,10 +1029,13 @@ proc cshpath {} {
   }
 }
 # }}}
+# lremove
+# {{{
 proc lremove {target_list item} {
   set a [lsearch -all -inline -not -exact $target_list $item]
   return $a
 }
+# }}}
 proc restore_env {} {
 
   while {[gets $kin line] >= 0} {
@@ -1716,13 +1718,6 @@ proc pagelist {{sort_by by_updated}} {
   ghtm_table_nodir pagelist 0
 }
 # }}}
-proc get_srcpath {infile} {
-  set orgpath [pwd]
-  cd [file dirname $infile]
-  set srcpath [pwd]
-  cd $orgpath
-  return $srcpath
-}
 proc ptses_chkver {ses_path} {
   set fin [open $ses_path/cmd_log r]
     set data [read $fin]
@@ -2595,6 +2590,8 @@ proc ghtm_new_html {title} {
 }
 
 # ghtm_toc
+# {{{
+# Table Of Content
 proc ghtm_toc {{mode ""} {begin_level 4} } {
 # 
   global env
@@ -2644,6 +2641,7 @@ proc ghtm_toc {{mode ""} {begin_level 4} } {
     puts $kout {</head> <body> </body> </html>}
   close $kout
 }
+# }}}
 
 proc ghtm_chap {level title {href ""} {id ""}} {
   upvar fout fout
@@ -2674,17 +2672,6 @@ proc gpage_where {pagename} {
     }
   } else {
     return $meta($pagename,where)/.index.htm
-  }
-}
-proc gpage_value {pagename attr} {
-  global env
-  source $env(GODEL_META_FILE)
-  source $meta($pagename,where)/.godel/vars.tcl
-  if [info exist vars($attr)] {
-    return $vars($attr)
-  } else {
-    #puts "Error: $pagename,bday not exist..."
-    return "NA"
   }
 }
 
@@ -2758,272 +2745,10 @@ proc lgrep_index {ilist pattern {start_index 0}} {
   }
 }
 # }}}
-proc gxml_exe {} {
-# process xml
-# <root>
-# <command> </command>
-# </root>
-  exec tcsh -fc "xclip -o > ~/.tmp.gexe"
-
-  set fin [open ~/.inst.xml r]
-  set doc [dom parse [read $fin]]
-  close $fin
-
-  set root [$doc documentElement]
-
-  set nodes [$root selectNodes /inst/command/text()]
-  foreach node $nodes {
-    set cmd [$node nodeValue]
-    catch {eval $cmd}
-    puts $cmd
-  }
-  puts "Done Execution!"
-}
-
-proc tmu {tagname attr args} {
-# tmu: tcl markup
-# example:
-# tmu a:2- "href=foo/index.htm" foo
-# -> <a href=foo/index.html>foo</a>
-  set c [split $tagname :]
-  set tag    [lindex $c 0] 
-  set indent [lindex $c 1]
-  if [regexp {\-} $indent] {
-    set newline ""
-  } else {
-    set newline "\n"
-  }
-  regsub {\-} $indent {} indent
-
-  set space [string repeat "  " $indent]
-
-  if {$attr == ""} {
-    set txt "$space<$tag>$newline"
-  } else {
-    set txt "$space<$tag $attr>$newline"
-  }
-
-  foreach i $args {
-    append txt "$i$newline"
-  }
-
-  if {$newline == ""} {
-    append txt "</$tag>"
-  } else {
-    append txt "$space</$tag>"
-  }
-  return $txt
-}
-
-
-proc chklist_co {type} {
-  global env
-
-  if {$type == ""} {
-    set ilist [glob -nocomplain $env(CLCENTER)/*]
-    foreach i $ilist {
-      puts [file tail $i]
-    }
-    return
-  }
-
-  set ilist [glob -nocomplain $env(CLCENTER)/$type/*]
-  file mkdir chklist/$type
-  foreach i $ilist {
-    set chkitem [file tail $i]
-    puts $chkitem
-    file delete -force     chklist/$type/$chkitem
-    file copy   -force $i  chklist/$type
-  }
-
-  godel_draw chklist
-}
 proc godel_touch {fname} {
   if ![file exist $fname] {
     close [open $fname w]
   }
-}
-proc chklist_new {chkitem} {
-  global env
-  #puts $chkitem
-  if {$chkitem == ""} {
-    puts "Usage: chklist-new `APR-01'"
-    return
-  }
-  set c [split $chkitem -]
-  set type [lindex $c 0]
-  file mkdir chklist/$type/$chkitem
-  set kout [open chklist/$type/$chkitem/description.txt w]
-  puts $kout "<pre>"
-  puts $kout "</pre>"
-  close $kout
-  godel_touch chklist/$type/$chkitem/comment.txt
-  godel_touch chklist/$type/$chkitem/clvars.tcl
-
-# time_creation
-  set clvars(time_creation) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
-  set clvars($type-$chkitem,owner) Nobody
-  set clvars($type-$chkitem,status) ""
-  godel_array_save clvars chklist/$type/$chkitem/clvars.tcl
-
-  cd chklist/$type/$chkitem
-  godel_draw chkitem
-  cd ../../../
-  godel_draw chklist
-}
-proc chklist_ci {} {
-  global env
-  if ![file exist chklist] {
-    puts "Error: there is no chklist directory..."
-    return
-  }
-  set ilist [glob chklist/*]
-  foreach i $ilist {
-    set type [file tail $i]
-    file mkdir $env(CLCENTER)/$type
-  }
-
-  set ilist [glob chklist/*/*]
-  foreach i $ilist {
-    regsub {chklist\/} $i {} i
-    file delete -force $env(CLCENTER)/$i
-    file copy -force chklist/$i $env(CLCENTER)/$i
-  }
-}
-
-proc chklist_owner {owner} {
-  upvar fout fout
-  global env
-  set flist [glob $env(CLCENTER)/*/*/clvars.tcl]
-  foreach f $flist {
-    source $f
-  }
-  #parray clvars
-  set ilist [glob $env(CLCENTER)/*/*/description.txt] 
-# Sort chkitems
-  set ilist [lsort -increasing $ilist]
-  foreach i $ilist {
-    set chkno [godel_get_path_elem $i end-1]
-    #puts $chkno
-    if [info exist clvars($chkno,owner)] {
-      if {[regexp $owner $clvars($chkno,owner)]} {
-        puts $chkno
-      }
-    }
-  }
-
-
-
-}
-# chklist_table
-# {{{
-proc chklist_table {{sort -increasing}} {
-  upvar fout fout
-  set flist [glob -nocomplain chklist/*/*/clvars.tcl]
-  foreach f $flist {
-    source $f
-  }
-
-  set ilist [glob chklist/*/*/description.txt] 
-# Sort chkitems
-  set ilist [lsort $sort $ilist]
-  puts $fout "<table class=\"table1\">"
-  puts $fout "<thead>"
-  puts $fout "<th>Check No.</th>"
-  puts $fout "<th>Description</th>"
-  puts $fout "<th>Status</th>"
-  puts $fout "<th>Comment</th>"
-  puts $fout "<th></th>"
-  puts $fout "<th>Owner</th>"
-  puts $fout "</thead>"
-  foreach i $ilist {
-    set chkno [godel_get_path_elem $i end-1]
-    set dir [file dirname $i]
-    if ![info exist clvars($chkno,status)] { set clvars($chkno,status) "" }
-    #if {$clvars($chkno,status) == "pass"} {
-    #  puts $fout "<tr bgcolor=lime>"
-    #} elseif {$clvars($chkno,status) == "fail"} {
-    #  puts $fout "<tr bgcolor=red>"
-    #} elseif {$clvars($chkno,status) == "waive"} {
-    #  puts $fout "<tr bgcolor=grey>"
-    #} else {
-    #  puts $fout "<tr>"
-    #}
-# chkitem
-    puts $fout "<td>"
-    puts $fout "<a href=$dir/.index.htm>$chkno</a>"
-    puts $fout "</td>"
-# description.txt
-    puts $fout "<td>"
-    set fin [open $i r]
-      while {[gets $fin line] >= 0} {
-        puts $fout $line
-      }
-    #puts $fin "description"
-    close $fin
-    puts $fout "</td>"
-# radios
-    if {$clvars($chkno,status) == "pass"} {
-      puts $fout "<td bgcolor=LawnGreen>"
-    } elseif {$clvars($chkno,status) == "fail"} {
-      puts $fout "<td bgcolor=Tomato>"
-    } elseif {$clvars($chkno,status) == "waive"} {
-      puts $fout "<td bgcolor=LightGrey>"
-    } else {
-      puts $fout "<td>"
-    }
-    puts $fout "<form>"
-    if ![info exist clvars($chkno,owner)] { set clvars($chkno,owner) "" }
-    if {$clvars($chkno,status) == "pass"}  { set passchk  checked } else {set passchk  ""}
-    if {$clvars($chkno,status) == "fail"}  { set failchk  checked } else {set failchk  ""}
-    if {$clvars($chkno,status) == "waive"} { set waivechk checked } else {set waivechk ""}
-    puts $fout " <input type=\"radio\" name=\"${chkno},status\" value=\"pass\"  $passchk> Pass<br>"
-    puts $fout " <input type=\"radio\" name=\"${chkno},status\" value=\"fail\"  $failchk> Fail<br>"
-    puts $fout " <input type=\"radio\" name=\"${chkno},status\" value=\"waive\" $waivechk> Waive"
-    puts $fout "</form> "
-    puts $fout "</td>"
-
-# comment.txt
-    puts $fout "<td>"
-    set fin [open $dir/comment.txt r]
-      while {[gets $fin line] >= 0} {
-        puts $fout $line
-      }
-    close $fin
-    puts $fout "</td>"
-# edit comment.txt
-    puts $fout "<td>"
-    puts $fout "<a href=$dir/comment.txt type=text/txt>e</a>"
-    puts $fout "</td>"
-# owner
-    puts $fout "<td>"
-    puts $fout "<form>"
-    puts $fout " <input type=\"text\" name=\"${chkno},owner\" value=\"$clvars($chkno,owner)\">"
-    puts $fout "</form> "
-    puts $fout "</td>"
-
-    puts $fout "</tr>"
-  }
-  puts $fout "</table>"
-  #puts $fout "<table class=\"table1\">"
-
-
-  #puts $fout "</table>"
-}
-# }}}
-proc chklist_set {chkno_type value} {
-  set c [split $chkno_type -]
-  set dir [lindex $c 0]
-  set c [split $chkno_type ,]
-  set chkno [lindex $c 0]
-  set type  [lindex $c 1]
-  set path chklist/$dir/$chkno
-  #puts $path
-  ##cd $path
-  source $path/clvars.tcl
-  set clvars($chkno_type) $value
-  #set clvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
-  godel_array_save clvars $path/clvars.tcl
 }
 
 proc godel_get_path_elem {path index} {
@@ -3144,34 +2869,6 @@ proc math_average {alist} {
 proc math_sum {alist} {
   expr ([join $alist +])
 }
-# {{{
-proc gdnew {name} {
-  global env
-  puts $name
-  set kout [open $env(GODEL_ROOT)/plugin/gdraw/gdraw_$name.tcl w]
-    puts $kout "lappend define(installed_flow) $name"
-    puts $kout "proc gdraw_${name} \{\} \{"
-      puts $kout "  global env
-      puts $kout "  set kout \[open .godel/ghtm.tcl w\]"
-      puts $kout "    puts \$kout \"set flow_name $name\""
-      puts $kout "    puts \$kout \"ghtm_top_bar\""
-      puts $kout "  close \$kout"
-    puts $kout "\}"
-  close $kout
-}
-# }}}
-proc gdrm {name} {
-  global env
-  puts $name
-  if [file exist $env(GODEL_ROOT)/plugin/gdraw/gdraw_$name.tcl] {
-    puts "Delete `$name'"
-    file delete $env(GODEL_ROOT)/plugin/gdraw/gdraw_$name.tcl
-  } else {
-    puts "`$name' not exist..."
-  }
-}
-proc gflu_topdown {} {
-}
 # gflu
 # {{{
 proc gflu {virus degree {action ""}} {
@@ -3215,11 +2912,6 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
   upvar bvars bvars
   set ::toc_list [list]
 
-  if {$ghtm_proc == "clean"} {
-    file delete -force -- .godel .index.htm .main.htm .toc.htm
-    return
-  }
-
   # source plugin script
   set flist [glob $env(GODEL_PLUGIN)/*/*.tcl]
   foreach f $flist {
@@ -3229,14 +2921,6 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
   if [info exist env(GODEL_USER_PLUGIN)] {
     set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
     foreach f $flist { source $f }
-  }
-
-  if {$ghtm_proc == "list"} {
-    puts "Installed flow:"
-    foreach i $define(installed_flow) {
-      puts "    $i"
-    }
-    return
   }
 
   # default vars
@@ -3371,100 +3055,6 @@ proc godel_re_import {gpath} {
 }
 # }}}
 #@=godel_import
-# godel_import
-# {{{
-proc godel_import {} {
-# {{{
-  global env
-  upvar argv argv
-
-  # source plugin script
-  set flist [glob $env(GODEL_PLUGIN)/*/*.tcl]
-  foreach f $flist { source $f }
-  if [info exist env(GODEL_USER_PLUGIN)] {
-    set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
-    foreach f $flist { source $f }
-  }
-
-  set flow_name [lindex $argv 0]
-  set dir  [lindex $argv 1]
-
-  # Print installed flows
-  if {$flow_name == ""} {
-    puts "Installed flow:"
-    foreach i $define(installed_flow) {
-      puts "    $i"
-    }
-    return
-  }
-
-  # Print supported files
-  if {$dir == ""} {
-    foreach f $define($flow_name,filelist) {
-      puts [format "%-20s %s" [lindex $f 0] [lindex $f 1]]
-    }
-    return
-  }
-
-# Mapped file name and whether exist
-  if {[tbox_path_length $dir] == 2} {
-    set stage  [file tail $dir]
-    set module [file dirname $dir]
-    puts [format "\033\[0;36m%-20s %-33s %s\033\[0m" "Required" "Mapped to" "Stage"]
-    foreach f $define($flow_name,filelist) {
-      #puts $f
-      set fname [lindex $f 0]
-      set mapped [godel_mapped_fname $fname]
-      puts [format "%-20s (%s)%-30s %s" $fname [lindex $mapped 1] [lindex $mapped 0] [lindex $mapped 2]]
-    }
-    return
-  }
-
-  set pp [lindex $argv 1]
-# To assure full path is specificed
-  regsub -all {\/} $pp { } pplist
-  if {[llength $pplist] != "4"} {
-    puts "Error: $pp"
-    puts "You might miss corner directory."
-    return
-  }
-# }}}
-  set corner          [file tail $pp]
-  set version         [file tail [file dirname $pp]]
-  set path            [file dirname [file dirname $pp]]
-  set stage           [file tail $path]
-  set module          [file tail [file dirname $path]]
-  set srcpath         [pwd]
-  set vars(module)   $module
-  set vars(stage)    $stage
-  set vars(corner)   $corner
-  set vars(version)  $version
-  set vars(flow_name) $flow_name
-  set vars(srcpath)   $srcpath
-
-  godel_create_dir4
-  cd $env(GODEL_CENTER)/$module/$stage/$version/$corner
- 
- # Init
-  if [info exist define($stage,init)] {
-     puts "\033\[0;36mInit .godel/vars.tcl...\033\[0m"
-     puts "     source $define($stage,init)"
-     source $define($stage,init)
-  } elseif [info exist define(default,init)] {
-     puts "\033\[0;36mInit .godel/vars.tcl...\033\[0m"
-     puts "     source $define(default,init)"
-     source $define(default,init)
-  }
-  godel_array_save vars .godel/vars.tcl
-
-  puts "\033\[0;36mCooking...(gdraw_$flow_name)\033\[0m"
-  godel_draw $flow_name
-  godel_complete_vars
-  godel_htmdraw
-
-  cd $srcpath
-}
-# }}}
 #@=godel_redraw
 # {{{
 proc godel_redraw {pp} {
@@ -3513,35 +3103,6 @@ proc godel_create_file {fname} {
   }
 }
 # }}}
-# godel_mapped_fname
-# {{{
-proc godel_mapped_fname {fname} {
-  upvar define define
-  upvar stage  stage
-  upvar module module
-
-  if       [info exist define($fname,$stage,$module)] {
-    set mapped $define($fname,$stage,$module)
-    set key $stage,$module
-  } elseif [info exist define($fname,$stage)] {
-    set mapped $define($fname,$stage)
-    set key $stage
-  } elseif [info exist define($fname,default)] {
-    set mapped $define($fname,default)
-    set key "default"
-  } else {
-    set mapped $fname
-    set key "NA"
-  }
-
-  if [file exist $mapped] {
-    return "$mapped O $key"
-  } else {
-    return "$mapped X $key"
-  }
-
-}
-# }}}
 # tbox_path_length
 # {{{
 proc tbox_path_length {path} {
@@ -3568,178 +3129,10 @@ proc godel_proc_get_ready {infile} {
   }
 }
 # }}}
-# godel_list
-# {{{
-proc godel_list {pp {prefix ""} {postfix ""}} {
-  global env
-  regsub -all {\/} $pp { } pplist
-  cd $env(GODEL_CENTER)/$pp
-  if {[llength $pplist] == "3"} {
-    set klist [glob -nocomplain */index5.htm]
-  } elseif {[llength $pplist] == "2"} {
-    set klist [glob -nocomplain */index4.htm]
-  } elseif {[llength $pplist] == "1"} {
-    set klist [glob -nocomplain */index3.htm]
-  } elseif {[llength $pplist] == "0"} {
-    set klist [glob -nocomplain */index2.htm]
-  }
-  
-  foreach k $klist {
-    lappend dlist [file dirname $k]
-  }
-  
-  foreach d $dlist {
-    puts "$prefix $d $postfix"
-  }
-}
-# }}}
 # godel_remove_list_element
 # {{{
 proc godel_remove_list_element {alist elename} {
   return [lsearch -all -inline -not -exact $alist $elename]
-}
-# }}}
-# godel_delete
-# {{{
-proc godel_delete {} {
-# under construction...
-  global env
-  upvar argv argv
-  set pp [lindex $argv 0]
-  cd $env(GODEL_CENTER)/$pp/..
-
-# Version
-# {{{
-  puts [pwd]
-  source .godel/vars.tcl
-  #parray vars
-  foreach {key value} [array get vars] {
-    if [regexp "$vername," $key] {
-      unset vars($key)
-    }
-  }
-  set vars(version_list) [godel_remove_list_element $vars(version_list) $vername]
-# latest_version
-  if [info exist vars(latest_version)] {
-    set vars(latest_version) [lindex [lsort -decreasing $vars(version_list)] 0]
-  } else {
-    set vars(latest_version) $version
-  }
-# current_version
-  if {$vars(current_version) == $vername} {
-    set vars(current_version) $vars(latest_version)
-  }
-  godel_array_save vars .godel/vars.tcl
-# }}}  
-# Stage
-# {{{
-  cd ..
-  godel_array_reset vars
-  puts [pwd]
-  source .godel/vars.tcl
-  #parray vars
-  foreach {key value} [array get vars] {
-    if [regexp "$vername," $key] {
-      unset vars($key)
-    }
-  }
-  godel_array_save vars .godel/vars.tcl
-# }}}  
-# Module
-# {{{
-  cd ..
-  godel_array_reset vars
-  puts [pwd]
-  source .godel/vars.tcl
-  #parray vars
-  foreach {key value} [array get vars] {
-    if [regexp "$vername," $key] {
-      unset vars($key)
-    }
-  }
-  godel_array_save vars .godel/vars.tcl
-# }}}  
-  exec tcsh -fc "rm -rf $env(GODEL_CENTER)/$pp"
-}
-# }}}
-# godel_index4_corner_td
-# {{{
-proc godel_index4_corner_td {cornerlist color} {
-  upvar define define
-  upvar fout fout
-  foreach corner $cornerlist {
-    set fname $define(pt,corner_name,$corner)
-    if [file exist $fname/index5.htm] {
-      puts $fout "<td bgcolor=$color><a href=$fname/index5.htm>$corner</a></td>"
-    } else {
-      puts $fout "<td bgcolor=$color>$corner</td>"
-    }
-  }
-}
-# }}}
-# godel_evolve
-# {{{
-proc godel_evolve {ver} {
-  global env
-  source $env(GODEL_CENTER)/.godel/vars.tcl
-
-  regsub -all {\/} $ver { } new
-  set module [godel_get_column $new 0]
-
-  set palist [list]
-# palist will be set here
-  godel_get_parent $module $ver
-
-  godel_evolve_htm
-
-}
-# }}}
-# godel_get_parent
-# {{{
-proc godel_get_parent {module son} {
-  upvar vars vars
-  upvar palist palist
-
-  regsub -all {\/} $son {,} son
-  set parent $vars($son,parent)
-
-  regsub -all {\/} $parent {,} parent
-  set parent $module,$parent
-
-  if [info exist vars($parent,parent)] {
-    lappend palist $parent
-    return [godel_get_parent $module $parent]
-  } else {
-    lappend palist $parent
-    return $parent
-  }
-}
-# }}}
-# godel_checkout
-# {{{
-proc godel_checkout {ipath} {
-  global env
-
-  set backup_dir [pwd]
-  cd $env(GODEL_CENTER)
-  set ilist [glob -nocomplain */sta/*/*/inputs]
-  set ilist2 [glob -nocomplain */*/*/inputs]
-  set ilist [concat $ilist $ilist2]
-
-  cd $backup_dir
-
-  if {$ipath == ""} {
-    foreach i $ilist {
-      set pp [file dirname $i]
-      puts "gco $pp"
-    }
-  } else {
-    #set pp [file dirname $ipath]
-    file mkdir export/$ipath
-    #file copy $env(GODEL_CENTER)/$ipath/inputs/* export/$ipath
-    exec tcsh -fc "cp -rf $env(GODEL_CENTER)/$ipath/inputs/* export/$ipath"
-    exec tcsh -fc "cp -rf $env(GODEL_CENTER)/$ipath/.godel/vars.tcl export/$ipath"
-  }
 }
 # }}}
 #: godel_list_uniq_add
@@ -3792,53 +3185,6 @@ proc godel_split_by_space {line} {
       return $c
 }
 # }}}
-#: godel_histogram
-# {{{
-proc godel_histogram {} {
-  godel_get_current_value syn nvp_wns.dat
-  godel_histogram2_script "nvp_wns.dat" "nvp_wns.png" "NVP/WNS"
-  catch {exec tcsh -fc "gnuplot -c histogram.plt"}
-}
-
-proc godel_get_current_value {stage ofile} {
-  puts [pwd]
-  set fout [open $ofile w]
-  set flist [lsort [glob *]]
-  foreach f $flist {
-    if {[file type $f] == "directory"} {
-# get vars(current_version)
-      godel_array_reset vars
-      if [file exist $f/$stage/.godel/vars.tcl] {
-        source $f/$stage/.godel/vars.tcl
-        if [info exist vars(current_version)] {
-# get all vars values
-          source $f/$stage/$vars(current_version)/.godel/vars.tcl
-          puts $fout "$f $vars(nvp) $vars(wns)"
-        }
-      }
-    }
-  }
-
-  close $fout
-}
-# }}}
-#: godel_trend_data
-# {{{
-proc godel_trend_data {key} {
-
-  set fout [open "trend.dat" w]
-
-  set flist [lsort [glob *]]
-  foreach f $flist {
-    if {[file type $f] == "directory"} {
-      source $f/.godel/vars.tcl
-      puts $fout "$f $vars($key)"
-    }
-  }
-
-  close $fout
-}
-# }}}
 #: godel_split_by
 # {{{
 proc godel_split_by {afile delimiter} {
@@ -3878,7 +3224,8 @@ proc godel_get_vars {key} {
   }
 }
 # }}}
-
+# todo_set
+# {{{
 proc todo_set {args} {
   set todopath [gvars todo where]
 # Go to todo directory
@@ -3898,7 +3245,9 @@ proc todo_set {args} {
   gset $gpage $attr $value
   #gset $todonum g:keywords $keywords
 }
-
+# }}}
+# todo_create
+# {{{
 proc todo_create {args} {
   set todopath [gvars todo where]
   # -k (keyword)
@@ -3959,7 +3308,7 @@ proc todo_create {args} {
   #exec lind.tcl
   mindex .godel/lmeta.tcl
 }
-
+# }}}
 # todo_list, tlist
 # {{{
 proc todo_list {args} {
@@ -4086,8 +3435,8 @@ proc gget {pagename args} {
   }
 }
 # }}}
-
 # and_hit
+# {{{
 proc and_hit {patterns target} {
   set hit 1
   foreach pattern $patterns {
@@ -4099,6 +3448,9 @@ proc and_hit {patterns target} {
   }
   return $hit
 }
+# }}}
+# mscope
+# {{{
 proc mscope {args} {
   # -w
   set opt(-w) 0
@@ -4114,7 +3466,9 @@ proc mscope {args} {
     puts "$args default"
   }
 }
+# }}}
 # mload
+# {{{
 proc mload {args} {
   global env env
   upvar meta meta
@@ -4169,6 +3523,7 @@ proc mload {args} {
     source $page_where/.godel/indexing.tcl
   }
 }
+# }}}
 # gvars
 # {{{
 proc gvars {args} {
@@ -6347,34 +5702,7 @@ proc godel_set_page_value {pname attr value} {
   #return $vars(g:keywords)
 }
 # }}}
-proc godel_get_page_value {pname attr} {
-  global env
-  source $env(GODEL_META_FILE)
-
-# Get pname where
-  source $mfile
-  #puts $meta($pname,where)
-
-# Get pname value
-  source $meta($pname,where)/.godel/vars.tcl
-
-  puts $vars(g:keywords)
-  return $vars(g:keywords)
-}
 #@>META
-#@=meta_get_page
-proc meta_get_pagelist {} {
-  global env
-  source $env(GODEL_META_FILE)
-
-  set pagelist [list]
-  foreach i [array name meta *,where] {
-    regsub ",where" $i "" i
-    lappend pagelist $i
-  }
-
-  return $pagelist
-}
 #@=mindex
 # {{{
 proc mindex {metafile} {
@@ -6532,43 +5860,8 @@ proc meta_rm {name} {
   godel_array_save meta $env(GODEL_META_FILE)
 }
 # }}}
-#@=meta_get_page_where
-proc meta_get_page_where {pname} {
-  global env
-  source $env(GODEL_META_FILE)
-  if [info exist meta($pname,where)] {
-    return $meta($pname,where)
-  } else {
-    return NA
-  }
-}
-#@=godel_set_page_vars
-proc godel_set_page_vars {pname key value} {
-  upvar vars vars
-  global env
-
-  set where [meta_get_page_where $pname]
-  if {$where == "NA"} {
-    puts "Error: no where for $pname"
-    return
-  }
-  #puts $where
-  cd $where
-  source .godel/vars.tcl
-
-# Set
-  set vars($key) $value
-
-  godel_array_save vars .godel.godel/vars.tcl
-}
-
-proc file_not_exist_exit {fname} {
-  if ![file exist $fname] {
-    puts "Error: $fname not exist. Nothing done..."
-    exit
-  }
-}
-
+# tbox_grep
+# {{{
 proc tbox_grep {re afilelist} {
     set files [glob -types f $args]
     foreach file $files {
@@ -6582,6 +5875,7 @@ proc tbox_grep {re afilelist} {
         close $fp
     }
 }
+# }}}
 # lgrep
 # {{{
 proc lgrep_inc {pattern} {
@@ -6642,97 +5936,6 @@ proc read_file_ret_list {afile} {
   }
 }
 # }}}
-proc getimg {name {confirm nogo}} {
-
-  set ilist [glob /cygdrive/c/Users/chihkang/Pictures/$name]
-  foreach i $ilist {
-    puts $i
-  }
-  if {$confirm == "go"} {
-    foreach i $ilist {
-      exec tcsh -fc "mv $i ."
-    }
-  }
-}
-proc getdownload {name {confirm nogo}} {
-
-  set ilist [glob /cygdrive/c/Users/chihkang/Downloads/$name]
-  foreach i $ilist {
-    puts $i
-  }
-  if {$confirm == "go"} {
-    foreach i $ilist {
-      exec tcsh -fc "mv $i ."
-    }
-  }
-}
-proc getdocument {name {confirm nogo}} {
-
-  set ilist [glob /cygdrive/c/Users/chihkang/Documents/$name]
-  foreach i $ilist {
-    regsub -all {\s} $i {\\ } i
-    puts $i
-  }
-  if {$confirm == "go"} {
-    foreach i $ilist {
-      regsub -all {\s} $i {\\ } i
-      exec tcsh -fc "mv $i ."
-    }
-  }
-}
-proc a4_rm_module {module} {
-  global env
-  source $env(GODEL_ROOT)/bin/gsh_cmds.tcl
-  regsub {CENTER\/} $module {} module
-
-  puts "Remove dir.. $env(GODEL_CENTER)/$module"
-  cd $env(GODEL_CENTER)
-  file delete -force $module
-
-  puts "Remove $module,"
-  source .godel/vars.tcl
-  remove_keys $module,*
-  set vars(module_list) [godel_remove_list_element $vars(module_list) $module]
-  godel_array_save vars .godel/vars.tcl
-  godel_array_reset vars
-}
-proc a4_rm_version {a4path} {
-  global env
-  source $env(GODEL_ROOT)/bin/gsh_cmds.tcl
-  regsub {CENTER\/} $a4path {} a4path
-
-  set version [godel_get_path_elem $a4path 2]
-  set stage   [godel_get_path_elem $a4path 1]
-  set module  [godel_get_path_elem $a4path 0]
-
-  #puts $a4path
-  puts "Remove dir.. $env(GODEL_CENTER)/$a4path"
-  cd $env(GODEL_CENTER)/$module/$stage
-  file delete -force $version
-
-  puts "Remove $version,"
-  source .godel/vars.tcl
-  remove_keys $version,*
-  set vars(version_list) [godel_remove_list_element $vars(version_list) $version]
-  godel_array_save vars .godel/vars.tcl
-  godel_array_reset vars
-
-  puts "Remove $stage,$version,"
-  cd ..
-  source .godel/vars.tcl
-  remove_keys $stage,$version,*
-  set vars($stage,version_list) [godel_remove_list_element $vars($stage,version_list) $version]
-  godel_array_save vars .godel/vars.tcl
-  godel_array_reset vars
-
-  puts "Remove $module,$stage,$version,"
-  cd ..
-  source .godel/vars.tcl
-  remove_keys $module,$stage,$version,*
-  set vars($module,$stage,version_list) [godel_remove_list_element $vars($module,$stage,version_list) $version]
-  godel_array_save vars .godel/vars.tcl
-  godel_array_reset vars
-}
 
 proc godel_load_vars {vpath} {
   global env
