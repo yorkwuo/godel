@@ -1,5 +1,69 @@
 
+# ghtm_list_files
+# {{{
+proc ghtm_list_files {pattern {description ""}} {
+  upvar env env
+  upvar fout fout
 
+  #puts $fout "<div><h5>Filelist$description<a href=[tbox_cygpath $env(GODEL_ROOT)/plugin/sys/ghtm_list_files.tcl] type=text/txt>(script)</a></h5></div>"
+  set flist [lsort [glob -nocomplain $pattern]]
+  foreach full $flist {
+    set fname $full
+
+    if {[regexp -nocase {\.jpg|\.png|\.gif} $fname]}  {
+      #puts $fout "<div class=\"w3-card\" style=\"width:10%\">"
+      #puts $fout "  <a href=$fname><img src=\"$fname\" style=\"width:100%\"></a>"
+      #puts $fout "    <p>$fname</p>"
+      #puts $fout "</div>"
+    } elseif [regexp -nocase {\.png} $fname] {
+    } elseif [regexp -nocase {\.md} $fname] {
+      #puts $fout "<a href=\"$full\" type=text/png><img src=$full width=30% height=30%></a>"
+
+    } elseif [regexp -nocase {\.docx} $fname] {
+      puts $fout "<a href=\"$full\" type=text/docx>$full</a><br>"
+
+    } elseif [regexp -nocase {\.one} $fname] {
+      puts $fout "<a href=\"$full\">$full</a><br>"
+
+    } elseif [regexp -nocase {\.mpg} $fname] {
+      puts $fout "<a href=\"$full\">$full</a><br>"
+
+    } elseif [regexp -nocase {\.msg} $fname] {
+      puts $fout "<a href=\"$full\">$full</a><br>"
+
+    } elseif [regexp -nocase {\.mobi} $fname] {
+      puts $fout "<a href=\"$full\">$full</a><br>"
+
+    } elseif [regexp -nocase {\.pptx} $fname] {
+      puts $fout "<a href=\"$full\" type=text/pptx>$full</a><br>"
+
+    } elseif [regexp -nocase {\.ppt} $fname] {
+      puts $fout "<a href=\"$full\" type=text/ppt>$full</a><br>"
+
+    } elseif [regexp -nocase {\.xlsx} $fname] {
+      puts $fout "<a href=\"$full\" type=text/xlsx>$full</a><br>"
+
+    } elseif [regexp -nocase {\.pdf} $fname] {
+      puts $fout "<a href=\"$full\" type=text/pdf>$full</a><br>"
+    } elseif [regexp -nocase {\.mp4} $fname] {
+      puts $fout "<a href=\"$full\" type=text/mp4>$full</a><br>"
+    } elseif [regexp -nocase {\.mp3} $fname] {
+      puts $fout "<a href=\"$full\" type=text/mp3>$full</a><br>"
+    } elseif [regexp -nocase {\.rmvb} $fname] {
+      puts $fout "<a href=\"$full\" type=text/rmvb>$full</a><br>"
+    } elseif [regexp -nocase {\.htm} $fname] {
+      puts $fout "<a href=\"$full\" type=text/htm>$full</a><br>"
+    } elseif [regexp -nocase {\.mht} $fname] {
+      puts $fout "<a href=\"$full\" type=text/mht>$full</a><br>"
+    } elseif [regexp -nocase {\.ppdf} $fname] {
+      puts $fout "<a href=\"$full\" type=text/ppdf>$full</a><br>"
+    } elseif [file isdirectory $fname] {
+    } else {
+      puts $fout "<a href=\"$full\" type=text/txt>$full</a><br>"
+    }
+  }
+}
+# }}}
 # ghtm_top_bar
 # {{{
 proc ghtm_top_bar {{type NA}} {
@@ -201,6 +265,9 @@ proc adjust_txt {ctrl txt} {
     }
   }
 
+  if {$ctrl == ""} {
+    set ctrl 10
+  }
   set absctrl [expr abs($ctrl)]
   if {$absctrl > $tlength} {
     set space_count [expr $absctrl - $tlength]
@@ -1036,19 +1103,6 @@ proc lremove {target_list item} {
   return $a
 }
 # }}}
-proc restore_env {} {
-
-  while {[gets $kin line] >= 0} {
-    regsub {=} $line { } line
-    set value [lrange $line 1 end]
-    set name  [lindex $line 0]
-    if [regexp {LS_COLOR} $name] {
-    } else {
-      puts "setenv $name \"$value\""
-    }
-  }
-
-}
 # gdraw_default
 # {{{
 proc gdraw_default {} {
@@ -1774,7 +1828,8 @@ proc gmd {fname} {
   gnotes $content
 }
 # }}}
-
+# wsplit: word split
+# {{{
 proc wsplit {str sep} {
     set out {} 
     set sepLen [string length $sep]
@@ -1791,7 +1846,7 @@ proc wsplit {str sep} {
     # appended
     lappend out $str
 }
-
+# }}}
 # list_video
 # {{{
 proc list_video {pattern} {
@@ -1818,6 +1873,7 @@ proc img_resize {pattern} {
 }
 # }}}
 # gmd_file
+# {{{
 proc gmd_file {afile} {
   set kin [open $afile r]
     set ftxt [read $kin]
@@ -1826,6 +1882,7 @@ proc gmd_file {afile} {
   #puts $ftxt
   return [::gmarkdown::md_convert $ftxt]
 }
+# }}}
 #@> gnotes
 # {{{
 proc gnotes {args} {
@@ -1952,16 +2009,6 @@ proc grow {content} {
   puts $fout "</div>"
 }
 # }}}
-
-proc plant {pp} {
-  global env
-  puts $pp
-  set org_path [pwd]
-  cd $pp
-  godel_draw
-  cd $org_path
-}
-
 # ghtm_filter_notes
 # {{{
 proc ghtm_filter_notes {} {
@@ -1979,7 +2026,6 @@ proc sset {varname value} {
  return ""
 }
 # }}}
-
 # list_img
 # {{{
 proc list_img {{N 4} {size 100%} {pattern "*.JPG *.PNG *.jpg *.png *.gif *.GIF"}} {

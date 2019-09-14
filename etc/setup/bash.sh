@@ -50,8 +50,8 @@ alias f2="gvim .godel/vars.tcl"
 alias f3="gvim .godel/proc.tcl"
 
 gmkdir () {
-  echo $1
-  path=`pwd`
+  mkdir $1
+  cd $1
   godel_draw.tcl
   cd ..
 }
