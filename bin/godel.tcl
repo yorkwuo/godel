@@ -398,7 +398,7 @@ proc gwaive {args} {
 proc ghtm_filter_table {tname column_no} {
   upvar fout fout
   puts $fout "<div class=\"w3-panel w3-pale-blue w3-leftbar w3-border-blue\">" 
-  puts $fout "<input type=text id=filter_table_input onkeyup=filter_table(\"$tname\",$column_no,event) placeholder=\"Search...\">"
+  puts $fout "<input type=text id=filter_table_input onkeyup=filter_table(\"$tname\",$column_no,event) placeholder=\"Search...\" autofocus>"
   puts $fout "</div>" 
 }
 # }}}
@@ -2218,23 +2218,7 @@ proc gok {keywords} {
 proc cdk {args} {
   global env
 
-  # -l (local)
-  set opt(-l) 0
-  set idx [lsearch $args {-l}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-l) 1
-  }
-  
   set keywords $args
-
-  if {$opt(-l)} {
-    if [file exist .godel/indexing.tcl] {
-      source .godel/indexing.tcl
-    } else {
-      puts "Error: Not exist... .godel/indexing.tcl "
-    }
-  }
 
   if ![info exist meta] {
     foreach i $env(GODEL_META_SCOPE) { mload $i }
