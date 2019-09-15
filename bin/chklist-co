@@ -1,3 +1,0 @@
-#!/usr/bin/tclsh
-source $env(GODEL_ROOT)/bin/godel.tcl
-chklist_co [lindex $argv 0]
