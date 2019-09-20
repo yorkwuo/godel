@@ -1,4 +1,17 @@
-
+proc getcol {args} {
+  # -c (key)
+# {{{
+  set opt(-c) 0
+  set idx [lsearch $args {-c}]
+  if {$idx != "-1"} {
+    set cols  [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-c) 1
+  }
+# }}}
+  puts $cols
+  puts $args
+}
 # ghtm_list_files
 # {{{
 proc ghtm_list_files {pattern {description ""}} {
@@ -1319,9 +1332,9 @@ proc list_pages {args} {
 # List pages
   foreach page $nlist {
     if {$opt(-k)} {
-      set disp [gvars -l $page $key]
+      set disp [lvars $page $key]
     } else {
-      set disp [gvars -l $page g:pagename]
+      set disp [lvars $page g:pagename]
     }
     if {$opt(-n)} {
       # With newline
@@ -2340,24 +2353,6 @@ proc ghtm_plot_line1 {name alist} {
   puts $fout "<a href=.godel/chart/$name.tcl>ctrl</a>"
 }
 # }}}
-#@> Table
-#@=tbl_get_rows
-proc tbl_get_rows {tname} {
-  upvar vars global
-  return $vars(gtable,$tname,rowlist)
-}
-#@=tbl_get_cols
-proc tbl_get_cols {tname} {
-  upvar vars vars
-  return $vars(gtable,$tname,columnlist)
-}
-#@=tbl_set_col_attr
-proc tbl_set_col_attr {tname collist attr} {
-  upvar vars vars
-  foreach col $collist {
-    set vars(gtable,$tname,$col,attr) $attr
-  }
-}
 #@=money_convert
 # {{{
 proc money_convert {from to fromvalue} {
@@ -2386,80 +2381,6 @@ proc money_convert {from to fromvalue} {
   return $tovalue
 }
 # }}}
-#@=tbl_add_value
-proc tbl_add_value {key value} {
-  upvar vars vars
-  set vars($key) $value
-}
-#@=tbl_add_values_to_row
-# {{{
-proc tbl_add_values_to_row {tname row_name values} {
-  upvar vars vars
-  foreach column  $vars(gtable,$tname,columnlist) value $values {
-    if {$value == "NA"} {
-      # keep it as original
-    } else {
-      set vars($row_name,$column) $value
-    }
-  }
-}
-# }}}
-#@=tbl_add_values_to_col
-# {{{
-proc tbl_add_values_to_col {tname col_name values} {
-  upvar vars vars
-  foreach row  $vars(gtable,$tname,rowlist) value $values {
-    if {$value == "NA"} {
-      # keep it as original
-    } else {
-      set vars($row,$col_name) $value
-    }
-  }
-}
-# }}}
-proc tbl_copy {from to} {
-  upvar vars vars
-  set vars(gtable,$to,rowlist) $vars(gtable,$from,rowlist)
-  set vars(gtable,$to,columnlist) $vars(gtable,$from,columnlist)
-}
-proc tbl_rm {tname} {
-  upvar vars vars
-  unset vars(gtable,$tname,rowlist)
-  unset vars(gtable,$tname,columnlist)
-}
-proc tbl_add_column {tblname location column_names} {
-}
-proc tbl_set_cols {tname columnlist} {
-  upvar vars vars
-  set   vars(gtable,$tname,columnlist) $columnlist
-  #puts $vars(gtable,$tname,columnlist)
-}
-proc tbl_set_rows {tname rowlist} {
-  upvar vars vars
-  regsub {#.*?\n} $rowlist {} rowlist
-  set   vars(gtable,$tname,rowlist) $rowlist
-  #puts $vars(gtable,$tname,rowlist)
-}
-
-proc tbl_sum_column {tname column} { }
-proc tbl_average_column {tname column} { }
-proc tbl_norm_column {tname column newcol location} { }
-#proc tbl_sum_column {tname column} { }
-#proc tbl_sum_column {tname column} { }
-
-
-proc tbl_get_column {tname column} {
-  upvar vars vars
-  set rlist [list]
-  foreach row $vars(gtable,$tname,rowlist) {
-    if [info exist vars($row,$column)] {
-      lappend rlist $vars($row,$column)
-    } else {
-      lappend rlist "NA"
-    }
-  }
-  return $rlist
-}
 # Read file in to line list
 proc read_timing_rpt_file {fname} {
   upvar vars vars
