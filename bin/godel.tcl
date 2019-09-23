@@ -1991,37 +1991,6 @@ proc gnotes {args} {
   puts $fout "</div>"
 }
 # }}}
-# grow
-# {{{
-proc grow {content} {
-  upvar fout fout
-  upvar vars vars
-  upvar grow_column_width grow_column_width
-
-  set cc [wsplit $content {#r}]
-
-  puts $fout "<div class=\"w3-cell-row gnotes w3-pale-blue w3-leftbar w3-border-blue\">"
-  set num 0
-  foreach i $cc {
-    if [regexp {^\n$} $i] {
-    } else {
-      set aa [::gmarkdown::convert $i]
-      regsub -line -all {<p>@\? (.*)</p>} $aa {<span class=keywords style=color:red>\1</span>} aa
-      set w [lindex $grow_column_width $num]
-      if {$w == ""} {
-        puts $fout "<div class=\"w3-container w3-cell w3-rightbar\">"
-      } else {
-        puts $fout "<div class=\"w3-container w3-cell w3-rightbar\" style=\"width:$w%\">"
-      }
-      #puts $fout "<div class=\"w3-container w3-cell w3-leftbar\">"
-      puts $fout $aa
-      puts $fout "</div>"
-      incr num
-    }
-  }
-  puts $fout "</div>"
-}
-# }}}
 # ghtm_filter_notes
 # {{{
 proc ghtm_filter_notes {} {

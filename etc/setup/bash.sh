@@ -38,7 +38,7 @@ mt () {
   lind.tcl
 }
 
-alias gd=godel_draw.tcl
+alias gd="godel_draw.tcl; xdotool search --name \"Mozilla\" key ctrl+r"
 alias cdg='cd $GODEL_ROOT'
 alias mci=meta_chkin.tcl
 alias mind=meta-indexing
@@ -51,9 +51,13 @@ alias f3="gvim .godel/proc.tcl"
 
 gmkdir () {
   mkdir $1
-  cd $1
+  \cd $1
   godel_draw.tcl
-  cd ..
+  \cd ..
+}
+
+function lcd { 
+  `lcd.tcl "$@"`
 }
 
 #export GODEL_GVIM=/cygdrive/c/Program\ Files\ \(x86\)/Vim/vim81/gvim.exe
