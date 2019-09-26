@@ -2793,6 +2793,10 @@ proc math_sum {alist} {
 #@=godel_draw
 # {{{
 proc godel_draw {{ghtm_proc NA} {force NA}} {
+  if [file exist .freeze] {
+    puts "INFO: No change to .index.htm. This page is frozen."
+    return
+  }
   package require gmarkdown
   upvar vars vars
   global env

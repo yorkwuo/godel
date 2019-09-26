@@ -265,7 +265,7 @@ img {
 .hbox {
   font-size  :150%;
   color      : white;
-  font-family:Verdana;
+  font-family:Verdana,san-serif;
   #background-color:DarkSlateBlue;
   background-color:darkorange;
   margin     :4px;
@@ -323,10 +323,10 @@ em {
 }
 
 p {
-  font-family: Consolas;
+  font-family: Consolas,san-serif;
 }
 a {
-  font-family: Consolas;
+  font-family: Consolas,san-serif;
 }
 
 h1{font-size:30px}h2{font-size:24px}h3{font-size:20px}h4{font-size:18px}h5{font-size:16px}h6{font-size:14px}

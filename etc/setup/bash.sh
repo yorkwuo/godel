@@ -38,7 +38,7 @@ mt () {
   lind.tcl
 }
 
-#alias gd="godel_draw.tcl; xdotool search --name \"Mozilla\" key ctrl+r"
+alias gdr="godel_draw.tcl; xdotool search --name \"Mozilla\" key ctrl+r"
 alias gd="godel_draw.tcl"
 alias cdg='cd $GODEL_ROOT'
 alias mci=meta_chkin.tcl
