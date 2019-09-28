@@ -16,7 +16,7 @@ export PATH=$GODEL_ROOT/bin:$PATH
 export GODEL_PLUGIN=$GODEL_ROOT/plugin
 
 tlist  () { 
-  eval `tdolist $*` 
+  tdolist $*
 }
 cdk    () { 
   eval `cdk.tcl $*` 
@@ -38,6 +38,7 @@ mt () {
   lind.tcl
 }
 
+alias tpage="gget todo -o"
 alias gdr="godel_draw.tcl; xdotool search --name \"Mozilla\" key ctrl+r"
 alias gd="godel_draw.tcl"
 alias cdg='cd $GODEL_ROOT'

@@ -134,13 +134,11 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "<div class=\"w3-dropdown-click w3-right\">"
   puts $fout "  <button onclick=\"myFunction()\" class=\"w3-button w3-hover-red\">More</button>"
   puts $fout "  <div id=\"Demo\" class=\"w3-dropdown-content w3-bar-block w3-card-4\">"
-  puts $fout "    <a href=\".main.htm\"                     class=\"w3-bar-item w3-button\">Table of Content</a>"
+  #puts $fout "    <a href=\".main.htm\"                     class=\"w3-bar-item w3-button\">Table of Content</a>"
   puts $fout "    <a href=\".index.htm\"      type=text/txt class=\"w3-bar-item w3-button\">HTML</a>"
-  puts $fout "    <a href=\"$path_help\"                    class=\"w3-bar-item w3-button\">Help</a>"
-  puts $fout "    <a href=\"$path_pagelist\"                class=\"w3-bar-item w3-button\">Pagelist</a>"
-  puts $fout "    <a href=\"$path_draw\"      type=text/txt class=\"w3-bar-item w3-button\">Draw</a>"
+  #puts $fout "    <a href=\"$path_help\"                    class=\"w3-bar-item w3-button\">Help</a>"
+  #puts $fout "    <a href=\"$path_pagelist\"                class=\"w3-bar-item w3-button\">Pagelist</a>"
   puts $fout "    <a href=\".godel/proc.tcl\" type=text/txt class=\"w3-bar-item w3-button\">Proc</a>"
-  puts $fout "    <a href=\"../.index.htm\"                 class=\"w3-bar-item w3-button\">Parent</a>"
   puts $fout "  </div>"
   puts $fout "</div>"
   
@@ -1908,6 +1906,8 @@ proc gmd_file {afile} {
   return [::gmarkdown::md_convert $ftxt]
 }
 # }}}
+# csv_table
+# {{{
 proc csv_table {args} {
   global fout
 
@@ -1935,6 +1935,7 @@ proc csv_table {args} {
   }
   puts $fout "</table>"
 }
+# }}}
 #@> gnotes
 # {{{
 proc gnotes {args} {
@@ -2798,11 +2799,15 @@ proc math_sum {alist} {
 #@> Godel Fundamental
 #@=godel_draw
 # {{{
-proc godel_draw {{ghtm_proc NA} {force NA}} {
+proc godel_draw {} {
+  # If .freeze exist, do nothing. Page keeps the same.
+# {{{
   if [file exist .freeze] {
     puts "INFO: No change to .index.htm. This page is frozen."
     return
   }
+# }}}
+
   package require gmarkdown
   upvar vars vars
   global env
@@ -2812,6 +2817,7 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
   set ::toc_list [list]
 
   # source plugin script
+# {{{
   set flist [glob $env(GODEL_PLUGIN)/*/*.tcl]
   foreach f $flist {
     #puts $f
@@ -2821,8 +2827,10 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
     set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
     foreach f $flist { source $f }
   }
+# }}}
 
   # default vars
+# {{{
   if [file exist .godel/vars.tcl] {
     source .godel/vars.tcl
     #godel_init_vars    g:where       [pwd]
@@ -2837,9 +2845,27 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
     godel_init_vars    g:pagename    [file tail [pwd]]
     godel_init_vars    g:iname       [file tail [pwd]]
   }
+# }}}
 
   file mkdir .godel
-  # .index.htm
+
+# draw.gtcl
+# {{{
+  if ![file exist .godel/draw.gtcl] {
+    set kout [open .godel/draw.gtcl w]
+      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
+      puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
+      puts $kout "cd \$pagepath"
+      puts $kout "godel_draw"
+      puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
+
+    close $kout
+  }
+# }}}
+
+#----------------------------
+# Start creating .index.htm
+#----------------------------
   global fout
   set fout [open ".index.htm" w]
 
@@ -2848,17 +2874,7 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
   puts $fout "<head>"
   puts $fout "<title>$vars(g:pagename)</title>"
 
-# Copy to local to make page sharing easier. Viwer don't need to have Godel installed.
-  #file copy -force $env(GODEL_ROOT)/etc/css/w3.css .godel/
-
-  #file copy -force $env(GODEL_ROOT)/scripts/js/prism/themes/prism-twilight.css .godel/
-  #puts $fout "<link rel=\"stylesheet\" href=.godel/w3.css>"
-  #puts $fout "<link rel=\"stylesheet\" href=.godel/prism-twilight.css data-noprefix/>"
-
-# Link to global w3.css
-  #puts $fout "<link rel=\"stylesheet\" href=[tbox_cygpath $env(GODEL_ROOT)/etc/css/w3.css]>"
-
-# Hardcode w3.css in .index.htm so that you have all in one file.
+# Hardcoded w3.css in .index.htm so that you have all in one file.
   puts $fout "<style>"
   set fin [open $env(GODEL_ROOT)/etc/css/w3.css r]
     while {[gets $fin line] >= 0} {
@@ -2866,40 +2882,21 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
     }
   close $fin
   puts $fout "</style>"
-  #puts $fout "<link rel=\"stylesheet\" href=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/prism/themes/prism-twilight.css] data-noprefix/>"
+
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
   puts $fout "<body>"
 
-  if {$force == "force"} {
-      if [tbox_procExists gdraw_$ghtm_proc] {
-        #puts "Check out `$ghtm_proc' ghtm.tcl..."
-        gdraw_$ghtm_proc
-      } else {
-        #puts "Check out `default' ghtm.tcl"
-        gdraw_default
-      }
-# ghtm.tcl is executed here.
-      #puts "Execute ghtm.tcl..."
-      source .godel/ghtm.tcl
+# Source ghtm.tcl
+  if [file exist .godel/ghtm.tcl] {
+    source .godel/ghtm.tcl
   } else {
-    if [file exist .godel/ghtm.tcl] {
-# ghtm.tcl is executed here.
-      #puts "Execute ghtm.tcl..."
-      source .godel/ghtm.tcl
-    } else {
-      if [tbox_procExists gdraw_$ghtm_proc] {
-        puts "Check out `$ghtm_proc'..."
-        gdraw_$ghtm_proc
-      } else {
-        #puts "Check out `default' ghtm.tcl"
-        gdraw_default
-      }
-# ghtm.tcl is executed here.
-      #puts "Execute ghtm.tcl..."
-      source .godel/ghtm.tcl
-    }
+    gdraw_default
+    source .godel/ghtm.tcl
   }
+
+# highlight words
+# {{{
   puts $fout "<script>"
   if [info exist rwords] {
     puts $fout "var target_words = \["
@@ -2909,17 +2906,22 @@ proc godel_draw {{ghtm_proc NA} {force NA}} {
     puts $fout "\];"
     puts $fout "word_highlight(target_words)"
   }
-
   puts $fout "</script>"
+# }}}
+
   puts $fout "</body>"
   puts $fout "</html>"
 
   close $fout
 
+# dyvars
+# {{{
   if [file exist .godel/dyvars.tcl] {
     source .godel/dyvars.tcl
   }
   set dyvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
+# }}}
+
   godel_array_save dyvars .godel/dyvars.tcl
   godel_array_save vars   .godel/vars.tcl
 
@@ -3147,21 +3149,33 @@ proc todo_list {args} {
   global env
   set todo_path [gvars todo where]
   godel_array_reset meta
-  source $todo_path/.godel/lmeta.tcl
-  source $todo_path/.godel/indexing.tcl
-
-  set ilist [list]
-  foreach i [lsort [array name meta *,where]] {
-    regsub ",where" $i "" i
-    lappend ilist $i
-  }
-
-  set found_names [list]
-
+#  source $todo_path/.godel/lmeta.tcl
+#  source $todo_path/.godel/indexing.tcl
+#
+#  set ilist [list]
+#  foreach i [lsort [array name meta *,where]] {
+#    regsub ",where" $i "" i
+#    lappend ilist $i
+#  }
+#
+#  set found_names [list]
+#
   set keywords $args
+  set varfiles [glob -nocomplain */.godel/vars.tcl]
+
+  foreach varfile $varfiles {
+    source $varfile
+    set todo [file dirname [file dirname $varfile]]
+    lappend todolist $todo
+    set meta($todo,keys) "$todo $vars(g:keywords)"
+  }
+  parray meta
+  #regsub -all {\/.godel} $ilist {} ilist
+  #puts stderr $ilist
+  #return
 
 # Search pagelist
-  foreach i $ilist {
+  foreach i $todolist {
     set found 1
 # Is it match with keyword
     foreach k $keywords {
@@ -3191,15 +3205,12 @@ proc todo_list {args} {
         if {$done == ""} {set done 0}
         if {$done == "NA"} {set done 0}
         if {!$done} {
-          if [info exist meta($i,keywords)] {
-            set pagename [gvars $i g:pagename]
-            set priority [gvars $i priority]
-            set keywords [gvars $i g:keywords]
-            set title    [gvars $i title]
+            set pagename [lvars $i g:pagename]
+            set priority [lvars $i priority]
+            set keywords [lvars $i g:keywords]
+            set title    [lvars $i title]
             #puts stderr  [format "%s (%s) %s. (%s)" $pagename $priority $title $keywords]
             lappend dlist [list $pagename $priority $keywords $title]
-          } else {
-          }
         } else {
           continue
         }
@@ -3238,6 +3249,15 @@ proc gget {pagename args} {
   if ![info exist meta] {
     foreach i $env(GODEL_META_SCOPE) { mload $i }
   }
+  # -o (open)
+# {{{
+  set opt(-o) 0
+  set idx [lsearch $args {-o}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-o) 1
+  }
+# }}}
 
 # source user plugin
   if [info exist env(GODEL_USER_PLUGIN)] {
@@ -3253,6 +3273,14 @@ proc gget {pagename args} {
   }
   source $meta($pagename,where)/.godel/vars.tcl
   set where $meta($pagename,where)
+
+# Open the page with firefox if -o
+  if {$opt(-o)} {
+    cd $where
+    puts "kkk"
+    exec firefox .index.htm &
+    return
+  }
 
   if [file exist $meta($pagename,where)/.godel/proc.tcl] {
     source $meta($pagename,where)/.godel/proc.tcl
@@ -3388,12 +3416,14 @@ proc gvars {args} {
     set opt(-k) 1
   }
   # -d (delete)
+# {{{
   set opt(-d) 0
   set idx [lsearch $args {-d}]
   if {$idx != "-1"} {
     set args [lreplace $args $idx $idx]
     set opt(-d) 1
   }
+# }}}
   # -t (tvars)
   set opt(-t) 0
   set idx [lsearch $args {-t}]
