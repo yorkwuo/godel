@@ -1,3 +1,5 @@
+# getcol
+# {{{
 proc getcol {args} {
   # -c (key)
 # {{{
@@ -12,6 +14,14 @@ proc getcol {args} {
   puts $cols
   puts $args
 }
+# }}}
+# ghtm_keyword_button
+# {{{
+proc ghtm_keyword_button {tablename column keyword} {
+  global fout
+  puts $fout "<button onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$keyword</button>"
+}
+# }}}
 # ghtm_list_files
 # {{{
 proc ghtm_list_files {pattern {description ""}} {
@@ -96,9 +106,14 @@ proc ghtm_top_bar {{type NA}} {
   }
 
   set cwd [pwd]
+  file mkdir .godel/js
+  file copy -force $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
+  file copy -force $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
 
-  puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/godel.js]></script>"
-  puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js]></script>"
+  puts $fout "<script src=.godel/js/godel.js></script>"
+  puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
+  #puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/godel.js]></script>"
+  #puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js]></script>"
   #puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/prism/prism.js]></script>"
 
   puts $fout "<div class=\"w3-bar w3-border w3-indigo w3-medium\">"
@@ -954,7 +969,7 @@ proc local_table {name args} {
     set opt(-edit) 1
   }
 # }}}
-  # -f(listfile)
+  # listfile
   # {{{
   if {$opt(-f)} {
     if [file exist $listfile] {
@@ -1785,21 +1800,18 @@ proc pagelist {{sort_by by_updated}} {
   ghtm_table_nodir pagelist 0
 }
 # }}}
-proc ptses_chkver {ses_path} {
-  set fin [open $ses_path/cmd_log r]
-    set data [read $fin]
-  close $fin
-
-  regexp {\/(\w-\d\d\d\d\.\d\d-.*?)\/} $data whole version
-  puts $version
-}
+# ge
+# {{{
 proc ge {cmd args} {
   eval $cmd {*}$args
 }
+# }}}
+# listcomp
+# {{{
+proc listcomp {a b} {
 #----------------
 # compare list a with b
 #----------------
-proc listcomp {a b} {
   set diff {}
   foreach i $a {
     if {[lsearch -exact $b $i]==-1} {
@@ -1808,7 +1820,7 @@ proc listcomp {a b} {
   }
   return $diff
 }
-
+# }}}
 # gmd
 # {{{
 proc gmd {fname} {
@@ -1896,6 +1908,33 @@ proc gmd_file {afile} {
   return [::gmarkdown::md_convert $ftxt]
 }
 # }}}
+proc csv_table {args} {
+  global fout
+
+  # -delim (delimiter)
+  set opt(-delim) 0
+  set idx [lsearch $args {-delim}]
+  if {$idx != "-1"} {
+    set delim [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-delim) 1
+  } else {
+    set delim {,}
+  }
+
+  set content [lindex $args 0]
+  set lines [split $content \n]
+  puts $fout "<table class=table1>"
+  foreach line $lines {
+    set cols [split $line $delim]
+    puts $fout "<tr>"
+    foreach col $cols {
+      puts $fout "<td>$col</td>"
+    }
+    puts $fout "</tr>"
+  }
+  puts $fout "</table>"
+}
 #@> gnotes
 # {{{
 proc gnotes {args} {
@@ -2298,30 +2337,6 @@ proc get_pagelist {{keywords ""}} {
 
 }
 # }}}
-# ghtm_plot_line1
-# {{{
-proc ghtm_plot_line1 {name alist} {
-  upvar fout fout
-  file mkdir .godel/chart
-  gnuplot_trend1_script .godel/chart/$name.dat \
-                        .godel/chart/$name \
-                        .godel/chart/$name.png
-
-  # Create dat file
-  set counter 1
-  set kout [open .godel/chart/$name.dat w]
-  foreach i $alist {
-    puts $kout "$counter $i"
-    incr counter
-  }
-  close $kout
-
-  catch {exec tcsh -fc "gnuplot -c .godel/chart/$name.plt"}
-
-  puts $fout "<img src=.godel/chart/$name.png>"
-  puts $fout "<a href=.godel/chart/$name.tcl>ctrl</a>"
-}
-# }}}
 #@=money_convert
 # {{{
 proc money_convert {from to fromvalue} {
@@ -2350,8 +2365,10 @@ proc money_convert {from to fromvalue} {
   return $tovalue
 }
 # }}}
-# Read file in to line list
+# read_timing_rpt_file
+# {{{
 proc read_timing_rpt_file {fname} {
+# Read file in to line list
   upvar vars vars
 
   set fin [open $fname r]
@@ -2392,8 +2409,9 @@ proc read_timing_rpt_file {fname} {
   }
   return $apaths
 }
-
+# }}}
 #@=extract_a_timing_path
+# {{{
 proc extract_a_timing_path {lines start_index path_begin_keyword path_end_keyword} {
 # User lrange to extract a path
 # lines: full timing path lines
@@ -2412,30 +2430,7 @@ proc extract_a_timing_path {lines start_index path_begin_keyword path_end_keywor
     return [list [expr $lslack + 1] $apath]
   }
 }
-
-proc reset_vars {} {
-  upvar instin     instin     
-  upvar instout    instout    
-  upvar cell       cell       
-  upvar fanout     fanout     
-  upvar net_cap    net_cap    
-  upvar in_tran    in_tran    
-  upvar out_tran   out_tran   
-  upvar cell_delay cell_delay 
-  upvar cell_derate cell_derate 
-  upvar net_derate net_derate 
-
-  set instin       NA
-  set instout      NA
-  set cell         NA
-  set fanout       NA
-  set net_cap      NA
-  set in_tran      NA
-  set out_tran     NA
-  set cell_delay   NA
-  set cell_derate  NA
-  set net_derate   NA
-}
+# }}}
 # dict_set
 # {{{
 # instin
@@ -2471,12 +2466,15 @@ proc dict_set {} {
   dict set dd net_derate  $net_derate
 }
 # }}}
-
+# lpush
+# {{{
 proc lpush {stack value} {
   upvar $stack list
   lappend list $value
 }
-
+# }}}
+# lpop
+# {{{
 proc lpop {stack} {
   upvar $stack  list
   if [info exist list] {
@@ -2487,8 +2485,9 @@ proc lpop {stack} {
     return ""
   }
 }
-
+# }}}
 # ghtm_new_html
+# {{{
 proc ghtm_new_html {title} {
   global env
   set fout [open .toc.htm w]
@@ -2508,7 +2507,7 @@ proc ghtm_new_html {title} {
   puts $fout "</html>"
   close $fout
 }
-
+# }}}
 # ghtm_toc
 # {{{
 # Table Of Content
@@ -2562,7 +2561,8 @@ proc ghtm_toc {{mode ""} {begin_level 4} } {
   close $kout
 }
 # }}}
-
+# ghtm_chap
+# {{{
 proc ghtm_chap {level title {href ""} {id ""}} {
   upvar fout fout
   if {$href == ""} {
@@ -2575,7 +2575,9 @@ proc ghtm_chap {level title {href ""} {id ""}} {
     }
   }
 }
-
+# }}}
+# gpage_where
+# {{{
 proc gpage_where {pagename} {
   global env env
   upvar meta meta
@@ -2594,7 +2596,9 @@ proc gpage_where {pagename} {
     return $meta($pagename,where)/.index.htm
   }
 }
-
+# }}}
+# num_symbol
+# {{{
 proc num_symbol {num {symbol NA}} {
   set s(K) 1000
   set s(W) 10000
@@ -2609,7 +2613,7 @@ proc num_symbol {num {symbol NA}} {
     return [format_3digit [expr $num/$s($symbol)]]$symbol
   }
 }
-
+# }}}
 # format_3digit
 # {{{
 proc format_3digit {num {sep ,}} {
@@ -2665,18 +2669,6 @@ proc lgrep_index {ilist pattern {start_index 0}} {
   }
 }
 # }}}
-proc godel_touch {fname} {
-  if ![file exist $fname] {
-    close [open $fname w]
-  }
-}
-
-proc godel_get_path_elem {path index} {
-  set c [split $path /]
-  set column_string [lindex $c $index]
-  return $column_string
-}
-
 #: godel_merge_proc
 # {{{
 proc godel_merge_proc {plist ofile} {
@@ -2695,7 +2687,6 @@ proc godel_merge_proc {plist ofile} {
   close $fout
 }
 # }}}
-
 #: godel_split_proc
 # {{{
 proc godel_split_proc {fname odir} {
@@ -2718,11 +2709,14 @@ proc godel_split_proc {fname odir} {
   }
 }
 # }}}
+# godel_file_join
+# {{{
 proc godel_file_join {args} {
   foreach i $args {
     puts $i
   }
 }
+# }}}
 #: godel_split_by_proc
 # {{{
 proc godel_split_by_proc {afile} {
@@ -2749,32 +2743,38 @@ proc godel_split_by_proc {afile} {
   #unset curs(0,all)
 }
 # }}}
-
 # cput: color put
 # {{{
 proc cputs {text} {
   puts "\033\[0;36m%$text\033\[0m"
 }
 # }}}
-# set:restrict
-# from a and not in b
+# setop_restrict
+# {{{
 proc setop_restrict {a b} {
+# from a and not in b
   set o {}
   foreach i $a {
     if {[lsearch $b $i] < 0} {lappend o $i}
   }
   return $o
 }
-# Both in a and b
+# }}}
+# setop_intersection
+# {{{
 proc setop_intersection {a b} {
+# Both in a and b
   set o {}
   foreach i $a {
     if {[lsearch $b $i] >= 0} {lappend o $i}
   }
   return $o
 }
-# All element in a and b once i.e. join
+# }}}
+# setop_union
+# {{{
 proc setop_union {a b} {
+# All element in a and b once i.e. join
   set o {}
   foreach i $a {
     if {[lsearch $b $i] < 0} {lappend o $i}
@@ -2782,13 +2782,19 @@ proc setop_union {a b} {
   set o [concat $o $b]
   return $o
 }
-
+# }}}
+# math_average
+# {{{
 proc math_average {alist} {
   expr ([join $alist +])/[llength $alist].
 }
+# }}}
+# math_sum
+# {{{
 proc math_sum {alist} {
   expr ([join $alist +])
 }
+# }}}
 #@> Godel Fundamental
 #@=godel_draw
 # {{{
@@ -3659,7 +3665,6 @@ proc pcollection_list {ll} {
   }
 }
 # }}}
-
 #@> Path Summary
 #:@=godel_ps
 # {{{
@@ -5106,191 +5111,6 @@ proc godel_value_accu {name bin_size inlist} {
 }
 
 # }}}
-
-# godel_get_vars_value
-# {{{
-proc godel_get_vars_value {key varsfile} {
-  if [file exist $varsfile] {
-    source $varsfile
-  }
-  if [info exist vars($key)] {
-    return $vars($key)
-  } else {
-    return NA
-  }
-}
-# }}}
-#@> grun
-#@=set_bvars
-proc set_bvars {name defalt_value} {
-  upvar kout   kout
-  upvar bvars  bvars
-  if [info exist bvars($name)] {
-    puts $kout [format "set %-30s %s" "vars($name)" $bvars($name)]
-  } else {
-    puts $kout [format "set %-30s %s" "vars($name)" $defalt_value]
-  }
-}
-#@=create_run
-proc create_run {path flowname} {
-  upvar bvars bvars
-  global env
-  set orgpath [pwd]
-  file mkdir $path
-  cd $path
-  godel_draw $flowname
-  grun_ci;
-  cd $orgpath
-}
-#@=grun_rm
-proc grun_rm {{pattern NA} {action NA}} {
-  global env
-  puts $action
-  set mfile $env(GODEL_META_CENTER)/runlist.tcl
-  if [file exist $mfile] {
-# get array `runlist'
-    source $mfile
-  }
-
-  if {$pattern == ""} {
-  } else {
-    foreach i [array names runlist] {
-      set run_root $runlist($i)
-      if [regexp $pattern $run_root] {
-        lappend pathlist $run_root
-        lappend namelist $i
-      }
-    }
-  }
-  set pathlist [lsort $pathlist]
-  foreach i $pathlist {
-    if {$action == "delete"} {
-      puts "delete..$i"
-      file delete -force $i
-      foreach name $namelist {
-        array unset runlist $name
-      }
-      godel_array_save runlist $env(GODEL_META_CENTER)/runlist.tcl
-    } else {
-      puts $i
-    }
-  }
-
-}
-#@=grun_ls
-# {{{
-proc grun_ls {{pattern .*}} {
-# Create vv.tcl, vv.tcl is to be used to draw ghtm table
-  global env
-  set mfile $env(GODEL_META_CENTER)/runlist.tcl
-  if [file exist $mfile] {
-# get array `runlist'
-    source $mfile
-  }
-  
-  set count 1
-
-  foreach i [array names runlist] {
-    set runname [lindex [split $i :] 1]
-    if [regexp $pattern $runname] {
-      lappend ilist "$runname $i"
-    }
-  }
-
-# Sort by runname
-  set ilist_sorted [lsort -index 0 $ilist]
-
-# Iterate each run in runlist
-  foreach item $ilist_sorted {
-    set runname [lindex $item 0]
-    set i      [lindex $item 1]
-    set run_root $runlist($i)
-
-# Because runname can be duplicated, we don't use runname as rowname,
-# instead we create 2 digit number as rowname
-      set twodigit [format "%02d" $count]
-      lappend vv(rowlist) $twodigit
-
-# Source `local.tcl' in run_root. Create array vv($twodigit,)
-# local.tcl contains config info of a run
-      if [file exist $run_root/local.tcl] {
-        source $run_root/local.tcl
-        foreach j [array names vars] {
-          set vv($twodigit,$j) $vars($j)
-          lappend vv(columnlist) $j
-        }
-      }
-# Source `.status.tcl' in run_root. Create array vv($twodigit,)
-# .status.tcl contains run status
-      if [file exist $run_root/.status.tcl] {
-        source $run_root/.status.tcl
-        foreach j [array names vars] {
-          set vv($twodigit,$j) $vars($j)
-        }
-        lappend vv(columnlist) $j
-      }
-      set vv($twodigit,runname) "${runname}=>$run_root/.index.htm"
-      
-      incr count
-      godel_array_reset vars
-  }
-  set vv(columnlist) [lsort -unique $vv(columnlist)]
-  godel_array_save vv vv.tcl
-
-}
-# }}}
-#@=grun_status
-# {{{
-proc grun_status {text} {
-# TODO:
-# grun_status status   killed
-# grun_status progress 10%
-#
-# To be embedded in run script
-# Predefined text:
-# done
-# begin
-#
-
-# source .status.tcl here to keep the original values
-  if [file exist .status.tcl] {
-    source .status.tcl
-  }
-# Update status
-  set vars(status) $text
-
-  set fout [open .status.tcl w]
-    foreach key [array names vars] {
-      regsub -all {"} $vars($key) {\\"}  newvalue
-      puts $fout [format "set %-40s \"%s\"" vars($key) $newvalue]
-    }
-  close $fout
-}
-# }}}
-#@=grun_ci
-# {{{
-proc grun_ci {{page_path .}} {
-  global env
-  set metafile $env(GODEL_META_CENTER)/runlist.tcl
-  if [file exist $metafile] {
-    source $metafile
-  }
-
-  #puts $page_path/.godel/vars.tcl
-  source $page_path/.godel/vars.tcl
-
-# pagename
-  set pagename $vars(g:pagename)
-  
-# checked-in meta value
-   #puts "Checkin $pagename..."
-   regsub -all {\/} $vars(g:where) {_} path2
-
-   set runlist($path2:$pagename)     $vars(g:where)
-
-   godel_array_save runlist $env(GODEL_META_CENTER)/runlist.tcl
-}
-# }}}
 #@=godel_add_class
 # {{{
 proc godel_add_class {pname value} {
@@ -5572,31 +5392,4 @@ proc read_file_ret_list {afile} {
 }
 # }}}
 
-proc godel_load_vars {vpath} {
-  global env
-  upvar vars vars
-
-  set vpath [tbox_cyg2unix $vpath]
-
-# Load vars.tcl
-  source [file dirname $vpath]/.godel/vars.tcl 
-
-# Load gsh_cmd.tcl
-  source ~/gsh_cmds.tcl
-}
-
-proc godel_copy_vars {vpath} {
-  global env
-  upvar vars vars
-
-  set vpath [tbox_cyg2unix $vpath]
-
-# Load vars.tcl
-  file copy -force [file dirname $vpath]/.godel/vars.tcl  .
-
-}
-proc godel_load_gsh_cmds {} {
-# Load gsh_cmd.tcl
-  source ~/gsh_cmds.tcl
-}
 # vim:fdm=marker
