@@ -2875,6 +2875,7 @@ proc godel_draw {} {
   puts $fout "<title>$vars(g:pagename)</title>"
 
 # Hardcoded w3.css in .index.htm so that you have all in one file.
+# {{{
   puts $fout "<style>"
   set fin [open $env(GODEL_ROOT)/etc/css/w3.css r]
     while {[gets $fin line] >= 0} {
@@ -2882,6 +2883,7 @@ proc godel_draw {} {
     }
   close $fin
   puts $fout "</style>"
+# }}}
 
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
