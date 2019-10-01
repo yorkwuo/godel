@@ -991,21 +991,61 @@ proc local_table {name args} {
     set css_class [lindex $args [expr $idx + 1]]
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-css) 1
+  } else {
+    set css_class table1
+  }
+# }}}
+  # -linkcol (link column)
+# {{{
+  set opt(-linkcol) 0
+  set idx [lsearch $args {-linkcol}]
+  if {$idx != "-1"} {
+    set linkcol [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-linkcol) 1
+  } else {
+    set linkcol "g:pagename"
+  }
+# }}}
+  # -fontsize (font size)
+# {{{
+  set opt(-fontsize) 0
+  set idx [lsearch $args {-fontsize}]
+  if {$idx != "-1"} {
+    set fontsize [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-fontsize) 1
+  } else {
+    set fontsize "g:pagename"
+  }
+# }}}
+  # -serial (serial numbers)
+# {{{
+  set opt(-serial) 0
+  set idx [lsearch $args {-serial}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-serial) 1
   }
 # }}}
 
 # Start creating table...
-  if {$opt(-css)} {
+#  if {$opt(-css)} {
+#    puts $fout "<table class=$css_class id=$name>"
+#  } else {
+#    puts $fout "<table class=table2 id=$name>"
+#  }
+    puts $fout "<style>"
+    puts $fout ".table1 td, .table1 th {"
+    puts $fout "font-size : $fontsize;"
+    puts $fout "}"
+    puts $fout "</style>"
     puts $fout "<table class=$css_class id=$name>"
-  } else {
-    puts $fout "<table class=table2 id=$name>"
-  }
 # Table Headers
+# {{{
   puts $fout "<tr>"
-  if {$opt(-w)} {
-    puts $fout "<th width=${width}%>name</th>"
-  } else {
-    puts $fout "<th>name</th>"
+  if {$opt(-serial)} {
+    puts $fout "<th>serial</th>"
   }
   foreach col $columns {
     set colname ""
@@ -1017,20 +1057,33 @@ proc local_table {name args} {
     puts $fout "<th>$colname</th>"
   }
   puts $fout "</tr>"
+# }}}
+
+  set serial 1
 # Table Row
   foreach row $rows {
     set bgcolor [lvars $row bgcolor]
     set fgcolor [lvars $row fgcolor]
+
     puts $fout "<tr style=\"background-color:$bgcolor;color:$fgcolor\">"
-    if {$opt(-edit)} {
-      puts $fout "<td><a href=$row/.godel/ghtm.tcl type=text/txt>e</a> : <a href=$row/.godel/vars.tcl type=text/txt>v</a> : <a href=$row/.index.htm>$row</a></td>"
-    } else {
-      puts $fout "<td><a href=$row/.index.htm>$row</a></td>"
+
+    #if {$opt(-edit)} {
+    #  puts $fout "<td><a href=$row/.godel/ghtm.tcl type=text/txt>e</a> : <a href=$row/.godel/vars.tcl type=text/txt>v</a> : <a href=$row/.index.htm>$row</a></td>"
+    #} else {
+    #  puts $fout "<td><a href=$row/.index.htm>$row</a></td>"
+    #}
+    if {$opt(-serial)} {
+      puts $fout "<td>$serial</td>"
     }
     # Table Data
     foreach col $columns {
+# Remove column width
       regsub {;\S+} $col {} col
+
       set col_data [lvars $row $col]
+      if {$col == $linkcol} {
+        set col_data "<a href=$row/.index.htm>$col_data</a>"
+      }
     # img:
       if [regexp {img:} $col] {
         regsub {img:} $col {} col
@@ -1061,6 +1114,7 @@ proc local_table {name args} {
       }
     }
     puts $fout "</tr>"
+    incr serial
   }
   puts $fout "</table>"
 
@@ -1135,11 +1189,10 @@ proc gdraw_default {} {
   upvar env env
   set kout [open .godel/ghtm.tcl w]
     puts $kout "ghtm_top_bar"
-    puts $kout "#list_img 4 100% images/*.jpg"
-    puts $kout "#local_table tbl -c {g:pagename} -css table1"
+    puts $kout "#list_img 4 100% images/*"
+    puts $kout "#local_table tbl -c {g:pagename}"
     puts $kout "ghtm_list_files *"
     puts $kout "#ghtm_filter_notes"
-    puts $kout "#hlwords    "
     puts $kout "gnotes {"
     puts $kout ""
     puts $kout "}"

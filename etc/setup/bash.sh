@@ -52,10 +52,17 @@ alias f2="gvim .godel/vars.tcl"
 alias f3="gvim .godel/proc.tcl"
 
 gmkdir () {
-  mkdir $1
-  \cd $1
-  godel_draw.tcl
-  \cd ..
+  for i in $@; do
+    if [ -e $i ]; then
+      echo "Exist...$i"
+    else 
+      echo "Creating $i"
+      mkdir $i
+      command cd $i
+      godel_draw.tcl
+      command cd ..
+      fi
+  done
 }
 
 function lcd { 
