@@ -122,8 +122,9 @@ proc ghtm_top_bar {{type NA}} {
 # Values
   puts $fout "  <div><a href=.godel/vars.tcl type=text/txt class=\"w3-bar-item w3-button w3-hover-red\">Values</a></div>"
 # Draw
-  #puts $fout "  <div><button class=\"w3-bar-item w3-button w3-hover-red\" onclick=\"js_godel_draw()\">Draw</button></div>"
   puts $fout "  <div><a href=.godel/draw.gtcl type=text/gtcl class=\"w3-bar-item w3-button w3-hover-red\">Draw</a></div>"
+# Parent
+  puts $fout "  <div><a href=../.index.htm class=\"w3-bar-item w3-button w3-hover-red\">Parent</a></div>"
 # 
   #puts $fout "  <div><div id=\"div\" class=\"w3-bar-item w3-button w3-hover-red\" style=\"width:20px;height:20px;\" contenteditable=\"true\"></div></div>"
 # TOC
@@ -142,7 +143,6 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "  </div>"
   puts $fout "</div>"
   
-  puts $fout "  <div><a href=../.index.htm class=\"w3-bar-item w3-button w3-hover-red w3-right\">Parent</a></div>"
   puts $fout "  <div class=\"w3-bar-item w3-button w3-hover-red w3-right\">$dyvars(last_updated)</div>"
 
   puts $fout "</div>"
@@ -1044,6 +1044,10 @@ proc local_table {name args} {
 # Table Headers
 # {{{
   puts $fout "<tr>"
+  if {$opt(-edit)} {
+    puts $fout "<th>e</th>"
+    puts $fout "<th>v</th>"
+  }
   if {$opt(-serial)} {
     puts $fout "<th>serial</th>"
   }
@@ -1067,11 +1071,10 @@ proc local_table {name args} {
 
     puts $fout "<tr style=\"background-color:$bgcolor;color:$fgcolor\">"
 
-    #if {$opt(-edit)} {
-    #  puts $fout "<td><a href=$row/.godel/ghtm.tcl type=text/txt>e</a> : <a href=$row/.godel/vars.tcl type=text/txt>v</a> : <a href=$row/.index.htm>$row</a></td>"
-    #} else {
-    #  puts $fout "<td><a href=$row/.index.htm>$row</a></td>"
-    #}
+    if {$opt(-edit)} {
+      puts $fout "<td><a href=$row/.godel/ghtm.tcl type=text/txt>e</a></td>"
+      puts $fout "<td><a href=$row/.godel/vars.tcl type=text/txt>v</a></td>"
+    }
     if {$opt(-serial)} {
       puts $fout "<td>$serial</td>"
     }
@@ -1965,6 +1968,7 @@ proc csv_table {args} {
   global fout
 
   # -delim (delimiter)
+# {{{
   set opt(-delim) 0
   set idx [lsearch $args {-delim}]
   if {$idx != "-1"} {
@@ -1974,6 +1978,17 @@ proc csv_table {args} {
   } else {
     set delim {,}
   }
+# }}}
+  # -procs (proc to execute)
+# {{{
+  set opt(-procs) 0
+  set idx [lsearch $args {-procs}]
+  if {$idx != "-1"} {
+    set procs [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-procs) 1
+  }
+# }}}
 
   set content [lindex $args 0]
   set lines [split $content \n]
@@ -1981,9 +1996,21 @@ proc csv_table {args} {
   foreach line $lines {
     set cols [split $line $delim]
     puts $fout "<tr>"
-    foreach col $cols {
-      puts $fout "<td>$col</td>"
+    set colsize [llength $cols]
+
+    for {set i 0} {$i < $colsize} {incr i} {
+      set coldata [lindex $cols $i]
+      if {$opt(-procs)} {
+        foreach {colnum procname} [split $procs :] {}
+        if {$i == $colnum} {
+          $procname
+        }
+      }
+      puts $fout "<td>$coldata</td>"
     }
+    #foreach col $cols {
+    #  puts $fout "<td>$col</td>"
+    #}
     puts $fout "</tr>"
   }
   puts $fout "</table>"
