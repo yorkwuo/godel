@@ -967,6 +967,33 @@ proc local_table {name args} {
     set opt(-edit) 1
   }
 # }}}
+  # -row_style_proc (row_style_proc)
+# {{{
+  set opt(-row_style_proc) 0
+  set idx [lsearch $args {-row_style_proc}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-row_style_proc) 1
+  }
+# }}}
+  # -column_style_proc (column_style_proc)
+# {{{
+  set opt(-column_style_proc) 0
+  set idx [lsearch $args {-column_style_proc}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-column_style_proc) 1
+  }
+# }}}
+  # -column_data_proc (column_data_proc)
+# {{{
+  set opt(-column_data_proc) 0
+  set idx [lsearch $args {-column_data_proc}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-column_data_proc) 1
+  }
+# }}}
   # listfile
   # {{{
   if {$opt(-f)} {
@@ -1064,12 +1091,24 @@ proc local_table {name args} {
 # }}}
 
   set serial 1
-# Table Row
+#--------------------
+# For each table row
+#--------------------
   foreach row $rows {
-    set bgcolor [lvars $row bgcolor]
-    set fgcolor [lvars $row fgcolor]
+    set row_disp 1
+    set row_style {}
 
-    puts $fout "<tr style=\"background-color:$bgcolor;color:$fgcolor\">"
+    # row_style_proc
+    if {$opt(-row_style_proc)} {
+      row_style_proc $row
+    }
+
+    # Control to hide the row
+    if {$row_disp == "0"} {
+      continue
+    } 
+
+    puts $fout "<tr style=\"$row_style\">"
 
     if {$opt(-edit)} {
       puts $fout "<td><a href=$row/.godel/ghtm.tcl type=text/txt>e</a></td>"
@@ -1078,44 +1117,59 @@ proc local_table {name args} {
     if {$opt(-serial)} {
       puts $fout "<td>$serial</td>"
     }
-    # Table Data
+    #----------------------
+    # For each table column
+    #----------------------
     foreach col $columns {
-# Remove column width
+      set cols2disp {}
+      set column_style {}
+      # Remove column width
       regsub {;\S+} $col {} col
 
+      if {$opt(-column_style_proc)} {
+        column_style_proc $row $col
+      }
+
+      # Get column data
       set col_data [lvars $row $col]
+
+      # linkcol
       if {$col == $linkcol} {
         set col_data "<a href=$row/.index.htm>$col_data</a>"
       }
-    # img:
+      # img:
       if [regexp {img:} $col] {
         regsub {img:} $col {} col
-        puts $fout "<td><a href=$row/images/cover.jpg><img height=100px src=$row/images/cover.jpg></a></td>"
-    # md:
+        append cols2disp "<td><a href=$row/images/cover.jpg><img height=100px src=$row/images/cover.jpg></a></td>"
+      # md:
       } elseif [regexp {md:} $col] {
         regsub {md:} $col {} col
         set fname $row/$col.md
         if [file exist $fname] {
           set aftermd [gmd_file $fname]
-          puts $fout "<td>$aftermd</td>"
+          append cols2disp "<td>$aftermd</td>"
         } else {
           set kout [open $fname w]
           close $kout
         }
-    # ed:
+      # ed:
       } elseif [regexp {ed:} $col] {
         regsub {ed:} $col {} col
         set fname $row/$col
         if [file exist $fname] {
-          #puts $fout "<td><a href=$fname type=text/txt>$col</a></td>"
-          puts $fout "<td><a href=$fname type=text/txt>e</a></td>"
+          append cols2disp "<td><a href=$fname type=text/txt>e</a></td>"
         } else {
-          puts $fout "<td></td>"
+          append cols2disp "<td></td>"
         }
       } else {
-        puts $fout "<td>$col_data</td>"
+        if {$opt(-column_data_proc)} {
+          column_data_proc $row $col
+        }
+        append cols2disp "<td style=\"$column_style\">$col_data</td>"
       }
+      puts $fout $cols2disp
     }
+
     puts $fout "</tr>"
     incr serial
   }
@@ -2919,17 +2973,11 @@ proc godel_draw {} {
 # {{{
   if [file exist .godel/vars.tcl] {
     source .godel/vars.tcl
-    #godel_init_vars    g:where       [pwd]
     godel_init_vars    g:keywords    ""
-    godel_init_vars    g:class       ""
     godel_init_vars    g:pagename    [file tail [pwd]]
-    godel_init_vars    g:iname       [file tail [pwd]]
   } else {
-    #godel_init_vars    g:where       [pwd]
     godel_init_vars    g:keywords    ""
-    godel_init_vars    g:class       ""
     godel_init_vars    g:pagename    [file tail [pwd]]
-    godel_init_vars    g:iname       [file tail [pwd]]
   }
 # }}}
 

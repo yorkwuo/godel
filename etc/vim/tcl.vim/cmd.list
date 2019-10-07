@@ -58,6 +58,8 @@ clkana_paths_file
 clkana_pocv_paths_file
 clock_opt
 collect_inst
+column_data_proc
+column_style_proc
 commit_upf
 compile
 compile_ultra
@@ -590,6 +592,7 @@ route_detail
 route_group
 route_opt
 route_track
+row_style_proc
 run_goal
 saif_map
 save_block

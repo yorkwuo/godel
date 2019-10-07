@@ -1,7 +1,7 @@
 h:
 	@gget . h
 1:
-	gen.tcl
+	gen_tclvim.tcl
 
 i1:
 	cp -f tcl.vim ~/.vim/syntax/tcl.vim
