@@ -994,22 +994,6 @@ proc local_table {name args} {
     set opt(-column_data_proc) 1
   }
 # }}}
-  # listfile
-  # {{{
-  if {$opt(-f)} {
-    if [file exist $listfile] {
-      set rows [read_file_ret_list $listfile]
-    } else {
-      puts "Errors: Not exist... $listfile"
-      return
-    }
-  } else {
-    set flist [lsort [glob -nocomplain */.godel]]
-    foreach f $flist {
-      lappend rows [file dirname $f]
-    }
-  }
-  # }}}
   # -css (css class)
 # {{{
   set opt(-css) 0
@@ -1046,6 +1030,22 @@ proc local_table {name args} {
     set fontsize "g:pagename"
   }
 # }}}
+  # -sortby (sort by...)
+# {{{
+  set opt(-sortby) 0
+  set idx [lsearch $args {-sortby}]
+  if {$idx != "-1"} {
+    set sortby [lindex $args [expr $idx + 1]]
+    if {[regexp {;d} $sortby]} {
+      regsub {;d} $sortby {} sortby
+      set sort_direction "-decreasing"
+    } else {
+      set sort_direction "-increasing"
+    }
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-sortby) 1
+  }
+# }}}
   # -serial (serial numbers)
 # {{{
   set opt(-serial) 0
@@ -1056,18 +1056,35 @@ proc local_table {name args} {
   }
 # }}}
 
+  # create rows
+  # {{{
+  if {$opt(-f)} {
+    if [file exist $listfile] {
+      set rows [read_file_ret_list $listfile]
+    } else {
+      puts "Errors: Not exist... $listfile"
+      return
+    }
+  } else {
+    set flist [lsort [glob -nocomplain */.godel]]
+    foreach f $flist {
+      lappend rows [file dirname $f]
+    }
+  }
+  # }}}
+
 # Start creating table...
 #  if {$opt(-css)} {
 #    puts $fout "<table class=$css_class id=$name>"
 #  } else {
 #    puts $fout "<table class=table2 id=$name>"
 #  }
-    puts $fout "<style>"
-    puts $fout ".table1 td, .table1 th {"
-    puts $fout "font-size : $fontsize;"
-    puts $fout "}"
-    puts $fout "</style>"
-    puts $fout "<table class=$css_class id=$name>"
+  puts $fout "<style>"
+  puts $fout ".table1 td, .table1 th {"
+  puts $fout "font-size : $fontsize;"
+  puts $fout "}"
+  puts $fout "</style>"
+  puts $fout "<table class=$css_class id=$name>"
 # Table Headers
 # {{{
   puts $fout "<tr>"
@@ -1088,6 +1105,38 @@ proc local_table {name args} {
     puts $fout "<th>$colname</th>"
   }
   puts $fout "</tr>"
+# }}}
+
+  # Sort by...
+# {{{
+  if {$opt(-sortby)} {
+    set index_num 1
+
+    # Create index() array
+    foreach col $columns {
+      set index($col) $index_num
+      incr index_num
+    }
+
+    # Create row_items for sorting
+    set row_items {}
+    foreach row $rows {
+      set col_items {}
+      foreach col $columns {
+        lappend col_items [lvars $row $col ]
+      }
+      lappend row_items [concat $row $col_items]
+    }
+
+    # Sorting...
+    set row_items [lsort -index $index($sortby) $sort_direction $row_items]
+
+    # Re-create rows based on sorted row_items
+    set rows {}
+    foreach i $row_items {
+      lappend rows [lindex $i 0]
+    }
+  }
 # }}}
 
   set serial 1
