@@ -874,6 +874,8 @@ proc lchart_line {args} {
 # lsetvar
 # {{{
 proc lsetvar {name key value} {
+  regsub {\/} $name {} name
+
   set varfile $name/.godel/vars.tcl
 
   if [file exist $varfile] {
@@ -2447,6 +2449,7 @@ proc cdk {args} {
     set found 1
 # Is it match with keyword
     foreach k $keywords {
+      regsub {\/} $k {} k
       if [info exist meta($i,keys)] {
         if {[lsearch -regexp $meta($i,keys) $k] >= 0} {
           set found [expr $found&&1]  
