@@ -374,7 +374,7 @@ proc gwaive {args} {
 
   set fname $args
 
-# Read waiver
+# Load waiver
   set waivers {}
   if {$opt(-w)} {
     set kin [open $waivefile r]
@@ -386,13 +386,13 @@ proc gwaive {args} {
       return
     }
   }
-    while {[gets $kin line] >= 0} {
-      if {[regexp {^#} $line]} {
-      } elseif {[regexp {^$} $line]} {
-      } else {
-        lappend waivers $line
-      }
+  while {[gets $kin line] >= 0} {
+    if {[regexp {^#} $line]} {
+    } elseif {[regexp {^$} $line]} {
+    } else {
+      lappend waivers $line
     }
+  }
   close $kin
 
 # Apply waiver
