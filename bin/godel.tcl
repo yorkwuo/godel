@@ -874,7 +874,7 @@ proc lchart_line {args} {
 # lsetvar
 # {{{
 proc lsetvar {name key value} {
-  regsub {\/} $name {} name
+  regsub {\/$} $name {} name
 
   set varfile $name/.godel/vars.tcl
 
@@ -2991,7 +2991,12 @@ proc math_sum {alist} {
 #@> Godel Fundamental
 #@=godel_draw
 # {{{
-proc godel_draw {} {
+proc godel_draw {{target_path NA}} {
+  if {$target_path == "NA" || $target_path == ""} {
+  } else {
+    set orgpath [pwd]
+    cd $target_path
+  }
   # If .freeze exist, do nothing. Page keeps the same.
 # {{{
   if [file exist .freeze] {
@@ -3114,6 +3119,11 @@ proc godel_draw {} {
   godel_array_save vars   .godel/vars.tcl
 
   godel_array_reset vars
+
+  if {$target_path == "NA" || $target_path == ""} {
+  } else {
+    cd $orgpath
+  }
 }
 # }}}
 # godel_create_file

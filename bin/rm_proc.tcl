@@ -9,7 +9,7 @@ set count 0
 while {[gets $fin line ] >= 0} {
 
 # If match `proc', start to look for a balanced closed brace.
-  if [regexp "proc" $line] {
+  if [regexp "^\s*proc " $line] {
     set open_braces  [regexp -all {\{} $line]
     set close_braces [regexp -all {\}} $line]
     set diff [expr $open_braces - $close_braces]

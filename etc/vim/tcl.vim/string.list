@@ -138,10 +138,12 @@
 -format
 -from
 -full
+-function
 -gate_clock
 -ground
 -ground_capacitance_factor
 -group
+-handle
 -height
 -hier
 -hier_separator

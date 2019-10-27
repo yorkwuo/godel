@@ -23,6 +23,7 @@ array_reset
 array_save
 asic4_raw
 associate_mv_cells
+associate_supply_set
 attach_clock_edge
 attach_corner_name
 attach_skew
@@ -708,6 +709,7 @@ set_parameter
 set_pin_name_synonym
 set_placement_status
 set_pocvm_corner_sigma
+set_port_attributes
 set_port_location
 set_power_prediction
 set_process_number
