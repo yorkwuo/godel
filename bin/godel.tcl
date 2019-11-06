@@ -229,7 +229,7 @@ proc lcd {args} {
   set found_names ""
   foreach dir $dir_keys {
     set found 1
-# Is it match with keyword
+# Is it match with keywords
     foreach k $keywords {
         set dir_keywords [lindex $dir 1]
         if {[lsearch -regexp $dir_keywords $k] >= 0} {

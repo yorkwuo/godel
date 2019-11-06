@@ -113,6 +113,7 @@
 -endpoint
 -endpoints_only
 -equal_ports_nets
+-error
 -exact
 -exclude
 -exclude_untested
