@@ -161,36 +161,36 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "}"
   set server $env(GODEL_SERVER)
   set pwd    [pwd]
-  puts $fout "function js_godel_draw() {"
-  puts $fout "  httpRequest = new XMLHttpRequest();"
-  puts $fout "  httpRequest.open('GET', 'http://$server/eval/cd $pwd;godel_draw', true);"
-  puts $fout "  httpRequest.send();"
-  puts $fout "}"
-  puts $fout ""
-  puts $fout "var div = document.getElementById('div');"
-  puts $fout "div.addEventListener('paste', function(e) {"
-  puts $fout "  if(e.clipboardData) {"
-  puts $fout "    for(var i = 0; i < e.clipboardData.items.length; i++ ) {"
-  puts $fout "      var c = e.clipboardData.items\[i];"
-  puts $fout "      var f = c.getAsFile();"
-  puts $fout "      var reader = new FileReader();"
-  puts $fout "      reader.readAsDataURL(f);"
-  puts $fout "      reader.onload = function(e) {"
-  puts $fout "        div.innerHTML  = 'Done';"
-  puts $fout "        var imgbase64 = e.target.result;"
-  puts $fout "    $.ajax({"
-  puts $fout "        type: \"POST\","
-  puts $fout "        url: \"http://localhost:8080/image $pwd\","
-  puts $fout "        data: { "
-  puts $fout "           imgbase64"
-  puts $fout "        }"
-  puts $fout "      }).done(function(responseText) {"
-  puts $fout "        console.log('saved');"
-  puts $fout "      });"
-  puts $fout "      }"
-  puts $fout "    }"
-  puts $fout "  }"
-  puts $fout "});"
+  #puts $fout "function js_godel_draw() {"
+  #puts $fout "  httpRequest = new XMLHttpRequest();"
+  #puts $fout "  httpRequest.open('GET', 'http://$server/eval/cd $pwd;godel_draw', true);"
+  #puts $fout "  httpRequest.send();"
+  #puts $fout "}"
+  #puts $fout ""
+  #puts $fout "var div = document.getElementById('div');"
+  #puts $fout "div.addEventListener('paste', function(e) {"
+  #puts $fout "  if(e.clipboardData) {"
+  #puts $fout "    for(var i = 0; i < e.clipboardData.items.length; i++ ) {"
+  #puts $fout "      var c = e.clipboardData.items\[i];"
+  #puts $fout "      var f = c.getAsFile();"
+  #puts $fout "      var reader = new FileReader();"
+  #puts $fout "      reader.readAsDataURL(f);"
+  #puts $fout "      reader.onload = function(e) {"
+  #puts $fout "        div.innerHTML  = 'Done';"
+  #puts $fout "        var imgbase64 = e.target.result;"
+  #puts $fout "    $.ajax({"
+  #puts $fout "        type: \"POST\","
+  #puts $fout "        url: \"http://localhost:8080/image $pwd\","
+  #puts $fout "        data: { "
+  #puts $fout "           imgbase64"
+  #puts $fout "        }"
+  #puts $fout "      }).done(function(responseText) {"
+  #puts $fout "        console.log('saved');"
+  #puts $fout "      });"
+  #puts $fout "      }"
+  #puts $fout "    }"
+  #puts $fout "  }"
+  #puts $fout "});"
 
   puts $fout "</script>"
 }
@@ -5439,13 +5439,12 @@ proc meta_indexing {{ofile NA}} {
         set meta($i,page_size)    $dyvars(page_size)
         }
       }
-      set meta($i,class)        $vars(g:class)
-      set meta($i,keywords)     [lsort [concat $vars(g:keywords) $vars(g:class)]]
+      set meta($i,keywords)     [lsort [concat $vars(g:keywords) ]]
 # cdk use "keys" for searching
       if [info exist vars(title)] {
-        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class) $vars(title)]]
+        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(title)]]
       } else {
-        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class)]]
+        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) ]]
       }
     } else {
       puts "Error: not exist.. $varspath"
