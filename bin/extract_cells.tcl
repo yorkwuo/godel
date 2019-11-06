@@ -7,10 +7,12 @@ proc split_by_cell {fname odir} {
   set process_no 0
   set fout [open $odir/0dummy.kkk w]
   while {[gets $fin line] >= 0} {
-    if {[regexp {^cell} $line]} {
+    if {[regexp {^\/\* Begin cell: (\S+) } $line -> cellname]} {
       close $fout
-      incr num
-      set fout [open $odir/$num.lib w]
+      set fout [open $odir/$cellname.lib w]
+      puts $fout $line
+    } else {
+      puts $fout $line
     }
   }
   close $fout
