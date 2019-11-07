@@ -122,8 +122,9 @@ proc ghtm_top_bar {{type NA}} {
 # Values
   puts $fout "  <div><a href=.godel/vars.tcl type=text/txt class=\"w3-bar-item w3-button w3-hover-red\">Values</a></div>"
 # Draw
-  #puts $fout "  <div><button class=\"w3-bar-item w3-button w3-hover-red\" onclick=\"js_godel_draw()\">Draw</button></div>"
   puts $fout "  <div><a href=.godel/draw.gtcl type=text/gtcl class=\"w3-bar-item w3-button w3-hover-red\">Draw</a></div>"
+# Parent
+  puts $fout "  <div><a href=../.index.htm class=\"w3-bar-item w3-button w3-hover-red\">Parent</a></div>"
 # 
   #puts $fout "  <div><div id=\"div\" class=\"w3-bar-item w3-button w3-hover-red\" style=\"width:20px;height:20px;\" contenteditable=\"true\"></div></div>"
 # TOC
@@ -142,7 +143,6 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "  </div>"
   puts $fout "</div>"
   
-  puts $fout "  <div><a href=../.index.htm class=\"w3-bar-item w3-button w3-hover-red w3-right\">Parent</a></div>"
   puts $fout "  <div class=\"w3-bar-item w3-button w3-hover-red w3-right\">$dyvars(last_updated)</div>"
 
   puts $fout "</div>"
@@ -161,36 +161,36 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "}"
   set server $env(GODEL_SERVER)
   set pwd    [pwd]
-  puts $fout "function js_godel_draw() {"
-  puts $fout "  httpRequest = new XMLHttpRequest();"
-  puts $fout "  httpRequest.open('GET', 'http://$server/eval/cd $pwd;godel_draw', true);"
-  puts $fout "  httpRequest.send();"
-  puts $fout "}"
-  puts $fout ""
-  puts $fout "var div = document.getElementById('div');"
-  puts $fout "div.addEventListener('paste', function(e) {"
-  puts $fout "  if(e.clipboardData) {"
-  puts $fout "    for(var i = 0; i < e.clipboardData.items.length; i++ ) {"
-  puts $fout "      var c = e.clipboardData.items\[i];"
-  puts $fout "      var f = c.getAsFile();"
-  puts $fout "      var reader = new FileReader();"
-  puts $fout "      reader.readAsDataURL(f);"
-  puts $fout "      reader.onload = function(e) {"
-  puts $fout "        div.innerHTML  = 'Done';"
-  puts $fout "        var imgbase64 = e.target.result;"
-  puts $fout "    $.ajax({"
-  puts $fout "        type: \"POST\","
-  puts $fout "        url: \"http://localhost:8080/image $pwd\","
-  puts $fout "        data: { "
-  puts $fout "           imgbase64"
-  puts $fout "        }"
-  puts $fout "      }).done(function(responseText) {"
-  puts $fout "        console.log('saved');"
-  puts $fout "      });"
-  puts $fout "      }"
-  puts $fout "    }"
-  puts $fout "  }"
-  puts $fout "});"
+  #puts $fout "function js_godel_draw() {"
+  #puts $fout "  httpRequest = new XMLHttpRequest();"
+  #puts $fout "  httpRequest.open('GET', 'http://$server/eval/cd $pwd;godel_draw', true);"
+  #puts $fout "  httpRequest.send();"
+  #puts $fout "}"
+  #puts $fout ""
+  #puts $fout "var div = document.getElementById('div');"
+  #puts $fout "div.addEventListener('paste', function(e) {"
+  #puts $fout "  if(e.clipboardData) {"
+  #puts $fout "    for(var i = 0; i < e.clipboardData.items.length; i++ ) {"
+  #puts $fout "      var c = e.clipboardData.items\[i];"
+  #puts $fout "      var f = c.getAsFile();"
+  #puts $fout "      var reader = new FileReader();"
+  #puts $fout "      reader.readAsDataURL(f);"
+  #puts $fout "      reader.onload = function(e) {"
+  #puts $fout "        div.innerHTML  = 'Done';"
+  #puts $fout "        var imgbase64 = e.target.result;"
+  #puts $fout "    $.ajax({"
+  #puts $fout "        type: \"POST\","
+  #puts $fout "        url: \"http://localhost:8080/image $pwd\","
+  #puts $fout "        data: { "
+  #puts $fout "           imgbase64"
+  #puts $fout "        }"
+  #puts $fout "      }).done(function(responseText) {"
+  #puts $fout "        console.log('saved');"
+  #puts $fout "      });"
+  #puts $fout "      }"
+  #puts $fout "    }"
+  #puts $fout "  }"
+  #puts $fout "});"
 
   puts $fout "</script>"
 }
@@ -229,7 +229,7 @@ proc lcd {args} {
   set found_names ""
   foreach dir $dir_keys {
     set found 1
-# Is it match with keyword
+# Is it match with keywords
     foreach k $keywords {
         set dir_keywords [lindex $dir 1]
         if {[lsearch -regexp $dir_keywords $k] >= 0} {
@@ -374,7 +374,7 @@ proc gwaive {args} {
 
   set fname $args
 
-# Read waiver
+# Load waiver
   set waivers {}
   if {$opt(-w)} {
     set kin [open $waivefile r]
@@ -386,13 +386,13 @@ proc gwaive {args} {
       return
     }
   }
-    while {[gets $kin line] >= 0} {
-      if {[regexp {^#} $line]} {
-      } elseif {[regexp {^$} $line]} {
-      } else {
-        lappend waivers $line
-      }
+  while {[gets $kin line] >= 0} {
+    if {[regexp {^#} $line]} {
+    } elseif {[regexp {^$} $line]} {
+    } else {
+      lappend waivers $line
     }
+  }
   close $kin
 
 # Apply waiver
@@ -874,6 +874,8 @@ proc lchart_line {args} {
 # lsetvar
 # {{{
 proc lsetvar {name key value} {
+  regsub {\/$} $name {} name
+
   set varfile $name/.godel/vars.tcl
 
   if [file exist $varfile] {
@@ -967,22 +969,33 @@ proc local_table {name args} {
     set opt(-edit) 1
   }
 # }}}
-  # listfile
-  # {{{
-  if {$opt(-f)} {
-    if [file exist $listfile] {
-      set rows [read_file_ret_list $listfile]
-    } else {
-      puts "Errors: Not exist... $listfile"
-      return
-    }
-  } else {
-    set flist [lsort [glob -nocomplain */.godel]]
-    foreach f $flist {
-      lappend rows [file dirname $f]
-    }
+  # -row_style_proc (row_style_proc)
+# {{{
+  set opt(-row_style_proc) 0
+  set idx [lsearch $args {-row_style_proc}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-row_style_proc) 1
   }
-  # }}}
+# }}}
+  # -column_style_proc (column_style_proc)
+# {{{
+  set opt(-column_style_proc) 0
+  set idx [lsearch $args {-column_style_proc}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-column_style_proc) 1
+  }
+# }}}
+  # -column_data_proc (column_data_proc)
+# {{{
+  set opt(-column_data_proc) 0
+  set idx [lsearch $args {-column_data_proc}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-column_data_proc) 1
+  }
+# }}}
   # -css (css class)
 # {{{
   set opt(-css) 0
@@ -1019,6 +1032,22 @@ proc local_table {name args} {
     set fontsize "g:pagename"
   }
 # }}}
+  # -sortby (sort by...)
+# {{{
+  set opt(-sortby) 0
+  set idx [lsearch $args {-sortby}]
+  if {$idx != "-1"} {
+    set sortby [lindex $args [expr $idx + 1]]
+    if {[regexp {;d} $sortby]} {
+      regsub {;d} $sortby {} sortby
+      set sort_direction "-decreasing"
+    } else {
+      set sort_direction "-increasing"
+    }
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-sortby) 1
+  }
+# }}}
   # -serial (serial numbers)
 # {{{
   set opt(-serial) 0
@@ -1029,21 +1058,42 @@ proc local_table {name args} {
   }
 # }}}
 
+  # create rows
+  # {{{
+  if {$opt(-f)} {
+    if [file exist $listfile] {
+      set rows [read_file_ret_list $listfile]
+    } else {
+      puts "Errors: Not exist... $listfile"
+      return
+    }
+  } else {
+    set flist [lsort [glob -nocomplain */.godel]]
+    foreach f $flist {
+      lappend rows [file dirname $f]
+    }
+  }
+  # }}}
+
 # Start creating table...
 #  if {$opt(-css)} {
 #    puts $fout "<table class=$css_class id=$name>"
 #  } else {
 #    puts $fout "<table class=table2 id=$name>"
 #  }
-    puts $fout "<style>"
-    puts $fout ".table1 td, .table1 th {"
-    puts $fout "font-size : $fontsize;"
-    puts $fout "}"
-    puts $fout "</style>"
-    puts $fout "<table class=$css_class id=$name>"
+  puts $fout "<style>"
+  puts $fout ".table1 td, .table1 th {"
+  puts $fout "font-size : $fontsize;"
+  puts $fout "}"
+  puts $fout "</style>"
+  puts $fout "<table class=$css_class id=$name>"
 # Table Headers
 # {{{
   puts $fout "<tr>"
+  if {$opt(-edit)} {
+    puts $fout "<th>e</th>"
+    puts $fout "<th>v</th>"
+  }
   if {$opt(-serial)} {
     puts $fout "<th>serial</th>"
   }
@@ -1059,60 +1109,118 @@ proc local_table {name args} {
   puts $fout "</tr>"
 # }}}
 
+  # Sort by...
+# {{{
+  if {$opt(-sortby)} {
+    set index_num 1
+
+    # Create index() array
+    foreach col $columns {
+      set index($col) $index_num
+      incr index_num
+    }
+
+    # Create row_items for sorting
+    set row_items {}
+    foreach row $rows {
+      set col_items {}
+      foreach col $columns {
+        lappend col_items [lvars $row $col ]
+      }
+      lappend row_items [concat $row $col_items]
+    }
+
+    # Sorting...
+    set row_items [lsort -index $index($sortby) $sort_direction $row_items]
+
+    # Re-create rows based on sorted row_items
+    set rows {}
+    foreach i $row_items {
+      lappend rows [lindex $i 0]
+    }
+  }
+# }}}
+
   set serial 1
-# Table Row
+#--------------------
+# For each table row
+#--------------------
   foreach row $rows {
-    set bgcolor [lvars $row bgcolor]
-    set fgcolor [lvars $row fgcolor]
+    set row_disp 1
+    set row_style {}
 
-    puts $fout "<tr style=\"background-color:$bgcolor;color:$fgcolor\">"
+    # row_style_proc
+    if {$opt(-row_style_proc)} {
+      row_style_proc $row
+    }
 
-    #if {$opt(-edit)} {
-    #  puts $fout "<td><a href=$row/.godel/ghtm.tcl type=text/txt>e</a> : <a href=$row/.godel/vars.tcl type=text/txt>v</a> : <a href=$row/.index.htm>$row</a></td>"
-    #} else {
-    #  puts $fout "<td><a href=$row/.index.htm>$row</a></td>"
-    #}
+    # Control to hide the row
+    if {$row_disp == "0"} {
+      continue
+    } 
+
+    puts $fout "<tr style=\"$row_style\">"
+
+    if {$opt(-edit)} {
+      puts $fout "<td><a href=$row/.godel/ghtm.tcl type=text/txt>e</a></td>"
+      puts $fout "<td><a href=$row/.godel/vars.tcl type=text/txt>v</a></td>"
+    }
     if {$opt(-serial)} {
       puts $fout "<td>$serial</td>"
     }
-    # Table Data
+    #----------------------
+    # For each table column
+    #----------------------
     foreach col $columns {
-# Remove column width
+      set cols2disp {}
+      set column_style {}
+      # Remove column width
       regsub {;\S+} $col {} col
 
+      if {$opt(-column_style_proc)} {
+        column_style_proc $row $col
+      }
+
+      # Get column data
       set col_data [lvars $row $col]
+
+      # linkcol
       if {$col == $linkcol} {
         set col_data "<a href=$row/.index.htm>$col_data</a>"
       }
-    # img:
+      # img:
       if [regexp {img:} $col] {
         regsub {img:} $col {} col
-        puts $fout "<td><a href=$row/images/cover.jpg><img height=100px src=$row/images/cover.jpg></a></td>"
-    # md:
+        append cols2disp "<td><a href=$row/images/cover.jpg><img height=100px src=$row/images/cover.jpg></a></td>"
+      # md:
       } elseif [regexp {md:} $col] {
         regsub {md:} $col {} col
         set fname $row/$col.md
         if [file exist $fname] {
           set aftermd [gmd_file $fname]
-          puts $fout "<td>$aftermd</td>"
+          append cols2disp "<td>$aftermd</td>"
         } else {
           set kout [open $fname w]
           close $kout
         }
-    # ed:
+      # ed:
       } elseif [regexp {ed:} $col] {
         regsub {ed:} $col {} col
         set fname $row/$col
         if [file exist $fname] {
-          #puts $fout "<td><a href=$fname type=text/txt>$col</a></td>"
-          puts $fout "<td><a href=$fname type=text/txt>e</a></td>"
+          append cols2disp "<td><a href=$fname type=text/txt>e</a></td>"
         } else {
-          puts $fout "<td></td>"
+          append cols2disp "<td></td>"
         }
       } else {
-        puts $fout "<td>$col_data</td>"
+        if {$opt(-column_data_proc)} {
+          column_data_proc $row $col
+        }
+        append cols2disp "<td style=\"$column_style\">$col_data</td>"
       }
+      puts $fout $cols2disp
     }
+
     puts $fout "</tr>"
     incr serial
   }
@@ -1965,6 +2073,7 @@ proc csv_table {args} {
   global fout
 
   # -delim (delimiter)
+# {{{
   set opt(-delim) 0
   set idx [lsearch $args {-delim}]
   if {$idx != "-1"} {
@@ -1974,6 +2083,17 @@ proc csv_table {args} {
   } else {
     set delim {,}
   }
+# }}}
+  # -procs (proc to execute)
+# {{{
+  set opt(-procs) 0
+  set idx [lsearch $args {-procs}]
+  if {$idx != "-1"} {
+    set procs [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-procs) 1
+  }
+# }}}
 
   set content [lindex $args 0]
   set lines [split $content \n]
@@ -1981,9 +2101,21 @@ proc csv_table {args} {
   foreach line $lines {
     set cols [split $line $delim]
     puts $fout "<tr>"
-    foreach col $cols {
-      puts $fout "<td>$col</td>"
+    set colsize [llength $cols]
+
+    for {set i 0} {$i < $colsize} {incr i} {
+      set coldata [lindex $cols $i]
+      if {$opt(-procs)} {
+        foreach {colnum procname} [split $procs :] {}
+        if {$i == $colnum} {
+          $procname
+        }
+      }
+      puts $fout "<td>$coldata</td>"
     }
+    #foreach col $cols {
+    #  puts $fout "<td>$col</td>"
+    #}
     puts $fout "</tr>"
   }
   puts $fout "</table>"
@@ -2317,6 +2449,7 @@ proc cdk {args} {
     set found 1
 # Is it match with keyword
     foreach k $keywords {
+      regsub {\/} $k {} k
       if [info exist meta($i,keys)] {
         if {[lsearch -regexp $meta($i,keys) $k] >= 0} {
           set found [expr $found&&1]  
@@ -2858,7 +2991,12 @@ proc math_sum {alist} {
 #@> Godel Fundamental
 #@=godel_draw
 # {{{
-proc godel_draw {} {
+proc godel_draw {{target_path NA}} {
+  if {$target_path == "NA" || $target_path == ""} {
+  } else {
+    set orgpath [pwd]
+    cd $target_path
+  }
   # If .freeze exist, do nothing. Page keeps the same.
 # {{{
   if [file exist .freeze] {
@@ -2892,17 +3030,11 @@ proc godel_draw {} {
 # {{{
   if [file exist .godel/vars.tcl] {
     source .godel/vars.tcl
-    #godel_init_vars    g:where       [pwd]
     godel_init_vars    g:keywords    ""
-    godel_init_vars    g:class       ""
     godel_init_vars    g:pagename    [file tail [pwd]]
-    godel_init_vars    g:iname       [file tail [pwd]]
   } else {
-    #godel_init_vars    g:where       [pwd]
     godel_init_vars    g:keywords    ""
-    godel_init_vars    g:class       ""
     godel_init_vars    g:pagename    [file tail [pwd]]
-    godel_init_vars    g:iname       [file tail [pwd]]
   }
 # }}}
 
@@ -2987,6 +3119,11 @@ proc godel_draw {} {
   godel_array_save vars   .godel/vars.tcl
 
   godel_array_reset vars
+
+  if {$target_path == "NA" || $target_path == ""} {
+  } else {
+    cd $orgpath
+  }
 }
 # }}}
 # godel_create_file
@@ -5302,13 +5439,12 @@ proc meta_indexing {{ofile NA}} {
         set meta($i,page_size)    $dyvars(page_size)
         }
       }
-      set meta($i,class)        $vars(g:class)
-      set meta($i,keywords)     [lsort [concat $vars(g:keywords) $vars(g:class)]]
+      set meta($i,keywords)     [lsort [concat $vars(g:keywords) ]]
 # cdk use "keys" for searching
       if [info exist vars(title)] {
-        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class) $vars(title)]]
+        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(title)]]
       } else {
-        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class)]]
+        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) ]]
       }
     } else {
       puts "Error: not exist.. $varspath"

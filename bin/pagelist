@@ -3,12 +3,12 @@ source $env(GODEL_ROOT)/bin/godel.tcl
 
 if [file exist $env(GODEL_META_CENTER)/pagelist/.index.htm] {
   cd $env(GODEL_META_CENTER)/pagelist
-  godel_draw pagelist
+  godel_draw 
 } else {
   cd $env(GODEL_META_CENTER)
   file mkdir pagelist
   cd pagelist
-  godel_draw pagelist
+  godel_draw 
 
 }
 if {$env(GODEL_IN_CYGWIN)} {

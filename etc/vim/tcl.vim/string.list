@@ -31,6 +31,7 @@
 -boundary
 -buffer_constants
 -bus_name_notations
+-c
 -cap
 -capacitance
 -capture_procedure
@@ -57,6 +58,8 @@
 -clock_tree
 -clocks
 -column
+-column_data_proc
+-column_style_proc
 -columnspan
 -combi
 -combinational
@@ -76,6 +79,7 @@
 -create_twf_setup_domain
 -cross
 -crosstalk_delta
+-css
 -cycle_color
 -data
 -data_path
@@ -100,6 +104,7 @@
 -early
 -echo
 -edge_triggered
+-edit
 -elements
 -enable_fast_analysis
 -enable_propagation
@@ -108,6 +113,7 @@
 -endpoint
 -endpoints_only
 -equal_ports_nets
+-error
 -exact
 -exclude
 -exclude_untested
@@ -127,15 +133,18 @@
 -flatten_multi_dimension_busses
 -folder
 -font
+-fontsize
 -force
 -foreground
 -format
 -from
 -full
+-function
 -gate_clock
 -ground
 -ground_capacitance_factor
 -group
+-handle
 -height
 -hier
 -hier_separator
@@ -186,6 +195,7 @@
 -lib
 -lib_cell
 -library
+-linkcol
 -list_not_annotated
 -location
 -log_file
@@ -306,6 +316,7 @@
 -route
 -route_nondefault_nets_first
 -row
+-row_style_proc
 -rule
 -rules
 -scan
@@ -314,6 +325,7 @@
 -sdf
 -selected
 -separate_all_groups
+-serial
 -setgrid
 -setup
 -setup_margin

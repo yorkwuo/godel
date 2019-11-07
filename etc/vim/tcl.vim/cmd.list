@@ -23,6 +23,7 @@ array_reset
 array_save
 asic4_raw
 associate_mv_cells
+associate_supply_set
 attach_clock_edge
 attach_corner_name
 attach_skew
@@ -58,6 +59,8 @@ clkana_paths_file
 clkana_pocv_paths_file
 clock_opt
 collect_inst
+column_data_proc
+column_style_proc
 commit_upf
 compile
 compile_ultra
@@ -521,17 +524,21 @@ remove_buffer
 remove_cell
 remove_clock_latency
 remove_clock_trees
+remove_corners
 remove_design
 remove_from_collection
 remove_ideal_network
 remove_ignored_layers
+remove_lib
 remove_mode
+remove_modes
 remove_pin_name_synonym
 remove_routing_blockage
 remove_routing_blockages
 remove_scenarios
 remove_track
 remove_voltage_area
+rename_block
 report_abstracts
 report_analysis_coverage
 report_annotated_parasitics
@@ -590,6 +597,7 @@ route_detail
 route_group
 route_opt
 route_track
+row_style_proc
 run_goal
 saif_map
 save_block
@@ -705,6 +713,7 @@ set_parameter
 set_pin_name_synonym
 set_placement_status
 set_pocvm_corner_sigma
+set_port_attributes
 set_port_location
 set_power_prediction
 set_process_number
@@ -779,6 +788,9 @@ split_by_space
 split_paths
 split_polygons
 split_proc
+sproc_get_macro_info
+sproc_msg
+sproc_source
 srcDeselectAll
 srcFndSigCreate
 srcFndSignalSearch
@@ -845,6 +857,7 @@ write_dc_script
 write_def
 write_file
 write_floorplan
+write_lib
 write_list_to_file
 write_milkyway
 write_parasitics
