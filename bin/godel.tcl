@@ -159,8 +159,8 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "        x.className = x.className.replace(\" w3-show\", \"\");"
   puts $fout "    }"
   puts $fout "}"
-  set server $env(GODEL_SERVER)
-  set pwd    [pwd]
+  #set server $env(GODEL_SERVER)
+  #set pwd    [pwd]
   #puts $fout "function js_godel_draw() {"
   #puts $fout "  httpRequest = new XMLHttpRequest();"
   #puts $fout "  httpRequest.open('GET', 'http://$server/eval/cd $pwd;godel_draw', true);"
@@ -3081,7 +3081,7 @@ proc godel_draw {{target_path NA}} {
 
   # source plugin script
 # {{{
-  set flist [glob $env(GODEL_PLUGIN)/*/*.tcl]
+  set flist [glob -nocomplain $env(GODEL_PLUGIN)/*/*.tcl]
   foreach f $flist {
     #puts $f
     source $f 
@@ -5526,10 +5526,22 @@ proc meta_indexing {{ofile NA}} {
 # }}}
 #@=meta_chkin
 # {{{
-proc meta_chkin {{page_path ""} {hier_level ""}} {
+proc meta_chkin {args} {
+  # -f (force)
+# {{{
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-f) 1
+  }
+# }}}
   global env
   source $env(GODEL_META_FILE)
   set org_path [pwd]
+
+  set page_path $args
+
 # meta value to be checked-in stored in .godel/vars.tcl
   if {$page_path != ""} {
     #cd [tbox_cyg2unix $page_path]
@@ -5540,7 +5552,11 @@ proc meta_chkin {{page_path ""} {hier_level ""}} {
   set fullpath [pwd]
   set c [split $fullpath /]
 
+  set fullpath [pwd]
+  set c [split $fullpath /]
+
 # pagename
+  set hier_level ""
   if {$hier_level == ""} {
     set pathelem [lrange $c end end]
   } else {
@@ -5548,19 +5564,28 @@ proc meta_chkin {{page_path ""} {hier_level ""}} {
   }
   
   set pagename [join $pathelem ":"]
+ 
 
 # checked-in meta value
-  if [info exist meta($pagename,where)] {
-    puts "Error: `$pagename' already exist..."
-    puts "       $pagename = $meta($pagename,where)"
-    cd $org_path
-    return 0
+  if {$opt(-f)} {
+      puts "Checkin $pagename..."
+      set meta($pagename,where)    $fullpath
+      godel_array_save meta $env(GODEL_META_FILE)
+      cd $org_path
+      return 1
   } else {
-    puts "Checkin $pagename..."
-    set meta($pagename,where)    $fullpath
-    godel_array_save meta $env(GODEL_META_FILE)
-    cd $org_path
-    return 1
+    if [info exist meta($pagename,where)] {
+      puts "Error: `$pagename' already exist..."
+      puts "       $pagename = $meta($pagename,where)"
+      cd $org_path
+      return 0
+    } else {
+      puts "Checkin $pagename..."
+      set meta($pagename,where)    $fullpath
+      godel_array_save meta $env(GODEL_META_FILE)
+      cd $org_path
+      return 1
+    }
   }
 
 
