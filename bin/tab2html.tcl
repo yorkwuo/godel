@@ -3,6 +3,7 @@ source $env(GODEL_ROOT)/bin/godel.tcl
 
 set tabfile [lindex $argv 0]
 
+puts "Generating... $tabfile.htm"
 
 ghtm_begin $tabfile.htm 
 

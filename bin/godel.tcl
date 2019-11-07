@@ -1320,7 +1320,7 @@ proc html_rows_sort {rows args} {
 proc make_table {rows header} {
   upvar fout fout
 
-  puts $fout "<table class=table1>"
+  puts $fout "<table class=table1 id=tbl>"
   puts $fout $header
 
   foreach row $rows {
