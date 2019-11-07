@@ -209,6 +209,72 @@ proc lkey {} {
   }
 }
 # }}}
+# lser
+# {{{
+proc lser {args} {
+  # -v vars to print
+# {{{
+  set opt(-v) 0
+  set idx [lsearch $args {-v}]
+  if {$idx != "-1"} {
+    set vars2print [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-v) 1
+  } else {
+    set listfile NA
+  }
+# }}}
+
+  set keywords $args
+
+  set dirs [glob -type d *]
+  foreach dir $dirs {
+    if [file exist $dir/.godel/vars.tcl] {
+      source $dir/.godel/vars.tcl
+      lappend dir_keys [list $dir "$dir $vars(g:keywords)"]
+      unset vars
+    } else {
+      lappend dir_keys [list $dir $dir]
+    }
+  }
+
+# Search pagelist
+  set found_names ""
+  foreach dir $dir_keys {
+    set found 1
+# Is it match with keywords
+    foreach k $keywords {
+        set dir_keywords [lindex $dir 1]
+        if {[lsearch -regexp $dir_keywords $k] >= 0} {
+          set found [expr $found&&1]  
+        } else {
+          set found [expr $found&&0]  
+        }
+    }
+
+    if {$found} {
+      lappend found_names $dir
+    }
+  }
+
+  if {$found_names == ""} {
+    puts stderr "Not found... $keywords"
+  } else {
+      foreach dir $found_names {
+        set gpage [lindex $dir 0]
+
+        if {$opt(-v)} {
+          foreach v $vars2print {
+            puts [lvars $gpage $v]
+          }
+        } else {
+          puts $gpage
+        }
+      }
+  }
+
+}
+# }}}
 # lcd
 # {{{
 proc lcd {args} {
