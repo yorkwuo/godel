@@ -3098,9 +3098,11 @@ proc godel_draw {{target_path NA}} {
     source .godel/vars.tcl
     godel_init_vars    g:keywords    ""
     godel_init_vars    g:pagename    [file tail [pwd]]
+    godel_init_vars    g:iname       [file tail [pwd]]
   } else {
     godel_init_vars    g:keywords    ""
     godel_init_vars    g:pagename    [file tail [pwd]]
+    godel_init_vars    g:iname       [file tail [pwd]]
   }
 # }}}
 
