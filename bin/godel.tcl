@@ -1,3 +1,98 @@
+
+
+# fdiff
+# {{{
+proc fdiff {} {
+  upvar vars  vars
+  upvar files files
+
+  source .godel/dyvars.tcl
+  if ![info exist dyvars(srcpath)] {
+    puts "Error: vars not exist... \$dyvars(srcpath)"
+    return
+  }
+  set srcpath $dyvars(srcpath)
+
+  foreach f $files {
+    puts "\n\033\[0;35m# $f\033\[0m\n"
+    catch {exec diff $srcpath/$f $f} result
+    puts $result
+  }
+}
+# }}}
+# ftkdiff
+# {{{
+proc ftkdiff {} {
+  upvar vars vars
+  upvar files files
+  source .godel/dyvars.tcl
+
+  if ![info exist dyvars(srcpath)] {
+    puts "Error: dyvars not exist... \$dyvars(srcpath)"
+    return
+  }
+  set srcpath $dyvars(srcpath)
+
+  foreach f $files {
+    puts "\n\033\[0;35m# $f\033\[0m\n"
+    puts "tkdiff $srcpath/$f $f"
+  }
+}
+# }}}
+# fpush
+# {{{
+proc fpush {} {
+  upvar vars vars
+  upvar files files
+  source .godel/dyvars.tcl
+  if ![info exist dyvars(srcpath)] {
+    puts "Error: dyvars not exist... \$dyvars(srcpath)"
+    return
+  }
+  set srcpath $dyvars(srcpath)
+
+  foreach f $files {
+    puts "cp $f $srcpath/$f"
+  }
+}
+# }}}
+# fpull
+# {{{
+proc fpull {} {
+  upvar vars vars
+  upvar files files
+  source .godel/dyvars.tcl
+  if ![info exist dyvars(srcpath)] {
+    puts "Error: dyvars not exist... \$dyvars(srcpath)"
+    return
+  }
+  set srcpath $dyvars(srcpath)
+
+  foreach f $files {
+    puts "cp $srcpath/$f $f"
+    #exec cp $srcpath/$f $f
+  }
+}
+# }}}
+# fpullforcce
+# {{{
+proc fpullforce {} {
+  upvar vars vars
+  source .godel/dyvars.tcl
+  if ![info exist dyvars(srcpath)] {
+    puts "Error: dyvars not exist... \$dyvars(srcpath)"
+    return
+  }
+  set srcpath $dyvars(srcpath)
+
+  foreach f $files {
+    puts "cp $srcpath/$f $f"
+    exec cp $srcpath/$f $f
+  }
+}
+# }}}
+
+
 # getcol
 # {{{
 proc getcol {args} {

@@ -58,6 +58,7 @@ clipboard
 clkana_paths_file
 clkana_pocv_paths_file
 clock_opt
+close_lib
 collect_inst
 column_data_proc
 column_style_proc
@@ -70,6 +71,8 @@ connect_logic_net
 connect_net
 connect_pg_net
 connect_supply_net
+copy_block
+copy_lib
 create_analysis_view
 create_bounds
 create_cell
@@ -175,6 +178,7 @@ get_attribute
 get_attribute_value
 get_attributes
 get_block
+get_blocks
 get_cell
 get_cell_list
 get_cell_type
@@ -417,6 +421,7 @@ lip_interpolate
 lip_list_index
 lip_print_value_table
 list_attributes
+list_blocks
 list_cells
 list_hier
 list_img
@@ -452,6 +457,7 @@ new_float64
 new_int32
 new_string
 new_vtype
+open_block
 open_lib
 open_mw_lib
 open_project
@@ -502,6 +508,7 @@ rdt_run_signoff
 rdt_source_if_exists
 read_aocvm
 read_ddc
+read_def
 read_design
 read_file
 read_file_ret_list
@@ -522,6 +529,7 @@ remove_attribute
 remove_bounds
 remove_buffer
 remove_cell
+remove_clock
 remove_clock_latency
 remove_clock_trees
 remove_corners

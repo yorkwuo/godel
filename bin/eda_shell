@@ -60,6 +60,9 @@ namespace eval procs_attr {
 }
 global upfvars
 
+proc rtm_shared_dirs {args} {procname}
+proc sproc_icc2_compute_SF_indices {args} {procname}
+#proc create_lib {args} {procname}
 proc list_licenses {args} {procname}
 proc check_license {args} {procname}
 proc get_license {args} {procname}
@@ -1687,10 +1690,10 @@ set mw_design_library ""
 #trace add variable INTEL_STA_RUN_TYPE write "tracer INTEL_STA_RUN_TYPE"
 #trace add variable INTEL_VG_FILES write "tracer INTEL_VG_FILES"
 
-#if {$tcl_interactive} {
-#} else {
-#  source $cmdfile
-#}
+if {$tcl_interactive} {
+} else {
+  source $cmdfile
+}
 
 
 #::tclreadline::Loop
