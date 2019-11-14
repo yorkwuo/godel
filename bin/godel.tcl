@@ -585,7 +585,8 @@ proc gwaive {args} {
 proc ghtm_filter_table {tname column_no} {
   upvar fout fout
   puts $fout "<div class=\"w3-panel w3-pale-blue w3-leftbar w3-border-blue\">" 
-  puts $fout "<input type=text id=filter_table_input onkeyup=filter_table(\"$tname\",$column_no,event) placeholder=\"Search...\" autofocus>"
+  #puts $fout "<input type=text id=filter_table_input onkeyup=filter_table(\"$tname\",$column_no,event) placeholder=\"Search...\" autofocus>"
+  puts $fout "<input type=text id=filter_table_input onkeyup=filter_table(\"$tname\",$column_no,event) placeholder=\"Search...\">"
   puts $fout "</div>" 
 }
 # }}}
@@ -1369,9 +1370,35 @@ proc local_table {name args} {
         regsub {ed:} $col {} col
         set fname $row/$col
         if [file exist $fname] {
-          append cols2disp "<td><a href=$fname type=text/txt>e</a></td>"
+          append cols2disp "<td><a href=$fname type=text/txt>E</a></td>"
         } else {
           append cols2disp "<td></td>"
+        }
+      # a:
+      } elseif [regexp {a:} $col] {
+        regsub {a:} $col {} col
+        set col_data [lvars $row $col]
+        if [file exist $col_data] {
+          append cols2disp "<td><a href=$col_data type=text/txt>$col_data</a></td>"
+        } else {
+          append cols2disp "<td>NA: $col_data</td>"
+        }
+      # ln:
+      } elseif [regexp {ln:} $col] {
+        regsub {ln:} $col {} col
+        regexp {=(\S+)$} $col -> key
+        regsub {=\S+$} $col {} col
+
+        if {$key == ""} {
+          set disp $col
+        } else {
+          set disp [lvars $row $key]
+        }
+        set fname $row/$col
+        if [file exist $fname] {
+          append cols2disp "<td><a href=$fname type=text/txt>$disp</a></td>"
+        } else {
+          append cols2disp "<td>NA: $col</td>"
         }
       } else {
         if {$opt(-column_data_proc)} {
