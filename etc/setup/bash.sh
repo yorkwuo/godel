@@ -65,6 +65,8 @@ gmkdir () {
   done
 }
 
+
+
 function lcd { 
   `lcd.tcl "$@"`
 }

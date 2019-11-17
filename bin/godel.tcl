@@ -290,18 +290,27 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "</script>"
 }
 # }}}
-# lkey
+# akey
 # {{{
-proc lkey {} {
-  set dirs [glob -type d *]
-  #puts $dirs
-  foreach dir $dirs {
-    set varsfile $dir/.godel/vars.tcl
-    if {[file exist $varsfile]} {
-      source $varsfile
-      puts [format "%-10s : %s" $dir $vars(g:keywords)]
-    }
+proc akey {gpage keywords} {
+# Func: add keywords
+
+# Remove possible `/' at the tail.
+  regsub {\/$} $gpage {} gpage
+
+# Check file existence
+  set varfile $gpage/.godel/vars.tcl
+  if ![file exist $varfile] {
+    puts "Error: not exist... $varfile"
+    return
+  } else {
+    source $varfile
   }
+
+  append vars(g:keywords) " $keywords"
+
+  godel_array_save vars $varfile
+
 }
 # }}}
 # lser

@@ -13,10 +13,12 @@ a:active,a:hover{outline-width:0}abbr[title]{border-bottom:none;text-decoration:
 dfn{font-style:italic}mark{background:#ff0;color:#000}
 small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
 sub{bottom:-0.25em}sup{top:-0.5em}figure{margin:1em 40px}img{border-style:none}svg:not(:root){overflow:hidden}
-code,kbd,pre,samp{font-family:"courier new",monospace;font-size:14px}hr{box-sizing:content-box;height:0;overflow:visible}
+code,kbd,pre,samp{font-family:"courier new",monospace;font-size:18px}hr{box-sizing:content-box;height:0;overflow:visible}
 .w3-wide{letter-spacing:4px}
 pre {
-  margin: 0 0;
+  margin: 20px ;
+  background-color: #FFFFBF;
+  padding    :10px 5px;
 }
 button,input,select,textarea{font:inherit;margin:0}optgroup{font-weight:bold}
 button,input{overflow:visible}button,select{text-transform:none}
@@ -32,7 +34,7 @@ legend{color:inherit;display:table;max-width:100%;padding:0;white-space:normal}t
 ::-webkit-input-placeholder{color:inherit;opacity:0.54}
 ::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}
 /* End extract */
-html,body{font-family:Consolas,Verdana,sans-serif;font-size:15px;line-height:1.5}html{overflow-x:hidden}
+html,body{font-family:Consolas,Verdana,sans-serif;font-size:18px;line-height:1.5}html{overflow-x:hidden}
 hr{border:0;border-top:1px solid #eee;margin:20px 0}
 .w3-image{max-width:100%;height:auto}img{vertical-align:middle}a{color:inherit}
 .w3-table,.w3-table-all{border-collapse:collapse;border-spacing:0;display:table}.w3-table-all{border:1px solid #ccc}
