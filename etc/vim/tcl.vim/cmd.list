@@ -84,6 +84,7 @@ create_bounds
 create_cell
 create_clock
 create_clock_balance_group
+create_clock_straps
 create_command_group
 create_corner
 create_dense_tap_cells
@@ -115,10 +116,12 @@ create_power_switch
 create_power_switch_rule
 create_pst
 create_routing_blockage
+create_routing_rule
 create_run
 create_scenario
 create_shape
 create_shield
+create_shields
 create_site_array
 create_state_retention_rule
 create_supply_net
@@ -234,9 +237,12 @@ get_placement_blockage
 get_placement_blockages
 get_port
 get_ports
+get_power_domains
+get_power_strategies
 get_scenarios
 get_selection
 get_shapes
+get_site_def
 get_site_defs
 get_site_rows
 get_snap_setting
@@ -250,6 +256,7 @@ get_techs
 get_terminals
 get_timing_path
 get_timing_paths
+get_vias
 get_voltage_areas
 get_voltage_map
 get_vtype_value
@@ -394,6 +401,7 @@ godel_web_index2
 godel_write_list_to_file
 gok
 gpage_where
+gproc_tstamp
 group_path
 grun_begin
 grun_ci
@@ -402,6 +410,10 @@ grun_status
 gscreen
 gset
 gui_execute_menu_item
+gui_get_color_value
+gui_get_highlight
+gui_get_highlight_options
+gui_set_highlight_options
 gui_start
 gui_stop
 gui_write_window_image
@@ -561,6 +573,7 @@ remove_clock_trees
 remove_corners
 remove_design
 remove_duplicate_timing_contexts
+remove_floorplan_rules
 remove_from_collection
 remove_generated_clock
 remove_ideal_network
@@ -568,11 +581,14 @@ remove_ignored_layers
 remove_lib
 remove_mode
 remove_modes
+remove_objects
 remove_pin_name_synonym
 remove_placement_blockage
+remove_placement_blockages
 remove_routing_blockage
 remove_routing_blockages
 remove_scenarios
+remove_shapes
 remove_terminal
 remove_tracks
 remove_vias
@@ -700,6 +716,7 @@ set_clock_gating_objects
 set_clock_gating_style
 set_clock_group
 set_clock_groups
+set_clock_routing_rules
 set_clock_sense
 set_clock_transition
 set_clock_tree_balance_point
@@ -810,6 +827,7 @@ set_snap_setting
 set_steady_state_resistance
 set_svf
 set_switching_activity
+set_technology
 set_threshold_voltage_group_type
 set_timing_derate
 set_tlu_plus_file
@@ -883,6 +901,7 @@ steps_list
 suppress_message
 synthesize_clock_tree
 synthesize_clock_trees
+synthesize_multisource_global_clock_trees
 tbl_add_values_to_col
 tbl_add_values_to_row
 tbl_get_cols

@@ -1,4 +1,11 @@
 
+proc gproc_tstamp {gpage name} {
+  if ![file exist $gpage] {
+    file mkdir $gpage
+    godel_draw $gpage
+  }
+  lsetvar $gpage tstamp,$name [clock format [clock seconds] -format {%Y-%m-%d %H:%M}]
+}
 
 # fdiff
 # {{{

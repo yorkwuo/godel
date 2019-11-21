@@ -30,6 +30,7 @@
 -autofix
 -background
 -balance_points
+-bbox
 -below
 -borderwidth
 -bottom
@@ -70,6 +71,7 @@
 -clock_tree
 -clocks
 -coincident_boundary
+-collection
 -column
 -column_data_proc
 -column_style_proc
@@ -102,6 +104,7 @@
 -data
 -data_path
 -data_pins
+-default_reference_rule
 -default_value
 -define
 -define_args
@@ -121,6 +124,7 @@
 -divide
 -divide_by
 -domain
+-driver_taper_distance
 -dynamic_power
 -early
 -early_spec
@@ -134,6 +138,10 @@
 -enable_rule_override
 -enabled
 -enabled_arcs_only
+-end_grid_high_offset
+-end_grid_high_steps
+-end_grid_low_offset
+-end_grid_low_steps
 -endpoint
 -endpoints_only
 -equal_ports_nets
@@ -239,7 +247,9 @@
 -log_file
 -logical
 -low
+-macro_by_color
 -map_effort
+-mask_constraints
 -mask_pattern
 -master
 -master_clock
@@ -255,6 +265,7 @@
 -max_routing_layer
 -max_tluplus
 -max_transition
+-mesh_window
 -methods
 -mim_group
 -min
@@ -353,6 +364,7 @@
 -power
 -power_domains
 -preferred_direction_only
+-prefix
 -preserve_design_name
 -primary_ground_net
 -primary_power_net
@@ -397,6 +409,7 @@
 -setup_margin
 -shape_type
 -shape_use
+-shield_widths
 -shielding_mode
 -shorts
 -show
@@ -411,6 +424,8 @@
 -slack_lesser_than
 -slack_range
 -slant
+-snap
+-snap_to_track
 -source
 -space
 -spec
@@ -460,6 +475,8 @@
 -type
 -unique
 -usage
+-use_zroute_for_pin_connections
+-user_grid
 -v
 -value
 -variable_name
@@ -502,6 +519,8 @@ _slk_keep_rc_for_small_change
 _slk_rc_reduction
 _slk_recover_big_net_offset
 alib_library_analysis_path
+align_pins_on_parallel_edges
+allow_connection_to_stripe_covered_secondary_pg_pin
 allow_newer_db_files
 auto_insert_evel_shifters_on_clocks
 auto_insert_level_shifters_on_clocks
@@ -523,6 +542,8 @@ compile_clock_gating_through_hierarchy
 compile_log_format
 compile_timing_high_effort
 compile_top_all_paths
+compress_design_lib
+continue_on_missing_scandef
 dc_allow_rtl_pg
 def_physical_cells_to_be_ignored
 default_threshold_voltage_group
@@ -531,6 +552,7 @@ delay_calc_waveform_analysis_mode
 delay_cell_list_for_hold
 direction
 dirname
+disable_recovery_removal_checks
 dont_eco_design
 dummy_load_cell_list
 eco_alternative_area_ratio_threshold
@@ -542,8 +564,12 @@ eco_tcl_use_module_based_high_level_insertion_cmd
 enable_ao_synthesis
 enable_no_fill1_spacing_rule
 enable_page_mode
+enable_power
 enable_presynthesis_floorplanning
 enable_recovery_removal_arcs
+enable_single_connection_for_var_width
+enable_track_capacity_check
+enable_vertical_abutment_rules
 endpoint_clock_latency
 endpoint_clock_open_edge_value
 exist
@@ -558,6 +584,7 @@ intel
 is_analog
 is_clock_pin
 is_data_pin
+is_default
 is_generated
 is_hierarchical
 is_sequential
@@ -578,11 +605,15 @@ multi_core_enable_analysis
 mv_allow_ls_on_leaf_pin_boundary
 mv_insert_level_shifters_on_ideal_nets
 mv_no_main_power_violations
+num_tracks_for_access_check
+number_of_secondary_pg_pin_connections
+on_disk_operation
 parasitics_log_file
 pba_aocvm_only_mode
 pba_exhaustive_endpoint_path_limit
 physical_status
 pin_direction
+pin_shape_track_match_threshold
 power_analysis_mode
 power_default_static_probability
 power_default_toggle_rate
@@ -606,6 +637,8 @@ si_enable_analysis
 si_enable_multi_input_switching_analysis
 si_enable_multi_input_switching_timing_window_filter
 si_xtalk_exit_on_max_iteration_count
+site_height
+site_width
 slack
 slk_auto_sizing_rule
 slk_cap_unit
@@ -630,10 +663,12 @@ slk_setup_target_slk
 slk_time_unit
 slk_transition_threshold
 slk_twf_cost_v2
+snapshot_storage_location
 startpoint_clock_latency
 startpoint_clock_open_edge_value
 svr_keep_unconnected_nets
 symbol_library
+symmetry
 synopsys_program_name
 synthetic_library
 target_library
