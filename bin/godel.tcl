@@ -1,3 +1,11 @@
+proc section_start {name} {
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d %H:%M}]
+  puts "# SECTION_START : $name : $timestamp"
+}
+proc section_stop {name} {
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d %H:%M}]
+  puts "# SECTION_STOP : $name : $timestamp"
+}
 
 proc gproc_tstamp {gpage name} {
   if ![file exist $gpage] {
@@ -21,9 +29,15 @@ proc fdiff {} {
   set srcpath $dyvars(srcpath)
 
   foreach f $files {
-    puts "\n\033\[0;35m# $f\033\[0m\n"
-    catch {exec diff $srcpath/$f $f} result
-    puts $result
+    catch {exec diff $f $srcpath/$f | wc -l} result
+    if {$result > 0} {
+      puts "\033\[0;35m# $f\033\[0m"
+      puts [lindex $result 0]
+      puts "tkdiff $f $srcpath/$f"
+      puts "cp     $f $srcpath/$f"
+      puts "cp     $srcpath/$f $f"
+    }
+    #puts $result
   }
 }
 # }}}
@@ -60,6 +74,24 @@ proc fpush {} {
 
   foreach f $files {
     puts "cp $f $srcpath/$f"
+  }
+}
+# }}}
+# fpushforce
+# {{{
+proc fpushforce {} {
+  upvar vars vars
+  upvar files files
+  source .godel/dyvars.tcl
+  if ![info exist dyvars(srcpath)] {
+    puts "Error: dyvars not exist... \$dyvars(srcpath)"
+    return
+  }
+  set srcpath $dyvars(srcpath)
+
+  foreach f $files {
+    puts "Overwrite: cp $f $srcpath/$f"
+    exec cp $f $srcpath/$f
   }
 }
 # }}}
@@ -1085,18 +1117,47 @@ proc lsetdyvar {name key value} {
 # }}}
 # lvars
 # {{{
-proc lvars {name {key ""}} {
-  if ![file exist $name/.godel/vars.tcl] {
-    return NA
+proc lvars {args} {
+
+  # -k (keyword)
+# {{{
+  set opt(-k) 0
+  set idx [lsearch $args {-k}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-k) 1
   }
-  source $name/.godel/vars.tcl
-  if {$key == ""} {
+# }}}
+  set gpage [lindex $args 0]
+  set vname  [lindex $args 1]
+
+  if {$gpage == ""} {
+    set gpage "."
+  }
+  if ![file exist $gpage/.godel/vars.tcl] {
+    puts "Error: not exist... $gpage/.godel/vars.tcl"
+    return
+  }
+  source $gpage/.godel/vars.tcl
+
+  set vlist ""
+  if {$vname == ""} {
     parray vars
   } else {
-    if [info exist vars($key)] {
-      return $vars($key)
+    if {$opt(-k)} {
+      foreach name [lsort [array names vars]] {
+        if [setop_and_hit $vname $name] {
+          puts [format "%-20s = %s" $name $vars($name)]
+          lappend klist [list $name $vars($name)]
+          set vlist [concat $vlist $vars($name)]
+        }
+      }
     } else {
-      return NA
+      if [info exist vars($vname)] {
+        return $vars($vname)
+      } else {
+        return NA
+      }
     }
   }
 }
@@ -1238,6 +1299,7 @@ proc local_table {name args} {
 
   # create rows
   # {{{
+  set rows ""
   if {$opt(-f)} {
     if [file exist $listfile] {
       set rows [read_file_ret_list $listfile]
@@ -3626,6 +3688,9 @@ proc gget {pagename args} {
   upvar meta meta
   if ![info exist meta] {
     foreach i $env(GODEL_META_SCOPE) { mload $i }
+  }
+  if [file exist $pagename] {
+    set meta($pagename,where) $pagename
   }
   # -o (open)
 # {{{

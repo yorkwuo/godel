@@ -1,6 +1,6 @@
 #!/usr/bin/tclsh
 source $env(GODEL_ROOT)/tools/tabulate.tcl
-#set edactrl(procname_disp) 1
+set edactrl(procname_disp) 1
 
 if [info exist env(GODEL_ROOT)] {
   source $env(GODEL_ROOT)/bin/godel.tcl
@@ -15,6 +15,16 @@ set ::sh_product_version I-2017.12
 set ::product_build_date 2017.12.16
 set ::synthetic_library ""
 
+proc get_site_defs {args} {procname}
+proc get_site_defs {args} {procname}
+proc get_layer {args} {procname}
+proc get_via_rules {args} {procname}
+proc set_technology {args} {procname}
+proc set_parasitics_parameters {args} {procname}
+proc remove_scenarios {args} {procname}
+proc remove_corners {args} {procname}
+proc commit_upf {args} {procname}
+proc compile {args} {procname}
 proc set_driving_cell {args} {procname}
 proc set_design_attributes {args} {procname}
 proc upf_version {args} {procname}
@@ -50,7 +60,7 @@ proc source {args} {
     #puts "# Source $args"
     uplevel ::realsource {*}$sfile
   } else {
-    puts "Error: \"$sfile\" not exist..."
+    puts "Error: not exist... $sfile"
   }
 }
 
@@ -1646,6 +1656,7 @@ proc set_max_area {args} {procname}
 proc get_lib_pins {args} {procname}
 proc get_cells {args} {procname}
 proc sizeof_collection {args} {procname}
+interp alias {} sizeof {} sizeof_collection
 proc set_preferred_routing_direction {args} {procname}
 proc set_ignored_layers {args} {procname}
 proc uniquify {args} {procname}
@@ -1697,4 +1708,4 @@ if {$tcl_interactive} {
 
 
 #::tclreadline::Loop
-# vim:fdm=marker
+# vim:fdm=marker ft=tcl

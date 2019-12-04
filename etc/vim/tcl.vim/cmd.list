@@ -18,6 +18,7 @@ all_register
 all_registers
 all_scenarios
 analyze
+analyze_rtl_congestion
 append_file
 append_to_collection
 array_reset
@@ -43,12 +44,14 @@ check_design
 check_floorplan_rules
 check_library
 check_license
+check_lp
 check_mv_design
 check_noise
 check_pin_placement
 check_power
 check_rp_groups
 check_scan_def
+check_scenarios
 check_timing
 check_tlu_plus_files
 chk_warn
@@ -106,6 +109,7 @@ create_mw_libreport_hierarchy
 create_net
 create_nominal_condition
 create_operating_corner
+create_pg_wire_pattern
 create_placement
 create_placement_blockage
 create_port
@@ -132,6 +136,7 @@ create_tap_meshes
 create_terminal
 create_test_protocol
 create_track
+create_via_rule
 create_voltage_area
 current_block
 current_corner
@@ -256,6 +261,7 @@ get_techs
 get_terminals
 get_timing_path
 get_timing_paths
+get_via_rules
 get_vias
 get_voltage_areas
 get_voltage_map
@@ -421,6 +427,7 @@ gvars
 hdlin_infer_multibit
 hlwords
 icc2_route_import
+identify_clock_gating
 index_collection
 initialize_floorplan
 inno_route_cook
@@ -486,6 +493,8 @@ mkdir
 money_convert
 move_object
 move_objects
+msg_section_start
+msg_section_stop
 new_boolean
 new_err
 new_expr
@@ -550,6 +559,7 @@ read_def
 read_design
 read_file
 read_file_ret_list
+read_floorplan
 read_lib
 read_library
 read_ocvm
@@ -559,6 +569,7 @@ read_power_intent
 read_saif
 read_sdc
 read_timing_rpt_file
+read_upf
 read_verilog
 read_verilog_outline
 redirect
@@ -582,6 +593,7 @@ remove_lib
 remove_mode
 remove_modes
 remove_objects
+remove_pg_patterns
 remove_pin_name_synonym
 remove_placement_blockage
 remove_placement_blockages
@@ -591,6 +603,7 @@ remove_scenarios
 remove_shapes
 remove_terminal
 remove_tracks
+remove_via_rules
 remove_vias
 remove_voltage_area
 rename_block
@@ -616,6 +629,7 @@ report_constraint
 report_corners
 report_design
 report_design_data
+report_design_mismatch
 report_dft_insertion_configuration
 report_dft_signal
 report_dont_touch
@@ -628,8 +642,10 @@ report_host_options
 report_host_usage
 report_ignored_layers
 report_individual_pin_constraints
+report_lp
 report_min_period
 report_min_pulse_width
+report_missing_constraints
 report_modes
 report_multibit
 report_multibit_banking
@@ -807,6 +823,7 @@ set_pocvm_corner_sigma
 set_port_attributes
 set_port_location
 set_power_prediction
+set_preferred_routing_direction
 set_process_number
 set_program_options
 set_propagated_clock
@@ -844,6 +861,7 @@ setop_union
 setvar
 shell_is_in_exploration_mode
 shell_is_in_topographical_mode
+shell_is_in_upf_mode
 shift
 si2drAttrGetAttrType
 si2drAttrGetName
@@ -961,6 +979,7 @@ write_dc_script
 write_def
 write_file
 write_floorplan
+write_icc2_files
 write_lib
 write_list_to_file
 write_milkyway

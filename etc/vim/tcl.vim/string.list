@@ -12,6 +12,7 @@
 -all_vias
 -all_violators
 -allow_metal_fill_only
+-allow_physical_cells
 -allowed_layer
 -analysis_style
 -analysis_type
@@ -86,6 +87,7 @@
 -context
 -continue_on_error
 -control_point
+-control_port
 -control_signal
 -coord
 -coordinate
@@ -100,6 +102,9 @@
 -cross
 -crosstalk_delta
 -css
+-cut_layer_names
+-cut_names
+-cut_rows
 -cycle_color
 -data
 -data_path
@@ -175,6 +180,7 @@
 -full
 -function
 -gate_clock
+-golden_upf
 -grid
 -ground
 -ground_capacitance_factor
@@ -187,6 +193,7 @@
 -hierarchical_separators
 -hierarchy
 -high
+-high_end
 -high_resolution
 -hold
 -hold_margin
@@ -197,6 +204,7 @@
 -include
 -include_clock_gating_network
 -include_scope
+-include_supply_exceptions
 -inclusive
 -incr
 -increasing
@@ -208,6 +216,7 @@
 -input
 -input_pins
 -input_port_nets
+-input_supply_port
 -input_transition_fall
 -input_transition_rise
 -inst
@@ -247,6 +256,7 @@
 -log_file
 -logical
 -low
+-low_end
 -macro_by_color
 -map_effort
 -mask_constraints
@@ -258,6 +268,7 @@
 -max_core
 -max_cores
 -max_delay
+-max_emulation_tluplus
 -max_fanout
 -max_library
 -max_nets
@@ -327,15 +338,18 @@
 -of_object
 -of_objects
 -off
+-on_state
 -only_cells
 -only_used
 -operation
 -orientation
 -output
 -output_port_nets
+-output_supply_port
 -overwrite
 -padx
 -pady
+-parameters
 -parent
 -path
 -path_type
@@ -374,6 +388,7 @@
 -quiet
 -real
 -recovery
+-ref
 -regexp
 -region
 -relief
@@ -428,6 +443,7 @@
 -snap_to_track
 -source
 -space
+-spacing
 -spec
 -specific_variables
 -spef
@@ -438,8 +454,10 @@
 -sticky
 -stop
 -stop_propagation
+-strict_check
 -submit_command
 -summary
+-supplemental
 -supplies
 -synthesis_optimization
 -target_latency
@@ -469,6 +487,7 @@
 -top_right_inside_horizontal_abutment_cells
 -top_right_outside_corner_cell
 -track
+-track_alignment
 -tran
 -transition_time
 -twf_setup
@@ -544,6 +563,8 @@ compile_timing_high_effort
 compile_top_all_paths
 compress_design_lib
 continue_on_missing_scandef
+cut_x_min_spacing_table
+cut_y_min_spacing_table
 dc_allow_rtl_pg
 def_physical_cells_to_be_ignored
 default_threshold_voltage_group
@@ -562,24 +583,33 @@ eco_instance_name_prefix
 eco_tcl_use_high_level_insertion_cmd
 eco_tcl_use_module_based_high_level_insertion_cmd
 enable_ao_synthesis
+enable_local_policy_match
+enable_multi_driver_analysis
 enable_no_fill1_spacing_rule
 enable_page_mode
 enable_power
 enable_presynthesis_floorplanning
 enable_recovery_removal_arcs
+enable_rule_based_query
 enable_single_connection_for_var_width
 enable_track_capacity_check
+enable_verdi_debug
 enable_vertical_abutment_rules
 endpoint_clock_latency
 endpoint_clock_open_edge_value
 exist
 existing_dft
 exists
+for_electro_migration
+for_high_performance
 full_name
 fuzzy_matching_enabled
+handle_hanging_crossover
+hdlin_enable_hier_map
 hdlin_preserve_sequential
 hier
 high_fanout_net_threshold
+implicit_scmr_pins
 intel
 is_analog
 is_clock_pin
@@ -597,6 +627,7 @@ link_force_case
 link_library
 link_path
 link_path_per_instance
+max_num_stagger_tracks_table
 metal_cut_allowed_horizontal_shrink_factor
 metal_cut_allowed_vertical_shrink_factor
 min_layer_mode_soft_cost
@@ -615,6 +646,7 @@ physical_status
 pin_direction
 pin_shape_track_match_threshold
 power_analysis_mode
+power_cg_physically_aware_cg
 power_default_static_probability
 power_default_toggle_rate
 power_enable_analysis
@@ -664,6 +696,7 @@ slk_time_unit
 slk_transition_threshold
 slk_twf_cost_v2
 snapshot_storage_location
+spg_enable_via_resistance_support
 startpoint_clock_latency
 startpoint_clock_open_edge_value
 svr_keep_unconnected_nets
@@ -690,7 +723,9 @@ timing_use_enhanced_capacitance_modeling
 uniquify_keep_original_design
 uniquify_naming_style
 upf_create_implicit_supply_sets
+upf_iso_filter_elements_with_applies_to
 upf_power_switches_always_on
+upper_metal_min_length_table
 verification_set_undriven_signals
 verilog
 verilogout_higher_designs_first
