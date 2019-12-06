@@ -117,6 +117,7 @@ proc fpull {} {
 # {{{
 proc fpullforce {} {
   upvar vars vars
+  upvar files files
   source .godel/dyvars.tcl
   if ![info exist dyvars(srcpath)] {
     puts "Error: dyvars not exist... \$dyvars(srcpath)"
@@ -1477,6 +1478,18 @@ proc local_table {name args} {
           append cols2disp "<td><a href=$fname type=text/txt>$disp</a></td>"
         } else {
           append cols2disp "<td>NA: $col</td>"
+        }
+      # lnf:
+      } elseif [regexp {lnf:} $col] {
+        regsub {lnf:} $col {} col
+        regexp {=(\S+)$} $col -> disp
+        regsub {=\S+$} $col {} col
+
+        set fname $row/$col
+        if [file exist $fname] {
+          append cols2disp "<td><a href=$fname>$disp</a></td>"
+        } else {
+          append cols2disp "<td>NA: $fname</td>"
         }
       } else {
         if {$opt(-column_data_proc)} {
