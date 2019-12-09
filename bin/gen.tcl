@@ -22,6 +22,18 @@ if {$idx != "-1"} {
   set ofile "a.html"
 }
 # }}}
+# -e eval
+# {{{
+set opt(-e) 0
+set idx [lsearch $argv {-e}]
+if {$idx != "-1"} {
+  set expression [lindex $argv [expr $idx + 1]]
+  set argv [lreplace $argv $idx [expr $idx + 1]]
+  set opt(-e) 1
+}
+# }}}
+
+eval $expression
 
 set cmdfile [lindex $argv 0]
 
@@ -31,3 +43,4 @@ source $cmdfile
 
 ghtm_end
 
+# vim:fdm=marker
