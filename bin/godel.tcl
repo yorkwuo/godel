@@ -1491,6 +1491,18 @@ proc local_table {name args} {
         } else {
           append cols2disp "<td>NA: $fname</td>"
         }
+      # edfile:
+      } elseif [regexp {edfile:} $col] {
+        regsub {edfile:} $col {} col
+        regexp {=(\S+)$} $col -> disp
+        regsub {=\S+$} $col {} col
+
+        set fname $row/$col
+        if [file exist $fname] {
+          append cols2disp "<td><a href=$fname type=text/txt>$disp</a></td>"
+        } else {
+          append cols2disp "<td>NA: $fname</td>"
+        }
       } else {
         if {$opt(-column_data_proc)} {
           column_data_proc $row $col
