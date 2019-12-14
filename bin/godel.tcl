@@ -2363,12 +2363,18 @@ proc img_resize {pattern} {
 # gmd_file
 # {{{
 proc gmd_file {afile} {
+  #puts [pwd]/$afile
+  #set oridir [pwd]
+  #cd [file dirname $afile]
+  #puts [pwd]
   set kin [open $afile r]
     set ftxt [read $kin]
   close $kin
 
+  #cd $oridir
   #puts $ftxt
-  return [::gmarkdown::md_convert $ftxt]
+  return [::gmarkdown::md_convert -f $afile -link rule $ftxt]
+  #return [::gmarkdown::convert $ftxt]
 }
 # }}}
 # csv_table
@@ -2434,7 +2440,6 @@ proc gnotes {args} {
   upvar count count
   upvar meta meta
 
-puts $args
   # -link (code block link)
 # {{{
   set opt(-link) 0

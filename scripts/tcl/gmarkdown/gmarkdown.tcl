@@ -44,7 +44,31 @@ namespace eval gmarkdown {
     # The output of this function is only a fragment, not a complete HTML
     # document. The format of the output is generic XHTML.
     #
-    proc md_convert {markdown} {
+
+# md_convert : original but modified by York
+    proc md_convert {args} {
+        # -f (file name)
+# {{{
+        set opt(-f) 0
+        set idx [lsearch $args {-f}]
+        if {$idx != "-1"} {
+          set opt(-f,fname) [lindex $args [expr $idx + 1]]
+          set args [lreplace $args $idx [expr $idx + 1]]
+          set opt(-f) 1
+        }
+# }}}
+        # -link (code block link)
+# {{{
+        set opt(-link) 0
+        set idx [lsearch $args {-link}]
+        if {$idx != "-1"} {
+          set opt(-link,suffix) [lindex $args [expr $idx + 1]]
+          set args [lreplace $args $idx [expr $idx + 1]]
+          set opt(-link) 1
+        }
+# }}}
+        set markdown [lindex $args 0]
+
         set markdown [regsub {\r\n?} $markdown {\n}]
         set markdown [::textutil::untabify2 $markdown 4]
         set markdown [string trimright $markdown]
@@ -60,7 +84,7 @@ namespace eval gmarkdown {
         return $ret
     }
 
-#@>convert
+#@>convert: create by York
     proc convert {markdown} {
       upvar opt opt
       upvar vars vars
@@ -280,6 +304,14 @@ namespace eval gmarkdown {
                     #@=CODE BLOCKS
                     set code_result {}
 
+if ![info exist opt(-f)] {
+  set opt(-f) 0
+  set oridir [pwd]
+}
+if {$opt(-f)} {
+  set oridir [pwd]
+  cd [file dirname $opt(-f,fname)]
+}
                     while {$index < $no_lines} {
                         incr index
 
@@ -293,11 +325,15 @@ namespace eval gmarkdown {
                         set after_escape [html_escape [\
                             regsub {^    } $line {}]\
                         ]
+if ![info exist opt(-link)] {
+  set opt(-link) 0
+  set opt(-link,suffix) NA
+}
 if {$opt(-link)} {
   set fname    [lindex $after_escape 0]
   set fullname $fname.$opt(-link,suffix)
   if [file exist $fullname] {
-    regsub "$fname" $after_escape "<a href=$fullname type=text/txt>$fname</a>" after_escape
+    regsub "$fname" $after_escape "<a href=[pwd]/$fullname type=text/txt>$fname</a>" after_escape
   }
 }
                         lappend code_result $after_escape
@@ -319,6 +355,9 @@ if {$opt(-link)} {
 
                         set line [lindex $lines $index]
                     }
+
+                    cd $oridir
+
                     set code_result [join $code_result \n]
 
                     append result <pre><code> $code_result \n </code></pre>
@@ -842,3 +881,4 @@ if {$opt(-link)} {
 
 package provide gmarkdown 1.0
 
+# vim:fdm=marker
