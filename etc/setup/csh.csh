@@ -17,6 +17,7 @@ alias gd                 godel_draw.tcl
 #alias gg                 gg.tcl
 
 alias cdk               'eval `cdk.tcl \!*`'
+alias jcd               'eval `jcd.tcl \!*`'
 alias gok               'eval `gok.tcl \!*`'
 alias gvi               'eval `gvi.tcl \!*`'
 alias gl                'gl.tcl -l  \!*'

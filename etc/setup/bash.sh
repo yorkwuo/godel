@@ -70,6 +70,9 @@ gmkdir () {
 function lcd { 
   `lcd.tcl "$@"`
 }
+function jcd { 
+  `jcd.tcl "$@"`
+}
 
 #export GODEL_GVIM=/cygdrive/c/Program\ Files\ \(x86\)/Vim/vim81/gvim.exe
 #export GODEL_FIREFOX=/cygdrive/c/Program\ Files/Mozilla\ Firefox/firefox.exe

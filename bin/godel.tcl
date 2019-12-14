@@ -1,3 +1,15 @@
+# jcd
+proc jcd {args} {
+
+  set hpath [lindex $args 0]
+
+  regsub {file:\/\/} $hpath {} hpath
+
+  set goto [file dirname $hpath]
+  #puts stderr "cd $goto"
+  puts "cd $goto"
+}
+
 proc section_start {name} {
   set timestamp [clock format [clock seconds] -format {%Y-%m-%d %H:%M}]
   puts "# SECTION_START : $name : $timestamp"
