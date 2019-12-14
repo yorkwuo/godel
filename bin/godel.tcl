@@ -2273,13 +2273,26 @@ proc listcomp {a b} {
 # }}}
 # gmd
 # {{{
-proc gmd {fname} {
+proc gmd {args} {
   global env
   upvar fout fout
   upvar vars vars
+
+  # -f (file name)
+# {{{
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
+  if {$idx != "-1"} {
+    set fname [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-f) 1
+  } else {
+    set listfile NA
+  }
+# }}}
+
   regsub -all {\.md} $fname {} fname1
   regsub -all { } $fname1 {_} fname2
-
 
   if [file exist $fname2.md] {
 # If not exist, create it...
@@ -2300,7 +2313,7 @@ proc gmd {fname} {
     set content [read $fp]
   close $fp
 
-  gnotes $content
+  gnotes {*}$args $content
 }
 # }}}
 # wsplit: word split
@@ -2420,6 +2433,18 @@ proc gnotes {args} {
   upvar vars vars
   upvar count count
   upvar meta meta
+
+puts $args
+  # -link (code block link)
+# {{{
+  set opt(-link) 0
+  set idx [lsearch $args {-link}]
+  if {$idx != "-1"} {
+    set opt(-link,suffix) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-link) 1
+  }
+# }}}
 
   # -qnote (quick note)
   set opt(-qnote) 0

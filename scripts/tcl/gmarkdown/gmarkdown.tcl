@@ -62,6 +62,7 @@ namespace eval gmarkdown {
 
 #@>convert
     proc convert {markdown} {
+      upvar opt opt
       upvar vars vars
         set markdown [regsub {\r\n?} $markdown {\n}]
         set markdown [::textutil::untabify2 $markdown 4]
@@ -160,6 +161,9 @@ namespace eval gmarkdown {
     proc apply_templates {markdown_var {parent {}}} {
        upvar $markdown_var markdown
 
+# York 2019/12/14
+        upvar vars vars
+        upvar opt opt
 
         set lines    [split $markdown \n]
         set no_lines [llength $lines]
@@ -279,9 +283,25 @@ namespace eval gmarkdown {
                     while {$index < $no_lines} {
                         incr index
 
-                        lappend code_result [html_escape [\
+# York 2019/12/14
+# Add link function
+# begin============================================================================
+                        #lappend code_result [html_escape [\
+                        #    regsub {^    } $line {}]\
+                        #]
+
+                        set after_escape [html_escape [\
                             regsub {^    } $line {}]\
                         ]
+if {$opt(-link)} {
+  set fname    [lindex $after_escape 0]
+  set fullname $fname.$opt(-link,suffix)
+  if [file exist $fullname] {
+    regsub "$fname" $after_escape "<a href=$fullname type=text/txt>$fname</a>" after_escape
+  }
+}
+                        lappend code_result $after_escape
+# end==============================================================================
 
                         set eoc 0
                         for {set peek $index} {$peek < $no_lines} {incr peek} {
