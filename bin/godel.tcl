@@ -1,4 +1,5 @@
 # jcd
+# {{{
 proc jcd {args} {
 
   set hpath [lindex $args 0]
@@ -9,16 +10,23 @@ proc jcd {args} {
   #puts stderr "cd $goto"
   puts "cd $goto"
 }
-
+# }}}
+# section_start
+# {{{
 proc section_start {name} {
   set timestamp [clock format [clock seconds] -format {%Y-%m-%d %H:%M}]
   puts "# SECTION_START : $name : $timestamp"
 }
+# }}}
+# section_stop
+# {{{
 proc section_stop {name} {
   set timestamp [clock format [clock seconds] -format {%Y-%m-%d %H:%M}]
   puts "# SECTION_STOP : $name : $timestamp"
 }
-
+# }}}
+# gproc_tstamp
+# {{{
 proc gproc_tstamp {gpage name} {
   if ![file exist $gpage] {
     file mkdir $gpage
@@ -26,6 +34,7 @@ proc gproc_tstamp {gpage name} {
   }
   lsetvar $gpage tstamp,$name [clock format [clock seconds] -format {%Y-%m-%d %H:%M}]
 }
+# }}}
 
 # fdiff
 # {{{
@@ -1445,6 +1454,24 @@ proc local_table {name args} {
       if [regexp {img:} $col] {
         regsub {img:} $col {} col
         append cols2disp "<td><a href=$row/images/cover.jpg><img height=100px src=$row/images/cover.jpg></a></td>"
+      # proc:
+      } elseif [regexp {proc:} $col] {
+        regsub {proc:} $col {} col
+        set procname $col
+        cd $row
+        $procname
+        cd ..
+      # flist:
+      } elseif [regexp {flist:} $col] {
+        regsub {flist:} $col {} col
+        set files [glob -nocomplain $row/*.pdf]
+        set links {<pre>}
+        foreach f $files {
+          set name [file tail $f]
+          append links "<a href=\"$f\">$name</a>\n"
+        }
+        append links {</pre>}
+          append cols2disp "<td>$links</td>"
       # md:
       } elseif [regexp {md:} $col] {
         regsub {md:} $col {} col

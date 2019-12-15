@@ -326,7 +326,7 @@ em {
 
 p {
   font-family: monospace,Consolas,san-serif;
-  margin: 0px;
+  margin: 10px 0px 0px 0px;
   font-size     : 15px;
 }
 a {
