@@ -1444,12 +1444,8 @@ proc local_table {name args} {
       }
 
       # Get column data
-      set col_data [lvars $row $col]
-
-      # linkcol
-      if {$col == $linkcol} {
-        set col_data "<a href=$row/.index.htm>$col_data</a>"
-      }
+      #puts "$row $col"
+      #puts "$row/[file dirname $col]"
       # img:
       if [regexp {img:} $col] {
         regsub {img:} $col {} col
@@ -1543,6 +1539,22 @@ proc local_table {name args} {
           append cols2disp "<td>NA: $fname</td>"
         }
       } else {
+        set dirname [file dirname $col]
+        if {$dirname eq "."} {
+          #puts "$col $dirname"
+          set page_path $row
+          set page_key  $col
+        } else {
+          set page_path $row/$dirname
+          set page_key  [file tail $col]
+          #puts $page_path
+        }
+        set col_data [lvars $page_path $page_key]
+
+      # linkcol
+      if {$col == $linkcol} {
+        set col_data "<a href=$row/.index.htm>$col_data</a>"
+      }
         if {$opt(-column_data_proc)} {
           column_data_proc $row $col
         }
