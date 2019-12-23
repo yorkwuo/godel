@@ -266,8 +266,8 @@ proc ghtm_top_bar {{type NA}} {
   file copy -force $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
   file copy -force $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
 
-  puts $fout "<script src=.godel/js/godel.js></script>"
   puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
+  puts $fout "<script src=.godel/js/godel.js></script>"
   #puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/godel.js]></script>"
   #puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js]></script>"
   #puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/prism/prism.js]></script>"
@@ -369,6 +369,7 @@ proc akey {gpage keywords} {
   }
 
   append vars(g:keywords) " $keywords"
+  set vars(g:keywords) [string trim $vars(g:keywords)]
 
   godel_array_save vars $varfile
 
@@ -1318,6 +1319,15 @@ proc local_table {name args} {
     set opt(-serial) 1
   }
 # }}}
+  # -save
+# {{{
+  set opt(-save) 0
+  set idx [lsearch $args {-save}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-save) 1
+  }
+# }}}
 
   # create rows
   # {{{
@@ -1479,6 +1489,21 @@ proc local_table {name args} {
           set kout [open $fname w]
           close $kout
         }
+      # edtable:
+      } elseif [regexp {edtable:} $col] {
+        regsub {edtable:} $col {} col
+        set dirname [file dirname $col]
+        if {$dirname eq "."} {
+          #puts "$col $dirname"
+          set page_path $row
+          set page_key  $col
+        } else {
+          set page_path $row/$dirname
+          set page_key  [file tail $col]
+          #puts $page_path
+        }
+        set col_data [lvars $page_path $page_key]
+        append cols2disp "<td gname=$page_path colname=$page_key contenteditable=true>$col_data</td>"
       # ed:
       } elseif [regexp {ed:} $col] {
         regsub {ed:} $col {} col
@@ -1551,10 +1576,11 @@ proc local_table {name args} {
         }
         set col_data [lvars $page_path $page_key]
 
-      # linkcol
-      if {$col == $linkcol} {
-        set col_data "<a href=$row/.index.htm>$col_data</a>"
-      }
+        # linkcol
+        if {$col == $linkcol} {
+          set col_data "<a href=$row/.index.htm>$col_data</a>"
+        }
+
         if {$opt(-column_data_proc)} {
           column_data_proc $row $col
         }
@@ -1567,6 +1593,9 @@ proc local_table {name args} {
     incr serial
   }
   puts $fout "</table>"
+  if {$opt(-save)} {
+  puts $fout "<button id=\"save\">Save</button>"
+  }
 
 }
 # }}}
@@ -1652,6 +1681,10 @@ proc gdraw_default {} {
     puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
     puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
     puts $kout "cd \$pagepath"
+    puts $kout "if \[file exist \$env(GODEL_DOWNLOAD)/gtcl.tcl\] {"
+    puts $kout "  source      \$env(GODEL_DOWNLOAD)/gtcl.tcl"
+    puts $kout "  file delete \$env(GODEL_DOWNLOAD)/gtcl.tcl"
+    puts $kout "}"
     puts $kout "godel_draw"
     puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
 

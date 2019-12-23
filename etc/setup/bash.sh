@@ -50,6 +50,8 @@ alias fa="firefox .index.htm&"
 alias f1="gvim .godel/ghtm.tcl"
 alias f2="gvim .godel/vars.tcl"
 alias f3="gvim .godel/proc.tcl"
+alias lv=lvars
+alias lsv=lsetvar
 
 gmkdir () {
   for i in $@; do
@@ -72,6 +74,9 @@ function lcd {
 }
 function jcd { 
   `jcd.tcl "$@"`
+}
+function ff { 
+  `firefox "$@"`
 }
 
 #export GODEL_GVIM=/cygdrive/c/Program\ Files\ \(x86\)/Vim/vim81/gvim.exe
