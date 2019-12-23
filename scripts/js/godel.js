@@ -29,11 +29,11 @@ $(document).ready(function(){
     });
 
 // Save
-    let data = cmds;
+    var data = cmds;
     const textToBLOB = new Blob([data], { type: 'text/plain' });
     const sFileName = 'gtcl.tcl';	   // The file to save the data.
 
-    let newLink = document.createElement("a");
+    var newLink = document.createElement("a");
     newLink.download = sFileName;
 
     if (window.webkitURL != null) {
