@@ -272,36 +272,44 @@ proc ghtm_top_bar {{type NA}} {
   #puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js]></script>"
   #puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/prism/prism.js]></script>"
 
-  puts $fout "<div class=\"w3-bar w3-border w3-indigo w3-medium\">"
-# Edit
-  puts $fout "  <div><a href=.godel/ghtm.tcl type=text/txt class=\"w3-bar-item w3-button w3-hover-red\">Edit</a></div>"
-# Values
-  puts $fout "  <div><a href=.godel/vars.tcl type=text/txt class=\"w3-bar-item w3-button w3-hover-red\">Values</a></div>"
-# Draw
-  puts $fout "  <div><a href=.godel/draw.gtcl type=text/gtcl class=\"w3-bar-item w3-button w3-hover-red\">Draw</a></div>"
-# Parent
-  puts $fout "  <div><a href=../.index.htm class=\"w3-bar-item w3-button w3-hover-red\">Parent</a></div>"
-# 
-  #puts $fout "  <div><div id=\"div\" class=\"w3-bar-item w3-button w3-hover-red\" style=\"width:20px;height:20px;\" contenteditable=\"true\"></div></div>"
-# TOC
-  puts $fout "  <div><a href=.main.htm  class=\"w3-bar-item w3-button w3-hover-red\">TOC</a></div>"
-  set path_help     [tbox_cygpath $env(GODEL_ROOT)/docs/help/.index.htm]
-  set path_pagelist [tbox_cygpath $env(GODEL_META_CENTER)/pagelist/.index.htm]
-  set path_draw     [tbox_cygpath $env(GODEL_ROOT)/plugin/gdraw/gdraw_$flow_name.tcl]
-  puts $fout "<div class=\"w3-dropdown-click w3-right\">"
-  puts $fout "  <button onclick=\"myFunction()\" class=\"w3-button w3-hover-red\">More</button>"
-  puts $fout "  <div id=\"Demo\" class=\"w3-dropdown-content w3-bar-block w3-card-4\">"
-  #puts $fout "    <a href=\".main.htm\"                     class=\"w3-bar-item w3-button\">Table of Content</a>"
-  puts $fout "    <a href=\".index.htm\"      type=text/txt class=\"w3-bar-item w3-button\">HTML</a>"
-  #puts $fout "    <a href=\"$path_help\"                    class=\"w3-bar-item w3-button\">Help</a>"
-  #puts $fout "    <a href=\"$path_pagelist\"                class=\"w3-bar-item w3-button\">Pagelist</a>"
-  puts $fout "    <a href=\".godel/proc.tcl\" type=text/txt class=\"w3-bar-item w3-button\">Proc</a>"
-  puts $fout "  </div>"
-  puts $fout "</div>"
+  puts $fout "<ul id=stickymenu class=solidblockmenu>"
+  puts $fout "<li><a href=.godel/ghtm.tcl type=text/txt>Edit</a></li>"
+  puts $fout "<li><a href=.godel/vars.tcl type=text/txt>Value</a></li>"
+  puts $fout "<li><a href=../.index.htm>Parent</a></li>"
+  puts $fout "<li><a href=.main.htm>TOC</a></li>"
+  puts $fout "<li><a href=.index.htm type=text/txt>HTML</a></li>"
+  puts $fout "<li><a href=.godel/draw.gtcl type=text/gtcl>Draw</a></li>"
+  puts $fout "</ul>"
+#  puts $fout "<div class=\"w3-bar w3-border w3-indigo w3-medium\">"
+## Edit
+#  puts $fout "  <div><a href=.godel/ghtm.tcl type=text/txt class=\"w3-bar-item w3-button w3-hover-red\">Edit</a></div>"
+## Values
+#  puts $fout "  <div><a href=.godel/vars.tcl type=text/txt class=\"w3-bar-item w3-button w3-hover-red\">Values</a></div>"
+## Draw
+#  puts $fout "  <div><a href=.godel/draw.gtcl type=text/gtcl class=\"w3-bar-item w3-button w3-hover-red\">Draw</a></div>"
+## Parent
+#  puts $fout "  <div><a href=../.index.htm class=\"w3-bar-item w3-button w3-hover-red\">Parent</a></div>"
+## 
+#  #puts $fout "  <div><div id=\"div\" class=\"w3-bar-item w3-button w3-hover-red\" style=\"width:20px;height:20px;\" contenteditable=\"true\"></div></div>"
+## TOC
+#  puts $fout "  <div><a href=.main.htm  class=\"w3-bar-item w3-button w3-hover-red\">TOC</a></div>"
+#  set path_help     [tbox_cygpath $env(GODEL_ROOT)/docs/help/.index.htm]
+#  set path_pagelist [tbox_cygpath $env(GODEL_META_CENTER)/pagelist/.index.htm]
+#  set path_draw     [tbox_cygpath $env(GODEL_ROOT)/plugin/gdraw/gdraw_$flow_name.tcl]
+#  puts $fout "<div class=\"w3-dropdown-click w3-right\">"
+#  puts $fout "  <button onclick=\"myFunction()\" class=\"w3-button w3-hover-red\">More</button>"
+#  puts $fout "  <div id=\"Demo\" class=\"w3-dropdown-content w3-bar-block w3-card-4\">"
+#  #puts $fout "    <a href=\".main.htm\"                     class=\"w3-bar-item w3-button\">Table of Content</a>"
+#  puts $fout "    <a href=\".index.htm\"      type=text/txt class=\"w3-bar-item w3-button\">HTML</a>"
+#  #puts $fout "    <a href=\"$path_help\"                    class=\"w3-bar-item w3-button\">Help</a>"
+#  #puts $fout "    <a href=\"$path_pagelist\"                class=\"w3-bar-item w3-button\">Pagelist</a>"
+#  puts $fout "    <a href=\".godel/proc.tcl\" type=text/txt class=\"w3-bar-item w3-button\">Proc</a>"
+#  puts $fout "  </div>"
+#  puts $fout "</div>"
   
-  puts $fout "  <div class=\"w3-bar-item w3-button w3-hover-red w3-right\">$dyvars(last_updated)</div>"
+#  puts $fout "  <div class=\"w3-bar-item w3-button w3-hover-red w3-right\">$dyvars(last_updated)</div>"
 
-  puts $fout "</div>"
+#  puts $fout "</div>"
 
 
   puts $fout "<textarea rows=10 cols=70 id=\"text_board\" style=\"display:none;font-size:10px\"></textarea>"
@@ -3454,6 +3462,10 @@ proc godel_draw {{target_path NA}} {
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
       puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
       puts $kout "cd \$pagepath"
+      puts $kout "if \[file exist \$env(GODEL_DOWNLOAD)/gtcl.tcl\] {"
+      puts $kout "  source      \$env(GODEL_DOWNLOAD)/gtcl.tcl"
+      puts $kout "  file delete \$env(GODEL_DOWNLOAD)/gtcl.tcl"
+      puts $kout "}"
       puts $kout "godel_draw"
       puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
 
