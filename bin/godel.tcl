@@ -280,6 +280,7 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "<li><a href=.index.htm type=text/txt>HTML</a></li>"
   puts $fout "<li><a href=.godel/draw.gtcl type=text/gtcl>Draw</a></li>"
   puts $fout "</ul>"
+  puts $fout "<br>"
 #  puts $fout "<div class=\"w3-bar w3-border w3-indigo w3-medium\">"
 ## Edit
 #  puts $fout "  <div><a href=.godel/ghtm.tcl type=text/txt class=\"w3-bar-item w3-button w3-hover-red\">Edit</a></div>"
