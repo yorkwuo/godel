@@ -276,9 +276,9 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "<li><a href=.godel/ghtm.tcl type=text/txt>Edit</a></li>"
   puts $fout "<li><a href=.godel/vars.tcl type=text/txt>Value</a></li>"
   puts $fout "<li><a href=../.index.htm>Parent</a></li>"
-  puts $fout "<li><a href=.main.htm>TOC</a></li>"
-  puts $fout "<li><a href=.index.htm type=text/txt>HTML</a></li>"
   puts $fout "<li><a href=.godel/draw.gtcl type=text/gtcl>Draw</a></li>"
+  puts $fout "<li style=float:right><a href=.main.htm>TOC</a></li>"
+  puts $fout "<li style=float:right><a href=.index.htm type=text/txt>HTML</a></li>"
   puts $fout "</ul>"
   puts $fout "<br>"
 #  puts $fout "<div class=\"w3-bar w3-border w3-indigo w3-medium\">"
@@ -3458,7 +3458,8 @@ proc godel_draw {{target_path NA}} {
 
 # draw.gtcl
 # {{{
-  if ![file exist .godel/draw.gtcl] {
+  #if ![file exist .godel/draw.gtcl] {
+  #}
     set kout [open .godel/draw.gtcl w]
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
       puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
@@ -3471,7 +3472,6 @@ proc godel_draw {{target_path NA}} {
       puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
 
     close $kout
-  }
 # }}}
 
 #----------------------------
