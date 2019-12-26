@@ -263,8 +263,10 @@ proc ghtm_top_bar {{type NA}} {
 
   set cwd [pwd]
   file mkdir .godel/js
-  file copy -force $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
-  file copy -force $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
+  #file copy -force $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
+  exec cp $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
+  #file copy -force $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
+  exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
 
   puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
   puts $fout "<script src=.godel/js/godel.js></script>"
