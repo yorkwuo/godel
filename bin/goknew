@@ -2,8 +2,6 @@
 source $env(GODEL_ROOT)/bin/godel.tcl
 
 set pagename    [lindex $argv 0]
-puts $pagename
-return
 
 # gok_list.tcl
 set mfile $env(HOME)/.goklist.tcl

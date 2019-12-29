@@ -1345,7 +1345,16 @@ proc local_table {name args} {
   set rows ""
   if {$opt(-f)} {
     if [file exist $listfile] {
-      set rows [read_file_ret_list $listfile]
+      #set rows [read_file_ret_list $listfile]
+      set kin [open $listfile r]
+
+      while {[gets $kin line] >= 0} {
+        if {[regexp {^\s*#} $line]} {
+        } else {
+          lappend rows $line
+        }
+      }
+      close $kin
     } else {
       puts "Errors: Not exist... $listfile"
       return
@@ -1364,11 +1373,16 @@ proc local_table {name args} {
 #  } else {
 #    puts $fout "<table class=table2 id=$name>"
 #  }
-  puts $fout "<style>"
-  puts $fout ".table1 td, .table1 th {"
-  puts $fout "font-size : $fontsize;"
-  puts $fout "}"
-  puts $fout "</style>"
+  if {$opt(-save)} {
+  puts $fout "<button id=\"save\">Save</button>"
+  }
+  if {$opt(-fontsize)} {
+    puts $fout "<style>"
+    puts $fout ".table1 td, .table1 th {"
+    puts $fout "font-size : $fontsize;"
+    puts $fout "}"
+    puts $fout "</style>"
+  }
   puts $fout "<table class=$css_class id=$name>"
 # Table Headers
 # {{{
@@ -1481,7 +1495,7 @@ proc local_table {name args} {
       # flist:
       } elseif [regexp {flist:} $col] {
         regsub {flist:} $col {} col
-        set files [glob -nocomplain $row/*.pdf]
+        set files [glob -nocomplain $row/$col]
         set links {<pre>}
         foreach f $files {
           set name [file tail $f]
@@ -1604,9 +1618,6 @@ proc local_table {name args} {
     incr serial
   }
   puts $fout "</table>"
-  if {$opt(-save)} {
-  puts $fout "<button id=\"save\">Save</button>"
-  }
 
 }
 # }}}
