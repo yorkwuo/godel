@@ -1,3 +1,19 @@
+# fmgr
+# {{{
+proc fmgr {args} {
+  upvar fout fout
+  set flist [glob *]
+  #puts $flist
+  puts $fout "<button id=\"fmgr_save\">Save</button>"
+  puts $fout "<table id=fmgr class=table1>"
+  foreach f [lsort $flist] {
+    puts $fout "<tr>"
+    puts $fout "<td>$f</td><td gname=$f contenteditable=true></td>"
+    puts $fout "</tr>"
+  }
+  puts $fout "</table>"
+}
+# }}}
 # jcd
 # {{{
 proc jcd {args} {
@@ -3469,7 +3485,7 @@ proc godel_draw {{target_path NA}} {
 
   file mkdir .godel
 
-# draw.gtcl
+# create draw.gtcl
 # {{{
   #if ![file exist .godel/draw.gtcl] {
   #}
@@ -3500,13 +3516,18 @@ proc godel_draw {{target_path NA}} {
 
 # Hardcoded w3.css in .index.htm so that you have all in one file.
 # {{{
-  puts $fout "<style>"
-  set fin [open $env(GODEL_ROOT)/etc/css/w3.css r]
-    while {[gets $fin line] >= 0} {
-      puts $fout $line
-    }
-  close $fin
-  puts $fout "</style>"
+#  puts $fout "<style>"
+#  set fin [open $env(GODEL_ROOT)/etc/css/w3.css r]
+#    while {[gets $fin line] >= 0} {
+#      puts $fout $line
+#    }
+#  close $fin
+#  puts $fout "</style>"
+# }}}
+# Standalone w3.css
+# {{{
+  exec cp $env(GODEL_ROOT)/etc/css/w3.css .godel/w3.css
+  puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
 # }}}
 
   puts $fout "<meta charset=utf-8>"
