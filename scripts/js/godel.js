@@ -1,4 +1,62 @@
+// JQuery: fmgr delete
+// {{{
+$(document).ready(function(){
+  var $TABLE = $('#fmgr');
 
+  $('#fmgr_savekk').click(function () {
+
+    //var $rows = $TABLE.find('tr');
+    var $rows = $('#fmgr').find('tr');
+
+    var cmds = "";
+    // foreach row
+    $rows.each(function () {
+      //var $td = $(this).find('td');
+      var $td = $(this).find('td');
+      // foreach td
+      $td.each(function () {
+        var value   = $(this).text();
+        var gname   = $(this).attr('gname');
+        //var colname = $(this).attr('colname');
+        if (typeof gname === 'undefined') {
+          return; // equal to continue
+        } else {
+          if (value === "dd" ) {
+            var cmd = "exec rm -rf " + gname + "\n";
+          } else {
+            //var cmd = value + "\n";
+            var cmd = "\n";
+          }
+          //var cmd = "lsetvar " + gname + " " + colname + " \"" + value + "\"\n";
+        }
+        cmds = cmds + cmd;
+      });
+    });
+
+// Save
+    var data = cmds;
+    const textToBLOB = new Blob([data], { type: 'text/plain' });
+    const sFileName = 'gtcl.tcl';	   // The file to save the data.
+
+    var newLink = document.createElement("a");
+    newLink.download = sFileName;
+
+    if (window.webkitURL != null) {
+        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+    }
+    else {
+        newLink.href = window.URL.createObjectURL(textToBLOB);
+        newLink.style.display = "none";
+        document.body.appendChild(newLink);
+    }
+
+    newLink.click(); 
+
+  });
+
+
+});
+// }}}
 // JQuery: Save text to disk
 // {{{
 $(document).ready(function(){
