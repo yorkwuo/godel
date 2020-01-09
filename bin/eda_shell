@@ -14,9 +14,11 @@ set synopsys_program_name dc_shell
 set ::sh_product_version I-2017.12
 set ::product_build_date 2017.12.16
 set ::synthetic_library ""
+set ::do_redirect 0
 
 proc get_site_defs {args} {procname}
-proc get_site_defs {args} {procname}
+proc report_clock_gating {args} {procname}
+proc identify_clock_gating {args} {procname}
 proc get_layer {args} {procname}
 proc get_via_rules {args} {procname}
 proc set_technology {args} {procname}

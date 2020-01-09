@@ -52,7 +52,7 @@ proc fdiff {} {
   foreach f $files {
     catch {exec diff $f $srcpath/$f | wc -l} result
     if {$result > 0} {
-      puts "\033\[0;35m# $f\033\[0m"
+      puts "\033\[0;92m# $f\033\[0m"
       puts [lindex $result 0]
       puts "tkdiff $f $srcpath/$f"
       puts "cp     $f $srcpath/$f"
@@ -76,7 +76,7 @@ proc ftkdiff {} {
   set srcpath $dyvars(srcpath)
 
   foreach f $files {
-    puts "\n\033\[0;35m# $f\033\[0m\n"
+    puts "\n\033\[0;92m# $f\033\[0m\n"
     puts "tkdiff $srcpath/$f $f"
   }
 }
@@ -1162,6 +1162,15 @@ proc lvars {args} {
     set opt(-k) 1
   }
 # }}}
+  # -pvar (path var)
+# {{{
+  set opt(-pvar) 0
+  set idx [lsearch $args {-pvar}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-pvar) 1
+  }
+# }}}
   set gpage [lindex $args 0]
   set vname  [lindex $args 1]
 
@@ -1188,7 +1197,17 @@ proc lvars {args} {
       }
     } else {
       if [info exist vars($vname)] {
-        return $vars($vname)
+
+        if {$opt(-pvar)} {
+          set txt ""
+          foreach path $vars($vname) {
+            set fname [file tail $path]
+            append txt "$fname\n"
+          }
+          return $txt
+        } else {
+          return $vars($vname)
+        }
       } else {
         return NA
       }
@@ -2578,19 +2597,29 @@ proc gnotes {args} {
 # @) Get vars values
   set matches [regexp -all -inline {@\)(\S+)} $content]
   foreach {g0 g1} $matches {
-    if [info exist vars($g1)] {
-      if {[llength $vars($g1)] > 1} {
-        #set txt "\n"
-        #foreach i $vars($g1) {
-        #  append txt "                  $i\n"
-        #}
-        #regsub -all "@\\)$g1" $content $txt content
-        regsub -all "@\\)$g1" $content $vars($g1) content
-      } else {
-        regsub -all "@\\)$g1" $content $vars($g1) content
-      }
+    # @)dir/key
+    if [regexp {\/} $g0] {
+        set dir [file dirname $g0]
+        regsub {@\)} $dir {} dir
+        set key [file tail    $g0]
+        set value [lvars $dir $key]
+        regsub -all "@\\)$g1" $content $value content
+    # @)key
     } else {
-      regsub -all "@\\)$g1" $content "<b>NA</b>($g1)" content
+      if [info exist vars($g1)] {
+        if {[llength $vars($g1)] > 1} {
+          #set txt "\n"
+          #foreach i $vars($g1) {
+          #  append txt "                  $i\n"
+          #}
+          #regsub -all "@\\)$g1" $content $txt content
+          regsub -all "@\\)$g1" $content $vars($g1) content
+        } else {
+          regsub -all "@\\)$g1" $content $vars($g1) content
+        }
+      } else {
+        regsub -all "@\\)$g1" $content "<b>NA</b>($g1)" content
+      }
     }
   }
 
@@ -3829,7 +3858,7 @@ proc todo_list {args} {
         set title    [lindex $i 3]
         set txt  [format "%s (%25s) (%s) (%s)" $pagename $keywords $priority $title]
         if {$priority == "1"} {
-          puts stderr "\033\[0;35m$txt\033\[0m"
+          puts stderr "\033\[0;92m$txt\033\[0m"
         } elseif {$priority == "2"} {
           puts stderr "\033\[0;36m$txt\033\[0m"
         } else {
