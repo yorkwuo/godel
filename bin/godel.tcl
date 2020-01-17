@@ -261,11 +261,31 @@ proc ghtm_list_files {pattern {description ""}} {
 # }}}
 # ghtm_top_bar
 # {{{
-proc ghtm_top_bar {{type NA}} {
+proc ghtm_top_bar {args} {
   upvar fout fout
   upvar env env
   upvar vars vars
   upvar flow_name flow_name
+  # -filter (filter tbl column x)
+# {{{
+  set opt(-filter) 0
+  set idx [lsearch $args {-filter}]
+  if {$idx != "-1"} {
+    set tblcol [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-filter) 1
+  }
+# }}}
+  # -save
+# {{{
+  set opt(-save) 0
+  set idx [lsearch $args {-save}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-save) 1
+  }
+# }}}
+
   if [file exist .godel/dyvars.tcl] {
     source .godel/dyvars.tcl
   } else {
@@ -273,9 +293,9 @@ proc ghtm_top_bar {{type NA}} {
   }
 
 # default flow_name
-  if ![info exist flow_name] {
-    set flow_name default
-  }
+  #if ![info exist flow_name] {
+  #  set flow_name default
+  #}
 
   set cwd [pwd]
   file mkdir .godel/js
@@ -293,10 +313,16 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "<ul id=stickymenu class=solidblockmenu>"
   puts $fout "<li><a href=.godel/ghtm.tcl type=text/txt>Edit</a></li>"
   puts $fout "<li><a href=.godel/vars.tcl type=text/txt>Value</a></li>"
-  puts $fout "<li><a href=../.index.htm>Parent</a></li>"
+  if {$opt(-save)} {
+  puts $fout "<li><button id=\"save\">Save</button></li>"
+  }
+  if {$opt(-filter)} {
+  puts $fout "<li><input type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\"></li>"
+  }
   puts $fout "<li><a href=.godel/draw.gtcl type=text/gtcl>Draw</a></li>"
-  puts $fout "<li style=float:right><a href=.main.htm>TOC</a></li>"
+  #puts $fout "<li style=float:right><a href=.main.htm>TOC</a></li>"
   puts $fout "<li style=float:right><a href=.index.htm type=text/txt>HTML</a></li>"
+  puts $fout "<li style=float:right><a href=../.index.htm>Parent</a></li>"
   puts $fout "</ul>"
   puts $fout "<br>"
 #  puts $fout "<div class=\"w3-bar w3-border w3-indigo w3-medium\">"
@@ -331,17 +357,18 @@ proc ghtm_top_bar {{type NA}} {
 #  puts $fout "</div>"
 
 
-  puts $fout "<textarea rows=10 cols=70 id=\"text_board\" style=\"display:none;font-size:10px\"></textarea>"
+  #puts $fout "<textarea rows=10 cols=70 id=\"text_board\" style=\"display:none;font-size:10px\"></textarea>"
 
-  puts $fout "<script>"
-  puts $fout "function myFunction() {"
-  puts $fout "    var x = document.getElementById(\"Demo\");"
-  puts $fout "    if (x.className.indexOf(\"w3-show\") == -1) {"
-  puts $fout "        x.className += \" w3-show\";"
-  puts $fout "    } else { "
-  puts $fout "        x.className = x.className.replace(\" w3-show\", \"\");"
-  puts $fout "    }"
-  puts $fout "}"
+  #puts $fout "<script>"
+  #puts $fout "function myFunction() {"
+  #puts $fout "    var x = document.getElementById(\"Demo\");"
+  #puts $fout "    if (x.className.indexOf(\"w3-show\") == -1) {"
+  #puts $fout "        x.className += \" w3-show\";"
+  #puts $fout "    } else { "
+  #puts $fout "        x.className = x.className.replace(\" w3-show\", \"\");"
+  #puts $fout "    }"
+  #puts $fout "}"
+  #
   #set server $env(GODEL_SERVER)
   #set pwd    [pwd]
   #puts $fout "function js_godel_draw() {"
@@ -1286,24 +1313,6 @@ proc local_table {name args} {
     set opt(-row_style_proc) 1
   }
 # }}}
-  # -column_style_proc (column_style_proc)
-# {{{
-  set opt(-column_style_proc) 0
-  set idx [lsearch $args {-column_style_proc}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-column_style_proc) 1
-  }
-# }}}
-  # -column_data_proc (column_data_proc)
-# {{{
-  set opt(-column_data_proc) 0
-  set idx [lsearch $args {-column_data_proc}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-column_data_proc) 1
-  }
-# }}}
   # -css (css class)
 # {{{
   set opt(-css) 0
@@ -1478,18 +1487,12 @@ proc local_table {name args} {
 # For each table row
 #--------------------
   foreach row $rows {
-    set row_disp 1
     set row_style {}
 
     # row_style_proc
     if {$opt(-row_style_proc)} {
-      row_style_proc $row
+      row_style_proc
     }
-
-    # Control to hide the row
-    if {$row_disp == "0"} {
-      continue
-    } 
 
     puts $fout "<tr style=\"$row_style\">"
 
@@ -1504,14 +1507,9 @@ proc local_table {name args} {
     # For each table column
     #----------------------
     foreach col $columns {
-      set cols2disp {}
-      set column_style {}
+      set celltxt {}
       # Remove column width
       regsub {;\S+} $col {} col
-
-      if {$opt(-column_style_proc)} {
-        column_style_proc $row $col
-      }
 
       # Get column data
       #puts "$row $col"
@@ -1519,14 +1517,14 @@ proc local_table {name args} {
       # img:
       if [regexp {img:} $col] {
         regsub {img:} $col {} col
-        append cols2disp "<td><a href=$row/images/cover.jpg><img height=100px src=$row/images/cover.jpg></a></td>"
+        append celltxt "<td><a href=$row/images/cover.jpg><img height=100px src=$row/images/cover.jpg></a></td>"
       # proc:
       } elseif [regexp {proc:} $col] {
         regsub {proc:} $col {} col
         set procname $col
-        cd $row
+        #cd $row
         $procname
-        cd ..
+        #cd ..
       # flist:
       } elseif [regexp {flist:} $col] {
         regsub {flist:} $col {} col
@@ -1537,14 +1535,14 @@ proc local_table {name args} {
           append links "<a href=\"$f\">$name</a>\n"
         }
         append links {</pre>}
-          append cols2disp "<td>$links</td>"
+          append celltxt "<td>$links</td>"
       # md:
       } elseif [regexp {md:} $col] {
         regsub {md:} $col {} col
         set fname $row/$col.md
         if [file exist $fname] {
           set aftermd [gmd_file $fname]
-          append cols2disp "<td>$aftermd</td>"
+          append celltxt "<td>$aftermd</td>"
         } else {
           set kout [open $fname w]
           close $kout
@@ -1563,24 +1561,24 @@ proc local_table {name args} {
           #puts $page_path
         }
         set col_data [lvars $page_path $page_key]
-        append cols2disp "<td gname=$page_path colname=$page_key contenteditable=true>$col_data</td>"
+        append celltxt "<td gname=$page_path colname=$page_key contenteditable=true>$col_data</td>"
       # ed:
       } elseif [regexp {ed:} $col] {
         regsub {ed:} $col {} col
         set fname $row/$col
         if [file exist $fname] {
-          append cols2disp "<td><a href=$fname type=text/txt>E</a></td>"
+          append celltxt "<td><a href=$fname type=text/txt>E</a></td>"
         } else {
-          append cols2disp "<td></td>"
+          append celltxt "<td></td>"
         }
       # a:
       } elseif [regexp {a:} $col] {
         regsub {a:} $col {} col
         set col_data [lvars $row $col]
         if [file exist $col_data] {
-          append cols2disp "<td><a href=$col_data type=text/txt>$col_data</a></td>"
+          append celltxt "<td><a href=$col_data type=text/txt>$col_data</a></td>"
         } else {
-          append cols2disp "<td>NA: $col_data</td>"
+          append celltxt "<td>NA: $col_data</td>"
         }
       # ln:
       } elseif [regexp {ln:} $col] {
@@ -1595,9 +1593,9 @@ proc local_table {name args} {
         }
         set fname $row/$col
         if [file exist $fname] {
-          append cols2disp "<td><a href=$fname type=text/txt>$disp</a></td>"
+          append celltxt "<td><a href=$fname type=text/txt>$disp</a></td>"
         } else {
-          append cols2disp "<td>NA: $col</td>"
+          append celltxt "<td>NA: $col</td>"
         }
       # lnf:
       } elseif [regexp {lnf:} $col] {
@@ -1607,9 +1605,9 @@ proc local_table {name args} {
 
         set fname $row/$col
         if [file exist $fname] {
-          append cols2disp "<td><a href=$fname>$disp</a></td>"
+          append celltxt "<td><a href=$fname>$disp</a></td>"
         } else {
-          append cols2disp "<td>NA: $fname</td>"
+          append celltxt "<td>NA: $fname</td>"
         }
       # edfile:
       } elseif [regexp {edfile:} $col] {
@@ -1619,20 +1617,18 @@ proc local_table {name args} {
 
         set fname $row/$col
         if [file exist $fname] {
-          append cols2disp "<td><a href=$fname type=text/txt>$disp</a></td>"
+          append celltxt "<td><a href=$fname type=text/txt>$disp</a></td>"
         } else {
-          append cols2disp "<td>NA: $fname</td>"
+          append celltxt "<td>NA: $fname</td>"
         }
       } else {
         set dirname [file dirname $col]
         if {$dirname eq "."} {
-          #puts "$col $dirname"
           set page_path $row
           set page_key  $col
         } else {
           set page_path $row/$dirname
           set page_key  [file tail $col]
-          #puts $page_path
         }
         set col_data [lvars $page_path $page_key]
 
@@ -1641,12 +1637,9 @@ proc local_table {name args} {
           set col_data "<a href=$row/.index.htm>$col_data</a>"
         }
 
-        if {$opt(-column_data_proc)} {
-          column_data_proc $row $col
-        }
-        append cols2disp "<td style=\"$column_style\">$col_data</td>"
+        append celltxt "<td>$col_data</td>"
       }
-      puts $fout $cols2disp
+      puts $fout $celltxt
     }
 
     puts $fout "</tr>"
@@ -2388,7 +2381,7 @@ proc pagelist {{sort_by by_updated}} {
   lappend columnlist [list size size]
   lappend columnlist [list keywords keywords]
 
-  ghtm_table_nodir pagelist 0
+  ghtm_table_nodir tbl 0
 }
 # }}}
 # ge
@@ -3210,20 +3203,20 @@ proc ghtm_toc {{mode ""} {begin_level 4} } {
     }
   }
 # Create toc.htm
-  ghtm_new_html toc
+  #ghtm_new_html toc
 
 # Create main.htm
-  set kout [open .main.htm w]
-    puts $kout {<!DOCTYPE html>}
-    puts $kout {<html> <head>}
-    puts $kout "<title>$vars(g:pagename)</title>"
-    puts $kout {<meta charset=utf-8>}
-    puts $kout {<frameset cols=25%,75%>}
-    puts $kout {　　<frame src=.toc.htm name=leftFrame >}
-    puts $kout {　　<frame src=.index.htm name=rightFrame >}
-    puts $kout {</frameset>}
-    puts $kout {</head> <body> </body> </html>}
-  close $kout
+#  set kout [open .main.htm w]
+#    puts $kout {<!DOCTYPE html>}
+#    puts $kout {<html> <head>}
+#    puts $kout "<title>$vars(g:pagename)</title>"
+#    puts $kout {<meta charset=utf-8>}
+#    puts $kout {<frameset cols=25%,75%>}
+#    puts $kout {　　<frame src=.toc.htm name=leftFrame >}
+#    puts $kout {　　<frame src=.index.htm name=rightFrame >}
+#    puts $kout {</frameset>}
+#    puts $kout {</head> <body> </body> </html>}
+#  close $kout
 }
 # }}}
 # ghtm_chap
