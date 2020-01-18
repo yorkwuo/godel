@@ -1,14 +1,31 @@
-# fmgr
+# fm
 # {{{
-proc fmgr {args} {
+proc fm {args} {
   upvar fout fout
-  set flist [glob *]
-  #puts $flist
-  puts $fout "<button id=\"fmgr_save\">Save</button>"
-  puts $fout "<table id=fmgr class=table1>"
-  foreach f [lsort $flist] {
+  set flist [glob -nocomplain *]
+  if {$flist eq ""} {
+    puts $fout "<p>No files...</p>"
+  }
+  puts $fout "<table id=tbl class=table1>"
+  foreach row [lsort $flist] {
     puts $fout "<tr>"
-    puts $fout "<td>$f</td><td gname=$f contenteditable=true></td>"
+    set celltxt {}
+    append celltxt "<td>$row</td>"
+    append celltxt "<td gname=\"$row\" contenteditable=true></td>"
+    # flist:
+      if [file isdirectory $row] {
+        regsub -all {\[} $row {\\[} dir
+        regsub -all {\]} $dir {\\]} dir
+        set files [glob -nocomplain $dir/*]
+        set links {<pre>}
+        foreach f $files {
+          set name [file tail $f]
+          append links "<a href=\"$f\">$name</a>\n"
+        }
+        append links {</pre>}
+        append celltxt "<td>$links</td>"
+      }
+    puts $fout $celltxt
     puts $fout "</tr>"
   }
   puts $fout "</table>"
@@ -281,7 +298,8 @@ proc ghtm_top_bar {args} {
   set opt(-save) 0
   set idx [lsearch $args {-save}]
   if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
+    set saveid [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-save) 1
   }
 # }}}
@@ -314,7 +332,8 @@ proc ghtm_top_bar {args} {
   puts $fout "<li><a href=.godel/ghtm.tcl type=text/txt>Edit</a></li>"
   puts $fout "<li><a href=.godel/vars.tcl type=text/txt>Value</a></li>"
   if {$opt(-save)} {
-  puts $fout "<li><button id=\"save\">Save</button></li>"
+    if {$saveid eq ""} {set saveid "save"}
+  puts $fout "<li><button id=\"$saveid\">Save</button></li>"
   }
   if {$opt(-filter)} {
   puts $fout "<li><input type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\"></li>"
@@ -1497,8 +1516,8 @@ proc local_table {name args} {
     puts $fout "<tr style=\"$row_style\">"
 
     if {$opt(-edit)} {
-      puts $fout "<td><a href=$row/.godel/ghtm.tcl type=text/txt>e</a></td>"
-      puts $fout "<td><a href=$row/.godel/vars.tcl type=text/txt>v</a></td>"
+      puts $fout "<td><a href=\"$row/.godel/ghtm.tcl\" type=text/txt>e</a></td>"
+      puts $fout "<td><a href=\"$row/.godel/vars.tcl\" type=text/txt>v</a></td>"
     }
     if {$opt(-serial)} {
       puts $fout "<td>$serial</td>"
@@ -1528,14 +1547,16 @@ proc local_table {name args} {
       # flist:
       } elseif [regexp {flist:} $col] {
         regsub {flist:} $col {} col
-        set files [glob -nocomplain $row/$col]
+        regsub -all {\[} $row {\\[} dir
+        regsub -all {\]} $dir {\\]} dir
+        set files [glob -nocomplain $dir/$col]
         set links {<pre>}
         foreach f $files {
           set name [file tail $f]
           append links "<a href=\"$f\">$name</a>\n"
         }
         append links {</pre>}
-          append celltxt "<td>$links</td>"
+        append celltxt "<td>$links</td>"
       # md:
       } elseif [regexp {md:} $col] {
         regsub {md:} $col {} col
@@ -1567,7 +1588,7 @@ proc local_table {name args} {
         regsub {ed:} $col {} col
         set fname $row/$col
         if [file exist $fname] {
-          append celltxt "<td><a href=$fname type=text/txt>E</a></td>"
+          append celltxt "<td><a href=\"$fname\" type=text/txt>E</a></td>"
         } else {
           append celltxt "<td></td>"
         }
@@ -1634,7 +1655,7 @@ proc local_table {name args} {
 
         # linkcol
         if {$col == $linkcol} {
-          set col_data "<a href=$row/.index.htm>$col_data</a>"
+          set col_data "<a href=\"$row/.index.htm\">$col_data</a>"
         }
 
         append celltxt "<td>$col_data</td>"
