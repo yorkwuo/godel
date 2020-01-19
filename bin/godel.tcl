@@ -1,14 +1,31 @@
-# fmgr
+# fm
 # {{{
-proc fmgr {args} {
+proc fm {args} {
   upvar fout fout
-  set flist [glob *]
-  #puts $flist
-  puts $fout "<button id=\"fmgr_save\">Save</button>"
-  puts $fout "<table id=fmgr class=table1>"
-  foreach f [lsort $flist] {
+  set flist [glob -nocomplain *]
+  if {$flist eq ""} {
+    puts $fout "<p>No files...</p>"
+  }
+  puts $fout "<table id=tbl class=table1>"
+  foreach row [lsort $flist] {
     puts $fout "<tr>"
-    puts $fout "<td>$f</td><td gname=$f contenteditable=true></td>"
+    set celltxt {}
+    append celltxt "<td>$row</td>"
+    append celltxt "<td gname=\"$row\" contenteditable=true></td>"
+    # flist:
+      if [file isdirectory $row] {
+        regsub -all {\[} $row {\\[} dir
+        regsub -all {\]} $dir {\\]} dir
+        set files [glob -nocomplain $dir/*]
+        set links {<pre>}
+        foreach f $files {
+          set name [file tail $f]
+          append links "<a href=\"$f\">$name</a>\n"
+        }
+        append links {</pre>}
+        append celltxt "<td>$links</td>"
+      }
+    puts $fout $celltxt
     puts $fout "</tr>"
   }
   puts $fout "</table>"
@@ -261,11 +278,32 @@ proc ghtm_list_files {pattern {description ""}} {
 # }}}
 # ghtm_top_bar
 # {{{
-proc ghtm_top_bar {{type NA}} {
+proc ghtm_top_bar {args} {
   upvar fout fout
   upvar env env
   upvar vars vars
   upvar flow_name flow_name
+  # -filter (filter tbl column x)
+# {{{
+  set opt(-filter) 0
+  set idx [lsearch $args {-filter}]
+  if {$idx != "-1"} {
+    set tblcol [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-filter) 1
+  }
+# }}}
+  # -save
+# {{{
+  set opt(-save) 0
+  set idx [lsearch $args {-save}]
+  if {$idx != "-1"} {
+    set saveid [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-save) 1
+  }
+# }}}
+
   if [file exist .godel/dyvars.tcl] {
     source .godel/dyvars.tcl
   } else {
@@ -273,9 +311,9 @@ proc ghtm_top_bar {{type NA}} {
   }
 
 # default flow_name
-  if ![info exist flow_name] {
-    set flow_name default
-  }
+  #if ![info exist flow_name] {
+  #  set flow_name default
+  #}
 
   set cwd [pwd]
   file mkdir .godel/js
@@ -293,10 +331,17 @@ proc ghtm_top_bar {{type NA}} {
   puts $fout "<ul id=stickymenu class=solidblockmenu>"
   puts $fout "<li><a href=.godel/ghtm.tcl type=text/txt>Edit</a></li>"
   puts $fout "<li><a href=.godel/vars.tcl type=text/txt>Value</a></li>"
-  puts $fout "<li><a href=../.index.htm>Parent</a></li>"
+  if {$opt(-save)} {
+    if {$saveid eq ""} {set saveid "save"}
+  puts $fout "<li><button id=\"$saveid\">Save</button></li>"
+  }
+  if {$opt(-filter)} {
+  puts $fout "<li><input type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\"></li>"
+  }
   puts $fout "<li><a href=.godel/draw.gtcl type=text/gtcl>Draw</a></li>"
-  puts $fout "<li style=float:right><a href=.main.htm>TOC</a></li>"
+  #puts $fout "<li style=float:right><a href=.main.htm>TOC</a></li>"
   puts $fout "<li style=float:right><a href=.index.htm type=text/txt>HTML</a></li>"
+  puts $fout "<li style=float:right><a href=../.index.htm>Parent</a></li>"
   puts $fout "</ul>"
   puts $fout "<br>"
 #  puts $fout "<div class=\"w3-bar w3-border w3-indigo w3-medium\">"
@@ -331,17 +376,18 @@ proc ghtm_top_bar {{type NA}} {
 #  puts $fout "</div>"
 
 
-  puts $fout "<textarea rows=10 cols=70 id=\"text_board\" style=\"display:none;font-size:10px\"></textarea>"
+  #puts $fout "<textarea rows=10 cols=70 id=\"text_board\" style=\"display:none;font-size:10px\"></textarea>"
 
-  puts $fout "<script>"
-  puts $fout "function myFunction() {"
-  puts $fout "    var x = document.getElementById(\"Demo\");"
-  puts $fout "    if (x.className.indexOf(\"w3-show\") == -1) {"
-  puts $fout "        x.className += \" w3-show\";"
-  puts $fout "    } else { "
-  puts $fout "        x.className = x.className.replace(\" w3-show\", \"\");"
-  puts $fout "    }"
-  puts $fout "}"
+  #puts $fout "<script>"
+  #puts $fout "function myFunction() {"
+  #puts $fout "    var x = document.getElementById(\"Demo\");"
+  #puts $fout "    if (x.className.indexOf(\"w3-show\") == -1) {"
+  #puts $fout "        x.className += \" w3-show\";"
+  #puts $fout "    } else { "
+  #puts $fout "        x.className = x.className.replace(\" w3-show\", \"\");"
+  #puts $fout "    }"
+  #puts $fout "}"
+  #
   #set server $env(GODEL_SERVER)
   #set pwd    [pwd]
   #puts $fout "function js_godel_draw() {"
@@ -1286,24 +1332,6 @@ proc local_table {name args} {
     set opt(-row_style_proc) 1
   }
 # }}}
-  # -column_style_proc (column_style_proc)
-# {{{
-  set opt(-column_style_proc) 0
-  set idx [lsearch $args {-column_style_proc}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-column_style_proc) 1
-  }
-# }}}
-  # -column_data_proc (column_data_proc)
-# {{{
-  set opt(-column_data_proc) 0
-  set idx [lsearch $args {-column_data_proc}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-column_data_proc) 1
-  }
-# }}}
   # -css (css class)
 # {{{
   set opt(-css) 0
@@ -1478,24 +1506,18 @@ proc local_table {name args} {
 # For each table row
 #--------------------
   foreach row $rows {
-    set row_disp 1
     set row_style {}
 
     # row_style_proc
     if {$opt(-row_style_proc)} {
-      row_style_proc $row
+      row_style_proc
     }
-
-    # Control to hide the row
-    if {$row_disp == "0"} {
-      continue
-    } 
 
     puts $fout "<tr style=\"$row_style\">"
 
     if {$opt(-edit)} {
-      puts $fout "<td><a href=$row/.godel/ghtm.tcl type=text/txt>e</a></td>"
-      puts $fout "<td><a href=$row/.godel/vars.tcl type=text/txt>v</a></td>"
+      puts $fout "<td><a href=\"$row/.godel/ghtm.tcl\" type=text/txt>e</a></td>"
+      puts $fout "<td><a href=\"$row/.godel/vars.tcl\" type=text/txt>v</a></td>"
     }
     if {$opt(-serial)} {
       puts $fout "<td>$serial</td>"
@@ -1504,14 +1526,9 @@ proc local_table {name args} {
     # For each table column
     #----------------------
     foreach col $columns {
-      set cols2disp {}
-      set column_style {}
+      set celltxt {}
       # Remove column width
       regsub {;\S+} $col {} col
-
-      if {$opt(-column_style_proc)} {
-        column_style_proc $row $col
-      }
 
       # Get column data
       #puts "$row $col"
@@ -1519,32 +1536,34 @@ proc local_table {name args} {
       # img:
       if [regexp {img:} $col] {
         regsub {img:} $col {} col
-        append cols2disp "<td><a href=$row/images/cover.jpg><img height=100px src=$row/images/cover.jpg></a></td>"
+        append celltxt "<td><a href=$row/images/cover.jpg><img height=100px src=$row/images/cover.jpg></a></td>"
       # proc:
       } elseif [regexp {proc:} $col] {
         regsub {proc:} $col {} col
         set procname $col
-        cd $row
+        #cd $row
         $procname
-        cd ..
+        #cd ..
       # flist:
       } elseif [regexp {flist:} $col] {
         regsub {flist:} $col {} col
-        set files [glob -nocomplain $row/$col]
+        regsub -all {\[} $row {\\[} dir
+        regsub -all {\]} $dir {\\]} dir
+        set files [glob -nocomplain $dir/$col]
         set links {<pre>}
         foreach f $files {
           set name [file tail $f]
           append links "<a href=\"$f\">$name</a>\n"
         }
         append links {</pre>}
-          append cols2disp "<td>$links</td>"
+        append celltxt "<td>$links</td>"
       # md:
       } elseif [regexp {md:} $col] {
         regsub {md:} $col {} col
         set fname $row/$col.md
         if [file exist $fname] {
           set aftermd [gmd_file $fname]
-          append cols2disp "<td>$aftermd</td>"
+          append celltxt "<td>$aftermd</td>"
         } else {
           set kout [open $fname w]
           close $kout
@@ -1563,24 +1582,24 @@ proc local_table {name args} {
           #puts $page_path
         }
         set col_data [lvars $page_path $page_key]
-        append cols2disp "<td gname=$page_path colname=$page_key contenteditable=true>$col_data</td>"
+        append celltxt "<td gname=$page_path colname=$page_key contenteditable=true>$col_data</td>"
       # ed:
       } elseif [regexp {ed:} $col] {
         regsub {ed:} $col {} col
         set fname $row/$col
         if [file exist $fname] {
-          append cols2disp "<td><a href=$fname type=text/txt>E</a></td>"
+          append celltxt "<td><a href=\"$fname\" type=text/txt>E</a></td>"
         } else {
-          append cols2disp "<td></td>"
+          append celltxt "<td></td>"
         }
       # a:
       } elseif [regexp {a:} $col] {
         regsub {a:} $col {} col
         set col_data [lvars $row $col]
         if [file exist $col_data] {
-          append cols2disp "<td><a href=$col_data type=text/txt>$col_data</a></td>"
+          append celltxt "<td><a href=$col_data type=text/txt>$col_data</a></td>"
         } else {
-          append cols2disp "<td>NA: $col_data</td>"
+          append celltxt "<td>NA: $col_data</td>"
         }
       # ln:
       } elseif [regexp {ln:} $col] {
@@ -1595,9 +1614,9 @@ proc local_table {name args} {
         }
         set fname $row/$col
         if [file exist $fname] {
-          append cols2disp "<td><a href=$fname type=text/txt>$disp</a></td>"
+          append celltxt "<td><a href=$fname type=text/txt>$disp</a></td>"
         } else {
-          append cols2disp "<td>NA: $col</td>"
+          append celltxt "<td>NA: $col</td>"
         }
       # lnf:
       } elseif [regexp {lnf:} $col] {
@@ -1607,9 +1626,9 @@ proc local_table {name args} {
 
         set fname $row/$col
         if [file exist $fname] {
-          append cols2disp "<td><a href=$fname>$disp</a></td>"
+          append celltxt "<td><a href=$fname>$disp</a></td>"
         } else {
-          append cols2disp "<td>NA: $fname</td>"
+          append celltxt "<td>NA: $fname</td>"
         }
       # edfile:
       } elseif [regexp {edfile:} $col] {
@@ -1619,34 +1638,29 @@ proc local_table {name args} {
 
         set fname $row/$col
         if [file exist $fname] {
-          append cols2disp "<td><a href=$fname type=text/txt>$disp</a></td>"
+          append celltxt "<td><a href=$fname type=text/txt>$disp</a></td>"
         } else {
-          append cols2disp "<td>NA: $fname</td>"
+          append celltxt "<td>NA: $fname</td>"
         }
       } else {
         set dirname [file dirname $col]
         if {$dirname eq "."} {
-          #puts "$col $dirname"
           set page_path $row
           set page_key  $col
         } else {
           set page_path $row/$dirname
           set page_key  [file tail $col]
-          #puts $page_path
         }
         set col_data [lvars $page_path $page_key]
 
         # linkcol
         if {$col == $linkcol} {
-          set col_data "<a href=$row/.index.htm>$col_data</a>"
+          set col_data "<a href=\"$row/.index.htm\">$col_data</a>"
         }
 
-        if {$opt(-column_data_proc)} {
-          column_data_proc $row $col
-        }
-        append cols2disp "<td style=\"$column_style\">$col_data</td>"
+        append celltxt "<td>$col_data</td>"
       }
-      puts $fout $cols2disp
+      puts $fout $celltxt
     }
 
     puts $fout "</tr>"
@@ -1725,10 +1739,13 @@ proc gdraw_default {} {
   upvar env env
   set kout [open .godel/ghtm.tcl w]
     puts $kout "ghtm_top_bar"
-    puts $kout "#list_img 4 100% images/*"
-    puts $kout "#local_table tbl -c {g:pagename}"
+    puts $kout "#ghtm_top_bar -save -filter 1"
+    #puts $kout "#list_img 4 100% images/*"
+    puts $kout "#lappend cols g:pagename"
+    puts $kout "#lappend cols edtable:g:keywords"
+    puts $kout "#local_table tbl -c \$cols"
     puts $kout "ghtm_list_files *"
-    puts $kout "#ghtm_filter_notes"
+    #puts $kout "#ghtm_filter_notes"
     puts $kout "gnotes {"
     puts $kout ""
     puts $kout "}"
@@ -2391,7 +2408,7 @@ proc pagelist {{sort_by by_updated}} {
   lappend columnlist [list size size]
   lappend columnlist [list keywords keywords]
 
-  ghtm_table_nodir pagelist 0
+  ghtm_table_nodir tbl 0
 }
 # }}}
 # ge
@@ -3213,20 +3230,20 @@ proc ghtm_toc {{mode ""} {begin_level 4} } {
     }
   }
 # Create toc.htm
-  ghtm_new_html toc
+  #ghtm_new_html toc
 
 # Create main.htm
-  set kout [open .main.htm w]
-    puts $kout {<!DOCTYPE html>}
-    puts $kout {<html> <head>}
-    puts $kout "<title>$vars(g:pagename)</title>"
-    puts $kout {<meta charset=utf-8>}
-    puts $kout {<frameset cols=25%,75%>}
-    puts $kout {　　<frame src=.toc.htm name=leftFrame >}
-    puts $kout {　　<frame src=.index.htm name=rightFrame >}
-    puts $kout {</frameset>}
-    puts $kout {</head> <body> </body> </html>}
-  close $kout
+#  set kout [open .main.htm w]
+#    puts $kout {<!DOCTYPE html>}
+#    puts $kout {<html> <head>}
+#    puts $kout "<title>$vars(g:pagename)</title>"
+#    puts $kout {<meta charset=utf-8>}
+#    puts $kout {<frameset cols=25%,75%>}
+#    puts $kout {　　<frame src=.toc.htm name=leftFrame >}
+#    puts $kout {　　<frame src=.index.htm name=rightFrame >}
+#    puts $kout {</frameset>}
+#    puts $kout {</head> <body> </body> </html>}
+#  close $kout
 }
 # }}}
 # ghtm_chap
@@ -4352,1274 +4369,6 @@ proc pcollection_list {ll} {
   foreach_in_collection i $ll {
     puts [get_attribute $i full_name]
   }
-}
-# }}}
-#@> Path Summary
-#:@=godel_ps
-# {{{
-proc godel_ps {corner eda {infile NA}} {
-  #upvar vars vars
-  upvar curs curs
-
-  if [file exist .godel/vars.tcl] {source .godel/vars.tcl}
-
-# Check file exist
-  if {$infile == "NA"} {
-    set infile vios.rpt
-  }
-  if [file exist $infile] {
-  } else {
-    puts "Error: Not exist.. $infile"
-    return
-  }
-
-# Extraction values from vios.rpt and store in vars
-  if {$eda == "cdn"} {
-    godel_ps_report_constraint_cdn $infile
-    godel_ps_path_categorizing
-    godel_ps_attach_corner_name $corner
-    godel_ps_attach_skew        $corner
-    godel_ps_attach_clock_edge
-    godel_ps_gen_summary        $corner "path_summary.rpt"
-  } else {
-    godel_ps_report_constraint $infile
-    godel_ps_path_categorizing
-    godel_ps_attach_corner_name $corner
-    godel_ps_attach_skew        $corner
-    godel_ps_attach_clock_edge
-    godel_ps_gen_summary        $corner "path_summary.rpt"
-  }
-
-  godel_array_rm curs *,all
-  godel_array_save curs cc.tcl
-  godel_array_save vars .godel/vars.tcl
-}
-# }}}
-#: godel_ps_gen_summary
-# {{{
-proc godel_ps_gen_summary {corner ofile} {
-  upvar vars vars
-  upvar 1 curs curs
-  if [file exist .godel/vars.tcl] {
-    source ./.godel/vars.tcl
-  }
-  #puts  $owner(TOP,PUBCP,aon_clk_wcdma_pubcp)
-  
-  file mkdir split/$corner
-  set fout  [open "$ofile" w]
-  #set fowner [open "./owner.tcl" w]
-  set count 0
-  for {set i 1} {$i <= $curs(size)} {incr i} {
-      set scat $curs($i,startpoint,cat)
-      set ecat $curs($i,endpoint,cat)
-      set eclk $curs($i,to_clock)
-      set g    $curs($i,path_group)
-      incr count
-# Create a new array `att' telling you that for a scat,ecat,eclk triplet, how many id are there.
-      lappend att($scat,$ecat,$eclk) $count
-  }
-  puts $fout "# Total NVP: $curs(size)"
-  #puts $fout2 "# Total NVP: $curs(size)"
-# Iterate each category (TOP,GPU,PUB0...)
-  set from_list "$curs(cat_list) IN"
-  set to_list   "$curs(cat_list) OUT"
-  # From
-  set summ_rows [list]
-  foreach i $from_list {
-    # To
-    foreach j $to_list {
-      # Collect IDs from a for example: TOP,PUB0,abcclk
-      set mm [array names att $i,$j,*]
-      foreach m $mm {
-        regsub "$i,$j," $m "" pgroup
-        regsub -all "\/" $pgroup "-" name
-        regsub -all {'}  $name {_neg}    name
-        set ids $att($m)
-        set nvp 0; # this will be set in sort_by_slack proc
-        set ids_wns [godel_ps_sort_by_slack curs $ids]
-        set wns [lindex [lindex $ids_wns 1] 0]
-        if {$wns == 0} {
-        } else {
-          set worst_id [lindex [lindex $ids_wns 0] 0]
-          set lau_edge $curs($worst_id,launch_edge)
-          set cap_edge $curs($worst_id,capture_edge)
-          set skew     $curs($worst_id,skew)
-          set lau_clock $curs($worst_id,from_clock)
-          set fname "split/$corner/${i}_${j}_$name.rpt"
-          if [info exist owner($i,$j,$pgroup)] {
-            set who $owner($i,$j,$pgroup)
-          } else {
-            set who "NA"
-            #puts $fowner "set owner($i,$j,$pgroup) \"\""
-          }
-          #puts        [format "%-8s %-8s %-8s %-7.f %-6d %-6d %-40s" $i $j $who $wns $nvp $skew $pgroup]
-          #puts        [format "%-8s %-8s %-7.f %-6.f %-6.f %-40s" $i $j $wns $nvp $skew $pgroup]
-          #lappend summ_rows [format "%-6s %-6s %-20s %-7.f %-6d %-6d %-37s %-37s %-5d %-5d %s" $i $j $who $wns $nvp $skew $lau_clock $pgroup $lau_edge $cap_edge $fname]
-          lappend summ_rows [format "%-6s %-6s %-7.f %-6.f %-6.f %-37s %-37s %-5.f %-5.f %s" $i $j $wns $nvp $skew $lau_clock $pgroup $lau_edge $cap_edge $fname]
-          godel_ps_write_by_id  curs $fname  [lindex $ids_wns 0]
-          #write_by_id2 curs $fname2 [lindex $ids_wns 0]
-        }
-      }
-    }
-  }
-  # Sort by slack
-  set cc [lsort -index 2 -integer $summ_rows]
-  set wns [lindex [lindex $cc 0] 2]
-  #puts $fout [format "# %-6s %-6s %-18s %-7s %-6s %-6s %-40s %-40s %-5s %-5s" From To Owner WNS NVP Skew LauClk CapClk LauEdge CapEdge]
-  puts $fout [format "# %-6s %-6s %-7s %-6s %-6s %-40s %-40s %-5s %-5s" From To WNS NVP Skew LauClk CapClk LauEdge CapEdge]
-  foreach t $curs(cat_list) {
-    puts $fout "# $t"
-    foreach c $cc {
-      set index0 [lindex $c 0]
-      set index1 [lindex $c 1]
-      set index3 [lindex $c 3]
-      set index7 [lindex $c 7]
-      if {$index1 == $t && $index1 != "OUT" && $index0 != "IN"} {
-        puts $fout $c
-        if [info exist owner($index0,$index1,$index7)] {
-        } else {
-          #puts $fowner "# $index3"
-          #puts $fowner "set owner($index0,$index1,$index7) \"\""
-        }
-      }
-    }
-  }
-  puts $fout "# IN"
-  foreach c $cc {
-    set index0 [lindex $c 0]
-    set index1 [lindex $c 1]
-    set index3 [lindex $c 3]
-    set index7 [lindex $c 7]
-    if {$index0 == "IN"} {
-      puts $fout $c
-      if [info exist owner($index0,$index1,$index7)] {
-      } else {
-        #puts $fowner "# $index3"
-        #puts $fowner "set owner($index0,$index1,$index7) \"\""
-      }
-    }
-  }
-  puts $fout "# OUT"
-  foreach c $cc {
-    set index0 [lindex $c 0]
-    set index1 [lindex $c 1]
-    set index3 [lindex $c 3]
-    set index7 [lindex $c 7]
-    if {$index1 == "OUT"} {
-      puts $fout $c
-      if [info exist owner($index0,$index1,$index7)] {
-      } else {
-        #puts $fowner "# $index3"
-        #puts $fowner "set owner($index0,$index1,$index7) \"\""
-      }
-    }
-  }
-  close $fout
-  #close $fowner
-  set vars(nvp) $curs(size)
-  set vars(wns) $wns
-  godel_array_save vars .godel/vars.tcl
-}
-# }}}
-#: godel_ps_attach_clock_edge
-# {{{
-proc godel_ps_attach_clock_edge {} {
-  upvar curs curs
-  for {set i 1} {$i <= $curs(size)} {incr i} {
-    #set from_clock $curs($i,from_clock)
-    #set to_clock   $curs($i,to_clock)
-    #regsub -all {'} $from_clock {} from_clock
-    #regsub -all {'} $to_clock {} to_clock
-    #set flag_launch  0
-    #set flag_capture 0
-    #foreach line $curs($i,all) {
-    #  regsub -all {'} $line {} line
-    #  if {!$flag_launch} {
-    #    if {[regexp "clock $from_clock ..... edge.\\s\+(\\S\+)" $line whole matched]} {
-    #        set curs($i,launch_edge) $matched
-    #        set flag_launch 1
-    #    }
-    #  } elseif {!$flag_capture} {
-    #    if {[regexp "clock $to_clock ..... edge.\\s\+(\\S\+)" $line whole matched]} {
-    #        set curs($i,capture_edge) $matched
-    #        set flag_capture 1
-    #    }
-    #  }
-    #}
-    #if [info exist curs($i,launch_edge)] {
-    #} else {
-    #  puts "$i no launch_edge...set it to 0"
-      set curs($i,launch_edge) 0
-    #}
-    #if [info exist curs($i,capture_edge)] {
-    #} else {
-    #  puts "$i no capture_edge...set it to 0"
-      set curs($i,capture_edge) 0
-    #}
-  }
-}
-# dio_report_constraint
-# redirect ./reports/gba.report_constraint.rpt           {report_constraint -max_delay -all_violators -nosplit}
-# redirect ./reports/verbose.gba.report_constraint.rpt   {report_constraint -max_delay -all_violators -nosplit -verbose}
-# redirect ./reports/pba.report_timing.rpt             {report_timing     -pba_mode exhaustive -crosstalk_delta -voltage -slack_lesser_than 0 -derate -delay max -input -net -max 1000 -nosplit}
-# redirect ./reports/pba.report_constraint.rpt         {report_constraint -max_delay -all_violators -pba_mode exhaustive -nosplit }
-# 
-# }}}
-#: godel_ps_attach_skew
-# {{{
-proc godel_ps_attach_skew {corner} {
-  upvar curs curs
-  for {set i 1} {$i <= $curs(size)} {incr i} {
-    if [info exist curs($i,capture_clock_latency)] {  } else { set curs($i,capture_clock_latency) 0}
-    if [info exist curs($i,launch_clock_latency)] {  } else {  set curs($i,launch_clock_latency) 0}
-    set curs($i,skew) [expr $curs($i,capture_clock_latency) - $curs($i,launch_clock_latency)]
-  }
-}
-# }}}
-#: godel_ps_attach_corner_name
-# {{{
-proc godel_ps_attach_corner_name {corner} {
-  upvar curs curs
-  for {set i 1} {$i <= $curs(size)} {incr i} {
-    set curs($i,corner) $corner
-  }
-}
-# }}}
-#: godel_ps_path_categorizing
-# {{{
-proc godel_ps_path_categorizing {} {
-  upvar curs curs
-  for {set i 1} {$i <= $curs(size)} {incr i} {
-# startpoint
-    set inst $curs($i,startpoint)
-    set cat [godel_ps_inst_catgorize $curs($i,startpoint)]
-    if {$cat == "TOP"} {
-      if [info exist curs($inst,inport)] {
-        set curs($i,startpoint,cat) IN
-      } else {
-        set curs($i,startpoint,cat) TOP
-      }
-    } else {
-        set curs($i,startpoint,cat) $cat
-    }
-# endpoint
-    set inst $curs($i,endpoint)
-    set cat [godel_ps_inst_catgorize $curs($i,endpoint)]
-    if {$cat == "TOP"} {
-      if [info exist curs($inst,outport)] {
-        set curs($i,endpoint,cat) OUT
-      } else {
-        set curs($i,endpoint,cat) TOP
-      }
-    } else {
-        set curs($i,endpoint,cat) $cat
-    }
-  }
-  set curs(cat_list) "TOP "
-}
-# }}}
-#: godel_ps_report_constraint
-# {{{
-proc godel_ps_report_constraint {fname} {
-  upvar curs curs
-  #split_by AllVio_ver.rpt
-  godel_split_by $fname "Startpoint:"
-  set count $curs(size)
-  #puts "Path count: $count"
-  set process_no 0
-  # foreach path
-  for {set i 1} {$i <= $count} {incr i} {
-    if {[expr $i%100]} {
-    } else {
-      incr process_no
-      puts $process_no
-    }
-    set endpoint na
-    set startpoint na
-    set startlist ""
-    set endlist ""
-    # Puts path into ilist
-    set ilist $curs($i,all)
-    #set curs($i,corner) $corner
-    set previous ""
-    set flag_clock_network_delay 0
-    # Iterate lines in a path
-    while {[llength $ilist]} {
-      set path_line [godel_shift ilist]
-      # startpoint
-      if {[regexp {Startpoint: (\S+)} $path_line whole matched]}      {
-        if [regexp {input port} $path_line] {
-          set curs($matched,inport) 1
-        }
-        set curs($i,startpoint,nopin) $matched 
-        set startpoint $matched
-        # remove []
-        regsub -all {\[} $startpoint {\\[} startpoint
-        regsub -all {\]} $startpoint {\\]} startpoint
-        # clock at 1st line
-        if [regexp {(\S+)\)} $path_line] {
-          regexp {(\S+)\)} $path_line whole from_clock
-        # clock at 2nd line
-        } else {
-          set path_line [godel_shift ilist]
-          regexp {(\S+)\)} $path_line whole from_clock
-          if [regexp {input port} $path_line] {
-            set curs($matched,inport) 1
-          }
-        }
-# from_clock
-        set curs($i,from_clock) $from_clock 
-      }
-# endpoint
-      if {[regexp {Endpoint: (\S+)} $path_line whole matched]}        {
-        if [regexp {output port} $path_line] {
-          set curs($matched,outport) 1
-        }
-        set curs($i,endpoint,nopin)   $matched 
-        if [regexp {(\S+)\)} $path_line] {
-          regexp {(\S+)\)} $path_line whole to_clock
-        } else {
-          set path_line [godel_shift ilist]
-          regexp {(\S+)\)} $path_line whole to_clock
-          if [regexp {output port} $path_line] {
-            set curs($matched,outport) 1
-          }
-        }
-# to_clock
-        set curs($i,to_clock) $to_clock 
-      }
-# common_pin
-      if {[regexp {Last common pin: (\S+)$} $path_line whole matched]} { set curs($i,common_pin) $matched }
-# path_group
-      if {[regexp {Path Group: (\S+)$} $path_line whole matched]}      { set curs($i,path_group) $matched }
-# path_type
-      if {[regexp {Path Type: (\S+)} $path_line whole matched]}       { set curs($i,path_type)  $matched }
-# launch_clock_latency
-      if {[regexp {clock network delay \(\w+\)\s+(\S+)} $path_line whole matched]} { 
-        if {$flag_clock_network_delay == 0} {
-          set curs($i,launch_clock_latency)  $matched 
-          set flag_clock_network_delay 1
-        } else {
-          set curs($i,capture_clock_latency)  $matched 
-          set flag_clock_network_delay 0
-        }
-      }
-# cppr
-      if {[regexp {clock reconvergence pessimism         \s+(\S+) } $path_line whole matched]}  { set curs($i,cppr)  $matched }
-# uncertainty
-      if {[regexp {uncertainty\s+(\S+) } $path_line whole matched]}  { set curs($i,uncertainty)  $matched }
-# slack
-      if {[regexp {slack \(.*\)\s+(\S+)} $path_line whole matched]}  { set curs($i,slack)  $matched }
-      
-      if [regexp "  $startpoint" $path_line] {
-        lappend startlist [godel_get_column $path_line 0]
-      }
-      if [regexp {data arrival time} $path_line] {
-        lappend endlist [godel_get_column $previous 0]
-      }
-# startpoint      
-      set curs($i,startpoint) [lindex $startlist 0]
-# endpoint
-      set curs($i,endpoint)   [lindex $endlist   0]
-      set previous $path_line
-    }
-  }
-  #puts $curs(size)
-}
-# }}}
-#: godel_ps_report_constraint_cdn
-# {{{
-proc godel_ps_report_constraint_cdn {fname} {
-  upvar curs curs
-  #split_by AllVio_ver.rpt
-  godel_split_by $fname "Endpoint:"
-  set count $curs(size)
-  #puts "Path count: $count"
-  set process_no 0
-  # foreach path
-  for {set i 1} {$i <= $count} {incr i} {
-    if {[expr $i%100]} {
-    } else {
-      incr process_no
-      puts $process_no
-    }
-    set endpoint na
-    set startpoint na
-    set startlist ""
-    set endlist ""
-    # Puts path into ilist
-    set ilist $curs($i,all)
-    #set curs($i,corner) $corner
-    set previous ""
-    set flag_clock_network_delay 0
-    # Iterate lines in a path
-    while {[llength $ilist]} {
-      set path_line [godel_shift ilist]
-# endpoint
-      if {[regexp {Endpoint:\s+(\S+)} $path_line whole matched]}        {
-        #if [regexp {output port} $path_line] {
-        #  set curs($matched,outport) 1
-        #}
-        regsub -all {\[} $matched {\\[} matched
-        regsub -all {\]} $matched {\\]} matched
-        set curs($i,endpoint)   $matched 
-        #if [regexp {(\S+)\)} $path_line] {
-        #  regexp {(\S+)\)} $path_line whole to_clock
-        #} else {
-        #  set path_line [godel_shift ilist]
-        #  regexp {(\S+)\)} $path_line whole to_clock
-        #  if [regexp {output port} $path_line] {
-        #    set curs($matched,outport) 1
-        #  }
-        #}
-# to_clock
-        set curs($i,to_clock) coreclk
-      }
-      # startpoint
-      if {[regexp {Beginpoint: (\S+)} $path_line whole matched]}      {
-        #if [regexp {input port} $path_line] {
-        #  set curs($matched,inport) 1
-        #}
-        regsub -all {\[} $matched {\\[} matched
-        regsub -all {\]} $matched {\\]} matched
-        set curs($i,startpoint) $matched 
-        #set startpoint $matched
-        # remove []
-        #regsub -all {\[} $startpoint {\\[} startpoint
-        #regsub -all {\]} $startpoint {\\]} startpoint
-        ## clock at 1st line
-        #if [regexp {(\S+)\)} $path_line] {
-        #  regexp {(\S+)\)} $path_line whole from_clock
-        ## clock at 2nd line
-        #} else {
-        #  set path_line [godel_shift ilist]
-        #  regexp {(\S+)\)} $path_line whole from_clock
-        #  if [regexp {input port} $path_line] {
-        #    set curs($matched,inport) 1
-        #  }
-        #}
-# from_clock
-        set curs($i,from_clock) coreclk
-      }
-# common_pin
-      #if {[regexp {Last common pin: (\S+)$} $path_line whole matched]} { set curs($i,common_pin) $matched }
-# path_group
-      if {[regexp {Path Groups:\s+(\S+)$} $path_line whole matched]}      { set curs($i,path_group) $matched }
-# path_type
-      #if {[regexp {Path Type: (\S+)} $path_line whole matched]}       { set curs($i,path_type)  $matched }
-      set curs($i,path_type) setup
-# launch_clock_latency
-      if {[regexp {clock network delay \(\w+\)\s+(\S+)} $path_line whole matched]} { 
-        if {$flag_clock_network_delay == 0} {
-          set curs($i,launch_clock_latency)  $matched 
-          set flag_clock_network_delay 1
-        } else {
-          set curs($i,capture_clock_latency)  $matched 
-          set flag_clock_network_delay 0
-        }
-      }
-# cppr
-      if {[regexp {clock reconvergence pessimism         \s+(\S+) } $path_line whole matched]}  { set curs($i,cppr)  $matched }
-# uncertainty
-      if {[regexp {uncertainty\s+(\S+) } $path_line whole matched]}  { set curs($i,uncertainty)  $matched }
-# slack
-      if {[regexp {Slack Time\s+(-\S+)} $path_line whole matched]}  { set curs($i,slack)  $matched }
-      
-      #if [regexp "  $startpoint" $path_line] {
-      #  lappend startlist [godel_get_column $path_line 0]
-      #}
-      #if [regexp {data arrival time} $path_line] {
-      #  lappend endlist [godel_get_column $previous 0]
-      #}
-# startpoint      
-      #set curs($i,startpoint) [lindex $startlist 0]
-# endpoint
-      #set curs($i,endpoint)   [lindex $endlist   0]
-      set previous $path_line
-    }
-  }
-  #puts $curs(size)
-}
-# }}}
-#: godel_ps_inst_catgorize
-# {{{
-proc godel_ps_inst_catgorize {inst} {
-  set keyinst(u_arm\/)      ARM
-  set keyinst(u_usb\/)      USB
-  set klist [array names keyinst *]
-  set ret ""
-  foreach k $klist {
-    if [regexp "$k" $inst] {
-      set ret $keyinst($k)
-    }
-  }
-  if {$ret == ""} {
-    return "TOP"
-  } else {
-    return $ret
-  }
-}
-# }}}
-#: godel_ps_sort_by_slack
-# {{{
-proc godel_ps_sort_by_slack {corner id} {
-  upvar 1 $corner arr
-  upvar nvp nvp
-  set pairs [list]
-  set nvp 0
-# Create a pairs
-  foreach i $id {
-    set skew [expr abs($arr($i,skew))]
-    #if {$skew > 500} {
-      lappend pairs [list $i $arr($i,slack)]
-      incr nvp
-    #}
-  }
-  if {$pairs == ""} {
-    set ids 0
-    set slk 0
-  } else {
-# Sort
-    set sorted_paires [lsort -index 1 -real $pairs]
-# Separate them as two lists
-    foreach i $sorted_paires {
-      lappend ids [lindex $i 0]
-      lappend slk [lindex $i 1]
-    }
-  }
-  return [list $ids $slk]
-}
-# scan_max_waiver
-# }}}
-#: godel_ps_write_by_id
-# {{{
-proc godel_ps_write_by_id {corner fname id} {
-  upvar 1 $corner arr
-  set fout [open $fname w] 
-  foreach i $id {
-    puts $fout "Corner     : $arr($i,corner)"
-    puts $fout "Slack      : $arr($i,slack)"
-    puts $fout "Skew       : $arr($i,skew)"
-    #puts $fout "CPPR       : $arr($i,cppr)"
-    puts $fout "Launch     : $arr($i,from_clock)"
-    puts $fout "Capture    : $arr($i,to_clock)"
-    puts $fout "LauEdge    : $arr($i,launch_edge)"
-    puts $fout "CapEdge    : $arr($i,capture_edge)"
-    puts $fout "LauLatency : $arr($i,launch_clock_latency)"
-    puts $fout "CapLatency : $arr($i,capture_clock_latency)"
-    if [info exist arr($i,uncertainty)] {
-        puts $fout "Uncertainty: $arr($i,uncertainty)"
-    } else {
-        puts $fout "Uncertainty: NA"
-    }
-    puts $fout ""
-    puts $fout "ID        : $i"
-    puts $fout "Startpoit : $arr($i,startpoint)"
-    puts $fout "Endpoint  : $arr($i,endpoint)"
-    puts $fout ""
-    puts $fout "redirect -file k.rpt {report_timing -crosstalk_delta -derate -net -cap -tran -delay $arr($i,path_type) -path_type full_clock_expanded -nos -from $arr($i,startpoint) -to $arr($i,endpoint)}"
-    puts $fout "report_timing -delay $arr($i,path_type) -nos -from $arr($i,startpoint) -to $arr($i,endpoint)"
-    puts $fout ""
-    foreach line $arr($i,all) {
-      puts $fout $line
-    }
-    puts $fout ""
-  }
-  close $fout
-}
-# }}}
-#: godel_ps_uniquify_endpoints
-# {{{
-proc godel_ps_uniquify_endpoints {cornerlist} {
-  upvar vars vars
-  upvar curs curs
-  upvar define define
-  #upvar cornerlist cornerlist
-  #puts $cornerlist
-  foreach code $cornerlist {
-    if [catch {glob $code*/inputs/vios.rpt}] {
-      puts "$code not ready"
-# Remove code that are not ready
-      set cornerlist [lsearch -all -inline -not -exact $cornerlist $code]
-    } else {
-      set f [glob $code*/inputs/vios.rpt]
-      #set fullname [code2fullname $code]
-      set fullname $define(pt,corner_name,$code)
-# Complete a curs
-      godel_ps_report_constraint $f
-      godel_ps_path_categorizing
-      godel_ps_attach_corner_name $fullname
-      godel_ps_attach_skew $fullname
-      godel_ps_attach_clock_edge
-# Save `curs' content to `$code'
-      array set $code [array get curs]
-      unset curs
-    }
-  }
-# Get endpoints from each modes and uniquify them
-  set ilist ""
-  foreach code $cornerlist {
-    array set curs [array get $code]
-    set ilist [concat $ilist [godel_ps_get_endpoints]]
-    unset curs
-  }
-  set ilist [lsort -unique $ilist]
-  
-  set count 1
-  set wst_slk 0
-  set wst_corner na
-  set wst_id 0
-# foreach uniquified endpoint
-  foreach i $ilist {
-    #puts $i
-    set slk ""
-    set wst_slk 0
-    set wst_corner na
-    set wst_id 0
-    # check each corners
-    foreach corner $cornerlist {
-      # Same endpoint could returns multiple IDs
-      set id [lindex [godel_ps_get_id $corner endpoint $i] 0]
-      if {$id == ""} {
-      } else {
-        set nn ${corner}($id,slack)
-        set endp ${corner}($id,endpoint)
-        set slk [set $nn]
-        if {$slk <= $wst_slk} {
-          set wst_slk    $slk
-          set wst_corner $corner
-          set wst_id     $id
-        }
-      }
-    }
-    #puts "$wst_id : $wst_slk : $wst_corner"
-    #unset curs
-# Create curs array
-    foreach {y z} [array get $wst_corner $wst_id,*] {
-      if {[regsub "$wst_id," $y "$count," y]} {
-        #set array_min_func($y) $z
-        set curs($y) $z
-      } else {
-        puts "wst_id: $wst_id"
-        puts "wst_corner: $wst_corner"
-        puts "Error: $y, $z"
-      }
-    }
-    incr count
-  }
-  #set array_min_func(size) [incr count -1]
-  set curs(size) [incr count -1]
-  #path_categorizing
-  set curs(cat_list) "TOP PUB0 GPU CAM PUBCP WTL VSP AP"
-}
-# uniq_ses
-# }}}
-#: godel_ps_get_endpoints
-# {{{
-proc godel_ps_get_endpoints {} {
-  #upvar 1 $corner arr
-  upvar curs curs
-  set ilist ""
-  for {set i 1} {$i <= $curs(size)} {incr i} {
-    lappend ilist $curs($i,endpoint)
-  }
-  #set ilist [array names arr *,endpoint]
-  return $ilist
-}
-# cc_report_constraint
-# Process report_constraint report and save the result to array `arr'
-# }}}
-#: godel_ps_get_id
-# {{{
-proc godel_ps_get_id {corner key value} {
-  upvar 1 $corner arr
-  regsub -all {\[} $value {\\[} value
-  regsub -all {\]} $value {\\]} value
-  set id ""
-  if [info exist arr(size)] {
-    for {set i 1} {$i <= $arr(size)} {incr i} {
-      set arrvalue    $arr($i,$key)]
-      if {[regexp $value $arrvalue]} {
-        lappend id $i
-      }
-    }
-  }
-  if {$id ==  ""} {
-    return $id
-  } else {
-    return [lindex [godel_ps_sort_by_slack arr $id] 0]
-  }
-}
-# }}}
-#@> Path Analyzer
-#@=godel_pa
-# {{{
-proc godel_pa {infile} {
-# Attributes
-# slack              : floating
-# startpoint         : string
-# endpoint           : string
-# path_group         : string
-# path_type          : string
-# cppr               : floating
-# uncertainty        : floating
-# last_common_inst   : string
-# b2_inst            : string list
-# b2_inst_count      : int
-# b1_inst            : string list
-# b1_inst_count      : int
-# common_inst        : string
-# common_inst_count  : int
-# launch_clock_inst  : string list
-# capture_clock_inst : string list
-# capture_clock_edge : floating
-# skew               : NA
-# data_path_inst     : string list
-# 
-#       set vars($netname,fanout) $fanout
-#       set vars($netname,netcap) $netcap
-#       set vars(launch_inst_list) $inst
-#       set vars(launch,$inst,innet) $netname
-#       set vars(launch,$inst,inpin) [lindex $cellin 0]
-#       set vars(launch,$inst,refname)   [lindex $cellin 1]
-#       set vars(launch,$inst,dtrans)    [lindex $cellin 2]
-#       set vars(launch,$inst,in_trans)     [lindex $cellin 3]
-#       set vars(launch,$inst,net_derate)    [lindex $cellin 4]
-#       set vars(launch,$inst,delta)     [lindex $cellin 5]
-#       set vars(launch,$inst,net_delay)  [lindex $cellin 6]
-#       set vars(launch,$inst,incr_delay_in)  [lindex $cellin 8]
-# 
-#       set vars(launch,$inst,cell_out_tran)  [lindex $cellout 2]
-#       set vars(launch,$inst,cell_derate) [lindex $cellout 3]
-#       set vars(launch,$inst,cell_delay)  [lindex $cellout 4]
-#       set vars(launch,$inst,incr_delay_out)  [lindex $cellout 6]
-#       set netline [split_by_space [shift ilist]]
-#       set vars(launch,$inst,outnet) [lindex $netline 0]
-# 
-# data_path_delay
-# skew
-# cppr
-# uncertainty
-# pod(point of divergence): string
-# Get path list in curs($path_num,all)
-  godel_split_by $infile Startpoint
-  set count $curs(size)
-  set svars(path_count) $count
-  set svars(infile)     $infile
-
-  lappend alist startpoint
-  lappend alist endpoint
-  lappend alist endpoint_pin
-  lappend alist slack
-  lappend alist skew
-  lappend alist path_group
-  lappend alist path_type
-  lappend alist cppr
-  lappend alist uncertainty
-  #lappend alist last_common_inst
-  lappend alist b1_inst_count
-  lappend alist b2_inst_count
-  lappend alist b1_net_sum
-  lappend alist b1_cell_sum
-  lappend alist b2_net_sum
-  lappend alist b2_cell_sum
-  lappend alist b1_latency
-  lappend alist b2_latency
-  lappend alist clock_launch_latency
-  lappend alist clock_capture_latency
-
-
-
-  file mkdir pa.$infile
-# Process each path
-  for {set i 1} {$i <= $count} {incr i} {
-    puts "Process..$i"
-    file mkdir pa.$infile/p$i
-    set fout_b1      [open "pa.$infile/p$i/b1.rpt" w]
-    set fout_b2      [open "pa.$infile/p$i/b2.rpt" w]
-# write out timing path snip for debugging
-    godel_write_list_to_file $curs($i,all) pa.$infile/p$i/raw_path.rpt
-    godel_array_reset vars
-# Main timing path processing proc
-    godel_pa_extract_info_list2 $curs($i,all)
-
-    # Branch1
-    # {{{
-    puts $fout_b1 [format "%10s %10s %10s %10s" in_tran net_delay cell_delay OutNetCap]
-    set b1_net_sum 0
-    set b1_cell_sum 0
-    foreach inst $vars(b1_inst) {
-      set net_delay  [format "%.2f" $vars(launch,$inst,net_delay)]
-      set cell_delay [format "%.2f" $vars(launch,$inst,cell_delay)]
-      #incr b1_net_sum  $net_delay
-      set b1_net_sum  [expr $b1_net_sum + $net_delay]
-      #incr b1_cell_sum $cell_delay
-      set b1_cell_sum [expr $b1_cell_sum + $cell_delay]
-      set in_tran    [format "%.2f" $vars(launch,$inst,in_trans)]
-      set netname $vars(launch,$inst,outnet)
-      set netcap $vars(launch,$netname,netcap)
-      puts $fout_b1 [format "%10.f %10.f %10.f %10.f    %s  %10.2f  %s" $in_tran    \
-                                                                $net_delay  \
-                                                                $cell_delay \
-                                                                $netcap     \
-                                                                $vars(launch,$inst,refname) \
-                                                                $vars(launch,$inst,cell_derate) \
-                                                                $inst]
-    }
-    puts $fout_b1 "net_total : $b1_net_sum"
-    puts $fout_b1 "cell_total: $b1_cell_sum"
-    set vars(b1_net_sum) $b1_net_sum
-    set vars(b1_cell_sum) $b1_cell_sum
-    set sumb1 [expr $b1_net_sum + $b1_cell_sum]
-    #set vars(b1_cell_delay_ratio) [format "%.2f" [expr double($b1_cell_sum) / $sumb1]]
-    close $fout_b1
-    # }}}
-    # Branch2
-    # {{{
-    puts $fout_b2 [format "%10s %10s %10s %10s" in_tran net_delay cell_delay OutNetCap]
-    set b2_net_sum 0
-    set b2_cell_sum 0
-    foreach inst $vars(b2_inst) {
-      set net_delay  [format "%.2f" $vars(capture,$inst,net_delay)]
-      set cell_delay [format "%.2f" $vars(capture,$inst,cell_delay)]
-      set in_trans   [format "%.2f" $vars(capture,$inst,in_trans)]
-      set b2_net_sum [expr $b2_net_sum + $net_delay]
-      set b2_cell_sum [expr $b2_cell_sum + $cell_delay]
-      set netname $vars(capture,$inst,outnet)
-      set netcap $vars(capture,$netname,netcap)
-      puts $fout_b2 [format "%10.f %10.f %10.f %10.f    %s  %10.2f  %s" $in_trans   \
-                                                         $net_delay  \
-                                                         $cell_delay \
-                                                         $netcap \
-                                                         $vars(capture,$inst,refname) \
-                                                         $vars(capture,$inst,cell_derate) \
-                                                         $inst]
-    }
-    puts $fout_b2 "net_total : $b2_net_sum"
-    puts $fout_b2 "cell_total: $b2_cell_sum"
-    set vars(b2_net_sum) $b2_net_sum
-    set vars(b2_cell_sum) $b2_cell_sum
-    set sumb2 [expr $b2_net_sum + $b2_cell_sum]
-    #set vars(b2_cell_delay_ratio) [format "%.2f" [expr double($b2_cell_sum) / $sumb2]]
-    close $fout_b2
-    # }}}
-    # data path
-    # {{{
-    set fout_datapath [open "pa.$infile/p$i/datapath.rpt" w]
-      puts -nonewline $fout_datapath [format "%10s "  trans]
-      puts -nonewline $fout_datapath [format "%10s "  net]
-      puts -nonewline $fout_datapath [format "%10s "  cell]
-      puts -nonewline $fout_datapath [format "%10s "  net]
-      puts -nonewline $fout_datapath [format "%13s "  incr_in]
-      puts -nonewline $fout_datapath [format "%19s "  refname]
-      puts -nonewline $fout_datapath [format "%s "    inst]
-      puts            $fout_datapath ""
-      puts -nonewline $fout_datapath [format "%10s "  ""]
-      puts -nonewline $fout_datapath [format "%10s "  delay]
-      puts -nonewline $fout_datapath [format "%10s "  delay]
-      puts -nonewline $fout_datapath [format "%10s "  cap]
-      puts -nonewline $fout_datapath [format "%13s "  delay]
-      puts -nonewline $fout_datapath [format "%19s "  ""]
-      puts -nonewline $fout_datapath [format "%s "    ""]
-      puts            $fout_datapath ""
-    foreach inst $vars(data_path_inst) {
-      #set netname $vars(launch,$inst,outnet)
-      #set netcap $vars(launch,$netname,netcap)
-      puts -nonewline $fout_datapath [format "%10.f " $vars(launch,$inst,in_trans)]
-      puts -nonewline $fout_datapath [format "%10.f " $vars(launch,$inst,net_delay)]
-      puts -nonewline $fout_datapath [format "%10.f " $vars(launch,$inst,cell_delay)]
-      puts -nonewline $fout_datapath [format "%10.f " $netcap]
-      puts -nonewline $fout_datapath [format "%13.f " $vars(launch,$inst,incr_delay_in)]
-      puts -nonewline $fout_datapath [format "%s "    $vars(launch,$inst,refname)]
-      puts -nonewline $fout_datapath [format "%s "    $inst]
-      puts $fout_datapath ""
-    }
-    close $fout_datapath
-    # }}}
-
-    foreach a $alist {
-      set svars(p$i,$a) $vars($a)
-    }
-
-    godel_array_save svars "pa.$infile/svars.tcl"
-  }
-
-  set fout [open "pa.$infile/startpoints.rpt" w]
-  for {set i 1} {$i <= $svars(path_count)} {incr i } {
-    puts [format "%s" $svars(p$i,startpoint)]
-  }
-  close $fout
-
-  # Print index
-  set fout [open "index.pa.$infile.htm" w]
-  godel_pa_html_header $fout index.pa.$infile.htm
-  puts $fout "<pre>"
-  for {set i 1} {$i <= $svars(path_count)} {incr i } {
-    puts [format "%-4d %-5.f %-4d %-4d %-5.f %s" \
-              $i \
-              $svars(p$i,slack) \
-              $svars(p$i,b2_inst_count) \
-              $svars(p$i,b1_inst_count) \
-              $svars(p$i,skew) \
-              $svars(p$i,endpoint)
-    ]
-    puts -nonewline $fout "<a href=pa.$infile/p$i/index.htm>$i</a>"
-    puts $fout [format "%5.f   %-4d %-4d %-5.f %s" \
-              $svars(p$i,slack) \
-              $svars(p$i,b2_inst_count) \
-              $svars(p$i,b1_inst_count) \
-              $svars(p$i,skew) \
-              $svars(p$i,endpoint)
-    ]
-  }
-  puts $fout "</pre>"
-  #puts $fout "</tbody>"
-  #puts $fout "</TABLE>"
-  puts $fout "</body>"
-  puts $fout "</html>"
-  close $fout
-
-  for {set i 1} {$i <= $svars(path_count)} {incr i } {
-    set fout [open "pa.$infile/p$i/index.htm" w]
-      godel_pa_html_header $fout p$i.index.htm
-      puts $fout "<a href=\"raw_path.rpt\" type=\"text/rpt\">raw_path.rpt</a><br>"
-      puts $fout "<a href=\"datapath.rpt\" type=\"text/rpt\">datapath.rpt</a><br>"
-      puts $fout "<a href=\"b1.rpt\" type=\"text/rpt\">b1.rpt</a><br>"
-      puts $fout "<a href=\"b2.rpt\" type=\"text/rpt\">b2.rpt</a><br>"
-      puts $fout "<pre>"
-      puts $fout [format "%-25s: %.f" Slack                 $svars(p$i,slack)]
-      puts $fout [format "%-25s: %s"  Startpoint            $svars(p$i,startpoint)]
-      puts $fout [format "%-25s: %s"  Endpoint              $svars(p$i,endpoint)]
-      puts $fout [format "%-25s: %s"  Path_Group            $svars(p$i,path_group)]
-      puts $fout [format "%-25s: %s"  Path_Type             $svars(p$i,path_type)]
-      puts $fout [format "%-25s: %.f" CPPR                  $svars(p$i,cppr)]
-      puts $fout [format "%-25s: %.f" Skew                  $svars(p$i,skew)]
-      puts $fout [format "%-25s: %.f" Uncertainty           $svars(p$i,uncertainty)]
-      puts $fout [format "%-25s: %.f" Clock_Launch_Latency  $svars(p$i,clock_launch_latency)]
-      puts $fout [format "%-25s: %.f" Clock_Capture_Latency $svars(p$i,clock_capture_latency)]
-      puts $fout [format "%-25s: %.f" B1_Latency            $svars(p$i,b1_latency)]
-      puts $fout [format "%-25s: %.f" B2_Latency            $svars(p$i,b2_latency)]
-      puts $fout "</pre>"
-      #puts $fout "</tbody>"
-      #puts $fout "</TABLE>"
-      puts $fout "</body>"
-      puts $fout "</html>"
-    close $fout
-  }
-}
-# }}}
-#: godel_pa_extract_info_list2
-# {{{
-proc godel_pa_extract_info_list2 {alist} {
-  upvar vars vars
-  godel_pa_cut_in_half_by "data arrival time" $alist
-  set first $half(1)
-  set second $half(2)
-  godel_pa_cut_in_half_by "------" $first
-# header
-  set vars(header) $half(1)
-  set launch_n_data $half(2)
-  foreach line $vars(header) {
-      # startpoint
-      if {[regexp {Startpoint: (\S+)} $line whole matched]}      { set vars(startpoint) $matched }
-      # endpoint
-      if {[regexp {Endpoint: (\S+)} $line whole matched]}        { set vars(endpoint)   $matched }
-      # path_group
-      if {[regexp {Path Group: (\S+)$} $line whole matched]}      { set vars(path_group) $matched }
-      # path_type
-      if {[regexp {Path Type: (\S+)} $line whole matched]}       { set vars(path_type)  $matched }
-  }
-  godel_pa_cut_in_half_by $vars(startpoint) $launch_n_data
-
-  # launch_clock_path
-  set vars(launch_clock_path) $half(1)
-  # data_path
-  set vars(data_path)         [concat $half(pattern) $half(2)]
-
-  godel_pa_cut_in_half_by "  slack " $second
-  # capture_clock_path
-  set vars(capture_clock_path) $half(1)
-
-  godel_pa_ext_launch
-  godel_pa_ext_capture
-  godel_pa_inst_type2_list
-}
-# }}}
-#: godel_pa_collect_inst
-# {{{
-proc godel_pa_collect_inst {name} {
-  upvar vars vars
-  set inst [list]
-  set ilist $vars($name)
-  while {[llength $ilist]} {
-    set line [godel_shift ilist]
-    set colnum [llength [godel_split_by_space $line]]
-    #puts "$colnum $line"
-    if {$colnum == 10} {
-      lappend inst [file dirname [lindex $line 0]]
-    }
-  }
-  return $inst
-}
-# }}}
-#: godel_pa_inst_type2_list
-# {{{
-proc godel_pa_inst_type2_list {} {
-  upvar vars vars
-# common_list
-  set vars(data_path_inst)    [godel_pa_collect_inst data_path]
-# launch_clock_inst
-  set vars(launch_clock_inst) [godel_pa_collect_inst launch_clock_path]
-  set vars(launch_clock_inst) [lreplace $vars(launch_clock_inst) end end]
-# b1_list
-  set vars(b1_inst) $vars(launch_clock_inst)
-# capture_clock_inst
-  set vars(capture_clock_inst) [godel_pa_collect_inst capture_clock_path]
-  set vars(capture_clock_inst) [lreplace $vars(capture_clock_inst) end end]
-# b2_list
-  set vars(b2_inst) $vars(capture_clock_inst)
-# common_inst
-  set vars(common_inst) [list]
-  set count [llength $vars(launch_clock_inst)]
-  if {[llength $vars(capture_clock_inst)] < $count} {
-    set count [llength $vars(capture_clock_inst)]
-  }
-  for {set i 1} {$i <= $count} {incr i} {
-    set inst_launch [lindex $vars(launch_clock_inst) $i]
-    set inst_capture [lindex $vars(capture_clock_inst) $i]
-    if {$inst_launch == $inst_capture} {
-      lappend vars(common_inst) $inst_launch
-      set vars(b1_inst) [lreplace $vars(b1_inst) 0 0]
-      set vars(b2_inst) [lreplace $vars(b2_inst) 0 0]
-    } else {
-      break
-    }
-  }
-  set vars(common_inst_count) [llength $vars(common_inst)]
-  set vars(b1_inst_count) [llength $vars(b1_inst)]
-  set vars(b2_inst_count) [llength $vars(b2_inst)]
-# capture_clock_edge
-  foreach line $vars(capture_clock_path) {
-    if [regexp {\s+clock\D+(\d+)} $line whole matched] {
-      set vars(capture_clock_edge) $matched
-      break
-    }
-  }
-# endpoint_pin
-  foreach line [lreverse $vars(data_path)] {
-    if [regexp $vars(endpoint) $line whole matched] {
-      set vars(endpoint_pin) [godel_get_column $line 0]
-      break
-    }
-  }
-  # When the capture is an output pin, the endpoint_pin = endpoint
-  if ![info exist vars(endpoint_pin)] {set vars(endpoint_pin) $vars(endpoint)}
-
-  if ![info exist vars(capture,$vars(endpoint),incr_delay_in)] { set vars(capture,$vars(endpoint),incr_delay_in) 0}
-  if ![info exist vars(launch,$vars(startpoint),incr_delay_in)] { set vars(launch,$vars(startpoint),incr_delay_in) 0}
-  set vars(skew) [expr $vars(capture,$vars(endpoint),incr_delay_in) - $vars(launch,$vars(startpoint),incr_delay_in) + $vars(cppr)]
-  set vars(clock_launch_latency)  $vars(launch,$vars(startpoint),incr_delay_in)
-  set vars(clock_capture_latency) $vars(capture,$vars(endpoint),incr_delay_in)
-  set vars(pod)                   [lindex $vars(common_inst) end]
-  if {$vars(pod) == ""} {
-    set vars(b1_latency)            0
-    set vars(b2_latency)            0
-  } else {
-    set vars(b1_latency)            [expr $vars(clock_launch_latency) - $vars(launch,$vars(pod),incr_delay_in)]
-    set vars(b2_latency)            [expr $vars(clock_capture_latency) - $vars(capture,$vars(pod),incr_delay_in)]
-  }
-
-  set vars(launch,$vars(endpoint),cell_delay) 0
-}
-# }}}
-#: godel_pa_cut_in_half_by
-# {{{
-proc godel_pa_cut_in_half_by {pattern ilist} {
-  set flag 0
-  upvar half half
-  regsub -all {\[} $pattern {\\[} pattern
-  regsub -all {\]} $pattern {\\]} pattern
-
-  godel_array_reset half
-
-  foreach i $ilist {
-    if {$flag} {
-      lappend half(2) $i
-    } else {
-      lappend half(1) $i
-    }
-
-    if [regexp "$pattern" $i] {
-      lappend half(pattern) $i
-      set flag 1
-    } 
-    
-  }
-}
-# }}}
-#: godel_pa_ext_capture
-# {{{
-proc godel_pa_ext_capture {} {
-  upvar vars vars
-# 2 means capture path
-  set ilist $vars(capture_clock_path)
-  while {[llength $ilist]} {
-    set line [godel_shift ilist]
-    regsub {<-} $line {} line
-    regsub {\(gclock source\)} $line {} line
-    set colno [llength [godel_split_by_space $line]]
-    #puts "$colno $line"
-    if {[regexp {\(net\)} $line]} {
-      set netline [godel_split_by_space $line]
-      set netname [lindex $netline 0]
-      set fanout  [lindex $netline 2]
-      set netcap  [lindex $netline 3]
-      lappend vars(nets_list) $netname
-      set vars(capture,$netname,fanout) $fanout
-      set vars(capture,$netname,netcap) $netcap
-# cellin
-      set cellin [godel_split_by_space [godel_shift ilist]]
-      set inst [file dirname [lindex $cellin 0]]
-      lappend vars(capture_inst_list) $inst
-      set vars(capture,$inst,innet)          $netname
-      set vars(capture,$inst,inpin)          [lindex $cellin 0]
-      set vars(capture,$inst,refname)        [lindex $cellin 1]
-      set vars(capture,$inst,dtrans)         [lindex $cellin 2]
-      set vars(capture,$inst,in_trans)       [lindex $cellin 3]
-      set vars(capture,$inst,net_derate)     [lindex $cellin 4]
-      set vars(capture,$inst,delta)          [lindex $cellin 5]
-      set vars(capture,$inst,net_delay)      [lindex $cellin 6]
-      set vars(capture,$inst,incr_delay_in)  [lindex $cellin 8]
-    }
-  }
-# cellout line and outnet
-  set ilist $vars(capture_clock_path)
-  while {[llength $ilist]} {
-    set line [godel_shift ilist]
-    regsub {\(gclock source\)} $line {} line
-    regsub {<-} $line {} line
-    
-    set colno [llength [godel_split_by_space $line]]
-    if {$colno == 8} {
-      set cellout [godel_split_by_space $line]]
-      set inst [file dirname [lindex $cellout 0]]
-      set vars(capture,$inst,cell_out_tran)   [lindex $cellout 2]
-      set vars(capture,$inst,cell_derate)     [lindex $cellout 3]
-      set vars(capture,$inst,cell_delay)      [lindex $cellout 4]
-      set vars(capture,$inst,incr_delay_out)  [lindex $cellout 5]
-      set netline [godel_split_by_space [godel_shift ilist]]
-      set vars(capture,$inst,outnet)          [lindex $netline 0]
-    }
-
-# cppr
-    set vars(cppr) 0
-    if {[regexp {clock reconvergence pessimism         \s+(\S+) } $line whole matched]}  { set vars(cppr)  $matched }
-# uncertainty
-    set vars(uncertainty) 0
-    if {[regexp {uncertainty\s+(\S+) } $line whole matched]}  { set vars(uncertainty)  $matched }
-# slack
-    if {[regexp {slack \(.*\)\s+(\S+)} $line whole matched]} {set vars(slack) $matched}
-  }
-}
-# ext_launch
-# }}}
-#: godel_pa_ext_launch
-# {{{
-proc godel_pa_ext_launch {} {
-  upvar vars vars
-# 1 means launch path
-  #set ilist $vars(1)
-  set ilist [concat $vars(launch_clock_path) $vars(data_path)]
-
-  while {[llength $ilist]} {
-    set line [godel_shift ilist]
-    regsub {\(gclock source\)} $line {} line
-    regsub {<-} $line {} line
-
-    set colno [llength [godel_split_by_space $line]]
-    #puts "$colno $line"
-    if {[regexp {\(net\)} $line]} {
-      set netline [godel_split_by_space $line]
-      set netname [lindex $netline 0]
-      set fanout  [lindex $netline 2]
-      set netcap  [lindex $netline 3]
-      lappend vars(nets_list) $netname
-      set vars(launch,$netname,fanout) $fanout
-      set vars(launch,$netname,netcap) $netcap
-# cellin
-      set cellin [godel_split_by_space [godel_shift ilist]]
-      set inst [file dirname [lindex $cellin 0]]
-      lappend vars(launch_inst_list) $inst
-      set vars(launch,$inst,innet) $netname
-      set vars(launch,$inst,inpin)           [lindex $cellin 0]
-      set vars(launch,$inst,refname)         [lindex $cellin 1]
-      set vars(launch,$inst,dtrans)          [lindex $cellin 2]
-      set vars(launch,$inst,in_trans)        [lindex $cellin 3]
-      set vars(launch,$inst,net_derate)      [lindex $cellin 4]
-      set vars(launch,$inst,delta)           [lindex $cellin 5]
-      set vars(launch,$inst,net_delay)       [lindex $cellin 6]
-      set vars(launch,$inst,incr_delay_in)   [lindex $cellin 8]
-    }
-  }
-  #set ilist $vars(1)
-  set ilist [concat $vars(launch_clock_path) $vars(data_path)]
-  while {[llength $ilist]} {
-    set line [godel_shift ilist]
-    regsub {\(gclock source\)} $line {} line
-    regsub {<-} $line {} line
-
-    set colno [llength [godel_split_by_space $line]]
-    if {$colno == 8} {
-      set cellout [godel_split_by_space $line]]
-      set inst [file dirname [lindex $cellout 0]]
-      set vars(launch,$inst,cell_out_tran)   [lindex $cellout 2]
-      set vars(launch,$inst,cell_derate)     [lindex $cellout 3]
-      set vars(launch,$inst,cell_delay)      [lindex $cellout 4]
-      set vars(launch,$inst,incr_delay_out)  [lindex $cellout 6]
-      set netline [godel_split_by_space [godel_shift ilist]]
-      set vars(launch,$inst,outnet) [lindex $netline 0]
-    }
-  }
-}
-# }}}
-#: godel_pa_html_header
-# {{{
-proc godel_pa_html_header {fout title} {
-  puts $fout ""
-  puts $fout "<html>"
-  puts $fout "<HEAD>"
-  puts $fout "<title> $title </title>"
-  puts $fout "<STYLE>"
-  puts $fout "table, th, td {"
-  puts $fout "  border: 1px solid black;"
-  puts $fout "  border-collapse: collapse;"
-  puts $fout "}"
-  puts $fout "th, td {"
-  puts $fout "  padding: 5px;"
-  puts $fout "  text-align: left;"
-  puts $fout "}"
-  puts $fout "table #t01 tr:nth-child(even) {"
-  puts $fout "  background-color: #eee;"
-  puts $fout "}"
-  puts $fout "table #t01 tr:nth-child(odd) {"
-  puts $fout "  background-color: #fff;"
-  puts $fout "}"
-  puts $fout "table #t01 {"
-  puts $fout "  color: white"
-  puts $fout "  background-color: black;"
-  puts $fout "}"
-  puts $fout "td ul li {"
-  puts $fout "    padding:0;"
-  puts $fout "    margin:0;"
-  puts $fout "}"
-  puts $fout "</STYLE>"
-  puts $fout "</HEAD>"
-  puts $fout " <br>"
-  puts $fout "<body>"
-  #puts $fout "<TABLE width=\"100%\" border=\"1\" id=\"t01\">"
-  #puts $fout "<TABLE border=\"1\" id=\"t01\">"
-  #puts $fout "<tbody>"
-  
 }
 # }}}
 #@> Tool Box

@@ -347,7 +347,9 @@ a {
 	background: #3f51b5;
 }
 
-
+.solidblockmenu input{
+  margin: 5px;
+}
 .solidblockmenu li{
 	display: inline;
 }

@@ -1,12 +1,12 @@
-// JQuery: fmgr delete
+// JQuery: fm delete
 // {{{
 $(document).ready(function(){
-  var $TABLE = $('#fmgr');
+  var $TABLE = $('#fm');
 
-  $('#fmgr_savekk').click(function () {
+  $('#fmsave').click(function () {
 
     //var $rows = $TABLE.find('tr');
-    var $rows = $('#fmgr').find('tr');
+    var $rows = $('#tbl').find('tr');
 
     var cmds = "";
     // foreach row
@@ -22,14 +22,17 @@ $(document).ready(function(){
           return; // equal to continue
         } else {
           if (value === "dd" ) {
-            var cmd = "exec rm -rf " + gname + "\n";
+            var cmd = "exec rm -rf \"" + gname + "\"\n";
+            cmds = cmds + cmd;
+          } else if (value === "") {
+            //var cmd = value + "\n";
           } else {
             //var cmd = value + "\n";
-            var cmd = "\n";
+            var cmd = "exec mkdir -p .tmp/" + value + "\n" + "exec mv {" + gname + "} .tmp/" + value + "\n";
+            cmds = cmds + cmd;
           }
           //var cmd = "lsetvar " + gname + " " + colname + " \"" + value + "\"\n";
         }
-        cmds = cmds + cmd;
       });
     });
 
