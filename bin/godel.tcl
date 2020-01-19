@@ -1937,6 +1937,9 @@ proc list_pages {args} {
   }
 # List pages
   foreach page $nlist {
+    if ![file exist $page/.godel] {
+      continue
+    }
     if {$opt(-k)} {
       set disp [lvars $page $key]
     } else {
