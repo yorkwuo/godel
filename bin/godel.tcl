@@ -10,21 +10,27 @@ proc fm {args} {
   foreach row [lsort $flist] {
     puts $fout "<tr>"
     set celltxt {}
-    append celltxt "<td>$row</td>"
+    if [regexp {\.mp4} $row] {
+      set mp4row "<video width=420 height=240 controls preload=none><source src=\"$row\" type=video/mp4></video>"
+      append celltxt "<td>$mp4row<br>$row</td>"
+    }
+# control
     append celltxt "<td gname=\"$row\" contenteditable=true></td>"
-    # flist:
-      if [file isdirectory $row] {
-        regsub -all {\[} $row {\\[} dir
-        regsub -all {\]} $dir {\\]} dir
-        set files [glob -nocomplain $dir/*]
-        set links {<pre>}
-        foreach f $files {
-          set name [file tail $f]
-          append links "<a href=\"$f\">$name</a>\n"
-        }
-        append links {</pre>}
-        append celltxt "<td>$links</td>"
+
+# flist:
+    if [file isdirectory $row] {
+      regsub -all {\[} $row {\\[} dir
+      regsub -all {\]} $dir {\\]} dir
+      set files [glob -nocomplain $dir/*]
+      set links {<pre>}
+      foreach f $files {
+        set name [file tail $f]
+        append links "<a href=\"$f\">$name</a>\n"
       }
+      append links {</pre>}
+      append celltxt "<td>$links</td>"
+    }
+
     puts $fout $celltxt
     puts $fout "</tr>"
   }
@@ -227,6 +233,7 @@ proc ghtm_list_files {pattern {description ""}} {
       #puts $fout "  <a href=$fname><img src=\"$fname\" style=\"width:100%\"></a>"
       #puts $fout "    <p>$fname</p>"
       #puts $fout "</div>"
+      puts $fout "<a href=\"$full\" type=text/jpg>$full</a><br>"
     } elseif [regexp -nocase {\.png} $fname] {
     } elseif [regexp -nocase {\.md} $fname] {
       #puts $fout "<a href=\"$full\" type=text/png><img src=$full width=30% height=30%></a>"
