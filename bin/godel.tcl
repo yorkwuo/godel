@@ -1659,6 +1659,9 @@ proc local_table {name args} {
           set page_key  [file tail $col]
         }
         set col_data [lvars $page_path $page_key]
+        if {$col_data eq "NA"} {
+          set col_data ""
+        }
 
         # linkcol
         if {$col == $linkcol} {
