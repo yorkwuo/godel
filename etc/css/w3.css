@@ -301,6 +301,7 @@ img {
 .table1 {
   font-family:Consolas,sans-serif;
   border-collapse: collapse;
+  margin-top:20px;
 }
 .table1 td, .table1 th{
   padding       : 5px;
