@@ -81,6 +81,7 @@
 -combinational
 -command
 -command_group
+-comment
 -compress
 -compressed
 -consider_for_balancing
@@ -293,6 +294,7 @@
 -mirror_left_inside_corner_cell
 -mirror_left_outside_corner_cell
 -mode
+-msg
 -mw_reference_library
 -name
 -name_prefix

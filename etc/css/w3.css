@@ -282,13 +282,13 @@ img {
   margin     :4px;
   padding    :2px 6px;
 }
-.table2 {
-  font-family:Consolas,sans-serif;
+.table_wrap {
+  font-family:courier,Consolas,sans-serif;
   border-collapse: collapse;
   table-layout: fixed;
   width: 100%;
 }
-.table2 td, .table1 th {
+.table_wrap td, .table_wrap th {
   word-wrap     : break-word;
   padding       : 5px;
   font-size     : 14px;
