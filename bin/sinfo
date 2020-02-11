@@ -1,0 +1,14 @@
+#!/bin/sh
+# the next line restarts using tclsh \
+exec tclsh "$0" ${1+"$@"}
+
+#source $env(GODEL_ROOT)/bin/godel.tcl
+
+set cpus [exec cat /proc/cpuinfo | grep processor | wc -l]
+set mem  [lindex [exec cat /proc/meminfo | grep MemTotal] 1]
+set dist [exec lsb_release -dr]
+puts "CPU:            $cpus"
+puts "MEM:            [expr $mem/1000000] GB"
+puts $dist
+
+# vim:ft=tcl
