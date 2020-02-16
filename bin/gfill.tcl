@@ -2,7 +2,7 @@
 source $env(GODEL_ROOT)/bin/godel.tcl
 if {$argv == ""} {
   puts "Usage:"
-  puts "% gfill.tcl -k foobar -v 999 *"
+  puts "% gfill.tcl -f list.f -k foobar -v 999 *"
   return
 }
 
