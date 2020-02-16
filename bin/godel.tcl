@@ -348,6 +348,7 @@ proc ghtm_top_bar {args} {
   puts $fout "<li><a href=.godel/draw.gtcl type=text/gtcl>Draw</a></li>"
   puts $fout "<li><a href=../.index.htm>Parent</a></li>"
   #puts $fout "<li style=float:right><a href=.main.htm>TOC</a></li>"
+  puts $fout "<li style=float:right><a href=.godel/open.gtcl type=text/gtcl>Open</a></li>"
   puts $fout "<li style=float:right><a href=.index.htm type=text/txt>HTML</a></li>"
   puts $fout "</ul>"
   puts $fout "<br>"
@@ -1771,6 +1772,13 @@ proc gdraw_default {} {
     puts $kout "}"
     puts $kout "godel_draw"
     puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
+  close $kout
+
+  set kout [open .godel/open.gtcl w]
+    puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
+    puts $kout "cd \$pagepath"
+    #puts $kout "exec nautilus . &"
+    puts $kout "exec xterm &"
 
   close $kout
 }
@@ -3561,6 +3569,13 @@ proc godel_draw {{target_path NA}} {
 
     close $kout
 # }}}
+  set kout [open .godel/open.gtcl w]
+    puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
+    puts $kout "cd \$pagepath"
+    #puts $kout "exec nautilus . &"
+    puts $kout "exec xterm &"
+
+  close $kout
 
 #----------------------------
 # Start creating .index.htm
