@@ -3708,17 +3708,6 @@ proc godel_write_list_to_file {ilist ofile} {
   close $fout
 }
 # }}}
-#: split_by
-# {{{
-proc split_by {content delimiter} {
-# Remove leading space
-      regsub -all {^\s+} $line "" line
-# Replace space with #
-      regsub -all {\s+} $line "#" line
-      set c [split $line #]
-      return $c
-}
-# }}}
 #: godel_split_by_space
 # {{{
 proc godel_split_by_space {line} {
@@ -3728,6 +3717,29 @@ proc godel_split_by_space {line} {
       regsub -all {\s+} $line "#" line
       set c [split $line #]
       return $c
+}
+# }}}
+#: split_by
+# {{{
+proc split_by {afile delimiter} {
+  upvar curs curs
+  godel_array_reset curs
+
+  set fin [open $afile r]
+  set num 0
+
+  while {[gets $fin line] >= 0} {
+    if {[regexp "$delimiter" $line]} {
+      incr num
+    }
+    lappend curs($num,all) $line
+  }
+  close $fin
+  set curs(size) $num
+
+  #if [info exist curs(0,all)] {
+  #  unset curs(0,all)
+  #}
 }
 # }}}
 #: godel_split_by
@@ -4296,7 +4308,8 @@ proc godel_array_save {aname ofile} {
   set fout [open $ofile w]
     set keys [lsort [array name arr]]
     foreach key $keys {
-      regsub -all {"} $arr($key) {\\"}  newvalue
+      set newvalue [string map {\\ {\\}} $arr($key)]
+      regsub -all {"}  $newvalue {\\"}  newvalue
       regsub -all {\[} $newvalue {\\[}  newvalue
       regsub -all {\]} $newvalue {\\]}  newvalue
       puts $fout [format "set %-40s \"%s\"" [set aname]($key) $newvalue]
