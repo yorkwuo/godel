@@ -1971,7 +1971,7 @@ proc list_pages {args} {
     puts $fout "<h1>$title</h1>"
   }
 # List pages
-  foreach page $nlist {
+  foreach page [lsort $nlist] {
     if ![file exist $page/.godel] {
       continue
     }
