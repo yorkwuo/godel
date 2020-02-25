@@ -1561,7 +1561,7 @@ proc local_table {name args} {
         set links {<pre>}
         foreach f $files {
           set name [file tail $f]
-          append links "<a href=\"$f\">$name</a>\n"
+          append links "<a href=\"$f\" type=text/txt>$name</a>\n"
         }
         append links {</pre>}
         append celltxt "<td>$links</td>"
