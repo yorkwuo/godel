@@ -1,0 +1,16 @@
+#!/bin/sh
+# the next line restarts using tclsh \
+exec tclsh "$0" ${1+"$@"}
+
+# rd: Commit gtcl in $env(GODEL_DOWNLOAD)/gtcl.tcl and ReDraw gpage
+
+source $env(GODEL_ROOT)/bin/godel.tcl
+
+if [file exist $env(GODEL_DOWNLOAD)/gtcl.tcl] {
+  source $env(GODEL_DOWNLOAD)/gtcl.tcl
+  godel_draw
+}
+file delete $env(GODEL_DOWNLOAD)/gtcl.tcl
+
+
+# vim:ft=tcl
