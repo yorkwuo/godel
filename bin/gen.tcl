@@ -23,6 +23,7 @@ if {$idx != "-1"} {
 }
 # }}}
 # -e eval
+# Use -e to dynamic direct how gen.tcl work.
 # {{{
 set opt(-e) 0
 set idx [lsearch $argv {-e}]
@@ -33,7 +34,9 @@ if {$idx != "-1"} {
 }
 # }}}
 
-eval $expression
+if {$opt(-e)} {
+  eval $expression
+}
 
 set cmdfile [lindex $argv 0]
 

@@ -1255,7 +1255,7 @@ proc lvars {args} {
 
   set vlist ""
   if {$vname == ""} {
-    parray vars
+    #parray vars
   } else {
     if {$opt(-k)} {
       foreach name [lsort [array names vars]] {
@@ -1971,7 +1971,7 @@ proc list_pages {args} {
     puts $fout "<h1>$title</h1>"
   }
 # List pages
-  foreach page $nlist {
+  foreach page [lsort $nlist] {
     if ![file exist $page/.godel] {
       continue
     }
