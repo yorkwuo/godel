@@ -1255,7 +1255,7 @@ proc lvars {args} {
 
   set vlist ""
   if {$vname == ""} {
-    #parray vars
+    parray vars
   } else {
     if {$opt(-k)} {
       foreach name [lsort [array names vars]] {
