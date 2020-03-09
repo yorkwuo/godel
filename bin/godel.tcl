@@ -1593,6 +1593,9 @@ proc local_table {name args} {
           #puts $page_path
         }
         set col_data [lvars $page_path $page_key]
+        if {$col_data eq "NA"} {
+          set col_data ""
+        }
         append celltxt "<td gname=$page_path colname=$page_key contenteditable=true>$col_data</td>"
       # ed:
       } elseif [regexp {ed:} $col] {
