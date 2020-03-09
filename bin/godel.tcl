@@ -244,6 +244,9 @@ proc ghtm_list_files {pattern {description ""}} {
     } elseif [regexp -nocase {\.one} $fname] {
       puts $fout "<a href=\"$full\">$full</a><br>"
 
+    } elseif [regexp -nocase {\.html} $fname] {
+      puts $fout "<a href=\"$full\">$full</a><br>"
+
     } elseif [regexp -nocase {\.mpg} $fname] {
       puts $fout "<a href=\"$full\">$full</a><br>"
 
