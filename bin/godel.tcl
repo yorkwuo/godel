@@ -1560,6 +1560,10 @@ proc local_table {name args} {
         regsub {flist:} $col {} col
         regsub -all {\[} $row {\\[} dir
         regsub -all {\]} $dir {\\]} dir
+        #set files ""
+        #foreach co $col {
+        #  lappend files [glob -nocomplain $dir/$co]
+        #}
         set files [glob -nocomplain $dir/$col]
         set links {<pre>}
         foreach f $files {
