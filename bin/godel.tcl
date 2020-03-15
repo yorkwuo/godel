@@ -1251,7 +1251,7 @@ proc lvars {args} {
     set gpage "."
   }
   if ![file exist $gpage/.godel/vars.tcl] {
-    puts "Error: not exist... $gpage/.godel/vars.tcl"
+    #puts "Error: not exist... $gpage/.godel/vars.tcl"
     return
   }
   source $gpage/.godel/vars.tcl
