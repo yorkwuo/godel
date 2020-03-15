@@ -4420,6 +4420,22 @@ proc pcollection_list {ll} {
 }
 # }}}
 #@> Tool Box
+# {{{
+proc ggrep {re ffile} {
+# Usage:
+# ggrep "errors" foo.rpt
+
+  set matches ""
+  set fp [open $ffile r]
+  while {[gets $fp line] >= 0} {
+      if [regexp -- $re $line] {
+          lappend matches "$line"
+      }
+  }
+  close $fp
+  return $matches
+}
+# }}}
 # tbox_grep_filelist
 # {{{
 proc tbox_grep_filelist {re filelist} {
