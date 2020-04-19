@@ -1,5 +1,9 @@
-write_oasis
 P_source_if_exists
+cth_eps
+pte_setup
+cth_r2g
+ddm
+
 add_buffer
 add_buffer_on_line
 add_port_state
@@ -13,6 +17,7 @@ all_connected
 all_fanin
 all_fanout
 all_inputs
+all_macro_cells
 all_modes
 all_outputs
 all_register
@@ -236,6 +241,7 @@ get_nets
 get_object_name
 get_objects_by_location
 get_pagelist
+get_path_groups
 get_pin
 get_pin_names
 get_pins
@@ -594,6 +600,7 @@ remove_lib
 remove_mode
 remove_modes
 remove_objects
+remove_path_group
 remove_pg_patterns
 remove_pin_name_synonym
 remove_placement_blockage
@@ -726,6 +733,7 @@ set_block_pin_constraints
 set_boundary_cell_rules
 set_case_analysis
 set_cell_location
+set_cell_mode
 set_clock_cell_spacing
 set_clock_exclusivity
 set_clock_gating_check
@@ -984,6 +992,7 @@ write_icc2_files
 write_lib
 write_list_to_file
 write_milkyway
+write_oasis
 write_parasitics
 write_physical_constraints
 write_pin_constraints

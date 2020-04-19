@@ -1553,7 +1553,7 @@ proc local_table {name args} {
         regsub {proc:} $col {} col
         set procname $col
         #cd $row
-        $procname
+        eval $procname
         #cd ..
       # flist:
       } elseif [regexp {flist:} $col] {
