@@ -102,7 +102,7 @@ if {$opt(-s)} {
       }
     }
     set aux   [lvars $page g:pagename]
-    puts [format "lsetvar %-20s %-15s \"%s\" ;# %s" $page $key $value $aux]
+    puts [format "lsetvar %-30s %-15s \"%s\" ;# %s" $page $key $value $aux]
   }
 
 }

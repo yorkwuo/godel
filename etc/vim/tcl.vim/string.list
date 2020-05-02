@@ -1,17 +1,8 @@
 -1801
--ward_id
--wfs
--init
--id
--block
--groups
--ward_root
 -above
 -active
 -add
 -add_delay
--dirs
--tag
 -add_dummy_nets
 -add_metal_cut_allowed
 -align_to_shape_end
@@ -22,6 +13,7 @@
 -all_violators
 -allow_metal_fill_only
 -allow_physical_cells
+-allowed
 -allowed_layer
 -analysis_style
 -analysis_type
@@ -42,6 +34,7 @@
 -balance_points
 -bbox
 -below
+-block
 -borderwidth
 -bottom
 -bottom_boundary_cells
@@ -58,6 +51,7 @@
 -cap
 -capacitance
 -capture_procedure
+-case_insensitive
 -cell
 -cell_check
 -cell_delay
@@ -81,6 +75,7 @@
 -clock_tree
 -clocks
 -coincident_boundary
+-collapse_name_space
 -collection
 -column
 -column_data_proc
@@ -134,12 +129,14 @@
 -design_list
 -dir
 -direction
+-dirs
 -display
 -distance
 -div
 -divide
 -divide_by
 -domain
+-dont_change_ports
 -driver_taper_distance
 -dynamic_power
 -early
@@ -178,6 +175,7 @@
 -fill
 -filler_cell_names
 -filter
+-first_restricted
 -flat
 -flatten_multi_dimension_busses
 -flip_first_row
@@ -196,6 +194,7 @@
 -ground
 -ground_capacitance_factor
 -group
+-groups
 -handle
 -height
 -hier
@@ -209,6 +208,7 @@
 -hold
 -hold_margin
 -icc2
+-id
 -ignore_arrival
 -ignore_clock_latency
 -image
@@ -223,7 +223,9 @@
 -incremental_mapping
 -index
 -info
+-init
 -inline
+-inout_ports_equal_nets
 -input
 -input_pins
 -input_port_nets
@@ -247,6 +249,7 @@
 -keep_placement
 -labels
 -ladder_name
+-last_restricted
 -late
 -late_spec
 -layer
@@ -267,11 +270,13 @@
 -linkcol
 -list_not_annotated
 -location
+-log_changes
 -log_file
 -logical
 -low
 -low_end
 -macro_by_color
+-map
 -map_effort
 -mask_constraints
 -mask_pattern
@@ -284,6 +289,7 @@
 -max_delay
 -max_emulation_tluplus
 -max_fanout
+-max_length
 -max_library
 -max_nets
 -max_paths
@@ -327,12 +333,14 @@
 -no_abutment_horizontal_spacing
 -no_autoungroup
 -no_bound
+-no_boundary_optimization
 -no_create_boundary
 -no_design_rule
 -no_placement_blockage
 -no_plan_group
 -no_propagate
 -no_route_guide
+-no_seq_output_inversion
 -no_sharing
 -no_voltage_area
 -nocomplain
@@ -348,6 +356,7 @@
 -objects1
 -objects2
 -oc_mode
+-oc_pattern_file
 -oc_type
 -of
 -of_object
@@ -475,6 +484,7 @@
 -supplemental
 -supplies
 -synthesis_optimization
+-tag
 -target_latency
 -tcl
 -tech
@@ -524,9 +534,12 @@
 -voltage
 -voltage_area
 -voltages
+-ward_id
+-ward_root
 -warning
 -waveform
 -weight
+-wfs
 -width
 -win
 -with_ground

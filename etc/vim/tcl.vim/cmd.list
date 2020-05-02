@@ -1,9 +1,4 @@
 P_source_if_exists
-cth_eps
-pte_setup
-cth_r2g
-ddm
-
 add_buffer
 add_buffer_on_line
 add_port_state
@@ -89,6 +84,7 @@ connect_supply_net
 copy_block
 copy_lib
 create_analysis_view
+create_auto_path_groups
 create_bounds
 create_cell
 create_clock
@@ -144,6 +140,8 @@ create_test_protocol
 create_track
 create_via_rule
 create_voltage_area
+cth_eps
+cth_r2g
 current_block
 current_corner
 current_design
@@ -158,6 +156,7 @@ current_scenario
 current_session
 current_test_mode
 cut_in_half_by
+ddm
 debImport
 defin
 define_always_on_cell
@@ -217,6 +216,7 @@ get_clocks
 get_column
 get_core_area
 get_corners
+get_designs
 get_endpoints
 get_flat_cells
 get_float64_value
@@ -547,6 +547,7 @@ pt_index1_module_list
 pt_index3
 pt_index4
 pt_index5
+pte_setup
 pulse_parse_open
 qrc_tech_file
 rdt_get_pvc
@@ -582,6 +583,7 @@ read_verilog_outline
 redirect
 refine_opt
 remove_attribute
+remove_auto_path_groups
 remove_bounds
 remove_buffer
 remove_cell
@@ -731,6 +733,7 @@ set_app_var
 set_attribute
 set_block_pin_constraints
 set_boundary_cell_rules
+set_boundary_optimization
 set_case_analysis
 set_cell_location
 set_cell_mode
@@ -749,6 +752,7 @@ set_clock_tree_options
 set_clock_uncertainty
 set_constraint_mapping_file
 set_cpf_version
+set_critical_range
 set_cross_voltage_domain_analysis_guardband
 set_design_attributes
 set_design_top

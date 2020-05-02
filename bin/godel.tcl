@@ -1,3 +1,34 @@
+
+# pair_value
+# {{{
+proc pair_value {key {name pair}} {
+  upvar where where
+
+  if ![file exist $where/$name] {
+    puts "Error: not exist... $where/$name"
+    return
+  }
+
+  set hits ""
+
+  set kin [open $where/$name r]
+
+
+  while {[gets $kin line] >= 0} {
+    if [regexp "$key" $line] {
+      lappend hits [lindex $line 2]
+    }
+  }
+
+  close $kin
+
+  #puts $hits
+
+  return $hits
+
+}
+# }}}
+
 # fm
 # {{{
 proc fm {args} {
