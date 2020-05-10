@@ -16,6 +16,7 @@ set ::product_build_date 2017.12.16
 set ::synthetic_library ""
 set ::do_redirect 0
 
+proc set_drive {args} {procname}
 proc get_site_defs {args} {procname}
 proc report_clock_gating {args} {procname}
 proc identify_clock_gating {args} {procname}

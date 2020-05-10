@@ -1455,6 +1455,7 @@ proc local_table {name args} {
 
       while {[gets $kin line] >= 0} {
         if {[regexp {^\s*#} $line]} {
+        } elseif {[regexp {^\s*$} $line]} {
         } else {
           lappend rows $line
         }
@@ -2086,7 +2087,11 @@ proc glocal {args} {
   if {$opt(-f)} {
     set kin [open $listfile r]
       while {[gets $kin line] >= 0} {
-        lappend ilist $line
+        if {[regexp {^\s*#} $line]} {
+        } elseif {[regexp {^\s*$} $line]} {
+        } else {
+          lappend ilist $line
+        }
       }
     close $kin
   } else {
