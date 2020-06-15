@@ -1,8 +1,8 @@
 -1801
-
+-full_clock
 -fixed
 -coordinates
-
+timing_clock_gating_propagate_enable
 -designs
 -power_supply_data
 -above

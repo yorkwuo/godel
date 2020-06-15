@@ -215,6 +215,43 @@ function filter_toc() {
   }
 }
 // }}}
+// filter_ghtmls
+// {{{
+function filter_ghtmls(e) {
+  var input = document.getElementById("filter_input");
+  filter = input.value.toUpperCase();
+
+  if(e.keyCode === 13){
+    e.preventDefault(); // Ensure it is only this code that rusn
+
+    filter = filter.split(" ");
+    var x = document.getElementsByClassName("ghtmls");
+
+// foreach ghtmls
+    for (i = 0; i < x.length; i++) {
+      //console.log(x[i].innerHTML);
+      y = x[i].getElementsByClassName("keywords");
+      if (y[0]) {
+        var found = 1
+        for (j = 0; j < filter.length; j++) {
+          //console.log("kk",filter[j])
+          if (y[0].innerHTML.toUpperCase().indexOf(filter[j]) > -1) {
+            found = found && 1
+          } else {
+            found = found && 0
+          }
+        }
+        if (found) {
+          //console.log(y[0].innerHTML);
+          x[i].style.display = "";
+        } else {
+          x[i].style.display = "none";
+        }
+      }
+    }
+  }
+}
+// }}}
 // filter_gnotes
 // {{{
 function filter_gnotes(e) {

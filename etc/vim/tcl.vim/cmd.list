@@ -1,5 +1,15 @@
+set_ideal_net
 
+dc_allocate_budgets
+set_wire_load_model
+set_wire_load_mode
+get_path_group
 
+filter
+get_timing_arcs
+
+remove_propagated_clock
+set_max_capacitance
 set_optimize_registers
 set_drive
 P_source_if_exists

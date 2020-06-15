@@ -248,6 +248,27 @@ proc ghtm_keyword_button {tablename column keyword} {
   puts $fout "<button onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$keyword</button>"
 }
 # }}}
+# ghtm_ls
+# {{{
+proc ghtm_ls {pattern {description ""}} {
+  upvar env env
+  upvar fout fout
+
+  #puts $fout "<div><h5>Filelist$description<a href=[tbox_cygpath $env(GODEL_ROOT)/plugin/sys/ghtm_list_files.tcl] type=text/txt>(script)</a></h5></div>"
+  set flist [lsort [glob -nocomplain -type f $pattern]]
+  puts $fout <p>
+  foreach full $flist {
+    set fname [file tail $full]
+    set mtime [file mtime $full]
+    set timestamp [clock format $mtime -format {%Y-%m-%d %H:%M}]
+    set fsize [file size $full]
+    set fsize [num_symbol $fsize M]
+    puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=$full type=text/txt>$fname</a><br></div>"]
+  }
+  puts $fout </p>
+  
+}
+# }}}
 # ghtm_list_files
 # {{{
 proc ghtm_list_files {pattern {description ""}} {
@@ -2004,7 +2025,7 @@ proc list_pages {args} {
   if {$args == ""} {
     set nlist [glob -type d *]
   } else {
-    set nlist {*}$args
+    set nlist [list {*}$args]
   }
 
   puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
@@ -2013,7 +2034,7 @@ proc list_pages {args} {
     puts $fout "<h1>$title</h1>"
   }
 # List pages
-  foreach page [lsort $nlist] {
+  foreach page $nlist {
     if ![file exist $page/.godel] {
       continue
     }
