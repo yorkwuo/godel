@@ -263,7 +263,7 @@ proc ghtm_ls {pattern {description ""}} {
     set timestamp [clock format $mtime -format {%Y-%m-%d %H:%M}]
     set fsize [file size $full]
     set fsize [num_symbol $fsize M]
-    puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=$full type=text/txt>$fname</a><br></div>"]
+    puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
   }
   puts $fout </p>
   
