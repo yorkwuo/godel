@@ -1,3 +1,49 @@
+# gwin
+# {{{
+proc gwin {size} {
+  set wid [exec xdotool getwindowfocus] 
+
+  if {$size eq "b1"} {
+    exec xdotool windowsize $wid 1800 800 
+    exec xdotool windowmove $wid 0 0
+  } elseif {$size eq "b3"} {
+    exec xdotool windowsize $wid 1550 800 
+    exec xdotool windowmove $wid 0 900
+  } elseif {$size eq "b4"} {
+    exec xdotool windowsize $wid 1800 800
+    exec xdotool windowmove $wid 774 383
+  } elseif {$size eq "s1"} {
+    exec xdotool windowsize $wid 1550 680
+    exec xdotool windowmove $wid 0 0
+  }
+}
+# }}}
+# chkfiles
+# {{{
+proc chkfiles {name_pattern} {
+  #upvar ward ward
+  upvar fout fout
+  #set f  $ward/$name_pattern
+  set f  $name_pattern
+  set fname   [file tail $name_pattern]
+  set dirname [file dirname $name_pattern]
+
+  if [file exist $f] {
+    set mtime [file mtime $f]
+    set timestamp [clock format $mtime -format {%Y-%m-%d %H:%M}]
+    puts $fout "<pre>$timestamp <a style=background-color:lightblue href=$f type=text/txt>$fname</a> $dirname</pre>"
+  } else {
+    if [file exist $name_pattern] {
+      set f $name_pattern
+      set mtime [file mtime $f]
+      set timestamp [clock format $mtime -format {%Y-%m-%d %H:%M}]
+      puts $fout "<pre>$timestamp <a style=background-color:lightblue href=$f type=text/txt>$fname</a> $dirname</pre>"
+    } else {
+      puts $fout "<pre>xxxx-xx-xx xx:xx <a style=background-color:lightgrey href=$f type=text/txt>$fname</a> $dirname</pre>"
+    }
+  }
+}
+# }}}
 
 # pair_value
 # {{{
@@ -120,13 +166,23 @@ proc fdiff {} {
   set srcpath $dyvars(srcpath)
 
   foreach f $files {
-    catch {exec diff $f $srcpath/$f | wc -l} result
-    if {$result > 0} {
-      puts "\033\[0;92m# $f\033\[0m"
-      puts [lindex $result 0]
-      puts "tkdiff $f $srcpath/$f"
-      puts "cp     $f $srcpath/$f"
-      puts "cp     $srcpath/$f $f"
+    set dir [file dirname $srcpath/$f]
+    if [file exist $dir] {
+      catch {exec diff $f $srcpath/$f | wc -l} result
+      if {$result > 0} {
+        puts "\033\[0;92m# $f\033\[0m"
+        puts [lindex $result 0]
+        puts "tkdiff $f $srcpath/$f"
+        puts "cp     $f $srcpath/$f"
+        puts "cp     $srcpath/$f $f"
+      }
+
+    } else {
+      if {[file tail $dir] eq ".godel"} {
+        puts "gdir [file dirname $dir]"
+      } else {
+        puts "mkdir $dir"
+      }
     }
     #puts $result
   }
@@ -1538,24 +1594,19 @@ proc local_table {name args} {
   if {$opt(-sortby)} {
     set index_num 1
 
-    # Create index() array
-    foreach col $columns {
-      set index($col) $index_num
-      incr index_num
-    }
-
-    # Create row_items for sorting
+    ## Create row_items for sorting
     set row_items {}
     foreach row $rows {
-      set col_items {}
-      foreach col $columns {
-        lappend col_items [lvars $row $col ]
+      #puts $row
+      set sdata [lvars $row $sortby]
+      if {$sdata eq ""} {
+        set sdata "NA"
       }
-      lappend row_items [concat $row $col_items]
+      lappend row_items [concat $row $sdata]
     }
 
-    # Sorting...
-    set row_items [lsort -index $index($sortby) $sort_direction $row_items]
+    ## Sorting...
+    set row_items [lsort -index 1 $sort_direction $row_items]
 
     # Re-create rows based on sorted row_items
     set rows {}
@@ -1713,6 +1764,22 @@ proc local_table {name args} {
         } else {
           append celltxt "<td>NA: $fname</td>"
         }
+      # invisible:
+      } elseif [regexp {invisible:} $col] {
+        regsub {invisible:} $col {} col
+        set dirname [file dirname $col]
+        if {$dirname eq "."} {
+          set page_path $row
+          set page_key  $col
+        } else {
+          set page_path $row/$dirname
+          set page_key  [file tail $col]
+        }
+        set col_data [lvars $page_path $page_key]
+        if {$col_data eq "NA"} {
+          set col_data ""
+        }
+        append celltxt "<td>$col_data</td>"
       } else {
         set dirname [file dirname $col]
         if {$dirname eq "."} {

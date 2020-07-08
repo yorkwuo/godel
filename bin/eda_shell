@@ -16,6 +16,14 @@ set ::product_build_date 2017.12.16
 set ::synthetic_library ""
 set ::do_redirect 0
 
+proc add_to_collection {args} {procname}
+proc add_to_collection {args} {procname}
+proc cdn_set_cases {args} {procname}
+proc get_port {args} {return $args}
+proc set_units {args} {procname}
+proc add_to_collection {args} {procname}
+proc set_case_analysis {args} {procname}
+proc set_false_path {args} {procname}
 proc set_drive {args} {procname}
 proc get_site_defs {args} {procname}
 proc report_clock_gating {args} {procname}
@@ -38,6 +46,12 @@ proc getenv {name} {
 }
 
 
+proc set_max_capacitance {args} {procname}
+proc set_ideal_network {args} {procname}
+proc set_dont_touch_network {args} {procname}
+proc get_clock {args} {procname}
+proc set_max_delay {args} {procname}
+
 proc read_verilog_outline {args} {procname}
 proc remove_design {args} {procname}
 proc set_vsdc {args} {procname}
@@ -53,6 +67,7 @@ proc current_design_name {args} {
 proc source {args} {
   regsub {\-echo} $args {} args
   regsub {\-e } $args {} args
+  regsub {\-v } $args {} args
   regsub {\-verbose} $args {} args
   regsub {\-encoding utf-8} $args {} args
 
@@ -811,7 +826,8 @@ proc procname {} {
   set level     [info level]
   #puts "    CMD: $proc_name...$fileloc"
   if {[info exist edactrl(procname_disp)] && $edactrl(procname_disp)} {
-    puts [format "%d%s%-20s ... %s ... %s" $level "    " $proc_name $fileloc $full_cmd]
+    #puts [format "%d%s%-25s ... %s ... %s" $level "    " $proc_name $fileloc $full_cmd]
+    puts [format "%d%s%-25s ... %s" $level "    " $proc_name $full_cmd]
   }
   #puts [format "%d%s%-20s ... %s" $level "    " $proc_name $fileloc]
 }
@@ -953,7 +969,11 @@ proc set_block_pin_constraints {args} {procname}
 proc remove_routing_blockages {args} {procname}
 proc get_routing_blockages {args} {procname}
 proc get_shapes {args} {procname}
-proc get_app_var {args} {procname}
+proc get_app_var {vname} {
+  upvar $vname name
+  return $name
+  
+}
 proc foreach_in_col {args} {procname}
 proc split_polygons {args} {procname}
 proc compute_polygons {args} {procname}
@@ -1640,13 +1660,18 @@ proc get_clocks {args} {
   #procname
   return $args
 }
-proc get_pins {args} {return $args}
+proc get_pin {args} {
+  return $args
+}
+proc get_pins {args} {
+  return $args
+}
 proc set_clock_uncertainty {args} {procname}
 proc get_attribute {args} {return "1.1"}
 proc all_inputs {args} {return "all_inputs_return in1 in2"}
 proc remove_from_collection {args} {return "remove_from_collection_return"}
 proc set_input_delay {args} {procname}
-proc all_outputs {args} {procname}
+proc all_outputs {args} {return "all_outputs_return out1 out2"}
 proc get_object_name {args} {return get_object_name_return}
 proc set_output_delay {args} {procname}
 proc get_lib_cells {args} {procname}
