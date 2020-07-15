@@ -304,7 +304,7 @@ img {
 }
 
 .table1 {
-  font-family:Consolas,sans-serif;
+  font-family:monospace,Consolas,sans-serif;
   border-collapse: collapse;
   margin-top:20px;
 }
