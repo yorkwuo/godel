@@ -1841,13 +1841,14 @@ proc ghtm_begin {ofile} {
   puts $fout "<head>"
   puts $fout "<title>$ofile</title>"
 
-  puts $fout "<style>"
-  set fin [open $env(GODEL_ROOT)/etc/css/w3.css r]
-    while {[gets $fin line] >= 0} {
-      puts $fout $line
-    }
-  close $fin
-  puts $fout "</style>"
+  #puts $fout "<style>"
+  #set fin [open $env(GODEL_ROOT)/etc/css/w3.css r]
+  #  while {[gets $fin line] >= 0} {
+  #    puts $fout $line
+  #  }
+  #close $fin
+  puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
+  #puts $fout "</style>"
 
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
@@ -4820,15 +4821,15 @@ proc mindex {metafile} {
         source $dyvarspath
         set meta($i,last_updated) $dyvars(last_updated)
       }
-      set meta($i,class)        $vars(g:class)
-      set meta($i,keywords)     [lsort [concat $vars(g:keywords) $vars(g:class)]]
+      #set meta($i,class)        $vars(g:class)
+      set meta($i,keywords)     [lsort [concat $vars(g:keywords)]]
       #set meta($i,pagesize)     $vars(pagesize)
       set meta($i,where)        $vars($i,where)
 # cdk use "keys" for searching
       if [info exist vars(title)] {
-        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class) $vars(title)]]
+        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(title)]]
       } else {
-        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(g:class)]]
+        set meta($i,keys)         [lsort [concat $i $vars(g:keywords)]]
       }
     } else {
       puts "Error: not exist.. $varspath"

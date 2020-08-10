@@ -3,13 +3,13 @@ source $env(GODEL_ROOT)/bin/godel.tcl
 
 set tabfile [lindex $argv 0]
 
-puts "Generating... $tabfile.htm"
+puts "Generating... $tabfile.html"
 
-ghtm_begin $tabfile.htm 
+ghtm_begin $tabfile.html
 
 set kin [open $tabfile r]
 
-puts $fout "<table class=table2>"
+puts $fout "<table class=table1>"
 
 while {[gets $kin line] > 0} {
   puts $fout "<tr>"
