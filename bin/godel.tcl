@@ -1305,6 +1305,24 @@ proc lchart_line {args} {
 
 }
 # }}}
+# lapvar
+# {{{
+proc lapvar {name key value} {
+  regsub {\/$} $name {} name
+
+  set varfile $name/.godel/vars.tcl
+
+  if [file exist $varfile] {
+ #   puts $varfile
+    source $varfile
+    lappend vars($key) $value
+  } else {
+    puts "Error: not exist... $varfile"
+  }
+
+  godel_array_save vars $varfile
+}
+# }}}
 # lsetvar
 # {{{
 proc lsetvar {name key value} {
