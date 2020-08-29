@@ -1427,6 +1427,7 @@ proc lvars {args} {
 # {{{
 proc local_table {name args} {
   global fout
+  upvar vars vars
 
   # -f (filelist name)
 # {{{
