@@ -1602,7 +1602,7 @@ proc local_table {name args} {
     puts $fout "<th>v</th>"
   }
   if {$opt(-serial)} {
-    puts $fout "<th>serial</th>"
+    puts $fout "<th>Num</th>"
   }
   foreach col $columns {
     set colname ""
