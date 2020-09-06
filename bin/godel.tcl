@@ -1,3 +1,20 @@
+proc ghtm_newnote {} {
+  upvar fout fout
+  set kout [open .godel/newnote.gtcl w]
+
+  puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
+  puts $kout "set pagepath \[file dirname \[info script]]"
+  puts $kout "cd \$pagepath/.."
+  puts $kout ""
+  puts $kout "exec newnote"
+  puts $kout ""
+  puts $kout "godel_draw"
+  puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
+
+  close $kout
+
+  puts $fout "<a href=.godel/newnote.gtcl type=text/gtcl>newnote</a>"
+}
 proc ghtm_filter_ls {} {
   upvar fout fout
   puts $fout "<div class=\"w3-panel w3-pale-blue w3-leftbar w3-border-blue\">" 
@@ -3749,7 +3766,11 @@ proc godel_draw {{target_path NA}} {
   puts $fout "<!DOCTYPE html>"
   puts $fout "<html>"
   puts $fout "<head>"
-  puts $fout "<title>$vars(g:pagename)</title>"
+  if [info exist vars(g:title)] {
+    puts $fout "<title>$vars(g:title)</title>"
+  } else {
+    puts $fout "<title>$vars(g:pagename)</title>"
+  }
 
 # Hardcoded w3.css in .index.htm so that you have all in one file.
 # {{{
