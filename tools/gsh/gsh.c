@@ -47,4 +47,3 @@ int gsh_main(Tcl_Interp* interp) {
     return 0;
 }
 
-// syntax:tcl_library

@@ -1,7 +1,7 @@
 1:
-	gcc -fPIC -c tclreadline.c
+	gcc -fPIC -c tclreadline.c -I/usr/include/tcl
 2:
-	gcc -shared -o libtclreadline.so tclreadline.o -lreadline -lncurses -ltcl8.5
+	gcc -shared -o libtclreadline.so tclreadline.o -lreadline -lncurses -ltcl8.6
 
 install:
 	mkdir -p             ~/usr/local/lib/tclreadline
