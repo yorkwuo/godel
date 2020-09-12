@@ -1,3 +1,22 @@
+# ghtm_js_input
+# {{{
+# Ex: ghtm_js_input add.js Add
+proc ghtm_js_input {jscmd bname} {
+  upvar fout    fout
+  upvar inputid inputid
+  upvar bid     bid
+
+  if ![info exist inputid] { set inputid 0 } else { incr inputid }
+  if ![info exist bid]     { set bid     0 } else { incr bid     }
+
+  puts $fout "<div>"
+  puts $fout "<input type=text id=inputid$inputid>"
+  puts $fout "<button id=bid$bid>$bname</button>"
+  puts $fout "<script src=$jscmd></script>"
+  puts $fout "</div>"
+}
+# }}}
+
 proc ghtm_newnote {} {
   upvar fout fout
   set kout [open .godel/newnote.gtcl w]
@@ -454,6 +473,7 @@ proc ghtm_top_bar {args} {
     set dyvars(last_updated) Now
   }
 
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M}]
 # default flow_name
   #if ![info exist flow_name] {
   #  set flow_name default
@@ -477,7 +497,7 @@ proc ghtm_top_bar {args} {
   puts $fout "<li><a href=.godel/vars.tcl type=text/txt>Value</a></li>"
   if {$opt(-save)} {
     if {$saveid eq ""} {set saveid "save"}
-  puts $fout "<li><button id=\"$saveid\">Save</button></li>"
+  puts $fout "<li><button id=\"$saveid\" style=\"margin: 10px 6px\">Save</button></li>"
   }
   if {$opt(-filter)} {
   puts $fout "<li><input type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\"></li>"
@@ -487,6 +507,7 @@ proc ghtm_top_bar {args} {
   #puts $fout "<li style=float:right><a href=.main.htm>TOC</a></li>"
   puts $fout "<li style=float:right><a href=.godel/open.gtcl type=text/gtcl>Open</a></li>"
   puts $fout "<li style=float:right><a href=.index.htm type=text/txt>HTML</a></li>"
+  puts $fout "<li style=float:right><a>$timestamp</a></li>"
   puts $fout "</ul>"
   puts $fout "<br>"
 #  puts $fout "<div class=\"w3-bar w3-border w3-indigo w3-medium\">"
@@ -516,7 +537,7 @@ proc ghtm_top_bar {args} {
 #  puts $fout "  </div>"
 #  puts $fout "</div>"
   
-#  puts $fout "  <div class=\"w3-bar-item w3-button w3-hover-red w3-right\">$dyvars(last_updated)</div>"
+  #puts $fout "  <div class=\"w3-bar-item w3-button w3-hover-red w3-right\">$timestamp</div>"
 
 #  puts $fout "</div>"
 
@@ -4145,8 +4166,9 @@ proc gget {pagename args} {
   if ![info exist meta] {
     foreach i $env(GODEL_META_SCOPE) { mload $i }
   }
+  
   if [file exist $pagename] {
-    set meta($pagename,where) $pagename
+    set meta($pagename,where) [pwd]/$pagename
   }
   # -o (open)
 # {{{
