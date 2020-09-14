@@ -353,9 +353,24 @@ proc ghtm_ls {pattern {description ""}} {
   upvar fout fout
 
   #puts $fout "<div><h5>Filelist$description<a href=[tbox_cygpath $env(GODEL_ROOT)/plugin/sys/ghtm_list_files.tcl] type=text/txt>(script)</a></h5></div>"
+  set flist [lsort [glob -nocomplain -type d $pattern]]
+  puts $fout <p>
+  #puts $fout [pwd]/$pattern
+  set count 1
+  foreach full $flist {
+    set fname [file tail $full]
+    set mtime [file mtime $full]
+    set timestamp [clock format $mtime -format {%Y-%m-%d %H:%M}]
+    set fsize [file size $full]
+    set fsize [num_symbol $fsize M]
+    puts $fout [format "<div class=ghtmls><pre style=background-color:lightblue>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+    incr count
+  }
+  puts $fout </p>
+
   set flist [lsort [glob -nocomplain -type f $pattern]]
   puts $fout <p>
-  puts $fout [pwd]/$pattern
+  #puts $fout [pwd]/$pattern
   set count 1
   foreach full $flist {
     set fname [file tail $full]
@@ -1372,11 +1387,11 @@ proc lsetvar {name key value} {
  #   puts $varfile
     source $varfile
     set vars($key) $value
+    godel_array_save vars $varfile
   } else {
     puts "Error: not exist... $varfile"
   }
 
-  godel_array_save vars $varfile
 }
 # }}}
 # lsetdyvar
@@ -3848,6 +3863,10 @@ proc godel_draw {{target_path NA}} {
   set dyvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
 # }}}
 
+  set kout [open .godel/dyvars.tcl w]
+  close $kout
+  set kout [open .godel/vars.tcl w]
+  close $kout
   godel_array_save dyvars .godel/dyvars.tcl
   godel_array_save vars   .godel/vars.tcl
 
@@ -4522,6 +4541,11 @@ proc godel_puts {key} {
 # {{{
 proc godel_array_save {aname ofile} {
   upvar $aname arr
+
+  if ![file exist $ofile] {
+    puts "Error: godel_array_save error... $ofile not exist."
+    return
+  }
   #parray arr
   if {[file dirname $ofile] != "."} {
     file mkdir [file dirname $ofile]
