@@ -8,5 +8,5 @@ set dirname [clock format [clock seconds] -format {%Y-%m-%d_%H-%M_%S}]
 
 file mkdir $dirname
 godel_draw $dirname
-lsetvar $dirname g:title $dirname
+lsetvar $dirname g:title ""
 
