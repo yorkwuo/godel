@@ -1,0 +1,46 @@
+#!/usr/bin/tclsh
+
+set trange [lindex $argv 0]
+
+if {$trange eq ""} {
+  puts "Usage:"
+  #puts "      fmod 0:0:10 -prefix rm"
+  puts "      fmod 1m -prefix rm"
+  return
+}
+
+if [regsub {d} $trange {} dd] {
+  set chkss [expr $dd*24*60*60]
+} elseif [regsub {h} $trange {} hh] {
+  set chkss [expr $hh*60*60]
+} elseif [regsub {m} $trange {} mm] {
+  set chkss [expr $mm*60]
+} elseif [regsub {s} $trange {} chkss] {
+}
+
+set files [glob *]
+
+set now [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]
+set now_ss [clock scan $now]
+
+foreach f $files {
+  #puts $f
+  set mtime [clock format [file mtime $f] -format "%Y-%m-%d %H:%M:%S"]
+  set mtime_ss [clock scan $mtime]
+
+  set tdiff [expr $now_ss - $mtime_ss]
+  if {$tdiff < $chkss} {
+    lappend lines [list $mtime $f]
+  }
+  #puts $tdiff
+}
+
+set lines [lsort -index 0 $lines]
+foreach line $lines {
+  set t [lindex $line 0]
+  set f [lindex $line 1]
+  puts "$t $f"
+}
+
+
+

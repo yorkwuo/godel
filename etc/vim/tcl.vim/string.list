@@ -1,6 +1,21 @@
 -1801
-
+-nosensitive
+-lastmod
+-verilog
+-both
+-golden
+-revised
+-seq_constant
 -block_reference
+-nodff_to_dlat_zero
+-auto_modeling
+-duty_cycle
+-gated_clock
+-dictionary
+-cycle
+
+
+
 
 -above
 -active

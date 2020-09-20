@@ -1,3 +1,39 @@
+# ghtm_js_input
+# {{{
+# Ex: ghtm_js_input add.js Add
+proc ghtm_js_input {jscmd bname} {
+  upvar fout    fout
+  upvar inputid inputid
+  upvar bid     bid
+
+  if ![info exist inputid] { set inputid 0 } else { incr inputid }
+  if ![info exist bid]     { set bid     0 } else { incr bid     }
+
+  puts $fout "<div>"
+  puts $fout "<input type=text id=inputid$inputid>"
+  puts $fout "<button id=bid$bid>$bname</button>"
+  puts $fout "<script src=$jscmd></script>"
+  puts $fout "</div>"
+}
+# }}}
+
+proc ghtm_newnote {} {
+  upvar fout fout
+  set kout [open .godel/newnote.gtcl w]
+
+  puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
+  puts $kout "set pagepath \[file dirname \[info script]]"
+  puts $kout "cd \$pagepath/.."
+  puts $kout ""
+  puts $kout "exec newnote"
+  puts $kout ""
+  puts $kout "godel_draw"
+  puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
+
+  close $kout
+
+  puts $fout "<a href=.godel/newnote.gtcl type=text/gtcl>newnote</a>"
+}
 proc ghtm_filter_ls {} {
   upvar fout fout
   puts $fout "<div class=\"w3-panel w3-pale-blue w3-leftbar w3-border-blue\">" 
@@ -317,9 +353,24 @@ proc ghtm_ls {pattern {description ""}} {
   upvar fout fout
 
   #puts $fout "<div><h5>Filelist$description<a href=[tbox_cygpath $env(GODEL_ROOT)/plugin/sys/ghtm_list_files.tcl] type=text/txt>(script)</a></h5></div>"
+  set flist [lsort [glob -nocomplain -type d $pattern]]
+  puts $fout <p>
+  #puts $fout [pwd]/$pattern
+  set count 1
+  foreach full $flist {
+    set fname [file tail $full]
+    set mtime [file mtime $full]
+    set timestamp [clock format $mtime -format {%Y-%m-%d %H:%M}]
+    set fsize [file size $full]
+    set fsize [num_symbol $fsize M]
+    puts $fout [format "<div class=ghtmls><pre style=background-color:lightblue>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+    incr count
+  }
+  puts $fout </p>
+
   set flist [lsort [glob -nocomplain -type f $pattern]]
   puts $fout <p>
-  puts $fout [pwd]/$pattern
+  #puts $fout [pwd]/$pattern
   set count 1
   foreach full $flist {
     set fname [file tail $full]
@@ -437,20 +488,30 @@ proc ghtm_top_bar {args} {
     set dyvars(last_updated) Now
   }
 
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M}]
 # default flow_name
   #if ![info exist flow_name] {
   #  set flow_name default
   #}
 
   set cwd [pwd]
-  file mkdir .godel/js
   #file copy -force $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
-  exec cp $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
+  #exec cp $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
   #file copy -force $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
-  exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
+  #exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
 
-  puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
-  puts $fout "<script src=.godel/js/godel.js></script>"
+  #puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
+  #puts $fout "<script src=.godel/js/godel.js></script>"
+  if {$env(GODEL_ALONE)} {
+    file mkdir .godel/js
+    exec cp $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
+    exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
+    puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
+    puts $fout "<script src=.godel/js/godel.js></script>"
+  } else {
+    puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
+    puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
+  }
   #puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/godel.js]></script>"
   #puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js]></script>"
   #puts $fout "<script src=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/prism/prism.js]></script>"
@@ -460,7 +521,7 @@ proc ghtm_top_bar {args} {
   puts $fout "<li><a href=.godel/vars.tcl type=text/txt>Value</a></li>"
   if {$opt(-save)} {
     if {$saveid eq ""} {set saveid "save"}
-  puts $fout "<li><button id=\"$saveid\">Save</button></li>"
+  puts $fout "<li><button id=\"$saveid\" style=\"margin: 10px 6px\">Save</button></li>"
   }
   if {$opt(-filter)} {
   puts $fout "<li><input type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\"></li>"
@@ -470,6 +531,7 @@ proc ghtm_top_bar {args} {
   #puts $fout "<li style=float:right><a href=.main.htm>TOC</a></li>"
   puts $fout "<li style=float:right><a href=.godel/open.gtcl type=text/gtcl>Open</a></li>"
   puts $fout "<li style=float:right><a href=.index.htm type=text/txt>HTML</a></li>"
+  puts $fout "<li style=float:right><a>$timestamp</a></li>"
   puts $fout "</ul>"
   puts $fout "<br>"
 #  puts $fout "<div class=\"w3-bar w3-border w3-indigo w3-medium\">"
@@ -499,7 +561,7 @@ proc ghtm_top_bar {args} {
 #  puts $fout "  </div>"
 #  puts $fout "</div>"
   
-#  puts $fout "  <div class=\"w3-bar-item w3-button w3-hover-red w3-right\">$dyvars(last_updated)</div>"
+  #puts $fout "  <div class=\"w3-bar-item w3-button w3-hover-red w3-right\">$timestamp</div>"
 
 #  puts $fout "</div>"
 
@@ -1305,6 +1367,24 @@ proc lchart_line {args} {
 
 }
 # }}}
+# lapvar
+# {{{
+proc lapvar {name key value} {
+  regsub {\/$} $name {} name
+
+  set varfile $name/.godel/vars.tcl
+
+  if [file exist $varfile] {
+ #   puts $varfile
+    source $varfile
+    lappend vars($key) $value
+  } else {
+    puts "Error: not exist... $varfile"
+  }
+
+  godel_array_save vars $varfile
+}
+# }}}
 # lsetvar
 # {{{
 proc lsetvar {name key value} {
@@ -1316,11 +1396,11 @@ proc lsetvar {name key value} {
  #   puts $varfile
     source $varfile
     set vars($key) $value
+    godel_array_save vars $varfile
   } else {
     puts "Error: not exist... $varfile"
   }
 
-  godel_array_save vars $varfile
 }
 # }}}
 # lsetdyvar
@@ -1409,6 +1489,7 @@ proc lvars {args} {
 # {{{
 proc local_table {name args} {
   global fout
+  upvar vars vars
 
   # -f (filelist name)
 # {{{
@@ -1584,7 +1665,7 @@ proc local_table {name args} {
     puts $fout "<th>v</th>"
   }
   if {$opt(-serial)} {
-    puts $fout "<th>serial</th>"
+    puts $fout "<th>Num</th>"
   }
   foreach col $columns {
     set colname ""
@@ -3730,7 +3811,11 @@ proc godel_draw {{target_path NA}} {
   puts $fout "<!DOCTYPE html>"
   puts $fout "<html>"
   puts $fout "<head>"
-  puts $fout "<title>$vars(g:pagename)</title>"
+  if [info exist vars(g:title)] {
+    puts $fout "<title>$vars(g:title)</title>"
+  } else {
+    puts $fout "<title>$vars(g:pagename)</title>"
+  }
 
 # Hardcoded w3.css in .index.htm so that you have all in one file.
 # {{{
@@ -3742,11 +3827,19 @@ proc godel_draw {{target_path NA}} {
 #  close $fin
 #  puts $fout "</style>"
 ## }}}
+
+  if {$env(GODEL_ALONE)} {
 # Standalone w3.css
 # {{{
-  exec cp $env(GODEL_ROOT)/etc/css/w3.css .godel/w3.css
-  puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
+    exec cp $env(GODEL_ROOT)/etc/css/w3.css .godel/w3.css
+    puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
 # }}}
+  } else {
+# Link to Godel's central w3.css
+# {{{
+    puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
+# }}}
+  }
 
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
@@ -3787,6 +3880,10 @@ proc godel_draw {{target_path NA}} {
   set dyvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
 # }}}
 
+  set kout [open .godel/dyvars.tcl w]
+  close $kout
+  set kout [open .godel/vars.tcl w]
+  close $kout
   godel_array_save dyvars .godel/dyvars.tcl
   godel_array_save vars   .godel/vars.tcl
 
@@ -4105,8 +4202,9 @@ proc gget {pagename args} {
   if ![info exist meta] {
     foreach i $env(GODEL_META_SCOPE) { mload $i }
   }
+  
   if [file exist $pagename] {
-    set meta($pagename,where) $pagename
+    set meta($pagename,where) [pwd]/$pagename
   }
   # -o (open)
 # {{{
@@ -4460,6 +4558,11 @@ proc godel_puts {key} {
 # {{{
 proc godel_array_save {aname ofile} {
   upvar $aname arr
+
+  if ![file exist $ofile] {
+    puts "Error: godel_array_save error... $ofile not exist."
+    return
+  }
   #parray arr
   if {[file dirname $ofile] != "."} {
     file mkdir [file dirname $ofile]

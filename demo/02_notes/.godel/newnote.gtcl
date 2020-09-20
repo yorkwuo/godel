@@ -1,0 +1,8 @@
+source $env(GODEL_ROOT)/bin/godel.tcl
+set pagepath [file dirname [info script]]
+cd $pagepath/..
+
+exec newnote
+
+godel_draw
+exec xdotool search --name "Mozilla" key ctrl+r

@@ -1,0 +1,9 @@
+source $env(GODEL_ROOT)/bin/godel.tcl
+set pagepath [file dirname [file dirname [info script]]]
+cd $pagepath
+if [file exist $env(GODEL_DOWNLOAD)/gtcl.tcl] {
+  source      $env(GODEL_DOWNLOAD)/gtcl.tcl
+  file delete $env(GODEL_DOWNLOAD)/gtcl.tcl
+}
+godel_draw
+exec xdotool search --name "Mozilla" key ctrl+r
