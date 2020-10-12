@@ -1,3 +1,11 @@
+
+proc list_svg {fname} {
+  upvar fout fout
+
+  puts $fout "<a href=$fname type=text/svg>$fname</a><br>"
+  puts $fout "<img src=$fname>"
+}
+
 # ghtm_js_input
 # {{{
 # Ex: ghtm_js_input add.js Add
@@ -1775,6 +1783,7 @@ proc local_table {name args} {
           append celltxt "<td>$aftermd</td>"
         } else {
           set kout [open $fname w]
+          puts $fname " "
           close $kout
         }
       # edtable:
@@ -1999,7 +2008,7 @@ proc gdraw_default {} {
     puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
     puts $kout "cd \$pagepath"
     #puts $kout "exec nautilus . &"
-    puts $kout "exec xterm &"
+    puts $kout "exec xterm -T xterm.\[pwd] &"
 
   close $kout
 }
@@ -2795,7 +2804,8 @@ proc csv_table {args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-delim) 1
   } else {
-    set delim {,}
+    #set delim {,}
+    set delim {:}
   }
 # }}}
   # -procs (proc to execute)
@@ -3293,107 +3303,6 @@ proc money_convert {from to fromvalue} {
   return $tovalue
 }
 # }}}
-# read_timing_rpt_file
-# {{{
-proc read_timing_rpt_file {fname} {
-# Read file in to line list
-  upvar vars vars
-
-  set fin [open $fname r]
-    set data [read $fin]
-    set lines [split $data \n]
-  close $fin
-
-# Extract information from star(*) header
-# We need below information to know how many lines to suck-in in each foreach
-# -inputs_pins
-# -nets
-  set lstar1 [lgrep_index $lines {\*\*} 0]
-  set lstar2 [lgrep_index $lines {\*\*} [expr $lstar1 + 1]]
-  set topheader [lrange $lines $lstar1 $lstar2]
-# -inputs_pins
-  if {[lsearch -regexp $topheader -input_pins] >= 0} {
-    set vars(-input_pins) 1
-  } else {
-    set vars(-input_pins) 0
-  }
-# -nets
-  if {[lsearch -regexp $topheader -nets] >= 0} {
-    set vars(-nets) 1
-  } else {
-    set vars(-nets) 0
-  }
-
-# extract timing paths from $lines and store in $apaths
-  set next_search_lineno 0
-  while {$next_search_lineno >= 0} {
-    set apath_pack [extract_a_timing_path $lines $next_search_lineno "Startpoint:" "^  slack"]
-
-    set next_search_lineno [lindex $apath_pack 0]
-    if {$next_search_lineno == "-1"} {
-      break
-    }
-    lappend apaths  [lindex $apath_pack 1]
-  }
-  return $apaths
-}
-# }}}
-#@=extract_a_timing_path
-# {{{
-proc extract_a_timing_path {lines start_index path_begin_keyword path_end_keyword} {
-# User lrange to extract a path
-# lines: full timing path lines
-# start_index: search start from $start_index
-# Path begin with keyword: $path_begin_keyword
-# Path end   with keyword: $path_end_keyword
-# Return a list contains [next_line_no, apath]
-  # line startpoint
-  set lstartpoint [lgrep_index $lines {Startpoint:} $start_index]
-  # line slack
-  set lslack      [lgrep_index $lines {^  slack}    [expr $lstartpoint + 1]]
-  if {$lstartpoint == "-1" || $lslack == "-1"} {
-    return [list "-1" "-1"]
-  } else {
-    set apath       [lrange $lines $lstartpoint $lslack]
-    return [list [expr $lslack + 1] $apath]
-  }
-}
-# }}}
-# dict_set
-# {{{
-# instin
-# instout
-# cell
-# fanout
-# net_cap
-# in_tran
-# out_tran
-# cell_delay
-proc dict_set {} {
-  upvar dd dd
-  upvar instin     instin     
-  upvar instout    instout    
-  upvar cell       cell       
-  upvar fanout     fanout     
-  upvar net_cap    net_cap    
-  upvar in_tran    in_tran    
-  upvar out_tran   out_tran   
-  upvar cell_delay cell_delay 
-  upvar net_derate net_derate
-  upvar cell_derate cell_derate
-
-  dict set dd instin      $instin    
-  dict set dd instout     $instout   
-  dict set dd cell        $cell      
-  dict set dd fanout      $fanout    
-  dict set dd net_cap     $net_cap   
-  dict set dd in_tran     $in_tran   
-  dict set dd out_tran    $out_tran  
-  dict set dd cell_delay  $cell_delay
-  dict set dd cell_derate $cell_derate
-  dict set dd net_derate  $net_derate
-}
-# }}}
 # lpush
 # {{{
 proc lpush {stack value} {
@@ -3582,6 +3491,8 @@ proc format_3digit {num {sep ,}} {
 proc lgrep_index {ilist pattern {start_index 0}} {
   set size [llength $ilist]
   #puts $start_index
+  regsub -all {\[} $pattern {\\[} pattern
+  regsub -all {\]} $pattern {\\]} pattern
 
   for {set i $start_index} {$i <= $size} {incr i} {
     set line [lindex $ilist $i]
@@ -3798,7 +3709,7 @@ proc godel_draw {{target_path NA}} {
     puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
     puts $kout "cd \$pagepath"
     #puts $kout "exec nautilus . &"
-    puts $kout "exec xterm &"
+    puts $kout "exec xterm -T xterm.\[pwd] &"
 
   close $kout
 
@@ -4639,12 +4550,25 @@ proc godel_get_column {line num} {
 # }}}
 #: plist
 # {{{
-proc plist {ll} {
-  #foreach i $ll {
-  #  puts $i
-  #}
-  foreach i [lsort $ll] {
-    puts $i
+proc plist {args} {
+  # -s (sort)
+# {{{
+  set opt(-s) 0
+  set idx [lsearch $args {-s}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-s) 1
+  }
+# }}}
+  set ll [lindex $args 0]
+  if {$opt(-s)} {
+    foreach i [lsort $ll] {
+      puts $i
+    }
+  } else {
+    foreach i $ll {
+      puts $i
+    }
   }
 }
 # }}}
