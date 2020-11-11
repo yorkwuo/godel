@@ -1619,6 +1619,15 @@ proc local_table {name args} {
     set opt(-save) 1
   }
 # }}}
+  # -revert
+# {{{
+  set opt(-revert) 0
+  set idx [lsearch $args {-revert}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-revert) 1
+  }
+# }}}
 
   # create rows
   # {{{
@@ -1641,7 +1650,11 @@ proc local_table {name args} {
       return
     }
   } else {
-    set flist [lsort [glob -nocomplain */.godel]]
+    if {$opt(-revert)} {
+      set flist [lsort -decreasing [glob -nocomplain */.godel]]
+    } else {
+      set flist [lsort [glob -nocomplain */.godel]]
+    }
     foreach f $flist {
       lappend rows [file dirname $f]
     }
@@ -4105,7 +4118,51 @@ proc todo_list {args} {
 
 } ;# todo_list end
 # }}}
-#@>gget
+# fget: flow get
+# {{{
+proc fget {pagename {flowname ""} {localname ""}} {
+  global env
+  upvar meta meta
+  if ![info exist meta] {
+    foreach i $env(GODEL_META_SCOPE) { mload $i }
+  }
+  
+  if [file exist $pagename] {
+    set meta($pagename,where) [pwd]/$pagename
+  }
+
+  foreach i $env(GODEL_META_SCOPE) { mload $i }
+  if {$pagename == "."} {
+    set meta(.,where) .
+  }
+  source $meta($pagename,where)/.godel/vars.tcl
+  set where $meta($pagename,where)
+
+  if [file exist $meta($pagename,where)/.godel/proc.tcl] {
+    source $meta($pagename,where)/.godel/proc.tcl
+  }
+  if {$flowname == ""} {
+    help
+  } else {
+    if {$localname eq ""} {
+      if [file exist $flowname] {
+        puts "Skip: Dir already exist... $flowname"
+      } else {
+        puts "cp -r $where/$flowname ."
+        exec cp -r $where/$flowname .
+      }
+    } else {
+      if [file exist $localname] {
+        puts "Skip: Dir already exist... $localname"
+      } else {
+        puts "cp -r $where/$flowname $localname"
+        exec cp -r $where/$flowname $localname
+      }
+    }
+  }
+}
+# }}}
+# gget
 # {{{
 proc gget {pagename args} {
   global env

@@ -1,4 +1,26 @@
 -1801
+-user_specified_buffers
+-coefficient
+-reroute
+-pocvm_coefficient
+-legalize_mode
+-dynamic
+-min_dynamic
+
+-use_technology_lib
+-no_legalize
+-eco_changed_cells
+-pocvm_coefficient_scale_factor
+-legalize_only
+timing_pocvm_corner_sigma
+pocv_coefficient_file_name
+
+-pocvm_guardband
+pocv_distance_based_derating_file_name
+
+-utilize_dangling_wires
+pba_derate_only_mode
+timing_pocvm_enable_analysis
 -nosensitive
 -lastmod
 -verilog
@@ -13,9 +35,12 @@
 -gated_clock
 -dictionary
 -cycle
+-timing_arcs
 
+-power_arcs
 
-
+-analyze_only
+-rc_congestion_ignored_layers
 
 -above
 -active

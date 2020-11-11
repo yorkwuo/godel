@@ -1,5 +1,20 @@
 P_source_if_exists
 set_clock_jitter
+
+
+add_buffer_on_route
+
+
+
+
+
+report_crpr
+
+set_max_library
+
+report_lib
+set_min_library
+
 compare
 add
 
@@ -21,8 +36,16 @@ all_modes
 all_outputs
 all_register
 all_registers
+set_clock_balance_points
+place_eco_cells
+remove_cut_metals
+check_lvs
+create_clock_skew_group
+check_routes
 
+route_eco
 
+set_clock_routing_rule
 remove_clock_jitter
 all_scenarios
 analyze
