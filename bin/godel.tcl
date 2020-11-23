@@ -534,8 +534,8 @@ proc ghtm_top_bar {args} {
   if {$opt(-filter)} {
   puts $fout "<li><input type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\"></li>"
   }
-  puts $fout "<li><a href=.godel/draw.gtcl type=text/gtcl>Draw</a></li>"
   puts $fout "<li><a href=../.index.htm>Parent</a></li>"
+  puts $fout "<li><a href=.godel/draw.gtcl type=text/gtcl>Draw</a></li>"
   #puts $fout "<li style=float:right><a href=.main.htm>TOC</a></li>"
   puts $fout "<li style=float:right><a href=.godel/open.gtcl type=text/gtcl>Open</a></li>"
   puts $fout "<li style=float:right><a href=.index.htm type=text/txt>HTML</a></li>"
