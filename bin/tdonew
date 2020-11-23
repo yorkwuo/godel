@@ -1,3 +1,0 @@
-#!/usr/bin/tclsh
-source $env(GODEL_ROOT)/bin/godel.tcl
-gget todo todo_create {*}$argv

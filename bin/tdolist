@@ -1,4 +1,0 @@
-#!/usr/bin/tclsh
-source $env(GODEL_ROOT)/bin/godel.tcl
-cd [file dirname [tbox_cyg2unix [gpage_where todo]]]
-gget todo todo_list {*}$argv

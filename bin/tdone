@@ -1,9 +1,0 @@
-#!/usr/bin/tclsh
-source $env(GODEL_ROOT)/bin/godel.tcl
-cd [file dirname [tbox_cyg2unix [gpage_where todo]]]
-foreach i $argv {
-  gset -l $i done 1
-  set now [time_now]
-  gset -l $i done,time $now
-}
-
