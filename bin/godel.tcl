@@ -3,7 +3,10 @@ proc list_svg {fname} {
   upvar fout fout
 
   puts $fout "<a href=$fname type=text/svg>$fname</a><br>"
-  puts $fout "<img src=$fname><br>"
+  set kin [open $fname r]
+  set content [read $kin]
+  puts $fout $content
+  close $kin
 }
 
 # ghtm_js_input
