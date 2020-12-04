@@ -1799,8 +1799,9 @@ proc local_table {name args} {
           append celltxt "<td>$aftermd</td>"
         } else {
           set kout [open $fname w]
-          puts $fname " "
+          puts $kout " "
           close $kout
+          append celltxt "<td> </td>"
         }
       # edtable:
       } elseif [regexp {edtable:} $col] {
@@ -2796,9 +2797,13 @@ proc gmd_file {afile} {
   #set oridir [pwd]
   #cd [file dirname $afile]
   #puts [pwd]
-  set kin [open $afile r]
-    set ftxt [read $kin]
-  close $kin
+  if [file exist $afile] {
+    set kin [open $afile r]
+      set ftxt [read $kin]
+    close $kin
+  } else {
+    puts "Error in gmd_file: not exist... $afile"
+  }
 
   #cd $oridir
   #puts $ftxt
