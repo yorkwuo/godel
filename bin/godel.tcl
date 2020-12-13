@@ -1,4 +1,36 @@
+# gexe_button
+# {{{
+proc gexe_button {args} {
+  upvar fout fout
+  # -nowin
+# {{{
+  set opt(-nowin) 0
+  set idx [lsearch $args {-nowin}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-nowin) 1
+  }
+# }}}
 
+  set exefile [lindex $args 0]
+  if [file exist $exefile] {
+    puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-teal\" type=text/gtcl>$exefile</a><a class=\"w3-button w3-black\" href=$exefile type=text/txt>cmd</a>"
+    set kout [open ".$exefile.gtcl" w]
+      puts $kout "set pagepath \[file dirname \[info script]]"
+      puts $kout "cd \$pagepath"
+      if {$opt(-nowin)} {
+        puts $kout "exec ./$exefile"
+      } else {
+        puts $kout "exec xterm -e \"./$exefile;sleep 2\""
+      }
+    close $kout
+  } else {
+    puts "Error: gexe_button: file not exist... $exefile"
+  }
+}
+# }}}
+# list_svg
+# {{{
 proc list_svg {fname} {
   upvar fout fout
 
@@ -8,7 +40,7 @@ proc list_svg {fname} {
   puts $fout $content
   close $kin
 }
-
+# }}}
 # ghtm_js_input
 # {{{
 # Ex: ghtm_js_input add.js Add
@@ -27,7 +59,8 @@ proc ghtm_js_input {jscmd bname} {
   puts $fout "</div>"
 }
 # }}}
-
+# ghtm_newnote
+# {{{
 proc ghtm_newnote {} {
   upvar fout fout
   set kout [open .godel/newnote.gtcl w]
@@ -45,12 +78,16 @@ proc ghtm_newnote {} {
 
   puts $fout "<a href=.godel/newnote.gtcl type=text/gtcl>newnote</a>"
 }
+# }}}
+# ghtm_filter_ls
+# {{{
 proc ghtm_filter_ls {} {
   upvar fout fout
   puts $fout "<div class=\"w3-panel w3-pale-blue w3-leftbar w3-border-blue\">" 
   puts $fout "<input type=text id=filter_input onKeyPress=filter_ghtmls(event) placeholder=\"Search...\">"
   puts $fout "</div>" 
 }
+# }}}
 # gwin
 # {{{
 proc gwin {size} {
@@ -3017,7 +3054,8 @@ proc list_img {{N 4} {size 100%} {pattern "*.JPG *.PNG *.jpg *.png *.gif *.GIF"}
     foreach p $partition {
       set num [expr 12/$N]
       puts $fout "<div class=\"w3-col m$num\">"
-      puts $fout "<a href=\"$p\"><img src=\"$p\" style=width:$size><p style=font-size:10px>$p</p></a>"
+      #puts $fout "<a href=\"$p\"><img src=\"$p\" style=width:$size><p style=font-size:10px>$p</p></a>"
+      puts $fout "<a href=\"$p\"><img src=\"$p\"></a>"
       puts $fout {</div>}
     }
     puts $fout "</div>"
