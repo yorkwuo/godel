@@ -14,7 +14,7 @@ proc gexe_button {args} {
 
   set exefile [lindex $args 0]
   if [file exist $exefile] {
-    puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-teal\" type=text/gtcl>$exefile</a><a class=\"w3-button w3-black\" href=$exefile type=text/txt>cmd</a>"
+    puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-teal\" type=text/gtcl>$exefile</a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
     set kout [open ".$exefile.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
       puts $kout "cd \$pagepath"
@@ -1802,7 +1802,18 @@ proc local_table {name args} {
       # img:
       if [regexp {img:} $col] {
         regsub {img:} $col {} col
-        append celltxt "<td><a href=$row/images/cover.jpg><img height=100px src=$row/images/cover.jpg></a></td>"
+        set coverfile [glob -nocomplain $row/cover.*]
+        if {$coverfile eq ""} {
+          set coverfile "cover.jpg"
+        }
+        append celltxt "<td><a href=$coverfile><img height=100px src=$coverfile></a></td>"
+      # exe_button:
+      } elseif [regexp {exe_button:} $col] {
+        regsub {exe_button:} $col {} col
+        set execmd [lvars $row execmd]
+        #append celltxt "<td><a href=$coverfile><img height=100px src=$coverfile></a></td>"
+        append celltxt "<td><a href=$row/.$execmd.gtcl class=\"w3-btn w3-teal\" type=text/gtcl>$execmd</a><a class=\"w3-button w3-lime\" href=$row/$execmd type=text/txt>cmd</a></td>"
+
       # proc:
       } elseif [regexp {proc:} $col] {
         regsub {proc:} $col {} col
