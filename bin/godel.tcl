@@ -902,6 +902,9 @@ proc dirdu {{pattern *}} {
 # gwaive
 # {{{
 proc gwaive {args} {
+  if [file exist .godel/vars.tcl] {
+    source .godel/vars.tcl
+  }
   # -w (waive file)
 # {{{
   set opt(-w) 0
@@ -914,8 +917,24 @@ proc gwaive {args} {
     set waivefile NA
   }
 # }}}
+  # -key (keyname)
+# {{{
+  set opt(-key) 0
+  set idx [lsearch $args {-key}]
+  if {$idx != "-1"} {
+    set keyname [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-key) 1
+    set vars($keyname,pre_waive)  0
+    set vars($keyname,post_waive) 0
+    set vars($keyname,waived)      0
+  } else {
+    set keyname NA
+  }
+# }}}
 
-  set fname $args
+
+  set fname [lindex $args 0]
 
 # Load waiver
   set waivers {}
@@ -925,7 +944,7 @@ proc gwaive {args} {
     if [file exist $fname.waive] {
       set kin [open $fname.waive r]
     } else {
-      puts "Error: not exist $fname.waive"
+      puts "Error: not exist $fname.waiver"
       return
     }
   }
@@ -938,9 +957,12 @@ proc gwaive {args} {
   }
   close $kin
 
+  set waived [open "$fname.waived" w]
+  set kout   [open "$fname.pw" w]
 # Apply waiver
   set kin [open $fname r]
     while {[gets $kin line] >= 0} {
+      incr vars($keyname,pre_waive)
 
       set flag_waive 0
       foreach waiver $waivers {
@@ -952,14 +974,23 @@ proc gwaive {args} {
 
       if {$flag_waive} {
         incr arr($waiver)
+        incr vars($keyname,waived)
+        puts $waived $line
       } else {
-        puts $line
+        incr vars($keyname,post_waive)
+        puts $kout $line
       }
     }
   close $kin
+  close $kout
+  close $waived
+
+  if {$opt(-key)} {
+    godel_array_save vars .godel/vars.tcl
+  }
 
 # Summary
-  parray arr
+  #parray arr
 }
 # }}}
 # ghtm_filter_table
@@ -2050,7 +2081,8 @@ proc gdraw_default {} {
     puts $kout "#lappend cols g:pagename"
     puts $kout "#lappend cols edtable:g:keywords"
     puts $kout "#local_table tbl -c \$cols"
-    puts $kout "ghtm_list_files *"
+    puts $kout "ghtm_ls *"
+    #puts $kout "ghtm_list_files *"
     #puts $kout "#ghtm_filter_notes"
     puts $kout "gnotes {"
     puts $kout ""
