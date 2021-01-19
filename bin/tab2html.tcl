@@ -9,6 +9,8 @@ ghtm_begin $tabfile.html
 
 set kin [open $tabfile r]
 
+set linkfile [file tail $tabfile]
+puts $fout "<a href=$linkfile.html type=text/txt>$linkfile.html</a><br>"
 puts $fout "<table class=table1>"
 
 while {[gets $kin line] > 0} {

@@ -417,16 +417,28 @@ proc ghtm_ls {pattern {description ""}} {
   puts $fout </p>
 
   set flist [lsort [glob -nocomplain -type f $pattern]]
-  puts $fout <p>
-  #puts $fout [pwd]/$pattern
-  set count 1
+  set flist2 ""
   foreach full $flist {
-    set fname [file tail $full]
     set mtime [file mtime $full]
+    lappend flist2 "$mtime $full"
+  }
+  set sortedlist [lsort -index 0 -decreasing $flist2 ]
+
+  puts $fout <p>
+
+  set count 1
+  foreach i $sortedlist {
+    set full [lindex $i 1]
+    set mtime [file mtime $full]
+    set fname [file tail $full]
     set timestamp [clock format $mtime -format {%Y-%m-%d %H:%M}]
     set fsize [file size $full]
     set fsize [num_symbol $fsize M]
-    puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
+    if [regexp {\.htm} $full] {
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+    } else {
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
+    }
     incr count
   }
   puts $fout </p>
@@ -966,6 +978,10 @@ proc gwaive {args} {
 
       set flag_waive 0
       foreach waiver $waivers {
+        regsub -all {\[} $waiver {\\[} waiver
+        regsub -all {\]} $waiver {\\]} waiver
+        regsub -all {\/} $waiver {\\/} waiver
+        #puts $waiver
         if [regexp $waiver $line] {
           set flag_waive 1
           break
