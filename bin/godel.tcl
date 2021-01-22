@@ -981,7 +981,6 @@ proc gwaive {args} {
         regsub -all {\[} $waiver {\\[} waiver
         regsub -all {\]} $waiver {\\]} waiver
         regsub -all {\/} $waiver {\\/} waiver
-        #puts $waiver
         if [regexp $waiver $line] {
           set flag_waive 1
           break
