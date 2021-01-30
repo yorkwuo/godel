@@ -14,6 +14,7 @@ proc gexe_button {args} {
 
   set exefile [lindex $args 0]
   if [file exist $exefile] {
+    exec chmod +x $exefile
     puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-teal\" type=text/gtcl>$exefile</a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
     set kout [open ".$exefile.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
@@ -262,7 +263,7 @@ proc fdiff {} {
       if {$result > 0} {
         puts "\033\[0;92m# $f\033\[0m"
         puts [lindex $result 0]
-        puts "tkdiff $f $srcpath/$f"
+        puts "tkdiff $f $srcpath/$f &"
         puts "cp     $f $srcpath/$f"
         puts "cp     $srcpath/$f $f"
       }
