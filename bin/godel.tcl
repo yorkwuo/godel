@@ -421,7 +421,7 @@ proc ghtm_ls {pattern {description ""}} {
   set flist2 ""
   foreach full $flist {
     set mtime [file mtime $full]
-    lappend flist2 "$mtime $full"
+    lappend flist2 [list $mtime $full]
   }
   set sortedlist [lsort -index 0 -decreasing $flist2 ]
 
@@ -437,6 +437,8 @@ proc ghtm_ls {pattern {description ""}} {
     set fsize [num_symbol $fsize M]
     if [regexp {\.htm} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+    } elseif [regexp {\.mp4} $full] {
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp4>$fname</a><br></div>"]
     } else {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
     }
