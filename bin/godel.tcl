@@ -35,7 +35,13 @@ proc gexe_button {args} {
 proc list_svg {fname} {
   upvar fout fout
 
-  puts $fout "<a href=$fname type=text/svg>$fname</a><br>"
+  if ![file exist $fname] {
+    set kout [open $fname w]
+      puts $kout "<svg>"
+      puts $kout "</svg>"
+    close $kout
+  }
+  puts $fout "<br><a href=$fname type=text/svg>$fname</a><br>"
   set kin [open $fname r]
   set content [read $kin]
   puts $fout $content
@@ -3059,9 +3065,10 @@ proc gnotes {args} {
 # Tidy iname likes `richard_dawkins</p>'
     regsub {<\/p>} $iname {} iname
 
-    set addr [gpage_where $iname]
-    set pagename [gvars $iname g:pagename]
-    set atxt "<a class=hbox2 href=$addr>$pagename</a>"
+    #set addr [gpage_where $iname]
+    set pagename [lvars $iname g:pagename]
+    puts "lvars $iname g:pagename"
+    set atxt "<a class=hbox2 href=$iname/.index.htm>$pagename</a>"
     regsub -all "@!$iname" $aftermd $atxt aftermd
   }
 # }}}
