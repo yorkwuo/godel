@@ -1,5 +1,5 @@
 setenv GODEL_ROOT           /path/to/godel
-setenv GODEL_PLUGIN         $dir/plugin
+setenv GODEL_PLUGIN         $GODEL_ROOT/plugin
 #setenv GODEL_USER_PLUGIN    $dir/plugin
 
 setenv GODEL_CENTER         $HOME/data/CENTER
