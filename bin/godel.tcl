@@ -1,3 +1,58 @@
+# glize
+# {{{
+proc glize {args} {
+  # -l (level)
+# {{{
+  set opt(-l) 0
+  set idx [lsearch $args {-l}]
+  if {$idx != "-1"} {
+    set level [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-l) 1
+  } else {
+    set level NA
+  }
+# }}}
+  # -r (recursive)
+# {{{
+  set opt(-r) 0
+  set idx [lsearch $args {-r}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-r) 1
+  }
+# }}}
+  # -gd (godelize)
+# {{{
+  set opt(-gd) 0
+  set idx [lsearch $args {-gd}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-gd) 1
+  }
+# }}}
+  
+  if {$opt(-r)} {
+    catch {exec tree -f -i -d} result
+  } elseif ($opt(-l)) {
+    puts $level
+    catch {exec tree -f -i -d -L $level} result
+  }
+
+  set lines [split $result \n]
+  foreach line $lines {
+    if [regexp " directories" $line] {
+    } elseif [regexp {^$} $line] {
+    } elseif [regexp {^\.$} $line] {
+    } else {
+      puts $line
+      if {$opt(-gd)} {
+        godel_draw $line
+      }
+    }
+  }
+}
+# }}}
 # gexe_button
 # {{{
 proc gexe_button {args} {
