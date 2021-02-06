@@ -1,5 +1,4 @@
-set dir = `pwd`
-setenv GODEL_ROOT           $dir
+setenv GODEL_ROOT           /path/to/godel
 setenv GODEL_PLUGIN         $dir/plugin
 #setenv GODEL_USER_PLUGIN    $dir/plugin
 
