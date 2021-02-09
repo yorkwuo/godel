@@ -1,9 +1,12 @@
 #!/bin/csh -f
 setenv LC_CTYPE zh_TW.UTF-8
 setenv LANG zh_TW.UTF-8
-setenv PROJ_NAME none
-setenv PROJ_ROOT `pwd`
-set prompt="%{\033[1;33m%}[$PROJ_NAME]:[%c4]%%%{\033[0m%} "
+#setenv PROJ_NAME none
+#setenv PROJ_ROOT `pwd`
+#set prompt="%{\033[1;33m%}[$PROJ_NAME]:[%c4]%%%{\033[0m%} "
+set prompt=" \
+%{\033[1;33m%}[%~] \
+%%%{\033[0m%} "
 setenv MANPATH /usr/share/man:/usr/man:/usr/local/share/man:/usr/local/man:/usr/X11R6/man
 setenv MANPATH $HOME/usr/local/man:$MANPATH
 
@@ -65,7 +68,11 @@ alias vi 'gvim -f \!* &'
 alias ls 'ls --color=auto'
 alias sc "source $HOME/.cshrc"
 alias myprocess 'ps -ef | grep $USER'
-alias setprompt 'set prompt="%{\033[1;33m%}[$PROJ_NAME]:[%c3]%%%{\033[0m%} "'  
+#alias setprompt 'set prompt="%{\033[1;33m%}[$PROJ_NAME]:[%c3]%%%{\033[0m%} "'  
+alias setprompt 'set prompt=" \\
+%{\033[1;33m%}[%~] \\
+%%%{\033[0m%} "'  
+
 alias cd 'cd \!*;setprompt;ls'
 alias la 'ls -hltr'
 alias ll 'ls -la'

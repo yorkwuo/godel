@@ -1,18 +1,24 @@
 -1801
+-ref_lib
+-rebind
 
 -module
 -liberty
 
-
+-buffering_aware_timing_driven
 
 -liberty
 
 -noelaborate
-
+-congestion
 -sensitive
-
+-timing_driven
 
 -nobboxempty
+-read_only
+-block_all
+-net_type
+-root_ndr_fanout_limit
 
 -undriven
 -detail
@@ -567,6 +573,7 @@ timing_pocvm_enable_analysis
 -scope
 -sdf
 -segment_parity
+-segments
 -selected
 -self
 -separate_all_groups
