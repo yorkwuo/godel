@@ -16,3 +16,13 @@ alias wf 'set wid=`xdotool search --name \!*`; xdotool windowactivate $wid'
 #alias wc 'set wid=`xdotool search --name \!*`; xdotool windowactivate --sync $wid ; xdotool key alt+F4'
 
 #alias get-winfo 'xwininfo -id `xdotool getactivewindow`'
+
+
+alias rmf 'rm -rf'
+alias less 'less -S'
+
+# Git
+alias git '/usr/intel/pkgs/git/2.17.0/bin/git'
+alias st  'git status'
+alias gitcm 'git commit -m n -a'
+
