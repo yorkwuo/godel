@@ -15,7 +15,7 @@ setenv LD_LIBRARY_PATH $HOME/usr/lib:/usr/local/lib:/usr/lib:$HOME/usr/local/lib
 setenv EDITOR /usr/bin/vim
 setenv PAGER less
 # Set directory color(di) to pink. Ref: dircolors
-setenv LS_COLORS "di=01;35:or=40;31;01:*.tdef=01;31:*.gz=01;31:*.rar=01;31:*.tcl=01;1" ;# Light blue background
+setenv LS_COLORS "di=01;35:or=40;31;01:*.tdef=01;31:*.gz=01;31:*.rar=01;31:*.tcl=01;1:ow=01;35"
 setenv LM_LICENSE_FILE
 setenv NO_AT_BRIDGE 1
 
