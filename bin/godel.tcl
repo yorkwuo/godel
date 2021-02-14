@@ -458,29 +458,43 @@ proc ghtm_keyword_button {tablename column keyword} {
 # }}}
 # ghtm_ls
 # {{{
-proc ghtm_ls {pattern {description ""}} {
+proc ghtm_ls {args} {
   upvar env env
   upvar fout fout
 
-  #puts $fout "<div><h5>Filelist$description<a href=[tbox_cygpath $env(GODEL_ROOT)/plugin/sys/ghtm_list_files.tcl] type=text/txt>(script)</a></h5></div>"
-  set flist [lsort [glob -nocomplain -type d $pattern]]
-  puts $fout <p>
-  #puts $fout [pwd]/$pattern
-  set count 1
-  foreach full $flist {
-    set fname [file tail $full]
-    set mtime [file mtime $full]
-    set timestamp [clock format $mtime -format {%Y-%m-%d %H:%M}]
-    set fsize [file size $full]
-    set fsize [num_symbol $fsize M]
-    puts $fout [format "<div class=ghtmls><pre style=background-color:lightblue>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
-    incr count
+  # -nodir
+# {{{
+  set opt(-nodir) 0
+  set idx [lsearch $args {-nodir}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-nodir) 1
   }
-  puts $fout </p>
+# }}}
+
+  set pattern [lindex $args 0]
+
+  if {!$opt(-nodir)} {
+    set flist [lsort [glob -nocomplain -type d $pattern]]
+    puts $fout <p>
+    #puts $fout [pwd]/$pattern
+    set count 1
+    foreach full $flist {
+      set fname [file tail $full]
+      set mtime [file mtime $full]
+      set timestamp [clock format $mtime -format {%Y-%m-%d %H:%M}]
+      set fsize [file size $full]
+      set fsize [num_symbol $fsize M]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:lightblue>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+      incr count
+    }
+    puts $fout </p>
+  }
 
   set flist [lsort [glob -nocomplain -type f $pattern]]
   set flist2 ""
   foreach full $flist {
+    if [regexp {\$} $full] {continue}
     set mtime [file mtime $full]
     lappend flist2 [list $mtime $full]
   }
@@ -2759,7 +2773,7 @@ proc pagelist {{sort_by by_updated}} {
   global env
   upvar fout fout
   #source $env(GODEL_META_CENTER)/meta.tcl
-  source $env(HOME)/meta.tcl
+  source $env(GODEL_META_FILE)
   source $env(GODEL_META_CENTER)/indexing.tcl
   array set vars [array get meta]
 # ilist = pagelist
