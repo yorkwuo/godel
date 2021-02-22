@@ -1,19 +1,15 @@
-
-font
-option
-wm
-
-focus
-
+set_hdl_option
+set_naming_rule
 set_ref_libs
 
 set_freeze_port
 create_abstract
-
+add_renaming_rule
 remove_buffer_trees
 
 report_modules
-
+add_ignore_outputs
+add_ignore_inputs
 set_temperature
 
 create_frame

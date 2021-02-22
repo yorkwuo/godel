@@ -90,15 +90,15 @@ font create mynewfont -family Clean -size 16
 #font create mynewfont -family Clean -size 10
 option add *font mynewfont
 
-frame .fr
-pack .fr
-
-button .fr.update -text "Update" -command {update}
-pack .fr.update -side left
-button .fr.down -text "Down" -command {down}
-pack .fr.down -side left
-button .fr.up -text "Up" -command {up}
-pack .fr.up -side left
+#frame .fr
+#pack .fr
+#
+#button .fr.update -text "Update" -command {update}
+#pack .fr.update -side left
+#button .fr.down -text "Down" -command {down}
+#pack .fr.down -side left
+#button .fr.up -text "Up" -command {up}
+#pack .fr.up -side left
 
 list_wins
 
@@ -106,5 +106,6 @@ list_wins
 #pack .bfr -pady 10
 
 bind . q exit
+bind . u update
 
 # vim:fdm=marker
