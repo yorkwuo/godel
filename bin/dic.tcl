@@ -188,6 +188,8 @@ proc add {} {
   global dicroot
   global filter
   global chinese
+  global  initlist
+  global  flist
   set root $dicroot
 
   if [file exist $root/$filter] {
@@ -201,16 +203,29 @@ proc add {} {
       lsetvar $dicroot/$filter chinese "$chinese"
   }
 
-  set qnfile $dicroot/$filter/.godel/.qn.md
-  #if [file exist $qnfile] {
-    set kout [open $qnfile w]
-    set txt [.fr.txt get 1.0 end]
-    regsub {^\s+} $txt {} txt
-    puts $kout $txt
-    close $kout
-  #} else {
-    #.fr.txt insert 1.0 ""
-  #}
+  #set qnfile $dicroot/$filter/.godel/.qn.md
+  #set kout [open $qnfile w]
+  #set txt [.fr.txt get 1.0 end]
+  #regsub {^\s+} $txt {} txt
+  #puts $kout $txt
+  #close $kout
+
+
+  #set flist $initlist
+  #puts jjj
+  #parray vars
+
+  update_dic
+
+  refresh_list
+
+  set ::filter ""
+  set ::chinese ""
+  .fr.txt delete 1.0 end
+  focus .fr.filter
+
+  .fr.lab configure -text [llength $::initlist]
+
 }
 # }}}
 
@@ -276,8 +291,17 @@ grid  .fr.lab -row 0 -column 0 -sticky sw
 ttk::button .fr.add -text "Add" -command add
 grid .fr.add -row 1 -column 0 -sticky e
 
-ttk::button .fr.update -text "Update" -command update_dic
-grid .fr.update -row 1 -column 0 -sticky w
+#ttk::button .fr.update -text "Update" -command update_dic
+#grid .fr.update -row 1 -column 0 -sticky w
+
+#proc ttt {} {
+#  upvar vars vars
+#  puts "print vars.........."
+#  parray vars
+#}
+#
+#ttk::button .fr.test -text "test" -command ttt
+#grid .fr.test -row 1 -column 0
 
 # Entry for keyin
 entry .fr.filter -textvar filter -width 60
@@ -337,9 +361,6 @@ proc update_dic {} {
   set total [llength $initlist]
   set flist $initlist
 
-  filter_out
-  refresh_list
-  
 }
 
 # select
