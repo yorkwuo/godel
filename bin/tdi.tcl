@@ -31,6 +31,14 @@ proc open_ghtm {} {
   exec gvim $dicroot/$curword/.godel/ghtm.tcl &
 }
 # }}}
+# use_ydict
+# {{{
+proc use_ydict {} {
+  global curword
+  puts $curword
+  puts [exec ydict $curword]
+}
+# }}}
 # google
 # {{{
 proc google {} {
@@ -285,6 +293,7 @@ bind .          o    disp_chinese
 bind .          g           google
 bind .          b           baidu
 bind .          h           open_ghtm
+bind .          <Alt-i>     use_ydict
 
 
 # vim:fdm=marker

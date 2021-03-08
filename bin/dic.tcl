@@ -31,6 +31,14 @@ proc open_ghtm {} {
   exec gvim $dicroot/$filter/.godel/ghtm.tcl &
 }
 # }}}
+# use_ydict
+# {{{
+proc use_ydict {} {
+  global filter
+  puts $filter
+  puts [exec ydict $filter]
+}
+# }}}
 # google
 # {{{
 proc google {} {
@@ -203,12 +211,13 @@ proc add {} {
       lsetvar $dicroot/$filter chinese "$chinese"
   }
 
-  #set qnfile $dicroot/$filter/.godel/.qn.md
-  #set kout [open $qnfile w]
-  #set txt [.fr.txt get 1.0 end]
-  #regsub {^\s+} $txt {} txt
-  #puts $kout $txt
-  #close $kout
+  # write to .qn.md
+  set qnfile $dicroot/$filter/.godel/.qn.md
+  set kout [open $qnfile w]
+    set txt [.fr.txt get 1.0 end]
+    regsub {^\s+} $txt {} txt
+    puts $kout $txt
+  close $kout
 
 
   #set flist $initlist
@@ -387,6 +396,9 @@ proc select {} {
     set kin [open $qnfile r]
     set content [read $kin]
     close $kin
+
+    #regsub -all {[^a-zA-Z0-9\s\n\.]} $content {} content
+
     .fr.txt insert 1.0 "\n$content"
   } else {
     .fr.txt insert 1.0 ""
@@ -412,6 +424,7 @@ bind .          <Alt-c> clear
 bind .fr.filter <Return>    {filter_out;refresh_list}
 bind .          <Control-q> exit
 bind .          <Escape>    clear
+bind .          <Alt-i>     use_ydict
 
 bind . <Alt-f> {focus .fr.filter}
 bind . <Alt-c> clear
