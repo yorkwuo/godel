@@ -322,7 +322,11 @@ proc check_answer {} {
   puts $::curword
   set syno [lvars $::dicroot/$::curword synonym]
 
-  set right_answer "$::curword $syno"
+  if {$syno eq "NA"} {
+    set right_answer "$::curword"
+  } else {
+    set right_answer "$::curword $syno"
+  }
 
   if [regexp $::answer $right_answer] {
     incr ::correct
