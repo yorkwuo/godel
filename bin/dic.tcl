@@ -35,10 +35,32 @@ proc open_ghtm {} {
 # {{{
 proc use_ydict {} {
   global filter
+
   puts $filter
-  puts [exec ydict $filter]
+  #puts [exec ydict $filter]
+  catch "exec ydict $filter" result
+
+  puts $result
+  set lines [split $result \n]
+
+  set endline [lgrep_index $lines {^$} 4]
+
+  set ::ydict_value ""
+  foreach ll [lrange $lines 4 $endline] {
+    if [regexp {^\s*$} $ll] {
+    } else {
+      regsub {^\s*} $ll {} ll
+      append ::ydict_value "$ll "
+    }
+  }
 }
 # }}}
+# auto_fill
+proc auto_fill {} {
+  regsub -all {\[} $::ydict_value {(} ::ydict_value
+  regsub -all {\]} $::ydict_value {)} ::ydict_value
+  set ::chinese $::ydict_value
+}
 # google
 # {{{
 proc google {} {
@@ -139,7 +161,6 @@ proc refresh_list {} {
 
   set items ""
   foreach f [lsort $flist] {
-    #regexp {(\w+)\+(.*)$} $f whole name chinese
     set name $f
     set chinese $vars($f,chinese)
     lappend items [format "%-20s %s" $name $chinese]
@@ -196,19 +217,25 @@ proc add {} {
   global dicroot
   global filter
   global chinese
-  global  initlist
-  global  flist
+  global initlist
+  global flist
+  global synonym
+
   set root $dicroot
 
   if [file exist $root/$filter] {
       puts "lsetvar $dicroot/$filter chinese $chinese"
       lsetvar $dicroot/$filter chinese "$chinese"
+      puts "lsetvar $dicroot/$filter synonym $synonym"
+      lsetvar $dicroot/$filter synonym "$synonym"
   } else {
       puts "gdir $root/$filter"
       file mkdir $root/$filter
       godel_draw $root/$filter
       puts "lsetvar $dicroot/$filter chinese $chinese"
       lsetvar $dicroot/$filter chinese "$chinese"
+      puts "lsetvar $dicroot/$filter synonym $synonym"
+      lsetvar $dicroot/$filter synonym "$synonym"
   }
 
   # write to .qn.md
@@ -230,6 +257,7 @@ proc add {} {
 
   set ::filter ""
   set ::chinese ""
+  set ::synonym ""
   .fr.txt delete 1.0 end
   focus .fr.filter
 
@@ -265,7 +293,6 @@ if {$opt(-l)} {
 
 
 wm attribute . -topmost 0
-#wm geometry . 550x650+0+0
 wm geometry . 550x650+900+700
 wm title . Dictionary
 
@@ -319,15 +346,14 @@ grid  .fr.filter -row 2 -column 0
 entry .fr.chinese -textvar chinese -width 60
 grid  .fr.chinese -row 3 -column 0
 
+entry .fr.synonym -textvar synonym -width 60
+grid  .fr.synonym -row 4 -column 0
+
 text .fr.txt -width 60 -height 12
-grid .fr.txt -row 4 -column 0
+grid .fr.txt -row 5 -column 0
 
-
-# listbox
 listbox .fr.l1 -width 60 -height 30
-grid    .fr.l1 -row 5 -column 0
-
-
+grid    .fr.l1 -row 6 -column 0
 
 refresh_list
 
@@ -381,11 +407,18 @@ proc select {} {
   set ::filter $selected
 
   set root $dicroot
+
   set chi [lvars $root/$selected chinese]
   if {$chi eq "NA"} {
     set ::chinese ""
   } else {
     set ::chinese $chi
+  }
+  set syno [lvars $root/$selected synonym]
+  if {$syno eq "NA"} {
+    set ::synonym ""
+  } else {
+    set ::synonym $syno
   }
 
   .fr.txt delete 1.0 end
@@ -428,6 +461,7 @@ bind .          <Alt-i>     use_ydict
 
 bind . <Alt-f> {focus .fr.filter}
 bind . <Alt-c> clear
+bind . <Alt-p> auto_fill
 
 focus .fr.filter
 
