@@ -3794,21 +3794,30 @@ proc godel_draw {{target_path NA}} {
   }
 # }}}
 
+  file mkdir .godel
   # default vars
 # {{{
   if [file exist .godel/vars.tcl] {
     source .godel/vars.tcl
-    godel_init_vars    g:keywords    ""
-    godel_init_vars    g:pagename    [file tail [pwd]]
-    godel_init_vars    g:iname       [file tail [pwd]]
   } else {
-    godel_init_vars    g:keywords    ""
-    godel_init_vars    g:pagename    [file tail [pwd]]
-    godel_init_vars    g:iname       [file tail [pwd]]
+    set kout [open .godel/dyvars.tcl w]
+    close $kout
+    set kout [open .godel/vars.tcl w]
+    close $kout
+    set vars(g:keywords) ""
+    set vars(g:pagename) [file tail [pwd]]
+    set vars(g:iname)    [file tail [pwd]]
+    godel_array_save vars   .godel/vars.tcl
+
   }
 # }}}
 
-  file mkdir .godel
+  if [file exist .godel/dyvars.tcl] {
+    source .godel/dyvars.tcl
+  }
+  set dyvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
+  godel_array_save dyvars .godel/dyvars.tcl
+
 
 # create draw.gtcl
 # {{{
@@ -3907,20 +3916,8 @@ proc godel_draw {{target_path NA}} {
 
 # dyvars
 # {{{
-  if [file exist .godel/dyvars.tcl] {
-    source .godel/dyvars.tcl
-  }
-  set dyvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
 # }}}
 
-  set kout [open .godel/dyvars.tcl w]
-  close $kout
-  set kout [open .godel/vars.tcl w]
-  close $kout
-  godel_array_save dyvars .godel/dyvars.tcl
-  godel_array_save vars   .godel/vars.tcl
-
-  godel_array_reset vars
 
   if {$target_path == "NA" || $target_path == ""} {
   } else {
@@ -4608,18 +4605,6 @@ proc gset {args} {
 
 }
 # }}}
-#: godel_init_vars
-# {{{
-proc godel_init_vars {key value} {
-  upvar vars vars
-  if [info exist vars($key)] {
-    #return $vars($key)
-    return
-  } else {
-    set vars($key) $value
-  }
-}
-# }}}
 #: godel_puts
 # {{{
 proc godel_puts {key} {
@@ -4654,6 +4639,7 @@ proc godel_array_save {aname ofile} {
       puts $fout [format "set %-40s \"%s\"" [set aname]($key) $newvalue]
     }
   close $fout
+
 }
 # }}}
 #: godel_array_reset

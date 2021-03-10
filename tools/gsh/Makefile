@@ -1,2 +1,2 @@
 1:
-	gcc -o gsh gsh.c -I/usr/include/tcl -ltcl8.6
+	gcc -o gsh gsh.c -I/usr/include/tcl -ltcl8.5
