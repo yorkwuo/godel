@@ -38,7 +38,8 @@ proc use_ydict {} {
 
   puts $filter
   #puts [exec ydict $filter]
-  catch "exec ydict $filter -v 1" result
+  #catch "exec ydict $filter -v 1" result
+  catch "exec ydict $filter" result
 
   puts $result
   set lines [split $result \n]
