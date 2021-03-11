@@ -328,7 +328,7 @@ proc check_answer {} {
     set right_answer "$::curword $syno"
   }
 
-  if [regexp $::answer $right_answer] {
+  if [regexp "\\y$::answer\\y" $right_answer] {
     incr ::correct
     .fr.word configure  -text $right_answer
   } else {
@@ -346,7 +346,7 @@ wm geometry . 550x650+900+700
 wm title . Dictionary
 
 # Font
-font create mynewfont -family Monospace -size 12
+font create mynewfont -family Monospace -size 14
 option add *font mynewfont
 
 # Frame
@@ -393,7 +393,7 @@ grid  .fr.chinese -row 5 -column 0  -sticky w
 label .fr.example -text "na" -justify left -wraplength 500
 grid  .fr.example -row 6 -column 0  -sticky w
 
-nextone
+#nextone
 focus .fr.answer
 
 bind .          <Control-q>   exit
