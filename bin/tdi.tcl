@@ -31,6 +31,24 @@ proc open_ghtm {} {
   exec gvim $dicroot/$curword/.godel/ghtm.tcl &
 }
 # }}}
+# open_qn
+# {{{
+proc open_qn {} {
+  global dicroot
+  global curword
+  puts $curword
+  exec gvim $dicroot/$curword/.godel/.qn.md &
+}
+# }}}
+# open_vars
+# {{{
+proc open_vars {} {
+  global dicroot
+  global curword
+  puts $curword
+  exec gvim $dicroot/$curword/.godel/vars.tcl &
+}
+# }}}
 # use_ydict
 # {{{
 proc use_ydict {} {
@@ -102,12 +120,70 @@ proc nextone {} {
 
 }
 # }}}
+# next2
+# {{{
+proc next2 {} {
+  upvar curword curword
+  upvar nowfile nowfile
+  upvar flist flist
+  upvar vars vars
+  set origsize [llength $flist]
+  #puts $origsize
+  .fr.lab configure -text $origsize
+
+  set newsize [expr $origsize - 1]
+  puts $newsize
+  set random_one [expr [random $origsize] - 1]
+  set ifile [lindex $flist $random_one]
+  set flist [lreplace $flist $random_one $random_one]
+  ##set ifile [lindex $flist 0]
+  ##incr size -1
+
+  #puts $ifile
+  #regexp {(\w+)\+(.*)$} $ifile whole name chinese
+  #puts $name
+  #puts $chinese
+  #set ::word $name
+  .fr.word    configure -text ""
+  .fr.chinese configure -text $vars($ifile,chinese)
+  .fr.example configure -text ""
+
+  set ::answer ""
+  focus .fr.answer
+
+  set curword $ifile
+
+
+}
+# }}}
+# hint
+# {{{
+proc hint {} {
+  upvar curword curword
+  upvar vars vars
+
+  #.fr.chinese configure -text $vars($curword,chinese)
+
+  set qnfile $vars($curword,path)/.godel/.qn.md
+  if [file exist $qnfile] {
+    set kin [open $qnfile r]
+      set txt [read $kin]
+    close $kin
+    regsub -all {[^a-zA-Z0-9\s\n\.]} $txt {} txt
+    .fr.example configure -text $txt
+  } else {
+  .fr.example configure -text ""
+  }
+
+}
+# }}}
 # disp_chinese
 # {{{
 proc disp_chinese {} {
   upvar curword curword
   upvar vars vars
 
+  .fr.word    configure -text $curword
   .fr.chinese configure -text $vars($curword,chinese)
 
   set qnfile $vars($curword,path)/.godel/.qn.md
@@ -241,6 +317,28 @@ if {$opt(-l)} {
 }
 # }}}
 
+proc check_answer {} {
+  puts $::answer
+  puts $::curword
+  set syno [lvars $::dicroot/$::curword synonym]
+
+  if {$syno eq "NA"} {
+    set right_answer "$::curword"
+  } else {
+    set right_answer "$::curword $syno"
+  }
+
+  if [regexp $::answer $right_answer] {
+    incr ::correct
+    .fr.word configure  -text $right_answer
+  } else {
+    incr ::wrong
+  }
+  .fr.correct configure -text "O:$::correct"
+  .fr.wrong   configure -text "X:$::wrong"
+  
+}
+
 
 wm attribute . -topmost 0
 #wm geometry . 550x650+0+0
@@ -248,7 +346,7 @@ wm geometry . 550x650+900+700
 wm title . Dictionary
 
 # Font
-font create mynewfont -family Monospace -size 18
+font create mynewfont -family Monospace -size 12
 option add *font mynewfont
 
 # Frame
@@ -270,30 +368,46 @@ if {$infile eq ""} {
 set total [llength $initlist]
 set flist $initlist
 
+set correct 0
+set wrong   0
 
 # Total
-label .fr.lab -text "Total: $total"
-grid  .fr.lab -row 0 -column 0 -sticky sw
+label .fr.lab -text "Total:$total"
+grid  .fr.lab -row 0 -column 0 -sticky w
 
-label .fr.word -text "na"
-grid  .fr.word -row 1 -column 0  -sticky w
+label .fr.correct -text "O:$correct"
+grid  .fr.correct -row 1 -column 0 -sticky w
 
-label .fr.chinese -text "na"
-grid  .fr.chinese -row 2 -column 0  -sticky w
+label .fr.wrong -text "X:$wrong"
+grid  .fr.wrong -row 2 -column 0 -sticky w
 
-label .fr.example -text "na"
-grid  .fr.example -row 3 -column 0  -sticky w
+label .fr.word -text "na" -pady 10
+grid  .fr.word -row 3 -column 0  -sticky w
+
+entry .fr.answer -textvar answer -width 40 -justify left
+grid  .fr.answer -row 4 -column 0  -sticky w
+
+label .fr.chinese -text "na" -justify left -wraplength 500 -pady 10
+grid  .fr.chinese -row 5 -column 0  -sticky w
+
+label .fr.example -text "na" -justify left -wraplength 500
+grid  .fr.example -row 6 -column 0  -sticky w
 
 nextone
+focus .fr.answer
 
-bind .          <Escape>    exit
-bind .          q    exit
-bind .          n    nextone
-bind .          o    disp_chinese
-bind .          g           google
-bind .          b           baidu
-bind .          h           open_ghtm
-bind .          <Alt-i>     use_ydict
+bind .          <Control-q>   exit
+bind .          <Alt-n>   nextone
+bind .          <Alt-m>   next2
+bind .          <Alt-o>   disp_chinese
+bind .          <Alt-g>   google
+bind .          <Alt-b>   baidu
+bind .          <Alt-h>   hint
+bind .          <Alt-e>   open_qn
+bind .          <Alt-v>   open_vars
+bind .          <Alt-i>   use_ydict
+bind .fr.answer <Return>  check_answer
+bind .          <Alt-c>   {set answer ""}
 
 
 # vim:fdm=marker
