@@ -54,7 +54,7 @@ proc open_vars {} {
 proc use_ydict {} {
   global curword
   puts $curword
-  puts [exec ydict -v $curword]
+  puts [exec ydict $curword -v 1]
 }
 # }}}
 # google
