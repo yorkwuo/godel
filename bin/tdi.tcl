@@ -40,6 +40,15 @@ proc open_qn {} {
   exec gvim $dicroot/$curword/.godel/.qn.md &
 }
 # }}}
+# open_vars
+# {{{
+proc open_vars {} {
+  global dicroot
+  global curword
+  puts $curword
+  exec gvim $dicroot/$curword/.godel/vars.tcl &
+}
+# }}}
 # use_ydict
 # {{{
 proc use_ydict {} {
@@ -311,8 +320,17 @@ if {$opt(-l)} {
 proc check_answer {} {
   puts $::answer
   puts $::curword
-  if {$::answer eq $::curword} {
+  set syno [lvars $::dicroot/$::curword synonym]
+
+  if {$syno eq "NA"} {
+    set right_answer "$::curword"
+  } else {
+    set right_answer "$::curword $syno"
+  }
+
+  if [regexp $::answer $right_answer] {
     incr ::correct
+    .fr.word configure  -text $right_answer
   } else {
     incr ::wrong
   }
@@ -375,11 +393,10 @@ grid  .fr.chinese -row 5 -column 0  -sticky w
 label .fr.example -text "na" -justify left -wraplength 500
 grid  .fr.example -row 6 -column 0  -sticky w
 
-#nextone
+nextone
 focus .fr.answer
 
-bind .          <Escape>  exit
-bind .          <Alt-q>   exit
+bind .          <Control-q>   exit
 bind .          <Alt-n>   nextone
 bind .          <Alt-m>   next2
 bind .          <Alt-o>   disp_chinese
@@ -387,8 +404,10 @@ bind .          <Alt-g>   google
 bind .          <Alt-b>   baidu
 bind .          <Alt-h>   hint
 bind .          <Alt-e>   open_qn
+bind .          <Alt-v>   open_vars
 bind .          <Alt-i>   use_ydict
 bind .fr.answer <Return>  check_answer
+bind .          <Alt-c>   {set answer ""}
 
 
 # vim:fdm=marker

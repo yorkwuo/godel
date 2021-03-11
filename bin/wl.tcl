@@ -90,11 +90,11 @@ font create mynewfont -family Clean -size 16
 #font create mynewfont -family Clean -size 10
 option add *font mynewfont
 
-#frame .fr
-#pack .fr
+frame .fr
+pack .fr
 #
-#button .fr.update -text "Update" -command {update}
-#pack .fr.update -side left
+button .fr.update -text "Update" -command {update}
+pack .fr.update -side left
 #button .fr.down -text "Down" -command {down}
 #pack .fr.down -side left
 #button .fr.up -text "Up" -command {up}
