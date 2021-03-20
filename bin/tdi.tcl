@@ -321,11 +321,15 @@ if {$opt(-f)} {
     } elseif [regexp {^\s*$} $line] {
     } else {
       set w $line
-      set chinese [lvars $dicdir/$w chinese]
-      puts $kout "lappend allwords $w"
-      puts $kout "set vars($w,path) $dicdir/$w"
-      puts $kout "set vars($w,chinese) \"$chinese\""    
-      puts $kout "set vars($w,concat) \"$w $chinese\""
+      if [file exist $dicdir/$w] {
+        set chinese [lvars $dicdir/$w chinese]
+        puts $kout "lappend allwords $w"
+        puts $kout "set vars($w,path) $dicdir/$w"
+        puts $kout "set vars($w,chinese) \"$chinese\""    
+        puts $kout "set vars($w,concat) \"$w $chinese\""
+      } else {
+        puts "Not exist... $w"
+      }
     }
   }
   close $kin
