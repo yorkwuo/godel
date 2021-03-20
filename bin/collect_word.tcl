@@ -3,7 +3,7 @@ source $env(GODEL_ROOT)/bin/godel.tcl
 
 set dicdir $env(GODEL_DIC)
 
-set words [glob -type d -type l $dicdir/*]
+set words [glob -type d $dicdir/*]
  
 set kout [open $dicdir/words w]
 puts $kout "set allwords \"\""

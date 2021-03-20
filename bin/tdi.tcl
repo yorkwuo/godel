@@ -1,13 +1,16 @@
 #!/usr/bin/wish
 source $env(GODEL_ROOT)/bin/godel.tcl
 set dicroot $env(GODEL_DIC)
-# -l (local)
+  # -f (filelist name)
 # {{{
-  set opt(-l) 0
-  set idx [lsearch $argv {-l}]
+  set opt(-f) 0
+  set idx [lsearch $argv {-f}]
   if {$idx != "-1"} {
-    set argv [lreplace $argv $idx $idx]
-    set opt(-l) 1
+    set listfile [lindex $argv [expr $idx + 1]]
+    set argv [lreplace $argv $idx [expr $idx + 1]]
+    set opt(-f) 1
+  } else {
+    set listfile NA
   }
 # }}}
 # -k
@@ -94,9 +97,20 @@ proc nextone {} {
   upvar curword curword
   upvar nowfile nowfile
   upvar flist flist
+  upvar initlist initlist
   upvar vars vars
+
   set origsize [llength $flist]
-  #puts $origsize
+
+  if {$origsize eq "0"} {
+    puts kkkk
+    set flist $initlist
+    set origsize [llength $flist]
+    set ::total $origsize
+    set ::correct 0
+    set ::wrong   0
+  }
+
   .fr.lab configure -text $origsize
 
   set newsize [expr $origsize - 1]
@@ -104,14 +118,7 @@ proc nextone {} {
   set random_one [expr [random $origsize] - 1]
   set ifile [lindex $flist $random_one]
   set flist [lreplace $flist $random_one $random_one]
-  ##set ifile [lindex $flist 0]
-  ##incr size -1
 
-  #puts $ifile
-  #regexp {(\w+)\+(.*)$} $ifile whole name chinese
-  #puts $name
-  #puts $chinese
-  #set ::word $name
   .fr.word    configure -text $ifile
   .fr.chinese configure -text ""
   .fr.example configure -text ""
@@ -295,26 +302,31 @@ proc tag_window {} {
 
 # infile
 # {{{
-if {$opt(-l)} {
-  if [file exist playlist] {
-  } else {
-    if [file exist "orig.playlist"] {
-      catch {exec cp orig.playlist playlist}
+if {$opt(-f)} {
+  set infile $listfile
+
+  set dicdir $dicroot
+
+  set kout [open $env(HOME)/words w]
+  set kin [open $listfile r]
+  while {[gets $kin line] >= 0} {
+    if [regexp {^\s*#} $line] {
+    } elseif [regexp {^\s*$} $line] {
     } else {
-      set ifiles [glob -nocomplain -type f *]
-      set kout [open "playlist" w]
-        foreach ifile $ifiles {
-          if [regexp {\.part} $ifile] {
-          } else {
-            puts $kout $ifile
-          }
-        }
-      close $kout
+      set w $line
+      set chinese [lvars $dicdir/$w chinese]
+      puts $kout "lappend allwords $w"
+      puts $kout "set vars($w,path) $dicdir/$w"
+      puts $kout "set vars($w,chinese) \"$chinese\""    
+      puts $kout "set vars($w,concat) \"$w $chinese\""
     }
   }
-  set infile playlist
+  close $kin
+  close $kout
+
+  set infile $env(HOME)/words
 } else {
-  set infile [lindex $argv 0]
+  set infile $env(GODEL_DIC)/words
 }
 # }}}
 
@@ -332,6 +344,7 @@ proc check_answer {} {
   if [regexp "\\y$::answer\\y" $right_answer] {
     incr ::correct
     .fr.word configure  -text $right_answer
+    set ::answer ""
   } else {
     incr ::wrong
   }
@@ -340,9 +353,9 @@ proc check_answer {} {
   
 }
 
+bind .          <Control-q>   exit
 
 wm attribute . -topmost 0
-#wm geometry . 550x650+0+0
 wm geometry . 550x650+900+700
 wm title . Dictionary
 
@@ -397,7 +410,6 @@ grid  .fr.example -row 6 -column 0  -sticky w
 #nextone
 focus .fr.answer
 
-bind .          <Control-q>   exit
 bind .          <Alt-n>   nextone
 bind .          <Alt-m>   next2
 bind .          <Alt-o>   disp_chinese
