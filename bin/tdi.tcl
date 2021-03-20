@@ -109,6 +109,8 @@ proc nextone {} {
     set ::total $origsize
     set ::correct 0
     set ::wrong   0
+    .fr.correct configure -text "O:$::correct"
+    .fr.wrong   configure -text "X:$::wrong"
   }
 
   .fr.lab configure -text $origsize
@@ -135,8 +137,20 @@ proc next2 {} {
   upvar nowfile nowfile
   upvar flist flist
   upvar vars vars
+
   set origsize [llength $flist]
-  #puts $origsize
+
+  if {$origsize eq "0"} {
+    puts kkkk
+    set flist $::initlist
+    set origsize [llength $flist]
+    set ::total $origsize
+    set ::correct 0
+    set ::wrong   0
+    .fr.correct configure -text "O:$::correct"
+    .fr.wrong   configure -text "X:$::wrong"
+  }
+
   .fr.lab configure -text $origsize
 
   set newsize [expr $origsize - 1]
@@ -144,14 +158,7 @@ proc next2 {} {
   set random_one [expr [random $origsize] - 1]
   set ifile [lindex $flist $random_one]
   set flist [lreplace $flist $random_one $random_one]
-  ##set ifile [lindex $flist 0]
-  ##incr size -1
 
-  #puts $ifile
-  #regexp {(\w+)\+(.*)$} $ifile whole name chinese
-  #puts $name
-  #puts $chinese
-  #set ::word $name
   .fr.word    configure -text ""
   .fr.chinese configure -text $vars($ifile,chinese)
   .fr.example configure -text ""
