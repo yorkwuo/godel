@@ -341,7 +341,10 @@ if {$opt(-f)} {
 }
 # }}}
 
+# check_answer
+# {{{
 proc check_answer {} {
+  upvar vars vars
   puts $::answer
   puts $::curword
   set syno [lvars $::dicroot/$::curword synonym]
@@ -356,13 +359,26 @@ proc check_answer {} {
     incr ::correct
     .fr.word configure  -text $right_answer
     set ::answer ""
+
+    set qnfile $vars($::curword,path)/.godel/.qn.md
+    if [file exist $qnfile] {
+      set kin [open $qnfile r]
+        set txt [read $kin]
+      close $kin
+      regsub -all {[^a-zA-Z0-9\s\n\.]} $txt {} txt
+      .fr.example configure -text $txt
+    } else {
+    .fr.example configure -text ""
+    }
   } else {
     incr ::wrong
   }
+
   .fr.correct configure -text "O:$::correct"
   .fr.wrong   configure -text "X:$::wrong"
   
 }
+# }}}
 
 bind .          <Control-q>   exit
 
