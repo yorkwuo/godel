@@ -3783,15 +3783,15 @@ proc godel_draw {{target_path NA}} {
 
   # source plugin script
 # {{{
-  set flist [glob -nocomplain $env(GODEL_PLUGIN)/*/*.tcl]
-  foreach f $flist {
-    #puts $f
-    source $f 
-  }
-  if [info exist env(GODEL_USER_PLUGIN)] {
-    set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
-    foreach f $flist { source $f }
-  }
+#  set flist [glob -nocomplain $env(GODEL_PLUGIN)/*/*.tcl]
+#  foreach f $flist {
+#    #puts $f
+#    source $f 
+#  }
+#  if [info exist env(GODEL_USER_PLUGIN)] {
+#    set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
+#    foreach f $flist { source $f }
+#  }
 # }}}
 
   file mkdir .godel
@@ -4292,10 +4292,10 @@ proc gget {pagename args} {
 
 # source user plugin
 # {{{
-  if [info exist env(GODEL_USER_PLUGIN)] {
-    set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
-    foreach f $flist { source $f }
-  }
+#  if [info exist env(GODEL_USER_PLUGIN)] {
+#    set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
+#    foreach f $flist { source $f }
+#  }
 # }}}
 
   foreach i $env(GODEL_META_SCOPE) { mload $i }
@@ -4420,10 +4420,10 @@ proc gvars {args} {
   global env env
   upvar meta meta
 # source user plugin
-  if [info exist env(GODEL_USER_PLUGIN)] {
-    set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
-    foreach f $flist { source $f }
-  }
+#  if [info exist env(GODEL_USER_PLUGIN)] {
+#    set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
+#    foreach f $flist { source $f }
+#  }
   # -l (local)
 # {{{
   set opt(-l) 0
