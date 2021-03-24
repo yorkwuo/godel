@@ -253,7 +253,6 @@ proc add {} {
   #parray vars
 
   update_dic
-
   refresh_list
 
   set ::filter ""
@@ -266,7 +265,6 @@ proc add {} {
 
 }
 # }}}
-
 # infile
 # {{{
 if {$opt(-l)} {
@@ -289,6 +287,114 @@ if {$opt(-l)} {
   set infile playlist
 } else {
   set infile [lindex $argv 0]
+}
+# }}}
+# update_dic
+# {{{
+proc update_dic {} {
+  upvar vars vars
+  global dicroot
+  upvar initlist initlist
+  upvar total total
+  upvar flist flist
+
+  set dicdir $dicroot
+
+  set words [glob -type d $dicdir/*]
+   
+  set kout [open $dicdir/words w]
+  foreach word $words {
+    set w [file tail $word]
+    #set name    [lvars $dicdir/$w g:pagename]
+    set chinese [lvars $dicdir/$w chinese]
+    #puts $kout "$name+$chinese"
+    puts $kout "lappend allwords $w"
+    puts $kout "set vars($w,path) $word"
+    puts $kout "set vars($w,chinese) \"$chinese\""    
+    puts $kout "set vars($w,concat) \"$w $chinese\""
+  }
+  close $kout
+
+  puts "Updated... $dicdir/words"
+
+  set initlist {}
+  source $dicdir/words
+  #set kin [open $dicdir/words r]
+  #  while {[gets $kin line] >= 0} {
+  #    lappend initlist $line
+  #  }
+  #close $kin
+  set initlist $allwords
+
+  set size 10
+  set total [llength $initlist]
+  set flist $initlist
+
+}
+# }}}
+# select
+# {{{
+proc select {} {
+  global dicroot
+  upvar vars vars
+  set selected [lindex [.fr.l1 get [.fr.l1 curselection]] 0]
+  set ::filter $selected
+
+  set root $dicroot
+
+  set chi [lvars $root/$selected chinese]
+  if {$chi eq "NA"} {
+    set ::chinese ""
+  } else {
+    set ::chinese $chi
+  }
+  set syno [lvars $root/$selected synonym]
+  if {$syno eq "NA"} {
+    set ::synonym ""
+  } else {
+    set ::synonym $syno
+  }
+
+  .fr.txt delete 1.0 end
+
+  set qnfile $vars($selected,path)/.godel/.qn.md
+  if [file exist $qnfile] {
+    .fr.txt delete 1.0 end
+    set kin [open $qnfile r]
+    set content [read $kin]
+    close $kin
+
+    #regsub -all {[^a-zA-Z0-9\s\n\.]} $content {} content
+
+    .fr.txt insert 1.0 "\n$content"
+  } else {
+    .fr.txt insert 1.0 ""
+  }
+
+}
+# }}}
+# delete
+# {{{
+proc delete {} {
+  upvar env env
+  upvar vars vars
+  global dicroot
+  global filter
+  global chinese
+  global initlist
+  global flist
+  global synonym
+
+  puts "Delete... $env(GODEL_DIC)/$filter"
+
+  catch {exec rm -rf $env(GODEL_DIC)/$filter}
+
+  set ::filter ""
+  set ::chinese ""
+  set ::synonym ""
+
+  update_dic
+  refresh_list
 }
 # }}}
 
@@ -358,88 +464,6 @@ grid    .fr.l1 -row 6 -column 0
 
 refresh_list
 
-proc update_dic {} {
-  upvar vars vars
-  global dicroot
-  upvar initlist initlist
-  upvar total total
-  upvar flist flist
-
-  set dicdir $dicroot
-
-  set words [glob -type d $dicdir/*]
-   
-  set kout [open $dicdir/words w]
-  foreach word $words {
-    set w [file tail $word]
-    #set name    [lvars $dicdir/$w g:pagename]
-    set chinese [lvars $dicdir/$w chinese]
-    #puts $kout "$name+$chinese"
-    puts $kout "lappend allwords $w"
-    puts $kout "set vars($w,path) $word"
-    puts $kout "set vars($w,chinese) \"$chinese\""    
-    puts $kout "set vars($w,concat) \"$w $chinese\""
-  }
-  close $kout
-
-  puts "Updated... $dicdir/words"
-
-  set initlist {}
-  source $dicdir/words
-  #set kin [open $dicdir/words r]
-  #  while {[gets $kin line] >= 0} {
-  #    lappend initlist $line
-  #  }
-  #close $kin
-  set initlist $allwords
-
-  set size 10
-  set total [llength $initlist]
-  set flist $initlist
-
-}
-
-# select
-# {{{
-proc select {} {
-  global dicroot
-  upvar vars vars
-  set selected [lindex [.fr.l1 get [.fr.l1 curselection]] 0]
-  set ::filter $selected
-
-  set root $dicroot
-
-  set chi [lvars $root/$selected chinese]
-  if {$chi eq "NA"} {
-    set ::chinese ""
-  } else {
-    set ::chinese $chi
-  }
-  set syno [lvars $root/$selected synonym]
-  if {$syno eq "NA"} {
-    set ::synonym ""
-  } else {
-    set ::synonym $syno
-  }
-
-  .fr.txt delete 1.0 end
-
-  set qnfile $vars($selected,path)/.godel/.qn.md
-  if [file exist $qnfile] {
-    .fr.txt delete 1.0 end
-    set kin [open $qnfile r]
-    set content [read $kin]
-    close $kin
-
-    #regsub -all {[^a-zA-Z0-9\s\n\.]} $content {} content
-
-    .fr.txt insert 1.0 "\n$content"
-  } else {
-    .fr.txt insert 1.0 ""
-  }
-
-}
-# }}}
 
 bind .fr.l1     n           nextone
 bind .fr.l1     h           open_ghtm
@@ -463,6 +487,7 @@ bind .          <Alt-i>     use_ydict
 bind . <Alt-f> {focus .fr.filter}
 bind . <Alt-c> clear
 bind . <Alt-p> auto_fill
+bind . <Control-d> delete
 
 focus .fr.filter
 
