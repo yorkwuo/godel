@@ -3861,25 +3861,26 @@ proc godel_draw {{target_path NA}} {
 
 # Hardcoded w3.css in .index.htm so that you have all in one file.
 # {{{
-#  puts $fout "<style>"
-#  set fin [open $env(GODEL_ROOT)/etc/css/w3.css r]
-#    while {[gets $fin line] >= 0} {
-#      puts $fout $line
-#    }
-#  close $fin
-#  puts $fout "</style>"
 ## }}}
 
   if {$env(GODEL_ALONE)} {
 # Standalone w3.css
-# {{{
-    exec cp $env(GODEL_ROOT)/etc/css/w3.css .godel/w3.css
-    puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
-# }}}
+      exec cp $env(GODEL_ROOT)/etc/css/w3.css .godel/w3.css
+      puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
   } else {
 # Link to Godel's central w3.css
 # {{{
-    puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
+    if {$env(GODEL_EMB_CSS)} {
+      puts $fout "<style>"
+      set fin [open $env(GODEL_ROOT)/etc/css/w3.css r]
+        while {[gets $fin line] >= 0} {
+          puts $fout $line
+        }
+      close $fin
+      puts $fout "</style>"
+    } else {
+      puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
+    }
 # }}}
   }
 
