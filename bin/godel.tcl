@@ -512,7 +512,7 @@ proc ghtm_ls {args} {
     set fsize [num_symbol $fsize M]
     if [regexp {\.htm} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
-    } elseif [regexp {\.mp4} $full] {
+    } elseif [regexp {\.mp4|\.mkv|\.webm} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp4>$fname</a><br></div>"]
     } elseif [regexp {\.pdf} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/pdf>$fname</a><br></div>"]
