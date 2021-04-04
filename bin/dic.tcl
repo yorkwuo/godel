@@ -350,6 +350,7 @@ proc update_dic {} {
   set total [llength $initlist]
   set flist $initlist
 
+  .fr.lab configure -text [llength $::initlist]
 }
 # }}}
 # select
@@ -455,6 +456,9 @@ grid  .fr.lab -row 0 -column 0 -sticky sw
 
 ttk::button .fr.add -text "Add" -command add
 grid .fr.add -row 1 -column 0 -sticky e
+
+ttk::button .fr.update -text "Update" -command {update_dic;refresh_list}
+grid .fr.update -row 1 -column 0 -sticky w
 
 # Entry for keyin
 entry .fr.filter -textvar filter -width 60
