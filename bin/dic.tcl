@@ -150,6 +150,15 @@ proc filter_out {} {
       close $kin
       .fr.txt insert 1.0 "\n$content"
     }
+  } elseif [file exist $dicroot/$filter] {
+    set qnfile $dicroot/$filter/.godel/.qn.md
+    if [file exist $qnfile] {
+      .fr.txt delete 1.0 end
+      set kin [open $qnfile r]
+      set content [read $kin]
+      close $kin
+      .fr.txt insert 1.0 "\n$content"
+    }
   } else {
     .fr.txt delete 1.0 end
   }
@@ -477,13 +486,13 @@ bind .          <Alt-e>     add
 bind .          <Alt-n>     nextone
 bind .          <Alt-g>     google
 bind .          <Alt-b>     baidu
-bind .          <Alt-w>     listfile
 bind .          <Control-u> clear
 bind .          <Alt-c> clear
 bind .fr.filter <Return>    {filter_out;refresh_list}
 bind .          <Control-q> exit
 bind .          <Escape>    clear
 bind .          <Alt-i>     use_ydict
+bind .          <Alt-w>     {focus .fr.txt;tk::TextSetCursor .fr.txt 1.0}
 
 bind . <Alt-f> {focus .fr.filter}
 bind . <Alt-c> clear
