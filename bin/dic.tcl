@@ -54,14 +54,25 @@ proc use_ydict {} {
       append ::ydict_value "$ll "
     }
   }
+
+  set content ""
+  foreach line [lrange $lines $endline end] {
+    regsub {^\s*} $line {} line
+    append content "$line\n"
+  }
+  set ::ydict_content $content
 }
 # }}}
 # auto_fill
+# {{{
 proc auto_fill {} {
   regsub -all {\[} $::ydict_value {(} ::ydict_value
   regsub -all {\]} $::ydict_value {)} ::ydict_value
   set ::chinese $::ydict_value
+
+  .fr.txt insert 1.0 "$::ydict_content"
 }
+# }}}
 # google
 # {{{
 proc google {} {
@@ -252,8 +263,8 @@ proc add {} {
   #puts jjj
   #parray vars
 
-  update_dic
-  refresh_list
+  #update_dic
+  #refresh_list
 
   set ::filter ""
   set ::chinese ""
@@ -261,7 +272,7 @@ proc add {} {
   .fr.txt delete 1.0 end
   focus .fr.filter
 
-  .fr.lab configure -text [llength $::initlist]
+  #.fr.lab configure -text [llength $::initlist]
 
 }
 # }}}
@@ -404,14 +415,16 @@ wm geometry . 550x650+900+700
 wm title . Dictionary
 
 # Font
+# {{{
 font create mynewfont -family Monospace -size 10
 option add *font mynewfont
-
+# }}}
 # Frame
+# {{{
 frame .fr -padx 5 -pady 5
 pack .fr -fill both -expand 1
+# }}}
 
-#.fr configure -bg green
 
 set nowfile "NA"
 
@@ -434,18 +447,6 @@ grid  .fr.lab -row 0 -column 0 -sticky sw
 ttk::button .fr.add -text "Add" -command add
 grid .fr.add -row 1 -column 0 -sticky e
 
-#ttk::button .fr.update -text "Update" -command update_dic
-#grid .fr.update -row 1 -column 0 -sticky w
-
-#proc ttt {} {
-#  upvar vars vars
-#  puts "print vars.........."
-#  parray vars
-#}
-#
-#ttk::button .fr.test -text "test" -command ttt
-#grid .fr.test -row 1 -column 0
-
 # Entry for keyin
 entry .fr.filter -textvar filter -width 60
 grid  .fr.filter -row 2 -column 0 
@@ -462,7 +463,7 @@ grid .fr.txt -row 5 -column 0
 listbox .fr.l1 -width 60 -height 30
 grid    .fr.l1 -row 6 -column 0
 
-refresh_list
+#refresh_list
 
 
 bind .fr.l1     n           nextone
