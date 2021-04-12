@@ -3820,6 +3820,9 @@ proc godel_draw {{target_path NA}} {
 
   if [file exist .godel/dyvars.tcl] {
     source .godel/dyvars.tcl
+  } else {
+    set kout [open .godel/dyvars.tcl w]
+    close $kout
   }
   set dyvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
   godel_array_save dyvars .godel/dyvars.tcl

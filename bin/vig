@@ -1,0 +1,5 @@
+#!/bin/sh
+# the next line restarts using tclsh \
+exec tclsh "$0" ${1+"$@"}
+
+exec gvim $env(GODEL_ROOT)/bin/godel.tcl &
