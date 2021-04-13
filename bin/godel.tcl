@@ -476,7 +476,7 @@ proc ghtm_ls {args} {
 
   if {!$opt(-nodir)} {
     set flist [lsort [glob -nocomplain -type d $pattern]]
-    puts $fout <p>
+    #puts $fout <p>
     #puts $fout [pwd]/$pattern
     set count 1
     foreach full $flist {
@@ -485,10 +485,11 @@ proc ghtm_ls {args} {
       set timestamp [clock format $mtime -format {%Y-%m-%d %H:%M}]
       set fsize [file size $full]
       set fsize [num_symbol $fsize M]
-      puts $fout [format "<div class=ghtmls><pre style=background-color:lightblue>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+      #puts $fout [format "<div class=ghtmls><pre style=background-color:lightblue>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:lightblue>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
       incr count
     }
-    puts $fout </p>
+    #puts $fout </p>
   }
 
   set flist [lsort [glob -nocomplain -type f $pattern]]
@@ -500,7 +501,7 @@ proc ghtm_ls {args} {
   }
   set sortedlist [lsort -index 0 -decreasing $flist2 ]
 
-  puts $fout <p>
+  #puts $fout <p>
 
   set count 1
   foreach i $sortedlist {
@@ -511,21 +512,21 @@ proc ghtm_ls {args} {
     set fsize [file size $full]
     set fsize [num_symbol $fsize M]
     if [regexp {\.htm} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
     } elseif [regexp {\.mp4|\.mkv|\.webm} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp4>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp4>$fname</a><br></div>"]
     } elseif [regexp {\.mp3} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp3>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp3>$fname</a><br></div>"]
     } elseif [regexp {\.pdf} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/pdf>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/pdf>$fname</a><br></div>"]
     } elseif [regexp {\.epub} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/epub>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/epub>$fname</a><br></div>"]
     } else {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
     }
     incr count
   }
-  puts $fout </p>
+  #puts $fout </p>
   
 }
 # }}}
