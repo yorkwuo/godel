@@ -383,7 +383,7 @@ proc check_answer {} {
 bind .          <Control-q>   exit
 
 wm attribute . -topmost 0
-wm geometry . 550x650+900+700
+wm geometry . 1050x650+900+700
 wm title . Dictionary
 
 # Font
@@ -425,13 +425,13 @@ grid  .fr.wrong -row 2 -column 0 -sticky w
 label .fr.word -text "na" -pady 10
 grid  .fr.word -row 3 -column 0  -sticky w
 
-entry .fr.answer -textvar answer -width 40 -justify left
+entry .fr.answer -textvar answer -width 50 -justify left
 grid  .fr.answer -row 4 -column 0  -sticky w
 
-label .fr.chinese -text "na" -justify left -wraplength 500 -pady 10
+label .fr.chinese -text "na" -justify left -wraplength 1000 -pady 10
 grid  .fr.chinese -row 5 -column 0  -sticky w
 
-label .fr.example -text "na" -justify left -wraplength 500
+label .fr.example -text "na" -justify left -wraplength 1000
 grid  .fr.example -row 6 -column 0  -sticky w
 
 #nextone

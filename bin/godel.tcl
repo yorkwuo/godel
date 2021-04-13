@@ -96,7 +96,7 @@ proc list_svg {fname} {
       puts $kout "</svg>"
     close $kout
   }
-  puts $fout "<br><a href=$fname type=text/svg>$fname</a><br>"
+  puts $fout "<a href=$fname type=text/svg>$fname</a><br>"
   set kin [open $fname r]
   set content [read $kin]
   puts $fout $content
@@ -514,6 +514,8 @@ proc ghtm_ls {args} {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
     } elseif [regexp {\.mp4|\.mkv|\.webm} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp4>$fname</a><br></div>"]
+    } elseif [regexp {\.mp3} $full] {
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp3>$fname</a><br></div>"]
     } elseif [regexp {\.pdf} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\" type=text/pdf>$fname</a><br></div>"]
     } elseif [regexp {\.epub} $full] {
@@ -1884,7 +1886,11 @@ proc local_table {name args} {
         set links {<pre>}
         foreach f $files {
           set name [file tail $f]
-          append links "<a href=\"$f\" type=text/txt>$name</a>\n"
+          if [regexp {\.pdf} $name] {
+            append links "<a href=\"$f\" type=text/pdf>$name</a>\n"
+          } else {
+            append links "<a href=\"$f\" type=text/txt>$name</a>\n"
+          }
         }
         append links {</pre>}
         append celltxt "<td>$links</td>"
