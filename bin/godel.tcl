@@ -1130,7 +1130,7 @@ proc lchart_linebar {args} {
     }
   }
 
-  puts $fout "<div class=\"w3-col\" style=\"width:$size;\">"
+  puts $fout "<div class=\"w3-panel w3-pale-white w3-leftbar w3-border-white\" style=\"width:$size;\">"
   puts $fout "<canvas id=\"$name\"></canvas>"
   puts $fout "</div>"
   if ![file exist "Chart.js"] {
