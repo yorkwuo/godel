@@ -372,7 +372,14 @@ proc fpush {} {
   set srcpath $dyvars(srcpath)
 
   foreach f $files {
-    puts "cp $f $srcpath/$f"
+    set dir [file dirname $srcpath/$f]
+    if [file exist $dir] {
+      catch {exec diff $f $srcpath/$f | wc -l} result
+      if {$result > 0} {
+        puts [format "cp %-30s %s" $f $srcpath/$f]
+      }
+    }
+    #puts $result
   }
 }
 # }}}
