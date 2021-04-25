@@ -478,6 +478,16 @@ proc ghtm_ls {args} {
     set opt(-nodir) 1
   }
 # }}}
+  # -sb (sortby)
+# {{{
+  set opt(-sb) 0
+  set idx [lsearch $args {-sb}]
+  if {$idx != "-1"} {
+    set sortby [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-sb) 1
+  }
+# }}}
 
   set pattern [lindex $args 0]
 
@@ -504,9 +514,14 @@ proc ghtm_ls {args} {
   foreach full $flist {
     if [regexp {\$} $full] {continue}
     set mtime [file mtime $full]
-    lappend flist2 [list $mtime $full]
+    set fname [file tail  $full]
+    lappend flist2 [list $mtime $full $fname]
   }
-  set sortedlist [lsort -index 0 -decreasing $flist2 ]
+  if {$opt(-sb)} {
+    set sortedlist [lsort -index 0 -decreasing $flist2 ]
+  } else {
+    set sortedlist [lsort -index 2 $flist2 ]
+  }
 
   #puts $fout <p>
 
@@ -520,7 +535,7 @@ proc ghtm_ls {args} {
     set fsize [num_symbol $fsize M]
     if [regexp {\.htm} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
-    } elseif [regexp {\.mp4|\.mkv|\.webm} $full] {
+    } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp4>$fname</a><br></div>"]
     } elseif [regexp {\.mp3} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp3>$fname</a><br></div>"]
@@ -3284,7 +3299,8 @@ proc gok {keywords} {
           set num 1
           foreach i $found_names {
             #puts stderr $i
-            puts stderr [format "%-3s %-35s %s" $num $i $meta($i,keywords)]
+            #puts stderr [format "%-3s %-35s %s" $num $i $meta($i,keywords)]
+            puts stderr [format "%-3s %-35s %s" $num $i $meta($i,where)]
             incr num
           }
         } else {
