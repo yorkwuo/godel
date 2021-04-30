@@ -81,7 +81,7 @@ proc gexe_button {args} {
       }
     close $kout
   } else {
-    puts "Error: gexe_button: file not exist... $exefile"
+    #puts "Error: gexe_button: file not exist... $exefile"
   }
 }
 # }}}
