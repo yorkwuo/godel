@@ -503,7 +503,7 @@ proc ghtm_ls {args} {
       set fsize [file size $full]
       set fsize [num_symbol $fsize M]
       #puts $fout [format "<div class=ghtmls><pre style=background-color:lightblue>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
-      puts $fout [format "<div class=ghtmls><pre style=background-color:lightblue>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:lightcyan>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full/.index.htm\">$fname</a><br></div>"]
       incr count
     }
     #puts $fout </p>
