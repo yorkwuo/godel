@@ -66,11 +66,38 @@ proc gexe_button {args} {
     set opt(-nowin) 1
   }
 # }}}
-
+  # -nocmd
+# {{{
+  set opt(-nocmd) 0
+  set idx [lsearch $args {-nocmd}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-nocmd) 1
+  }
+# }}}
+  # -name 
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  }
+# }}}
   set exefile [lindex $args 0]
+  if {$opt(-name)} {
+  } else {
+    set name $exefile
+  }
+
   if [file exist $exefile] {
     exec chmod +x $exefile
-    puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-teal\" type=text/gtcl><b>$exefile</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
+    if {$opt(-nocmd)} {
+      puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a>"
+    } else {
+      puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
+    }
     set kout [open ".$exefile.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
       puts $kout "cd \$pagepath"
