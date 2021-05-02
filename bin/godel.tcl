@@ -515,6 +515,20 @@ proc ghtm_ls {args} {
     set opt(-sb) 1
   }
 # }}}
+  # -exclude
+# {{{
+  set opt(-exclude) 0
+  set idx [lsearch $args {-exclude}]
+  if {$idx != "-1"} {
+    set exclude_pattern [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-exclude) 1
+  }
+# }}}
+
+  if {$opt(-exclude)} {
+    set exfiles [glob {*}$exclude_pattern]
+  }
 
   set pattern [lindex $args 0]
 
@@ -537,6 +551,10 @@ proc ghtm_ls {args} {
   }
 
   set flist [lsort [glob -nocomplain -type f $pattern]]
+
+  if {$opt(-exclude)} {
+    set flist [setop_restrict $flist $exfiles]
+  }
   set flist2 ""
   foreach full $flist {
     if [regexp {\$} $full] {continue}
