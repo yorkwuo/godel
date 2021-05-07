@@ -1,0 +1,3 @@
+set pagepath [file dirname [file dirname [info script]]]
+cd $pagepath
+exec xterm -T xterm.[pwd] &
