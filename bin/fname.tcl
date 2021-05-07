@@ -2,6 +2,30 @@
 # the next line restarts using tclsh \
 exec tclsh "$0" ${1+"$@"}
 
+# -from (replace from)
+# {{{
+  set opt(-from) 0
+  set idx [lsearch $argv {-from}]
+  if {$idx != "-1"} {
+    set from [lindex $argv [expr $idx + 1]]
+    set argv [lreplace $argv $idx [expr $idx + 1]]
+    set opt(-from) 1
+  } else {
+    set from NA
+  }
+# }}}
+# -to (replace to)
+# {{{
+  set opt(-to) 0
+  set idx [lsearch $argv {-to}]
+  if {$idx != "-1"} {
+    set to [lindex $argv [expr $idx + 1]]
+    set argv [lreplace $argv $idx [expr $idx + 1]]
+    set opt(-to) 1
+  } else {
+    set to NA
+  }
+# }}}
 
 # -remove (remove)
 # {{{
@@ -58,6 +82,8 @@ foreach f $flist {
 
   if {$opt(-remove)} {
     regsub $remove $f {} newname
+  } elseif {$opt(-from)} {
+    regsub $from $f $to newname
   } else {
     if {$opt(-pre)} {
       if {$opt(-post)} {
