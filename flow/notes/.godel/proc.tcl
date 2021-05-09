@@ -5,8 +5,7 @@ lappend files Makefile
 
 proc help {} {
   upvar where where
-  puts $where
-  puts kk
+  puts "% gget notes pull <name>"
 }
 
 proc pull {{name ""}} {
@@ -14,7 +13,9 @@ proc pull {{name ""}} {
 
   if {$name eq ""} {
     exec cp -r $where .
+    lsetdyvar notes srcpath $where
   } else {
     exec cp -r $where $name
+    lsetdyvar $name srcpath $where
   }
 }
