@@ -13,11 +13,6 @@ export TCLLIBPATH=$pp
 export PATH=$GODEL_ROOT/bin:$PATH
 
 
-export GODEL_PLUGIN=$GODEL_ROOT/plugin
-
-tlist  () { 
-  tdolist $*
-}
 cdk    () { 
   eval `cdk.tcl $*` 
 }
@@ -27,16 +22,6 @@ gok    () {
 gvi    () { 
   eval `gvi.tcl $*` 
 }
-mscope () { 
-  export GODEL_META_SCOPE=`mscope.tcl $*` 
-}
-tdoset () { 
-  gget todo todo_set $* 
-}
-mt () {
-  genmeta.tcl > .godel/lmeta.tcl
-  lind.tcl
-}
 
 alias tpage="gget todo -o"
 alias gdr="godel_draw.tcl; xdotool search --name \"Mozilla\" key ctrl+r"
@@ -44,29 +29,13 @@ alias gd="godel_draw.tcl"
 alias cdg='cd $GODEL_ROOT'
 alias mci=meta_chkin.tcl
 alias mind=meta-indexing
-alias mfile='. mfile.sh'
-alias tkg="tkgdl.tcl &"
 alias fa="firefox .index.htm&"
 alias f1="gvim .godel/ghtm.tcl"
 alias f2="gvim .godel/vars.tcl"
 alias f3="gvim .godel/proc.tcl"
+alias f4="gvim .godel/dyvars.tcl"
 alias lv=lvars
 alias lsv=lsetvar
-
-gmkdir () {
-  for i in $@; do
-    if [ -e $i ]; then
-      echo "Exist...$i"
-    else 
-      echo "Creating $i"
-      mkdir $i
-      command cd $i
-      godel_draw.tcl
-      command cd ..
-      fi
-  done
-}
-
 
 
 function lcd { 
@@ -75,9 +44,3 @@ function lcd {
 function jcd { 
   `jcd.tcl "$@"`
 }
-function ff { 
-  `firefox "$@"`
-}
-
-#export GODEL_GVIM=/cygdrive/c/Program\ Files\ \(x86\)/Vim/vim81/gvim.exe
-#export GODEL_FIREFOX=/cygdrive/c/Program\ Files/Mozilla\ Firefox/firefox.exe

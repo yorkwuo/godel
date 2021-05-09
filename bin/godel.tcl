@@ -487,7 +487,7 @@ proc getcol {args} {
 # {{{
 proc ghtm_keyword_button {tablename column keyword} {
   global fout
-  puts $fout "<button onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$keyword</button>"
+  puts $fout "<button class=\"w3-button w3-round w3-blue-gray\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$keyword</button>"
 }
 # }}}
 # ghtm_ls
@@ -2310,34 +2310,6 @@ proc html_rows_sort {rows args} {
   return $sorted_rows
 }
 # }}}
-# make_table
-# {{{
-proc make_table {rows header} {
-  upvar fout fout
-
-  puts $fout "<table class=table1 id=tbl>"
-  puts $fout $header
-
-  foreach row $rows {
-    set row_ctrl [lindex $row end]
-    set row [lreplace $row end end]
-
-    set col_size [llength $row]
-    puts -nonewline $fout "<tr $row_ctrl>"
-    for {set i 0} {$i < $col_size} {incr i} {
-      set data [lindex $row $i]
-# Do nothing to data if <td> already specified
-      if {[regexp {<td} $data]} {
-        puts -nonewline $fout "$data"
-      } else {
-        puts -nonewline $fout "<td>$data</td>"
-      }
-    }
-    puts $fout "</tr>"
-  }
-  puts $fout "<table>"
-}
-# }}}
 # time_now
 # {{{
 proc time_now {} {
@@ -2455,11 +2427,6 @@ proc glocal {args} {
   }
 # }}}
   set keywords $args
-
-  # Comment out to disable global gl
-  #if ![info exist meta] {
-  #  foreach i $env(GODEL_META_SCOPE) { mload $i }
-  #}
 
   set ilist [list]
   if {$opt(-f)} {
@@ -2623,11 +2590,6 @@ proc glist {args} {
     }
   }
 
-  # Comment out to disable global gl
-  #if ![info exist meta] {
-  #  foreach i $env(GODEL_META_SCOPE) { mload $i }
-  #}
-
   set ilist [list]
   if {$opt(-f)} {
     set kin [open $listfile r]
@@ -2721,137 +2683,6 @@ proc glist {args} {
   return $found_names
 } ; # End glist
 
-# }}}
-# todo_table
-# {{{
-proc todo_table {ilist} {
-  upvar fout fout 
-
-  foreach i $ilist {
-    source $i/.godel/vars.tcl
-    if [info exist vars(done)] {
-    } else {
-      set vars(done) 0
-    }
-    if {$vars(done)} {
-    } else {
-      lappend tlist [list $vars(g:pagename) $vars(priority) $vars(title) $vars(done)]
-    }
-    godel_array_reset vars
-  }
-
-  puts $fout "<table class=table1>"
-  foreach t [lsort -index 1 $tlist] {
-    set page [lindex $t 0]
-    set prio [lindex $t 1]
-    set done [lindex $t 3]
-    set titl [lindex $t 2]
-    if {$prio == "1"} {
-      puts $fout "<tr bgcolor=pink>"
-    } elseif {$prio == "2"} {
-      puts $fout "<tr bgcolor=cyan>"
-    } else {
-      puts $fout "<tr>"
-    }
-    puts $fout "<td><a href=$page/.index.htm>$page</a></td>"
-    puts $fout "<td>$prio</td>"
-    if {$done} {
-      puts $fout "<td>O</td>"
-    } else {
-      puts $fout "<td></td>"
-    }
-    puts $fout "<td>$titl</td>"
-    puts $fout "</tr>"
-  }
-  puts $fout "</table>"
-}
-# }}}
-# pagelist
-# {{{
-proc pagelist {{sort_by by_updated}} {
-# ghtm_pagelist by_updated/by_size
-  global env
-  upvar fout fout
-  #source $env(GODEL_META_CENTER)/meta.tcl
-  source $env(GODEL_META_FILE)
-  source $env(GODEL_META_CENTER)/indexing.tcl
-  array set vars [array get meta]
-# ilist = pagelist
-
-  #set ilist [lmap i [array name meta *,where] {regsub ",where" $i ""}]
-  set ilist [list]
-  foreach i [array name meta *,where] {
-    regsub ",where" $i "" i
-    lappend ilist $i
-  }
-
-#@>Foreach Pages in pagelist
-# $ilist = page name list
-  foreach i $ilist {
-    set location $vars($i,where)
-# vars,href
-    set vars($i,href) "<a href=\"[tbox_cygpath $vars($i,where)/.index.htm]\" class=w3-text-blue>$i</a>"
-# vars,last_updated
-    if [info exist vars($i,last_updated)] {
-      #regsub {^\d\d\d\d-} $vars($i,last_updated) {} vars($i,last_updated)
-    } else {
-      set vars($i,last_updated) 1111-11-11_1111
-    }
-
-    lappend pairs [list $i $vars($i,last_updated)]
-# size_pairs
-    if [info exist vars($i,page_size)] {
-      if {$vars($i,page_size) == "NA"} {
-        set vars($i,page_size) 0
-        lappend size_pairs [list $i $vars($i,page_size)]
-      } else {
-        lappend size_pairs [list $i $vars($i,page_size)]
-      }
-    } else {
-      set vars($i,page_size) 0
-      lappend size_pairs [list $i $vars($i,page_size)]
-    }
-  }
-  set arr(by_updated) [lsort -index 1 -decreasing $pairs]
-  set arr(by_size)    [lsort -index 1 -decreasing -integer $size_pairs]
-
-
-  set num 1
-  foreach pair $arr($sort_by) {
-    set name [lindex $pair 0]
-# rowlist
-    lappend rowlist $num
-    set vars($num,name)     "$vars($name,href)"
-    #puts $vars($num,name)
-    set ghtm      "$vars($name,where)/.godel/ghtm.tcl type=text/txt"
-    set vars_href "$vars($name,where)/.godel/vars.tcl type=text/txt"
-    set vars($num,ghtm)     "ghtm=>$ghtm"
-    set vars($num,vars)     "vars=>$vars_href"
-    set vars($num,last)     $vars($name,last_updated)
-    if [info exist vars($name,page_size)] {
-      set vars($num,size)     $vars($name,page_size)
-    } else {
-      set vars($num,size)     ""
-    }
-    if [info exist vars($name,keywords)] {
-      set vars($num,keywords) [concat $name $vars($name,keywords)]
-    } else {
-      set vars($num,keywords) ""
-    }
-    incr num
-  }
-
-# columnlist
-  set columnlist [list]
-  lappend columnlist [list name name]
-  #lappend columnlist [list ghtm ghtm]
-  #lappend columnlist [list vars vars]
-  lappend columnlist [list last last]
-  lappend columnlist [list size size]
-  lappend columnlist [list keywords keywords]
-
-  ghtm_table_nodir tbl 0
-}
 # }}}
 # ge
 # {{{
@@ -3039,7 +2870,7 @@ proc csv_table {args} {
   puts $fout "</table>"
 }
 # }}}
-#@> gnotes
+# gnotes
 # {{{
 proc gnotes {args} {
   global env
@@ -3373,11 +3204,10 @@ proc gok {keywords} {
 proc cdk {args} {
   global env
 
-  set keywords $args
+  source $env(GODEL_CENTER)/meta.tcl
+  source $env(GODEL_CENTER)/indexing.tcl
 
-  if ![info exist meta] {
-    foreach i $env(GODEL_META_SCOPE) { mload $i }
-  }
+  set keywords $args
 
   set ilist [list]
   foreach i [lsort [array name meta *,where]] {
@@ -3392,8 +3222,8 @@ proc cdk {args} {
 # Is it match with keyword
     foreach k $keywords {
       regsub {\/} $k {} k
-      if [info exist meta($i,keys)] {
-        if {[lsearch -regexp $meta($i,keys) $k] >= 0} {
+      if [info exist meta($i,keywords)] {
+        if {[lsearch -regexp $meta($i,keywords) $k] >= 0} {
           set found [expr $found&&1]  
         } else {
           set found [expr $found&&0]  
@@ -3431,48 +3261,7 @@ proc cdk {args} {
 
 }
 # }}}
-# get_pagelist
-# {{{
-proc get_pagelist {{keywords ""}} {
-  global env
-  upvar meta meta
-  if ![info exist meta] {
-    foreach i $env(GODEL_META_SCOPE) { mload $i }
-  }
-
-  set ilist [list]
-  foreach i [lsort [array name meta *,where]] {
-    regsub ",where" $i "" i
-    lappend ilist $i
-  }
-
-  set found_names [list]
-
-# Search pagelist
-  foreach i $ilist {
-    set found 1
-# Is it match with keyword
-    foreach k $keywords {
-      if [info exist meta($i,keys)] {
-        if {[lsearch -regexp $meta($i,keys) $k] >= 0} {
-          set found [expr $found&&1]  
-        } else {
-          set found [expr $found&&0]  
-        }
-      } else {
-        set found [expr $found&&0]  
-      }
-    }
-
-    if {$found} {
-      lappend found_names $i
-    }
-  }
-  return $found_names
-
-}
-# }}}
-#@=money_convert
+# money_convert
 # {{{
 proc money_convert {from to fromvalue} {
   set rate(GBP) 0.737
@@ -3616,19 +3405,20 @@ proc gpage_where {pagename} {
   global env env
   upvar meta meta
 
-  if [info exist meta] {
-  } else {
-    mload default
-  }
-  if {$env(GODEL_IN_CYGWIN)} {
-    if [info exist meta($pagename,where)] {
-      return [tbox_cygpath $meta($pagename,where)]/.index.htm
-    } else {
-      return ".index.htm"
-    }
-  } else {
+  #if [info exist meta] {
+  #} else {
+  #  mload default
+  #}
+  #if {$env(GODEL_IN_CYGWIN)} {
+  #  if [info exist meta($pagename,where)] {
+  #    return [tbox_cygpath $meta($pagename,where)]/.index.htm
+  #  } else {
+  #    return ".index.htm"
+  #  }
+  #} else {
+  #  return $meta($pagename,where)/.index.htm
+  #}
     return $meta($pagename,where)/.index.htm
-  }
 }
 # }}}
 # num_symbol
@@ -3705,13 +3495,13 @@ proc lgrep_index {ilist pattern {start_index 0}} {
   }
 }
 # }}}
-#: godel_merge_proc
+# godel_merge_proc
 # {{{
 proc godel_merge_proc {plist ofile} {
   set fout [open "m.tcl" w]
   foreach p $plist {
     set fin [open "dc_tcl/$p.tcl"]
-      puts $fout "#: $p"
+      puts $fout "# $p"
       puts $fout "# {{{"
       while {[gets $fin line] >= 0} {
         puts $fout $line
@@ -3723,7 +3513,7 @@ proc godel_merge_proc {plist ofile} {
   close $fout
 }
 # }}}
-#: godel_split_proc
+# godel_split_proc
 # {{{
 proc godel_split_proc {fname odir} {
   godel_split_by_proc $fname
@@ -3753,7 +3543,7 @@ proc godel_file_join {args} {
   }
 }
 # }}}
-#: godel_split_by_proc
+# godel_split_by_proc
 # {{{
 proc godel_split_by_proc {afile} {
   upvar curs curs
@@ -3766,7 +3556,7 @@ proc godel_split_by_proc {afile} {
       incr num
     }
 
-    if [regexp {^#: } $line] {
+    if [regexp {^# } $line] {
     } elseif [regexp {^# \{\{\{} $line] {
     } elseif [regexp {^# \}\}\}} $line] {
     } elseif [regexp {^# vim} $line] {
@@ -3831,8 +3621,8 @@ proc math_sum {alist} {
   expr ([join $alist +])
 }
 # }}}
-#@> Godel Fundamental
-#@=godel_draw
+# Godel Fundamental
+# godel_draw
 # {{{
 proc godel_draw {{target_path NA}} {
   if {$target_path == "NA" || $target_path == ""} {
@@ -3856,18 +3646,6 @@ proc godel_draw {{target_path NA}} {
   upvar bvars bvars
   set ::toc_list [list]
 
-  # source plugin script
-# {{{
-#  set flist [glob -nocomplain $env(GODEL_PLUGIN)/*/*.tcl]
-#  foreach f $flist {
-#    #puts $f
-#    source $f 
-#  }
-#  if [info exist env(GODEL_USER_PLUGIN)] {
-#    set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
-#    foreach f $flist { source $f }
-#  }
-# }}}
 
   file mkdir .godel
   # default vars
@@ -4045,7 +3823,7 @@ proc godel_remove_list_element {alist elename} {
   return [lsearch -all -inline -not -exact $alist $elename]
 }
 # }}}
-#: godel_list_uniq_add
+# godel_list_uniq_add
 # {{{
 proc godel_list_uniq_add {varname value} {
   upvar $varname var
@@ -4053,7 +3831,7 @@ proc godel_list_uniq_add {varname value} {
   set var [lsort [lsort -unique $var]]
 }
 # }}}
-#: godel_array_add_prefix
+# godel_array_add_prefix
 # {{{
 proc godel_array_add_prefix {arrname prefix} {
   upvar $arrname arr
@@ -4063,7 +3841,7 @@ proc godel_array_add_prefix {arrname prefix} {
   }
 }
 # }}}
-#: godel_write_list_to_file
+# godel_write_list_to_file
 # {{{
 proc godel_write_list_to_file {ilist ofile} {
   set fout [open $ofile w]
@@ -4073,7 +3851,7 @@ proc godel_write_list_to_file {ilist ofile} {
   close $fout
 }
 # }}}
-#: godel_split_by_space
+# godel_split_by_space
 # {{{
 proc godel_split_by_space {line} {
 # Remove leading space
@@ -4084,7 +3862,7 @@ proc godel_split_by_space {line} {
       return $c
 }
 # }}}
-#: split_by
+# split_by
 # {{{
 proc split_by {afile delimiter} {
   upvar curs curs
@@ -4107,7 +3885,7 @@ proc split_by {afile delimiter} {
   #}
 }
 # }}}
-#: godel_split_by
+# godel_split_by
 # {{{
 proc godel_split_by {afile delimiter} {
   upvar curs curs
@@ -4135,7 +3913,7 @@ proc godel_split_by {afile delimiter} {
   }
 }
 # }}}
-#: godel_get_vars
+# godel_get_vars
 # {{{
 proc godel_get_vars {key} {
   upvar vars vars
@@ -4146,257 +3924,27 @@ proc godel_get_vars {key} {
   }
 }
 # }}}
-# todo_set
-# {{{
-proc todo_set {args} {
-  set todopath [gvars todo where]
-# Go to todo directory
-  cd $todopath
-
-  set gpage [lindex $args 0]
-  set attr  [lindex $args 1]
-  set value [lindex $args 2]
-
-  set env(GODEL_META_FILE) ./localmeta.tcl
-  source ./localmeta.tcl
-# Create localmeta.tcl/indexing.tcl
-  #exec genmeta.tcl > localmeta.tcl
-  #meta_indexing indexing.tcl
-
-# Set title/keywords
-  gset $gpage $attr $value
-  #gset $todonum g:keywords $keywords
-}
-# }}}
-# todo_create
-# {{{
-proc todo_create {args} {
-  set todopath [gvars todo where]
-  # -k (keyword)
-  set opt(-k) 0
-  set idx [lsearch $args {-k}]
-  if {$idx != "-1"} {
-    set keywords [lindex $args [expr $idx + 1]]
-    set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-k) 1
-  }
-  # -p (priority)
-  set opt(-p) 0
-  set idx [lsearch $args {-p}]
-  if {$idx != "-1"} {
-    set priority [lindex $args [expr $idx + 1]]
-    set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-p) 1
-  }
-
-  set title [lindex $args 0]
-
-# Create todo directory
-  set todonum [clock format [clock seconds] -format {%Y-%m-%d_%H-%M_%S}]
-  puts $todonum
-  file mkdir $todopath/$todonum
-  cd $todopath/$todonum
-  godel_draw
-
-# Go to todo directory
-  cd $todopath
-
-# Set title/keywords
-  lsetvar $todonum title $title
-  if ![info exist keywords] {
-    set keywords ""
-  }
-  lsetvar $todonum g:keywords $keywords
-
-  if ![info exist priority] {
-    set priority 1
-  }
-  if ![info exist done] {
-    set done 0
-  }
-  lsetvar $todonum priority   $priority
-  lsetvar $todonum done       $done
-  
-}
-# }}}
-# todo_list, tlist
-# {{{
-proc todo_list {args} {
-  global env
-  set todo_path [gvars todo where]
-  godel_array_reset meta
-
-  set keywords $args
-  set varfiles [glob -nocomplain */.godel/vars.tcl]
-
-  foreach varfile $varfiles {
-    source $varfile
-    set todo [file dirname [file dirname $varfile]]
-    lappend todolist $todo
-    set meta($todo,keys) "$todo $vars(g:keywords)"
-  }
-
-# Search pagelist
-  foreach i $todolist {
-    set found 1
-# Is it match with keyword
-    foreach k $keywords {
-      if [info exist meta($i,keys)] {
-        if {[lsearch -regexp $meta($i,keys) $k] >= 0} {
-          set found [expr $found&&1]  
-        } else {
-          set found [expr $found&&0]  
-        }
-      } else {
-        set found [expr $found&&0]  
-      }
-    }
-
-    if {$found} {
-      lappend found_names $i
-    }
-  }
-
-  if {$found_names == ""} {
-    puts stderr "Not found... $keywords"
-  } else {
-# If more than 1 page found, display them
-    if {[llength $found_names] > 1} {
-      foreach i $found_names {
-        set done [gvars $i done]
-        if {$done == ""} {set done 0}
-        if {$done == "NA"} {set done 0}
-        if {!$done} {
-            set pagename [lvars $i g:pagename]
-            set priority [lvars $i priority]
-            set keywords [lvars $i g:keywords]
-            set title    [lvars $i title]
-            #puts stderr  [format "%s (%s) %s. (%s)" $pagename $priority $title $keywords]
-            lappend dlist [list $pagename $priority $keywords $title]
-        } else {
-          continue
-        }
-      }
-
-      set klist [lsort -index 1 $dlist]
-      foreach i $klist {
-        set pagename [lindex $i 0]
-        set priority [lindex $i 1]
-        set keywords [lindex $i 2]
-        set title    [lindex $i 3]
-        set txt  [format "%s (%25s) (%s) (%s)" $pagename $keywords $priority $title]
-        if {$priority == "1"} {
-          puts stderr "\033\[0;92m$txt\033\[0m"
-        } elseif {$priority == "2"} {
-          puts stderr "\033\[0;36m$txt\033\[0m"
-        } else {
-          puts stderr $txt
-        }
-      }
-      #puts stderr $dlist
-# If only 1 page found, cd to it
-    } else {
-      puts "cd $meta($found_names,where)"
-      #puts "found $found_names"
-    }
-  }
-
-} ;# todo_list end
-# }}}
-# fget: flow get
-# {{{
-proc fget {pagename {flowname ""} {localname ""}} {
-  global env
-  upvar meta meta
-  if ![info exist meta] {
-    foreach i $env(GODEL_META_SCOPE) { mload $i }
-  }
-  
-  if [file exist $pagename] {
-    set meta($pagename,where) [pwd]/$pagename
-  }
-
-  foreach i $env(GODEL_META_SCOPE) { mload $i }
-  if {$pagename == "."} {
-    set meta(.,where) .
-  }
-  source $meta($pagename,where)/.godel/vars.tcl
-  set where $meta($pagename,where)
-
-  if [file exist $meta($pagename,where)/.godel/proc.tcl] {
-    source $meta($pagename,where)/.godel/proc.tcl
-  }
-  if {$flowname == ""} {
-    help
-  } else {
-    if {$localname eq ""} {
-      if [file exist $flowname] {
-        puts "Skip: Dir already exist... $flowname"
-      } else {
-        puts "cp -r $where/$flowname ."
-        exec cp -r $where/$flowname .
-      }
-    } else {
-      if [file exist $localname] {
-        puts "Skip: Dir already exist... $localname"
-      } else {
-        puts "cp -r $where/$flowname $localname"
-        exec cp -r $where/$flowname $localname
-      }
-    }
-  }
-}
-# }}}
 # gget
 # {{{
 proc gget {pagename args} {
   global env
-  upvar meta meta
-  if ![info exist meta] {
-    foreach i $env(GODEL_META_SCOPE) { mload $i }
-  }
+  source $env(GODEL_CENTER)/meta.tcl
   
   if [file exist $pagename] {
     set meta($pagename,where) [pwd]/$pagename
   }
-  # -o (open)
-# {{{
-  set opt(-o) 0
-  set idx [lsearch $args {-o}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-o) 1
-  }
-# }}}
 
-# source user plugin
-# {{{
-#  if [info exist env(GODEL_USER_PLUGIN)] {
-#    set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
-#    foreach f $flist { source $f }
-#  }
-# }}}
-
-  foreach i $env(GODEL_META_SCOPE) { mload $i }
   if {$pagename == "."} {
     set meta(.,where) .
   }
+
   source $meta($pagename,where)/.godel/vars.tcl
   set where $meta($pagename,where)
-
-# Open the page with firefox if -o
-# {{{
-  if {$opt(-o)} {
-    cd $where
-    puts "kkk"
-    exec firefox .index.htm &
-    return
-  }
-# }}}
 
   if [file exist $meta($pagename,where)/.godel/proc.tcl] {
     source $meta($pagename,where)/.godel/proc.tcl
   }
+
   if {$args == ""} {
     help
   } else {
@@ -4418,273 +3966,7 @@ proc setop_and_hit {patterns target} {
   return $hit
 }
 # }}}
-# mscope
-# {{{
-proc mscope {args} {
-  # -w
-  set opt(-w) 0
-  set idx [lsearch $args {-w}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-w) 1
-  }
-
-  if {$opt(-w)} {
-    puts $args
-  } else {
-    puts "$args default"
-  }
-}
-# }}}
-# mload
-# {{{
-proc mload {args} {
-  global env env
-  upvar meta meta
-  # -w overwrite
-  set opt(-w) 0
-  set idx [lsearch $args {-w}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-w) 1
-  }
-  # -g global
-  set opt(-g) 0
-  set idx [lsearch $args {-g}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-g) 1
-  }
-  # -a
-  #set opt(-a) 0
-  #set idx [lsearch $args {-a}]
-  #if {$idx != "-1"} {
-  #  set args [lreplace $args $idx $idx]
-  #  set opt(-a) 1
-  #}
-
-  proc get_where {name} {
-    global env env
-    source $env(GODEL_META_FILE)
-    if {$name == "default"} {
-      return "default"
-    } else {
-      return $meta($name,where)
-    }
-  }
-  set page $args
-# where
-  set page_where [get_where $page]
-
-  if {$opt(-w)} {
-    godel_array_reset meta
-  } else {
-    if {$opt(-g)} {
-      source $env(GODEL_META_CENTER)/indexing.tcl
-    }
-  }
-
-# source 
-  if {$page_where == "default"} {
-    source $env(GODEL_META_FILE)
-    source $env(GODEL_META_CENTER)/indexing.tcl
-  } else {
-    source $page_where/.godel/indexing.tcl
-  }
-}
-# }}}
-# gvars
-# {{{
-proc gvars {args} {
-  global env env
-  upvar meta meta
-# source user plugin
-#  if [info exist env(GODEL_USER_PLUGIN)] {
-#    set flist [glob -nocomplain $env(GODEL_USER_PLUGIN)/*.tcl]
-#    foreach f $flist { source $f }
-#  }
-  # -l (local)
-# {{{
-  set opt(-l) 0
-  set idx [lsearch $args {-l}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-l) 1
-  }
-  if ![info exist meta] {
-    if $opt(-l) {
-      source .godel/lmeta.tcl
-    } else {
-      foreach i $env(GODEL_META_SCOPE) { mload $i }
-    }
-  }
-# }}}
-  # -k (keyword)
-# {{{
-  set opt(-k) 0
-  set idx [lsearch $args {-k}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-k) 1
-  }
-# }}}
-  # -d (delete)
-# {{{
-  set opt(-d) 0
-  set idx [lsearch $args {-d}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-d) 1
-  }
-# }}}
-  # -t (tvars)
-# {{{
-  set opt(-t) 0
-  set idx [lsearch $args {-t}]
-  if {$idx != "-1"} {
-    set tvar_name [lindex $args [expr $idx + 1]]
-    set args   [lreplace $args $idx [expr $idx + 1]]
-    set opt(-t) 1
-  }
-# }}}
-  
-  set pagename [lindex $args 0]
-  if {$pagename == ""} {
-    source .godel/vars.tcl
-    parray vars
-    return
-  } elseif {$pagename == "."} {
-    #source .godel/vars.tcl
-    set meta($pagename,where) .
-  }
-  set args [lreplace $args 0 0]
-  set vname    $args
-
-  if [info exist meta($pagename,where)] {
-  } else {
-    return
-  }
-  source $meta($pagename,where)/.godel/vars.tcl
-  set where $meta($pagename,where)
-  set vars(where) $where
-
-  set vlist ""
-# if no key specified, display all keys and values
-  if {$vname == ""} {
-    parray vars
-    return
-  } else {
-# if -k enable, display all matched keys
-    if {$opt(-k)} {
-      foreach name [lsort [array names vars]] {
-        if [setop_and_hit $vname $name] {
-          puts [format "%-20s = %s" $name $vars($name)]
-          lappend klist [list $name $vars($name)]
-          set vlist [concat $vlist $vars($name)]
-        }
-      }
-# return value of query key
-    } else {
-      if [info exist vars($vname)] {
-        set vlist $vars($vname)
-        #return $vars($vname)
-      } else {
-        return NA
-      }
-    }
-  }
-
-  if $opt(-d) {
-    if [info exist klist] {
-      foreach k $klist {
-        set key [lindex $k 0]
-        unset vars($key)
-      }
-      unset vars(where)
-      godel_array_save vars $meta($pagename,where)/.godel/vars.tcl
-    }
-  }
-  
-  if $opt(-t) {
-    eval "gset tvars $tvar_name \"$vlist\""
-  }
-
-  return $vlist
-}
-# }}}
-# gset
-# {{{
-proc gset {args} {
-  upvar env env
-  upvar meta meta
-  # -l (local)
-# {{{
-  set opt(-l) 0
-  set idx [lsearch $args {-l}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-l) 1
-  }
-# }}}
-
-  if {$opt(-l)} {
-    if [file exist .godel/indexing.tcl] {
-      source .godel/indexing.tcl
-    } else {
-      puts "Error: Not exist... .godel/indexing.tcl "
-    }
-  }
-
-  if ![info exist meta] {
-    foreach i $env(GODEL_META_SCOPE) { mload $i }
-  }
-
-  # -p (path)
-  set opt(-p) 0
-  set idx [lsearch $args {-p}]
-  if {$idx != "-1"} {
-    set path [lindex $args [expr $idx + 1]]
-    set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-p) 1
-  }
-  # -f (file)
-  set opt(-f) 0
-  set idx [lsearch $args {-f}]
-  if {$idx != "-1"} {
-    set infile [lindex $args [expr $idx + 1]]
-    set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-f) 1
-  }
-
-  set pagename [lindex $args 0]
-  if {$pagename == "."} {
-    set meta($pagename,where) .
-  }
-  source $meta($pagename,where)/.godel/vars.tcl
-  set where $meta($pagename,where)
-  
-  if {$opt(-p)} {
-    set key      [file tail $path]
-    set value    $path
-    set vars($key) $value
-  } elseif {$opt(-f)} {
-    set ilist [read_file_ret_list $infile]
-    foreach i $ilist {
-      set key      [file tail $i]
-      set value    $i
-      set vars($key) $value
-    }
-  } else {
-    set key      [lindex $args 1]
-    set value    [lindex $args 2]
-    set vars($key) $value
-  }
-
-  godel_array_save vars $where/.godel/vars.tcl
-
-}
-# }}}
-#: godel_puts
+# godel_puts
 # {{{
 proc godel_puts {key} {
   upvar vars vars
@@ -4695,7 +3977,7 @@ proc godel_puts {key} {
   }
 }
 # }}}
-#: godel_array_save
+# godel_array_save
 # {{{
 proc godel_array_save {aname ofile} {
   upvar $aname arr
@@ -4721,14 +4003,14 @@ proc godel_array_save {aname ofile} {
 
 }
 # }}}
-#: godel_array_reset
+# godel_array_reset
 # {{{
 proc godel_array_reset {arrname} {
   upvar $arrname arr
   array unset arr *
 }
 # }}}
-#: godel_array_rm
+# godel_array_rm
 # {{{
 proc godel_array_rm {arrname pattern} {
   upvar $arrname arr
@@ -4737,7 +4019,7 @@ proc godel_array_rm {arrname pattern} {
   }
 }
 # }}}
-#: lshift
+# lshift
 # {{{
 proc lshift {ls {size 1}} {
   upvar 1 $ls LIST
@@ -4753,7 +4035,7 @@ proc lshift {ls {size 1}} {
   }
 }
 # }}}
-#: godel_shift
+# godel_shift
 # {{{
 proc godel_shift {ls} {
   upvar 1 $ls LIST
@@ -4766,7 +4048,7 @@ proc godel_shift {ls} {
   }
 }
 # }}}
-#: godel_get_column
+# godel_get_column
 # {{{
 proc godel_get_column {line num} {
       regsub {<-} $line "" line
@@ -4779,7 +4061,7 @@ proc godel_get_column {line num} {
       set column_string [lindex $c $num]
 }
 # }}}
-#: plist
+# plist
 # {{{
 proc plist {args} {
   # -s (sort)
@@ -4803,7 +4085,7 @@ proc plist {args} {
   }
 }
 # }}}
-#: pcollection_list
+# pcollection_list
 # {{{
 proc pcollection_list {ll} {
   foreach_in_collection i $ll {
@@ -4811,7 +4093,7 @@ proc pcollection_list {ll} {
   }
 }
 # }}}
-#@> Tool Box
+# Tool Box
 # {{{
 proc ggrep {re ffile} {
 # Usage:
@@ -4843,44 +4125,6 @@ proc tbox_grep_filelist {re filelist} {
         }
         close $fp
     }
-}
-# }}}
-# tbox_cygpath
-# {{{
-proc tbox_cygpath {pp} {
-  global env
-  if {$env(GODEL_IN_CYGWIN)} {
-    if [regexp {^\/} $pp] {
-      if [regexp {\/cygdrive\/\w} $pp] {
-        regsub {\/cygdrive\/(\w)} $pp {\1:} winpath
-      } else {
-        #set winpath "C:/cygwin64$pp"
-        set winpath "$env(CYGWIN_INSTALL)/$pp"
-      }
-      set path "file:///$winpath"
-    } else {
-      set path $pp
-    }
-  } else {
-    set path $pp
-  }
-  return $path
-}
-# }}}
-# tbox_cyg2unix
-# {{{
-proc tbox_cyg2unix {pp} {
-  global env
-  if {$env(GODEL_IN_CYGWIN)} {
-    regsub {file:///} $pp {} pp
-    regsub {file:/} $pp {} pp
-    set path [exec tcsh -fc "cygpath -u $pp"]
-  } else {
-    regsub {file://} $pp {} pp
-    set path $pp
-  }
-
-  return $path
 }
 # }}}
 # tbox_ww2date
@@ -4924,7 +4168,7 @@ proc tbox_procExists {p} {
    return uplevel 1 [expr {[llength [info procs $p]] > 0}]
 }
 # }}}
-#: godel_value_scatter
+# godel_value_scatter
 # {{{
 proc godel_value_scatter {name bin_size inlist} {
   if ![file exist .chart] { file mkdir .chart }
@@ -4965,7 +4209,7 @@ proc godel_value_scatter {name bin_size inlist} {
 }
 
 # }}}
-#: godel_value_accu
+# godel_value_accu
 # {{{
 proc godel_value_accu {name bin_size inlist} {
   if ![file exist .chart] { file mkdir .chart }
@@ -5005,7 +4249,7 @@ proc godel_value_accu {name bin_size inlist} {
 }
 
 # }}}
-#@=godel_add_class
+# godel_add_class
 # {{{
 proc godel_add_class {pname value} {
   global env
@@ -5030,7 +4274,7 @@ proc godel_add_class {pname value} {
   godel_array_save vars $meta($pname,where)/.godel/vars.tcl
 }
 # }}}
-#@=godel_set_page_value
+# godel_set_page_value
 # {{{
 proc godel_set_page_value {pname attr value} {
   global env
@@ -5051,64 +4295,14 @@ proc godel_set_page_value {pname attr value} {
   #return $vars(g:keywords)
 }
 # }}}
-#@>META
-#@=mindex
-# {{{
-proc mindex {metafile} {
-  source $metafile
-
-  array set vars [array get meta]
-
-  # lmap is supported in tcl 8.6
-  #set ilist [lmap i [array name meta *,where] {regsub ",where" $i ""}]
-  set ilist [list]
-  foreach i [array name meta *,where] {
-    regsub ",where" $i "" i
-    lappend ilist $i
-  }
-
-  godel_array_reset meta
-
-  foreach i $ilist {
-    set varspath   $vars($i,where)/.godel/vars.tcl
-    set dyvarspath $vars($i,where)/.godel/dyvars.tcl
-    if [file exist $varspath] {
-      source $varspath
-
-      if [file exist $dyvarspath] {
-        source $dyvarspath
-        set meta($i,last_updated) $dyvars(last_updated)
-      }
-      #set meta($i,class)        $vars(g:class)
-      set meta($i,keywords)     [lsort [concat $vars(g:keywords)]]
-      #set meta($i,pagesize)     $vars(pagesize)
-      set meta($i,where)        $vars($i,where)
-# cdk use "keys" for searching
-      if [info exist vars(title)] {
-        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(title)]]
-      } else {
-        set meta($i,keys)         [lsort [concat $i $vars(g:keywords)]]
-      }
-    } else {
-      puts "Error: not exist.. $varspath"
-    }
-  }
-
-  godel_array_save meta [file dirname $metafile]/indexing.tcl
-}
-# }}}
-#@=meta-indexing
+# meta-indexing
 # {{{
 proc meta_indexing {{ofile NA}} {
   upvar env env
-  foreach f $env(GODEL_META_FILE) {
-    source $f
-  }
+  source $env(GODEL_CENTER)/meta.tcl
 
   array set vars [array get meta]
 
-  # lmap is supported in tcl 8.6
-  #set ilist [lmap i [array name meta *,where] {regsub ",where" $i ""}]
   set ilist [list]
   foreach i [array name meta *,where] {
     regsub ",where" $i "" i
@@ -5119,40 +4313,26 @@ proc meta_indexing {{ofile NA}} {
 
   foreach i $ilist {
     set varspath   $vars($i,where)/.godel/vars.tcl
-    set dyvarspath $vars($i,where)/.godel/dyvars.tcl
     if [file exist $varspath] {
       source $varspath
-
-      if [file exist $dyvarspath] {
-        godel_array_reset dyvars
-        source $dyvarspath
-        if [info exist dyvars(last_updated)] {
-        set meta($i,last_updated) $dyvars(last_updated)
-        }
-        if [info exist dyvars(page_size)] {
-        set meta($i,page_size)    $dyvars(page_size)
-        }
-      }
-      set meta($i,keywords)     [lsort [concat $vars(g:keywords) ]]
-# cdk use "keys" for searching
-      if [info exist vars(title)] {
-        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) $vars(title)]]
-      } else {
-        set meta($i,keys)         [lsort [concat $i $vars(g:keywords) ]]
-      }
+      set meta($i,keywords)     [lsort [concat $vars(g:keywords) $i]]
+      
     } else {
       puts "Error: not exist.. $varspath"
     }
   }
 
-  if {$ofile == "NA"} {
-    godel_array_save meta $env(GODEL_META_CENTER)/indexing.tcl
+  set index_file $env(GODEL_CENTER)/indexing.tcl
+  if [file exist $index_file] {
   } else {
-    godel_array_save meta $ofile
+    set kout [open $index_file w]
+    close $kout
   }
+
+  godel_array_save meta $env(GODEL_CENTER)/indexing.tcl
 }
 # }}}
-#@=meta_chkin
+# meta_chkin
 # {{{
 proc meta_chkin {args} {
   # -f (force)
@@ -5219,7 +4399,7 @@ proc meta_chkin {args} {
 
 }
 # }}}
-#@=meta_rm
+# meta_rm
 # {{{
 proc meta_rm {name} {
   global env
