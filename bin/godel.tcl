@@ -3132,8 +3132,8 @@ proc lcount {list} {
 # {{{
 proc gvi {keywords} {
   global env
-  if [file exist $env(GODEL_META_CENTER)/gvi_list.tcl] {
-    source       $env(GODEL_META_CENTER)/gvi_list.tcl
+  if [file exist $env(GODEL_CENTER)/gvi_list.tcl] {
+    source       $env(GODEL_CENTER)/gvi_list.tcl
   } else {
     return
   }
@@ -4450,7 +4450,7 @@ proc meta_chkin {args} {
   if {$opt(-f)} {
       puts "Checkin $pagename..."
       set meta($pagename,where)    $fullpath
-      godel_array_save meta $env(GODEL_META_FILE)
+      godel_array_save meta $env(GODEL_CENTER)/meta.tcl
       cd $org_path
       return 1
   } else {
@@ -4462,7 +4462,7 @@ proc meta_chkin {args} {
     } else {
       puts "Checkin $pagename..."
       set meta($pagename,where)    $fullpath
-      godel_array_save meta $env(GODEL_META_FILE)
+      godel_array_save meta $env(GODEL_CENTER)/meta.tcl
       cd $org_path
       return 1
     }
@@ -4475,14 +4475,14 @@ proc meta_chkin {args} {
 # {{{
 proc meta_rm {name} {
   global env
-  set mfile $env(GODEL_META_FILE)
+  set mfile $env(GODEL_CENTER)/meta.tcl
   if [file exist $mfile] {
     source $mfile
   }
 
   array unset meta $name,where
 
-  godel_array_save meta $env(GODEL_META_FILE)
+  godel_array_save meta $env(GODEL_CENTER)/meta.tcl
 }
 # }}}
 # tbox_grep
