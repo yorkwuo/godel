@@ -1,3 +1,58 @@
+
+# bton_delete
+# {{{
+proc bton_delete {name} {
+  upvar celltxt celltxt
+  upvar row     row
+
+  if [file exist $row/.delete.gtcl] {
+  } else {
+    set kout [open $row/.delete.gtcl w]
+      puts $kout "set pagepath \[file dirname \[file dirname \[info script]]]"
+      puts $kout "cd \$pagepath"
+      puts $kout "exec rm -rf $row"
+      puts $kout "exec godel_draw.tcl"
+      puts $kout "exec xdotool search --name \"$name — Mozilla Firefox\" key ctrl+r"
+    close $kout
+  }
+
+  if [file exist "$row/.delete.gtcl"] {
+    set celltxt "<td><a href=$row/.delete.gtcl class=\"w3-btn w3-teal w3-round\" type=text/gtcl>D</a></td>"
+  } else {
+    set celltxt "<td></td>"
+  }
+}
+# }}}
+# bton_tick
+# {{{
+proc bton_tick {name} {
+  upvar celltxt celltxt
+  upvar row     row
+
+  if [file exist $row/.tick.gtcl] {
+  } else {
+    set kout [open $row/.tick.gtcl w]
+      puts $kout "set pagepath \[file dirname \[file dirname \[info script]]]"
+      puts $kout "cd \$pagepath"
+      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
+      puts $kout "set tick_status \[lvars $row tick_status]"
+      puts $kout "if {\$tick_status eq \"\" | \$tick_status eq \"1\"} {"
+      puts $kout "  lsetvar $row tick_status 0"
+      puts $kout "} else {"
+      puts $kout "  lsetvar $row tick_status 1"
+      puts $kout "}"
+      puts $kout "exec godel_draw.tcl"
+      puts $kout "exec xdotool search --name \"$name — Mozilla Firefox\" key ctrl+r"
+    close $kout
+  }
+
+  if [file exist "$row/.tick.gtcl"] {
+    set celltxt "<td><a href=$row/.tick.gtcl class=\"w3-btn w3-teal w3-round\" type=text/gtcl>T</a></td>"
+  } else {
+    set celltxt "<td></td>"
+  }
+}
+# }}}
 # glize
 # {{{
 proc glize {args} {
@@ -1906,7 +1961,7 @@ proc local_table {name args} {
       puts $fout "<td><a href=\"$row/.godel/vars.tcl\" type=text/txt>v</a></td>"
     }
     if {$opt(-serial)} {
-      puts $fout "<td>$serial</td>"
+      puts $fout "<td><a href=$row/.index.htm>$serial</a></td>"
     }
     #----------------------
     # For each table column
@@ -2829,8 +2884,18 @@ proc csv_table {args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-delim) 1
   } else {
-    #set delim {,}
-    set delim {:}
+    set delim {,}
+    #set delim {:}
+  }
+# }}}
+  # -file
+# {{{
+  set opt(-file) 0
+  set idx [lsearch $args {-file}]
+  if {$idx != "-1"} {
+    set fname [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-file) 1
   }
 # }}}
   # -procs (proc to execute)
@@ -2844,8 +2909,15 @@ proc csv_table {args} {
   }
 # }}}
 
-  set content [lindex $args 0]
+  if {$opt(-file)} {
+    set kin [open $fname r]
+      set content [read $kin]
+    close $kin
+  } else {
+    set content [lindex $args 0]
+  }
   set lines [split $content \n]
+
   puts $fout "<table class=table1>"
   foreach line $lines {
     set cols [split $line $delim]
