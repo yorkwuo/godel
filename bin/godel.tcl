@@ -4325,7 +4325,7 @@ proc godel_value_accu {name bin_size inlist} {
 # {{{
 proc godel_add_class {pname value} {
   global env
-  source $env(GODEL_META_FILE)
+  source $env(GODEL_CENTER)/meta.tcl
 
 # Get pname where
   source $mfile
@@ -4350,7 +4350,7 @@ proc godel_add_class {pname value} {
 # {{{
 proc godel_set_page_value {pname attr value} {
   global env
-  source $env(GODEL_META_FILE)
+  source $env(GODEL_CENTER)/meta.tcl
 
 # Get pname where
   source $mfile
@@ -4417,7 +4417,7 @@ proc meta_chkin {args} {
   }
 # }}}
   global env
-  source $env(GODEL_META_FILE)
+  source $env(GODEL_CENTER)/meta.tcl
   set org_path [pwd]
 
   set page_path $args
