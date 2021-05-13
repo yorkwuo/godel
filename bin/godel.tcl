@@ -1632,11 +1632,11 @@ proc lsetdyvar {name key value} {
   set varfile $name/.godel/dyvars.tcl
 
   if [file exist $varfile] {
- #   puts $varfile
     source $varfile
     set dyvars($key) $value
   } else {
-    puts "Error: not exist... $varfile"
+    set kout [open $varfile w]
+    close $kout
   }
 
   godel_array_save dyvars $varfile
