@@ -1,5 +1,5 @@
 #!/usr/bin/tclsh
-source ~/godel.tcl
+source $env(GODEL_ROOT)/bin/godel.tcl
 
 proc ghtm_top_bar {args} {
 }

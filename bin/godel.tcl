@@ -2910,9 +2910,13 @@ proc csv_table {args} {
 # }}}
 
   if {$opt(-file)} {
-    set kin [open $fname r]
-      set content [read $kin]
-    close $kin
+    if [file exist $fname] {
+      set kin [open $fname r]
+        set content [read $kin]
+      close $kin
+    } else {
+      return
+    }
   } else {
     set content [lindex $args 0]
   }
