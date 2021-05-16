@@ -60,6 +60,21 @@ $(document).ready(function(){
 
 });
 // }}}
+//
+var table = document.getElementById('tbl');
+var cells = table.getElementsByTagName('td');
+
+for (var i = 0; i < cells.length; i++) {
+
+  cells[i].addEventListener('input', function(){
+    var gname   = this.getAttribute("gname");
+    var att = this.setAttribute("changed","1");
+    this.style.backgroundColor = "lightyellow";
+    //var kk   = this.getAttribute("changed");
+    //console.log(kk);
+  })
+}
+
 // JQuery: Save text to disk
 // {{{
 $(document).ready(function(){
@@ -80,12 +95,15 @@ $(document).ready(function(){
         var value   = $(this).text();
         var gname   = $(this).attr('gname');
         var colname = $(this).attr('colname');
+        var changed = $(this).attr('changed');
         if (typeof gname === 'undefined') {
           return; // equal to continue
         } else {
-          var cmd = "lsetvar " + gname + " " + colname + " \"" + value + "\"\n";
+          if (changed) {
+            var cmd = "lsetvar " + gname + " " + colname + " \"" + value + "\"\n";
+            cmds = cmds + cmd;
+          }
         }
-        cmds = cmds + cmd;
       });
     });
 

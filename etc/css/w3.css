@@ -311,7 +311,7 @@ img {
 .table1 td, .table1 th{
   padding       : 5px;
   font-size     : 14px;
-  text-align    : right;
+  text-align    : left;
   border-bottom : 1px solid #ddd;
   border        : 1px solid black;
   border-color  : #f79646 #ccc;  
@@ -327,6 +327,19 @@ img {
   text-align    : left;
   border-bottom : 1px solid #ddd;
   border        : 1px solid;
+  border-color  : #f79646 #ccc;  
+}
+.table3 {
+  font-family:monospace,Consolas,sans-serif;
+  border-collapse: collapse;
+  margin-top:20px;
+}
+.table3 td, .table3 th{
+  padding       : 5px;
+  font-size     : 14px;
+  text-align    : right;
+  border-bottom : 1px solid #ddd;
+  border        : 1px solid black;
   border-color  : #f79646 #ccc;  
 }
 

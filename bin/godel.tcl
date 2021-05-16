@@ -1,12 +1,101 @@
+# ltbl_iname
+# {{{
+proc ltbl_iname {} {
+  upvar celltxt celltxt
+  upvar row     row
 
+  set iname [lvars $row g:iname]
+  set tick_status [lvars $row tick_status]
+
+  regsub {^\d\d\d\d-} $iname {} iname
+  regsub {_\d\d\-\d\d_\d\d} $iname {} iname
+
+  
+  if {$tick_status eq "1"} {
+    set celltxt "<td bgcolor=palegreen><a href=$row/.index.htm>$iname</a></td>"
+  } else {
+    set celltxt "<td><a href=$row/.index.htm>$iname</a></td>"
+  }
+}
+# }}}
+# ghtm_panel_begin
+# {{{
+proc ghtm_panel_begin {args} {
+  upvar fout fout
+  # -title
+# {{{
+  set opt(-title) 0
+  set idx [lsearch $args {-title}]
+  if {$idx != "-1"} {
+    set title [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-title) 1
+  } else {
+    set title NA
+  }
+# }}}
+  # -bg
+# {{{
+  set opt(-bg) 0
+  set idx [lsearch $args {-bg}]
+  if {$idx != "-1"} {
+    set bgcolor [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-bg) 1
+  } else {
+    set bgcolor NA
+  }
+# }}}
+
+  if {$opt(-bg)} {
+    puts $fout "<div class=\"w3-panel w3-$bgcolor w3-leftbar\">"
+  } else {
+    puts $fout "<div class=\"w3-panel w3-pale-blue w3-leftbar\">"
+  }
+  if {$opt(-title)} {
+    puts $fout "<p>$title</p>"
+  }
+}
+# }}}
+# ghtm_panel_end
+# {{{
+proc ghtm_panel_end {} {
+  upvar fout fout
+  puts $fout "</div>"
+}
+# }}}
+# bton_move
+# {{{
+proc bton_move {pathto name} {
+  upvar celltxt celltxt
+  upvar row     row
+
+  #if [file exist $row/.move.gtcl] {
+  #} else {
+    set kout [open $row/.move.gtcl w]
+      puts $kout "set pagepath \[file dirname \[file dirname \[info script]]]"
+      puts $kout "cd \$pagepath"
+      puts $kout "exec mv $row $pathto"
+      puts $kout "exec godel_draw.tcl"
+      puts $kout "exec xdotool search --name \"$name — Mozilla Firefox\" key ctrl+r"
+    close $kout
+  #}
+
+  if [file exist "$row/.move.gtcl"] {
+    set celltxt "<td><a href=$row/.move.gtcl class=\"w3-btn w3-teal w3-round\" type=text/gtcl>M</a></td>"
+  } else {
+    set celltxt "<td></td>"
+  }
+}
+# }}}
 # bton_delete
 # {{{
 proc bton_delete {name} {
   upvar celltxt celltxt
   upvar row     row
 
-  if [file exist $row/.delete.gtcl] {
-  } else {
+  #if [file exist $row/.delete.gtcl] {
+  #} else {
     set kout [open $row/.delete.gtcl w]
       puts $kout "set pagepath \[file dirname \[file dirname \[info script]]]"
       puts $kout "cd \$pagepath"
@@ -14,7 +103,7 @@ proc bton_delete {name} {
       puts $kout "exec godel_draw.tcl"
       puts $kout "exec xdotool search --name \"$name — Mozilla Firefox\" key ctrl+r"
     close $kout
-  }
+  #}
 
   if [file exist "$row/.delete.gtcl"] {
     set celltxt "<td><a href=$row/.delete.gtcl class=\"w3-btn w3-teal w3-round\" type=text/gtcl>D</a></td>"
@@ -29,8 +118,8 @@ proc bton_tick {name} {
   upvar celltxt celltxt
   upvar row     row
 
-  if [file exist $row/.tick.gtcl] {
-  } else {
+  #if [file exist $row/.tick.gtcl] {
+  #} else {
     set kout [open $row/.tick.gtcl w]
       puts $kout "set pagepath \[file dirname \[file dirname \[info script]]]"
       puts $kout "cd \$pagepath"
@@ -44,7 +133,7 @@ proc bton_tick {name} {
       puts $kout "exec godel_draw.tcl"
       puts $kout "exec xdotool search --name \"$name — Mozilla Firefox\" key ctrl+r"
     close $kout
-  }
+  #}
 
   if [file exist "$row/.tick.gtcl"] {
     set celltxt "<td><a href=$row/.tick.gtcl class=\"w3-btn w3-teal w3-round\" type=text/gtcl>T</a></td>"
@@ -169,8 +258,22 @@ proc gexe_button {args} {
 # }}}
 # list_svg
 # {{{
-proc list_svg {fname} {
+proc list_svg {args} {
   upvar fout fout
+  # -title
+# {{{
+  set opt(-title) 0
+  set idx [lsearch $args {-title}]
+  if {$idx != "-1"} {
+    set title [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-title) 1
+  } else {
+    set title NA
+  }
+# }}}
+
+  set fname [lindex $args 0]
 
   if ![file exist $fname] {
     set kout [open $fname w]
@@ -178,7 +281,14 @@ proc list_svg {fname} {
       puts $kout "</svg>"
     close $kout
   }
-  puts $fout "<a href=$fname type=text/svg>$fname</a><br>"
+  puts $fout "<div class=\"w3-panel w3-light-gray w3-leftbar \">"
+  if {$opt(-title)} {
+    puts $fout "<p>$title <a href=$fname type=text/svg>$fname</a></p>"
+  } else {
+    puts $fout "<p><a href=$fname type=text/svg>$fname</a></p>"
+  }
+  puts $fout "</div>"
+
   set kin [open $fname r]
   set content [read $kin]
   puts $fout $content
@@ -748,6 +858,17 @@ proc ghtm_top_bar {args} {
     set opt(-save) 1
   }
 # }}}
+  # -js
+# {{{
+  set opt(-js) 0
+  set idx [lsearch $args {-js}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-js) 1
+    upvar LOCAL_JS LOCAL_JS
+    set LOCAL_JS 1
+  }
+# }}}
 
   if [file exist .godel/dyvars.tcl] {
     source .godel/dyvars.tcl
@@ -765,16 +886,6 @@ proc ghtm_top_bar {args} {
 
   #puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
   #puts $fout "<script src=.godel/js/godel.js></script>"
-  if {$env(GODEL_ALONE)} {
-    file mkdir .godel/js
-    exec cp $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
-    exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
-    puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
-    puts $fout "<script src=.godel/js/godel.js></script>"
-  } else {
-    puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
-    puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
-  }
 
   puts $fout "<ul id=stickymenu class=solidblockmenu>"
   puts $fout "<li><a href=.godel/ghtm.tcl type=text/txt>Edit</a></li>"
@@ -786,6 +897,9 @@ proc ghtm_top_bar {args} {
   if {$opt(-filter)} {
   puts $fout "<li><input type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\"></li>"
   }
+  if {$opt(-js)} {
+    puts $fout "<li style=float:right><a href=local.js type=text/txt>JS</a></li>"
+  }
   puts $fout "<li><a href=../.index.htm>Parent</a></li>"
   puts $fout "<li><a href=.godel/draw.gtcl type=text/gtcl>Draw</a></li>"
   puts $fout "<li style=float:right><a href=.godel/open.gtcl type=text/gtcl>Open</a></li>"
@@ -794,7 +908,6 @@ proc ghtm_top_bar {args} {
   puts $fout "</ul>"
   puts $fout "<br>"
 
-  puts $fout "</script>"
   if [file exist .godel/.qn.md] {
     gmd -f .godel/.qn.md
   } else {
@@ -1876,14 +1989,8 @@ proc local_table {name args} {
   }
   # }}}
 
-# Start creating table...
-#  if {$opt(-css)} {
-#    puts $fout "<table class=$css_class id=$name>"
-#  } else {
-#    puts $fout "<table class=table2 id=$name>"
-#  }
   if {$opt(-save)} {
-  puts $fout "<button id=\"save\">Save</button>"
+    puts $fout "<button id=\"save\">Save</button>"
   }
   if {$opt(-fontsize)} {
     puts $fout "<style>"
@@ -1923,7 +2030,6 @@ proc local_table {name args} {
     ## Create row_items for sorting
     set row_items {}
     foreach row $rows {
-      #puts $row
       set sdata [lvars $row $sortby]
       if {$sdata eq ""} {
         set sdata "NA"
@@ -1972,8 +2078,6 @@ proc local_table {name args} {
       regsub {;\S+} $col {} col
 
       # Get column data
-      #puts "$row $col"
-      #puts "$row/[file dirname $col]"
       # img:
       if [regexp {img:} $col] {
         regsub {img:} $col {} col
@@ -1986,16 +2090,13 @@ proc local_table {name args} {
       } elseif [regexp {exe_button:} $col] {
         regsub {exe_button:} $col {} col
         set execmd [lvars $row execmd]
-        #append celltxt "<td><a href=$coverfile><img height=100px src=$coverfile></a></td>"
         append celltxt "<td><a href=$row/.$execmd.gtcl class=\"w3-btn w3-teal\" type=text/gtcl>$execmd</a><a class=\"w3-button w3-lime\" href=$row/$execmd type=text/txt>cmd</a></td>"
 
       # proc:
       } elseif [regexp {proc:} $col] {
         regsub {proc:} $col {} col
         set procname $col
-        #cd $row
         eval $procname
-        #cd ..
       # flist:
       } elseif [regexp {flist:} $col] {
         regsub {flist:} $col {} col
@@ -2057,72 +2158,6 @@ proc local_table {name args} {
         } else {
           append celltxt "<td></td>"
         }
-      # a:
-      } elseif [regexp {a:} $col] {
-        regsub {a:} $col {} col
-        set col_data [lvars $row $col]
-        if [file exist $col_data] {
-          append celltxt "<td><a href=$col_data type=text/txt>$col_data</a></td>"
-        } else {
-          append celltxt "<td>NA: $col_data</td>"
-        }
-      # ln:
-      } elseif [regexp {ln:} $col] {
-        regsub {ln:} $col {} col
-        regexp {=(\S+)$} $col -> key
-        regsub {=\S+$} $col {} col
-
-        if {$key == ""} {
-          set disp $col
-        } else {
-          set disp [lvars $row $key]
-        }
-        set fname $row/$col
-        if [file exist $fname] {
-          append celltxt "<td><a href=$fname type=text/txt>$disp</a></td>"
-        } else {
-          append celltxt "<td>NA: $col</td>"
-        }
-      # lnf:
-      } elseif [regexp {lnf:} $col] {
-        regsub {lnf:} $col {} col
-        regexp {=(\S+)$} $col -> disp
-        regsub {=\S+$} $col {} col
-
-        set fname $row/$col
-        if [file exist $fname] {
-          append celltxt "<td><a href=$fname>$disp</a></td>"
-        } else {
-          append celltxt "<td>NA: $fname</td>"
-        }
-      # edfile:
-      } elseif [regexp {edfile:} $col] {
-        regsub {edfile:} $col {} col
-        regexp {=(\S+)$} $col -> disp
-        regsub {=\S+$} $col {} col
-
-        set fname $row/$col
-        if [file exist $fname] {
-          append celltxt "<td><a href=$fname type=text/txt>$disp</a></td>"
-        } else {
-          append celltxt "<td>NA: $fname</td>"
-        }
-      # invisible:
-      } elseif [regexp {invisible:} $col] {
-        regsub {invisible:} $col {} col
-        set dirname [file dirname $col]
-        if {$dirname eq "."} {
-          set page_path $row
-          set page_key  $col
-        } else {
-          set page_path $row/$dirname
-          set page_key  [file tail $col]
-        }
-        set col_data [lvars $page_path $page_key]
-        if {$col_data eq "NA"} {
-          set col_data ""
-        }
-        append celltxt "<td>$col_data</td>"
       } else {
         set dirname [file dirname $col]
         if {$dirname eq "."} {
@@ -2137,11 +2172,9 @@ proc local_table {name args} {
           set col_data ""
         }
 
-        # linkcol
-        if {$col == $linkcol} {
+        if {$col == "g:pagename"} {
           set col_data "<a href=\"$row/.index.htm\">$col_data</a>"
         }
-
         append celltxt "<td>$col_data</td>"
       }
       puts $fout $celltxt
@@ -2976,6 +3009,10 @@ proc gnotes {args} {
 
   set content [lindex $args 0]
 
+  if {$content eq ""} {
+    return
+  }
+
   if {$opt(-qnote)} {
     puts $content
   }
@@ -3718,10 +3755,6 @@ proc godel_draw {{target_path NA}} {
   upvar vars vars
   global env
   upvar argv argv
-  upvar just_draw just_draw
-  upvar bvars bvars
-  set ::toc_list [list]
-
 
   file mkdir .godel
   # default vars
@@ -3830,27 +3863,40 @@ proc godel_draw {{target_path NA}} {
 
 # highlight words
 # {{{
-  puts $fout "<script>"
   if [info exist rwords] {
+  puts $fout "<script>"
     puts $fout "var target_words = \["
     foreach rword $rwords {
       puts $fout "\'$rword\',"
     }
     puts $fout "\];"
     puts $fout "word_highlight(target_words)"
-  }
   puts $fout "</script>"
+  }
 # }}}
+  if {$env(GODEL_ALONE)} {
+    file mkdir .godel/js
+    exec cp $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
+    exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
+    puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
+    puts $fout "<script src=.godel/js/godel.js></script>"
+  } else {
+    puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
+    puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
+  }
+
+  if [info exist LOCAL_JS] {
+    if ![file exist "local.js"] {
+      set kout [open "local.js" w]
+      close $kout
+    }
+    puts $fout "<script src=local.js></script>"
+  }
 
   puts $fout "</body>"
   puts $fout "</html>"
 
   close $fout
-
-# dyvars
-# {{{
-# }}}
-
 
   if {$target_path == "NA" || $target_path == ""} {
   } else {
