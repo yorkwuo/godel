@@ -1637,6 +1637,7 @@ proc lsetdyvar {name key value} {
   } else {
     set kout [open $varfile w]
     close $kout
+    set dyvars($key) $value
   }
 
   godel_array_save dyvars $varfile
