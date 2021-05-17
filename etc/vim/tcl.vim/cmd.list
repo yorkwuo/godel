@@ -1,3 +1,9 @@
+ghtm_panel_begin
+list_svg
+ghtm_keyword_button
+gexe_button
+
+ghtm_panel_end
 find_runtcl
 iproc_source
 
