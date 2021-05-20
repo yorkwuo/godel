@@ -66,7 +66,7 @@ proc ghtm_panel_end {} {
 # }}}
 # bton_move
 # {{{
-proc bton_move {pathto name} {
+proc bton_move {pathto {name ""}} {
   upvar celltxt celltxt
   upvar row     row
 
@@ -77,7 +77,7 @@ proc bton_move {pathto name} {
       puts $kout "cd \$pagepath"
       puts $kout "exec mv $row $pathto"
       puts $kout "exec godel_draw.tcl"
-      puts $kout "exec xdotool search --name \"$name — Mozilla Firefox\" key ctrl+r"
+      puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
     close $kout
   #}
 
@@ -90,7 +90,7 @@ proc bton_move {pathto name} {
 # }}}
 # bton_delete
 # {{{
-proc bton_delete {name} {
+proc bton_delete {{name ""}} {
   upvar celltxt celltxt
   upvar row     row
 
@@ -101,7 +101,7 @@ proc bton_delete {name} {
       puts $kout "cd \$pagepath"
       puts $kout "exec rm -rf $row"
       puts $kout "exec godel_draw.tcl"
-      puts $kout "exec xdotool search --name \"$name — Mozilla Firefox\" key ctrl+r"
+      puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
     close $kout
   #}
 
@@ -114,7 +114,7 @@ proc bton_delete {name} {
 # }}}
 # bton_tick
 # {{{
-proc bton_tick {name} {
+proc bton_tick {{name ""}} {
   upvar celltxt celltxt
   upvar row     row
 
@@ -131,7 +131,7 @@ proc bton_tick {name} {
       puts $kout "  lsetvar $row tick_status 1"
       puts $kout "}"
       puts $kout "exec godel_draw.tcl"
-      puts $kout "exec xdotool search --name \"$name — Mozilla Firefox\" key ctrl+r"
+      puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
     close $kout
   #}
 
