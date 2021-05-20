@@ -99,7 +99,7 @@ proc bton_delete {{name ""}} {
     set kout [open $row/.delete.gtcl w]
       puts $kout "set pagepath \[file dirname \[file dirname \[info script]]]"
       puts $kout "cd \$pagepath"
-      puts $kout "exec rm -rf $row"
+      puts $kout "exec xterm -e \"rm -rf $row\""
       puts $kout "exec godel_draw.tcl"
       puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
     close $kout
