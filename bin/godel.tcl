@@ -1828,6 +1828,16 @@ proc local_table {name args} {
   global fout
   upvar vars vars
 
+  # -exclude
+# {{{
+  set opt(-exclude) 0
+  set idx [lsearch $args {-exclude}]
+  if {$idx != "-1"} {
+    set exclude_pattern [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-exclude) 1
+  }
+# }}}
   # -f (filelist name)
 # {{{
   set opt(-f) 0
@@ -1989,6 +1999,10 @@ proc local_table {name args} {
     }
   }
   # }}}
+  #
+  if {$opt(-exclude)} {
+    set exdirs [glob {*}$exclude_pattern]
+  }
 
   if {$opt(-save)} {
     puts $fout "<button id=\"save\">Save</button>"
@@ -2048,6 +2062,10 @@ proc local_table {name args} {
     }
   }
 # }}}
+#
+  if {$opt(-exclude)} {
+    set rows [setop_restrict $rows $exdirs]
+  }
 
   set serial 1
 #--------------------

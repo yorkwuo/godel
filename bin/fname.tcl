@@ -81,7 +81,9 @@ foreach f $flist {
   set extension [file extension $f]
 
   if {$opt(-remove)} {
-    regsub $remove $f {} newname
+    if [regsub $remove $f {} newname] {
+      puts "$newname"
+    }
   } elseif {$opt(-from)} {
     regsub $from $f $to newname
   } else {
@@ -96,7 +98,6 @@ foreach f $flist {
     }
   }
 
-  puts "$newname"
 
   if {$opt(-commit)} {
     if {$f eq $newname} {
