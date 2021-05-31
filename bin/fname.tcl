@@ -98,6 +98,7 @@ foreach f $flist {
     }
   }
 
+      puts "$newname"
 
   if {$opt(-commit)} {
     if {$f eq $newname} {

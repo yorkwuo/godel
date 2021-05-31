@@ -5,7 +5,7 @@ exec tclsh "$0" ${1+"$@"}
 
 source $env(GODEL_ROOT)/bin/godel.tcl
 
-source $env(GODEL_META_FILE)
+source $env(GODEL_CENTER)/meta.tcl
 
 set kout [open "dir_not_exist.rpt" w]
 
@@ -20,7 +20,7 @@ foreach i [array names meta] {
 }
 close $kout
 
-godel_array_save meta $env(GODEL_META_FILE)
+godel_array_save meta $env(GODEL_CENTER)/meta.tcl
 
 
 # vim:ft=tcl

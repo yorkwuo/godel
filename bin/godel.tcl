@@ -1,20 +1,128 @@
-# ltbl_iname
+# bton_note_onoff
 # {{{
-proc ltbl_iname {} {
+proc bton_note_onoff {} {
+  upvar fout fout
+
+  if [file exist .note_onoff.gtcl] {
+  } else {
+    set kout [open ".note_onoff.gtcl" w]
+      puts $kout "#!/usr/bin/tclsh"
+      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
+      puts $kout "set pagepath \[file dirname \[info script]]"
+      puts $kout "cd \$pagepath"
+      puts $kout ""
+      puts $kout "set note_state \[lvars . note_state]"
+      puts $kout ""
+      puts $kout "if {\$note_state eq \"1\"} {"
+      puts $kout "  lsetvar . note_state 0"
+      puts $kout "} else {"
+      puts $kout "  lsetvar . note_state 1"
+      puts $kout "}"
+      puts $kout ""
+      puts $kout "godel_draw"
+      puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
+    close $kout
+
+  }
+
+  puts $fout "<a href=.note_onoff.gtcl class=\"w3-btn w3-teal\" type=text/gtcl><b>note on/off</b></a>"
+}
+# }}}
+# insert_note_column
+# {{{
+proc insert_note_column {} {
+  upvar cols cols
+  set note_state [lvars . note_state]
+  if {$note_state eq "1"} {
+    lappend cols "md:note;Note"
+    lappend cols "ed:note.md;E"
+  }
+}
+# }}}
+# ltbl_play
+# {{{
+proc ltbl_play {} {
   upvar celltxt celltxt
   upvar row     row
 
-  set iname [lvars $row g:iname]
-  set tick_status [lvars $row tick_status]
+  if [file exist $row/.1play.gtcl] {
+  } else {
+    set kout [open $row/.1play.gtcl w]
+      puts $kout "#!/usr/bin/tclsh"
+      puts $kout "set pagepath \[file dirname \[info script]]"
+      puts $kout "cd \$pagepath"
+      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
+      puts $kout ""
+      puts $kout "set hit \[lvars . hit]"
+      puts $kout ""
+      puts $kout "if {\$hit eq \"1\"} {"
+      puts $kout "  catch {exec mpv --playlist=playlist.f}"
+      puts $kout "  set views \[lvars . views]"
+      puts $kout "  if {\$views eq \"NA\"} {"
+      puts $kout "    set views 1"
+      puts $kout "  } else {"
+      puts $kout "    incr views"
+      puts $kout "  }"
+      puts $kout "  lsetvar . views \$views"
+      puts $kout "  set timestamp \[clock format \[clock seconds] -format {%Y-%m-%d}]"
+      puts $kout "  lsetvar . last \$timestamp"
+      puts $kout "} else {"
+      puts $kout "  exec xterm -hold -e \"echo Not exist... \$pfile\""
+      puts $kout "}"
+    close $kout
+  }
 
-  regsub {^\d\d\d\d-} $iname {} iname
-  regsub {_\d\d\-\d\d_\d\d} $iname {} iname
+  if [file exist $row/.1play.gtcl] {
+    set celltxt "<td><a href=$row/.1play.gtcl type=text/gtcl>Play</a></td>"
+  } else {
+    set celltxt "<td></td>"
+  }
+}
+# }}}
+# ltbl_hit
+# {{{
+proc ltbl_hit {dispcol} {
+  upvar celltxt celltxt
+  upvar row row
+  set code $row
+
+  set hit  [lvars $code hit]
+  set tick [lvars $code tick_status]
+  set disp [lvars $code $dispcol]
+
+  if {$hit eq "NA"} {
+    set hit 0
+  }
+
+  if {$hit} {
+    if {$tick eq "1"} {
+      set celltxt "<td bgcolor=lightgreen>$disp</td>"
+    } else {
+      set celltxt "<td>$disp</td>"
+    }
+  } else {
+    set celltxt "<td bgcolor=lightgray>$disp</td>"
+  }
+}
+# }}}
+# ltbl_iname
+# {{{
+proc ltbl_iname {dispcol} {
+  upvar celltxt celltxt
+  upvar row     row
+
+  #set iname [lvars $row g:iname]
+  set tick_status [lvars $row tick_status]
+  set disp [lvars $row $dispcol]
+
+  #regsub {^\d\d\d\d-} $iname {} iname
+  #regsub {_\d\d\-\d\d_\d\d} $iname {} iname
 
   
   if {$tick_status eq "1"} {
-    set celltxt "<td bgcolor=palegreen><a href=$row/.index.htm>$iname</a></td>"
+    set celltxt "<td bgcolor=palegreen><a href=$row/.index.htm>$disp</a></td>"
   } else {
-    set celltxt "<td><a href=$row/.index.htm>$iname</a></td>"
+    set celltxt "<td><a href=$row/.index.htm>$disp</a></td>"
   }
 }
 # }}}
@@ -94,8 +202,8 @@ proc bton_delete {{name ""}} {
   upvar celltxt celltxt
   upvar row     row
 
-  #if [file exist $row/.delete.gtcl] {
-  #} else {
+  if [file exist $row/.delete.gtcl] {
+  } else {
     set kout [open $row/.delete.gtcl w]
       puts $kout "set pagepath \[file dirname \[file dirname \[info script]]]"
       puts $kout "cd \$pagepath"
@@ -103,7 +211,7 @@ proc bton_delete {{name ""}} {
       puts $kout "exec godel_draw.tcl"
       puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
     close $kout
-  #}
+  }
 
   if [file exist "$row/.delete.gtcl"] {
     set celltxt "<td><a href=$row/.delete.gtcl class=\"w3-btn w3-teal w3-round\" type=text/gtcl>D</a></td>"
@@ -118,8 +226,8 @@ proc bton_tick {{name ""}} {
   upvar celltxt celltxt
   upvar row     row
 
-  #if [file exist $row/.tick.gtcl] {
-  #} else {
+  if [file exist $row/.tick.gtcl] {
+  } else {
     set kout [open $row/.tick.gtcl w]
       puts $kout "set pagepath \[file dirname \[file dirname \[info script]]]"
       puts $kout "cd \$pagepath"
@@ -133,7 +241,7 @@ proc bton_tick {{name ""}} {
       puts $kout "exec godel_draw.tcl"
       puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
     close $kout
-  #}
+  }
 
   if [file exist "$row/.tick.gtcl"] {
     set celltxt "<td><a href=$row/.tick.gtcl class=\"w3-btn w3-teal w3-round\" type=text/gtcl>T</a></td>"
@@ -248,7 +356,8 @@ proc gexe_button {args} {
       if {$opt(-nowin)} {
         puts $kout "exec ./$exefile"
       } else {
-        puts $kout "exec xterm -e \"./$exefile;sleep 2\""
+        #puts $kout "exec xterm -e \"./$exefile;sleep 0.5\""
+        puts $kout "exec xterm -e \"./$exefile\""
       }
     close $kout
   } else {
@@ -697,6 +806,7 @@ proc ghtm_ls {args} {
 
   set pattern [lindex $args 0]
 
+# Dir
   if {!$opt(-nodir)} {
     set flist [lsort [glob -nocomplain -type d $pattern]]
     #puts $fout <p>
@@ -707,14 +817,15 @@ proc ghtm_ls {args} {
       set mtime [file mtime $full]
       set timestamp [clock format $mtime -format {%Y-%m-%d %H:%M}]
       set fsize [file size $full]
-      set fsize [num_symbol $fsize M]
+      set fsize [num_symbol $fsize K]
       #puts $fout [format "<div class=ghtmls><pre style=background-color:lightblue>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
-      puts $fout [format "<div class=ghtmls><pre style=background-color:lightcyan>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full/.index.htm\">$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:lightcyan>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full/.index.htm\">$fname</a><br></div>"]
       incr count
     }
     #puts $fout </p>
   }
 
+# Files
   set flist [lsort [glob -nocomplain -type f $pattern]]
 
   if {$opt(-exclude)} {
@@ -733,8 +844,6 @@ proc ghtm_ls {args} {
     set sortedlist [lsort -index 2 $flist2 ]
   }
 
-  #puts $fout <p>
-
   set count 1
   foreach i $sortedlist {
     set full [lindex $i 1]
@@ -742,19 +851,25 @@ proc ghtm_ls {args} {
     set fname [file tail $full]
     set timestamp [clock format $mtime -format {%Y-%m-%d %H:%M}]
     set fsize [file size $full]
-    set fsize [num_symbol $fsize M]
-    if [regexp {\.htm} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
-    } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp4>$fname</a><br></div>"]
-    } elseif [regexp {\.mp3} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp3>$fname</a><br></div>"]
-    } elseif [regexp {\.pdf} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/pdf>$fname</a><br></div>"]
-    } elseif [regexp {\.epub} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/epub>$fname</a><br></div>"]
+    if {$fsize >= 1000000} {
+      set fsize [num_symbol $fsize M]
+    } elseif {$fsize >= 1000} {
+      set fsize [num_symbol $fsize K]
     } else {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-5s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
+      set fsize [num_symbol $fsize B]
+    }
+    if [regexp {\.htm} $full] {
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+    } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $full] {
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp4>$fname</a><br></div>"]
+    } elseif [regexp {\.mp3} $full] {
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp3>$fname</a><br></div>"]
+    } elseif [regexp {\.pdf} $full] {
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/pdf>$fname</a><br></div>"]
+    } elseif [regexp {\.epub} $full] {
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/epub>$fname</a><br></div>"]
+    } else {
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
     }
     incr count
   }
@@ -3555,15 +3670,18 @@ proc gpage_where {pagename} {
 # }}}
 # num_symbol
 # {{{
-proc num_symbol {num {symbol NA}} {
+proc num_symbol {num {symbol B}} {
   set s(K) 1000
   set s(W) 10000
   set s(M) 1000000
   set s(Y) 100000000
   set s(B) 1000000000
+  set s(G) 1000000000
   set s(T) 1000000000000
-  if {$num == "NA"} {
+  if {$num eq "NA"} {
     return "NA"
+  } elseif {$symbol eq "B"} {
+    return [format_3digit [expr $num]]$symbol
   } else {
     regsub -all {,} $num {} num
     return [format_3digit [expr $num/$s($symbol)]]$symbol
