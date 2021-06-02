@@ -973,6 +973,16 @@ proc ghtm_top_bar {args} {
     set opt(-save) 1
   }
 # }}}
+  # -csv
+# {{{
+  set opt(-csv) 0
+  set idx [lsearch $args {-csv}]
+  if {$idx != "-1"} {
+    set csvid [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-csv) 1
+  }
+# }}}
   # -js
 # {{{
   set opt(-js) 0
@@ -1007,10 +1017,14 @@ proc ghtm_top_bar {args} {
   puts $fout "<li><a href=.godel/vars.tcl type=text/txt>Value</a></li>"
   if {$opt(-save)} {
     if {$saveid eq ""} {set saveid "save"}
-  puts $fout "<li><button id=\"$saveid\" style=\"margin: 10px 6px\">Save</button></li>"
+    puts $fout "<li><button id=\"$saveid\" style=\"margin: 10px 6px\">Save</button></li>"
+  }
+  if {$opt(-csv)} {
+    if {$csvid eq ""} {set csvid "csv"}
+    puts $fout "<li><button id=\"$csvid\" style=\"margin: 10px 6px\">CSV</button></li>"
   }
   if {$opt(-filter)} {
-  puts $fout "<li><input type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\"></li>"
+    puts $fout "<li><input type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\"></li>"
   }
   if {$opt(-js)} {
     puts $fout "<li style=float:right><a href=local.js type=text/txt>JS</a></li>"
@@ -1942,6 +1956,10 @@ proc lvars {args} {
 proc local_table {name args} {
   global fout
   upvar vars vars
+  upvar ltblrows ltblrows
+  if ![info exist ltblrows] {
+    set ltblrows ""
+  }
 
   # -exclude
 # {{{
@@ -2086,32 +2104,36 @@ proc local_table {name args} {
   # create rows
   # {{{
   set rows ""
-  if {$opt(-f)} {
-    if [file exist $listfile] {
-      #set rows [read_file_ret_list $listfile]
-      set kin [open $listfile r]
+  if {$ltblrows eq ""} {
+    if {$opt(-f)} {
+      if [file exist $listfile] {
+        #set rows [read_file_ret_list $listfile]
+        set kin [open $listfile r]
 
-      while {[gets $kin line] >= 0} {
-        if {[regexp {^\s*#} $line]} {
-        } elseif {[regexp {^\s*$} $line]} {
-        } else {
-          lappend rows $line
+        while {[gets $kin line] >= 0} {
+          if {[regexp {^\s*#} $line]} {
+          } elseif {[regexp {^\s*$} $line]} {
+          } else {
+            lappend rows $line
+          }
         }
+        close $kin
+      } else {
+        puts "Errors: Not exist... $listfile"
+        return
       }
-      close $kin
     } else {
-      puts "Errors: Not exist... $listfile"
-      return
+      if {$opt(-revert)} {
+        set flist [lsort -decreasing [glob -nocomplain */.godel]]
+      } else {
+        set flist [lsort [glob -nocomplain */.godel]]
+      }
+      foreach f $flist {
+        lappend rows [file dirname $f]
+      }
     }
   } else {
-    if {$opt(-revert)} {
-      set flist [lsort -decreasing [glob -nocomplain */.godel]]
-    } else {
-      set flist [lsort [glob -nocomplain */.godel]]
-    }
-    foreach f $flist {
-      lappend rows [file dirname $f]
-    }
+    set rows $ltblrows
   }
   # }}}
   #

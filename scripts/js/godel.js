@@ -131,6 +131,63 @@ $(document).ready(function(){
 
 });
 // }}}
+// JQuery: save table as CSV
+// {{{
+$(document).ready(function(){
+  var $TABLE = $('#tbl');
+
+  $('#csv_button').click(function () {
+
+    //var $rows = $TABLE.find('tr');
+    var $rows = $('#tbl').find('tr');
+
+    var cmds = "";
+
+    // foreach row
+    $rows.each(function () {
+      //var value = $(this).text();
+      //  //var cmd = "\"" + value + "\",";
+      //  var cmd = value;
+      //  cmds = cmds + cmd;
+      var $td = $(this).find('td');
+      //console.log($td.length)
+      if ($td.length == 0) {
+        var $td = $(this).find('th');
+      }
+      // foreach td
+      $td.each(function () {
+        var value   = $(this).text();
+        var cmd = "\"" + value + "\",";
+        cmds = cmds + cmd;
+      });
+
+      cmds = cmds + "\n";
+    });
+
+// Save
+    var data = cmds;
+    const textToBLOB = new Blob([data], { type: 'text/plain' });
+    const sFileName = 'table.csv';	   // The file to save the data.
+
+    var newLink = document.createElement("a");
+    newLink.download = sFileName;
+
+    if (window.webkitURL != null) {
+        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+    }
+    else {
+        newLink.href = window.URL.createObjectURL(textToBLOB);
+        newLink.style.display = "none";
+        document.body.appendChild(newLink);
+    }
+
+    newLink.click(); 
+
+  });
+
+
+});
+// }}}
 // word_highlight
 // {{{
 function word_highlight (target_words) {
