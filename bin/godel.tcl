@@ -1,3 +1,91 @@
+# godel_csv
+# {{{
+proc godel_csv {args} {
+  global fout
+
+  # -delim (delimiter)
+# {{{
+  set opt(-delim) 0
+  set idx [lsearch $args {-delim}]
+  if {$idx != "-1"} {
+    set delim [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-delim) 1
+  } else {
+    set delim {,}
+    #set delim {:}
+  }
+# }}}
+  # -file
+# {{{
+  set opt(-file) 0
+  set idx [lsearch $args {-file}]
+  if {$idx != "-1"} {
+    set fname [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-file) 1
+  }
+# }}}
+  # -procs (proc to execute)
+# {{{
+  set opt(-procs) 0
+  set idx [lsearch $args {-procs}]
+  if {$idx != "-1"} {
+    set procs [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-procs) 1
+  }
+# }}}
+
+  if {$opt(-file)} {
+    if [file exist $fname] {
+      set kin [open $fname r]
+        set content [read $kin]
+      close $kin
+    } else {
+      return
+    }
+  } else {
+    set content [lindex $args 0]
+  }
+  set lines [split $content \n]
+  set lines [lreplace $lines end end]
+
+  set hline [lindex $lines 0]
+  set header_names [split $hline $delim]
+  set num 0
+  foreach header_name $header_names {
+    set colindex($header_name) $num
+    incr num
+  }
+
+
+  set namelist [lvars . namelist]
+
+  set lines [lreplace $lines 0 0]
+
+  puts $fout "<table class=table1>"
+
+  puts -nonewline $fout "<tr>"
+  foreach h $namelist {
+    puts -nonewline $fout "<th>$h</th>"
+  }
+  puts $fout "</tr>"
+
+  foreach line $lines {
+    set cols [split $line $delim]
+    puts -nonewline $fout "<tr>"
+
+    foreach i $namelist {
+      set coldata [lindex $cols $colindex($i)]
+      puts $fout "<td>$coldata</td>"
+    }
+
+    puts $fout "</tr>"
+  }
+  puts $fout "</table>"
+}
+# }}}
 # bton_note_onoff
 # {{{
 proc bton_note_onoff {} {

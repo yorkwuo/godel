@@ -1,4 +1,6 @@
 ghtm_panel_begin
+iproc_msg
+compile_fusion
 list_svg
 ghtm_keyword_button
 gexe_button
