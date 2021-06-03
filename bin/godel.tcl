@@ -1,3 +1,56 @@
+# bton_set
+# {{{
+proc bton_set {args} {
+  upvar fout fout
+  # -key 
+# {{{
+  set opt(-key) 0
+  set idx [lsearch $args {-key}]
+  if {$idx != "-1"} {
+    set key [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-key) 1
+  }
+# }}}
+  # -name 
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  }
+# }}}
+  # -value 
+# {{{
+  set opt(-value) 0
+  set idx [lsearch $args {-value}]
+  if {$idx != "-1"} {
+    set value [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-value) 1
+  }
+# }}}
+
+  set exefile ".set_${key}_$value.gtcl"
+
+  if [file exist $exefile] {
+      puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
+  } else {
+      puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
+    set kout [open "$exefile" w]
+      puts $kout "set pagepath \[file dirname \[info script]]"
+      puts $kout "cd \$pagepath"
+      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
+      puts $kout "lsetvar . $key $value"
+      puts $kout "godel_draw"
+      puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
+    close $kout
+  }
+  
+}
+# }}}
 # godel_csv
 # {{{
 proc godel_csv {args} {

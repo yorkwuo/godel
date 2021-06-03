@@ -82,7 +82,7 @@ foreach f $flist {
 
   if {$opt(-remove)} {
     if [regsub $remove $f {} newname] {
-      puts "$newname"
+      #puts "$newname"
     }
   } elseif {$opt(-from)} {
     regsub $from $f $to newname
@@ -98,7 +98,7 @@ foreach f $flist {
     }
   }
 
-      puts "$newname"
+      #puts "$newname"
 
   if {$opt(-commit)} {
     if {$f eq $newname} {
