@@ -33,21 +33,21 @@ proc bton_set {args} {
   }
 # }}}
 
-  set exefile ".set_${key}_$value.gtcl"
+  set exefile ".set_$name.gtcl"
 
-  if [file exist $exefile] {
-      puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
-  } else {
+  #if [file exist $exefile] {
+  #    puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
+  #} else {
       puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
     set kout [open "$exefile" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
       puts $kout "cd \$pagepath"
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
-      puts $kout "lsetvar . $key $value"
+      puts $kout "lsetvar . $key \"$value\""
       puts $kout "godel_draw"
       puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
     close $kout
-  }
+  #}
   
 }
 # }}}
