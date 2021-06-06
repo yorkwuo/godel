@@ -1,3 +1,12 @@
+# ltbl_chkbox
+# {{{
+proc ltbl_chkbox {} {
+  upvar celltxt celltxt
+  upvar row     row
+
+  set celltxt "<td gname=$row colname=chkbox><input type=checkbox id=cb_$row></td>"
+}
+# }}}
 # bton_set
 # {{{
 proc bton_set {args} {
@@ -38,7 +47,8 @@ proc bton_set {args} {
   #if [file exist $exefile] {
   #    puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
   #} else {
-      puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
+      #puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
+      puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a>"
     set kout [open "$exefile" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
       puts $kout "cd \$pagepath"
@@ -1000,17 +1010,17 @@ proc ghtm_ls {args} {
       set fsize [num_symbol $fsize B]
     }
     if [regexp {\.htm} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
     } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp4>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp4>$fname</a><br></div>"]
     } elseif [regexp {\.mp3} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp3>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp3>$fname</a><br></div>"]
     } elseif [regexp {\.pdf} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/pdf>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/pdf>$fname</a><br></div>"]
     } elseif [regexp {\.epub} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/epub>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/epub>$fname</a><br></div>"]
     } else {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
     }
     incr count
   }
@@ -2144,15 +2154,6 @@ proc local_table {name args} {
     set opt(-w) 1
   }
 # }}}
-  # -edit (edit)
-# {{{
-  set opt(-edit) 0
-  set idx [lsearch $args {-edit}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-edit) 1
-  }
-# }}}
   # -row_style_proc (row_style_proc)
 # {{{
   set opt(-row_style_proc) 0
@@ -2296,21 +2297,23 @@ proc local_table {name args} {
 # Table Headers
 # {{{
   puts $fout "<tr>"
-  if {$opt(-edit)} {
-    puts $fout "<th>e</th>"
-    puts $fout "<th>v</th>"
-  }
   if {$opt(-serial)} {
     puts $fout "<th>Num</th>"
   }
   foreach col $columns {
     set colname ""
-    regexp {;(\S+)} $col -> colname
+    if [regexp {;} $col] {
+      regexp {;(\S+)} $col -> colname
 
-    if {$colname == ""} {
+      if {$colname == ""} {
+        puts $fout "<th></th>"
+      } else {
+        puts $fout "<th>$colname</th>"
+      }
+    } else {
       set colname $col
-    } 
-    puts $fout "<th>$colname</th>"
+      puts $fout "<th>$colname</th>"
+    }
   }
   puts $fout "</tr>"
 # }}}
@@ -2359,10 +2362,6 @@ proc local_table {name args} {
 
     puts $fout "<tr style=\"$row_style\">"
 
-    if {$opt(-edit)} {
-      puts $fout "<td><a href=\"$row/.godel/ghtm.tcl\" type=text/txt>e</a></td>"
-      puts $fout "<td><a href=\"$row/.godel/vars.tcl\" type=text/txt>v</a></td>"
-    }
     if {$opt(-serial)} {
       puts $fout "<td><a href=$row/.index.htm>$serial</a></td>"
     }
@@ -2409,6 +2408,8 @@ proc local_table {name args} {
           set name [file tail $f]
           if [regexp {\.pdf} $name] {
             append links "<a href=\"$f\" type=text/pdf>$name</a>\n"
+          } elseif [regexp {\.htm*} $name] {
+            append links "<a href=\"$f\">$name</a>\n"
           } else {
             append links "<a href=\"$f\" type=text/txt>$name</a>\n"
           }
@@ -2556,8 +2557,9 @@ proc gdraw_default {} {
     puts $kout "ghtm_top_bar"
     puts $kout "#ghtm_top_bar -save -filter 1"
     #puts $kout "#list_img 4 100% images/*"
-    puts $kout "#lappend cols g:pagename"
-    puts $kout "#lappend cols edtable:g:keywords"
+    puts $kout "#lappend cols \"proc:ltbl_iname g:iname;Name\""
+    puts $kout "#lappend cols \"edtable:bday;bday\""
+    puts $kout "#lappend cols \"edtable:g:keywords;Keywords\""
     puts $kout "#local_table tbl -c \$cols"
     puts $kout "ghtm_ls *"
     #puts $kout "ghtm_list_files *"
