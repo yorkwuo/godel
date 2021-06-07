@@ -1,3 +1,13 @@
+# ss2ddhhmm
+# {{{
+proc ss2ddhhmm {sec} {
+  set dd [expr int([expr $sec/86400])]
+  set hh [expr int([expr $sec/3600]) % 24]
+  set mm [expr int([expr $sec/60]) % 60]
+
+  return "$dd:$hh:$mm"
+}
+# }}}
 # bton_set
 # {{{
 proc bton_set {args} {
