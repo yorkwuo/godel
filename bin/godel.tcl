@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # ss2ddhhmm
 # {{{
 proc ss2ddhhmm {sec} {
@@ -7,7 +6,8 @@ proc ss2ddhhmm {sec} {
   set mm [expr int([expr $sec/60]) % 60]
 
   return "$dd:$hh:$mm"
-=======
+}
+# }}}
 # ltbl_chkbox
 # {{{
 proc ltbl_chkbox {} {
@@ -15,7 +15,6 @@ proc ltbl_chkbox {} {
   upvar row     row
 
   set celltxt "<td gname=$row colname=chkbox><input type=checkbox id=cb_$row></td>"
->>>>>>> acd61b93c70bb735b19ab45a6dfb139fe0c6b024
 }
 # }}}
 # bton_set
