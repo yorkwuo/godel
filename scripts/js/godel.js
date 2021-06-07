@@ -100,9 +100,22 @@ $(document).ready(function(){
           return; // equal to continue
         } else {
           if (changed) {
-            var cmd = "lsetvar " + gname + " " + colname + " \"" + value + "\"\n";
-            cmds = cmds + cmd;
+            if (colname == "chkbox") {
+              var n = 'cb_' + gname;
+              var v = document.getElementById(n).checked;
+              if (v) {
+                var cmd = "exec rm -rf " + gname + "\n";
+                cmds = cmds + cmd;
+                document.getElementById(n).checked = false;
+                $(this).attr('changed', false);
+              }
+            } else {
+              var cmd = "lsetvar " + gname + " " + colname + " \"" + value + "\"\n";
+              cmds = cmds + cmd;
+            }
+            $(this).css('backgroundColor', "");
           }
+
         }
       });
     });
