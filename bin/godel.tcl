@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ss2hhmmss
 # {{{
 proc ss2hhmmss {sec} {
@@ -8,6 +9,8 @@ proc ss2hhmmss {sec} {
   return "${hh}h:${mm}m:${ss}s"
 }
 # }}}
+=======
+>>>>>>> 548c5fce89d159e56ab46affaf57a0f3f39473db
 # ss2ddhhmm
 # {{{
 proc ss2ddhhmm {sec} {
@@ -15,7 +18,11 @@ proc ss2ddhhmm {sec} {
   set hh [expr int([expr $sec/3600]) % 24]
   set mm [expr int([expr $sec/60]) % 60]
 
+<<<<<<< HEAD
   return "${dd}d:${hh}h:${mm}m"
+=======
+  return "$dd:$hh:$mm"
+>>>>>>> 548c5fce89d159e56ab46affaf57a0f3f39473db
 }
 # }}}
 # ltbl_chkbox
