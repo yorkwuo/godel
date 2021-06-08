@@ -1,4 +1,13 @@
-<<<<<<< HEAD
+# ss2hhmmss
+# {{{
+proc ss2hhmmss {sec} {
+  set hh [expr int([expr $sec/3600])]
+  set mm [expr int([expr $sec/60]) % 60]
+  set ss [expr int([expr $sec % 60])]
+
+  return "${hh}h:${mm}m:${ss}s"
+}
+# }}}
 # ss2ddhhmm
 # {{{
 proc ss2ddhhmm {sec} {
@@ -6,8 +15,9 @@ proc ss2ddhhmm {sec} {
   set hh [expr int([expr $sec/3600]) % 24]
   set mm [expr int([expr $sec/60]) % 60]
 
-  return "$dd:$hh:$mm"
-=======
+  return "${dd}d:${hh}h:${mm}m"
+}
+# }}}
 # ltbl_chkbox
 # {{{
 proc ltbl_chkbox {} {
@@ -15,7 +25,6 @@ proc ltbl_chkbox {} {
   upvar row     row
 
   set celltxt "<td gname=$row colname=chkbox><input type=checkbox id=cb_$row></td>"
->>>>>>> acd61b93c70bb735b19ab45a6dfb139fe0c6b024
 }
 # }}}
 # bton_set
@@ -138,7 +147,7 @@ proc godel_csv {args} {
 
   set lines [lreplace $lines 0 0]
 
-  puts $fout "<table class=table1>"
+  puts $fout "<table class=table1 id=tbl>"
 
   puts -nonewline $fout "<tr>"
   foreach h $namelist {
@@ -151,8 +160,12 @@ proc godel_csv {args} {
     puts -nonewline $fout "<tr>"
 
     foreach i $namelist {
-      set coldata [lindex $cols $colindex($i)]
-      puts $fout "<td>$coldata</td>"
+      if [info exist colindex($i)] {
+        set coldata [lindex $cols $colindex($i)]
+        puts $fout "<td>$coldata</td>"
+      } else {
+        puts $fout "<td></td>"
+      }
     }
 
     puts $fout "</tr>"
@@ -2606,8 +2619,8 @@ proc gdraw_default {} {
 proc datediff {date2 date1 {type dd}} {
 # datediff 2019/3/2 2019/1/3 hh
 
-  set d2 [exec date -d $date2 +%s]
-  set d1 [exec date -d $date1 +%s]
+  set d2 [exec date -d "$date2" +%s]
+  set d1 [exec date -d "$date1" +%s]
 
   if {$type == "ss"} {
     return [expr ($d2 - $d1)]
