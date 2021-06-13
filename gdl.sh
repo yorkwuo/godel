@@ -1,16 +1,12 @@
 
 export GODEL_ROOT=/home/york/github/godel
-
-export GODEL_CENTER=$HOME/data/CENTER
-export GODEL_META_CENTER=$HOME/data/META
-export GODEL_META_FILE=$HOME/meta.tcl
+export GODEL_CENTER=$HOME/gcenter
+export GODEL_DOWNLOAD=/home/york/downloads
+export GODEL_DIC=/home/york/pages/dictionary
 
 export TCLSH=/usr/bin/tclsh
-export GODEL_SERVER="localhost:8080"
 
-export GODEL_IN_CYGWIN=0
-export CYGWIN_INSTALL=C:/cygwin64
-
-# /home/york/github/godel/etc/setup/bash.sh
+export GODEL_ALONE=0
+export GODEL_EMB_CSS=0
 source $GODEL_ROOT/etc/setup/bash.sh
 
