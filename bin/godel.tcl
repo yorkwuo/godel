@@ -1,3 +1,20 @@
+# auto_kw_button
+# {{{
+proc auto_kw_button {} {
+  set dirs [glob -type d *-*]
+  
+  set names ""
+  foreach dir $dirs {
+    regexp {(\w*)-} $dir whole name
+    lappend names $name
+  }
+  set names [lsort -unique $names]
+  
+  foreach nn $names {
+    ghtm_keyword_button tbl 5 $nn
+  }
+}
+# }}}
 # ss2ddhhmm
 # {{{
 proc ss2ddhhmm {sec} {
