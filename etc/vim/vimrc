@@ -1,9 +1,12 @@
 set nocompatible
 
-set autochdir
+set noswapfile
+set nobackup
+set autochdir " change directory to the current file
 "@>menu
-menu York.vimrc <ESC>:e $HOME/.vimrc<cr>
-menu York.func  <ESC>:e $HOME/func.vim<cr>
+menu &Access.&vimrc <ESC>:e $HOME/.vimrc<cr>
+menu &Access.&Error <ESC>/error<cr>
+"menu York.func  <ESC>:e $HOME/func.vim<cr>
 " Makes bash open in the working directory
 let $CHERE_INVOKING=1
 
@@ -26,10 +29,10 @@ let $CHERE_INVOKING=1
 
 set encoding=utf-8
 set fo+=m
-set clipboard=unnamed
 
+set linebreak
 set nowrap
-set guifont=Monospace
+set guifont=Monospace\ 11
 "set guifont=Consolas:h12
 "set guifont=Monaco\ 10
 "set guifont=Terminus\ 12
@@ -54,6 +57,9 @@ set iskeyword-=)
 "set isfname
 
 :filetype on        " turn on filetype detection
+filetype plugin on
+" C-X, C-O
+"set omnifun=syntaxomplete#Complete
 :syntax on          " 
 ":colorscheme koehler 
 colorscheme torte
@@ -100,6 +106,12 @@ func! Gnotes() range
   call cursor(a:firstline,3)
 endfunc
 
+"Firefox_Reload
+" {{{
+func Firefox_Reload()
+  silent !xdotool search --name "Mozilla" key ctrl+r
+endfunc
+" }}}
 "Godel_Draw
 " {{{
 func Godel_Draw()
@@ -199,7 +211,7 @@ map <F3> :silent call Godel_Draw()<cr>
 "map <F4> :let @* = expand("%:p")<CR>
 " Changing pwd to the path of current editing file
 "map <F4> :silent !fa<cr>
-map <F4> :call Godel_Page()<cr>
+map <F4> :call Firefox_Reload()<cr>
 
 "map <F5> :lcd %:p:h<cr>
 map <F5> :Bkmark<CR>
@@ -255,6 +267,10 @@ endfunc
 
 autocmd BufRead * call s:AdditionalSyntax()
 
+:menu &Dump.&dd <ESC>A -filter 5<ESC>G:r ~/tt.ghtm<cr>
+:menu &Dump.&2time <ESC>:g/時間/d<cr>
+:menu &Dump.&godel <ESC>:e /home/york/github/godel/bin/godel.tcl<cr>
+:menu &Dump.&js <ESC>:e /home/york/github/godel/scripts/js/godel.js<cr>
 "set runtimepath=c:/cygwin64/home/USER/.vim,$VIMRUNTIME
 
 " vim:fdm=marker
