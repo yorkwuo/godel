@@ -1,0 +1,13 @@
+!! XTerm*font: 10x20
+
+*VT100.font: 9x15
+*VT100.utf8Fonts.font: -misc-fixed-medium-r-normal--18-120-100-100-c-90-iso10646-1
+
+XTerm*Foreground: white
+XTerm*Background: black
+
+XTerm*VT100.Translations: #override \n\
+  Alt<Key>V: insert-selection(CLIPBOARD)
+
+
+
