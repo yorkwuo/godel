@@ -951,9 +951,27 @@ proc getcol {args} {
 # }}}
 # ghtm_keyword_button
 # {{{
-proc ghtm_keyword_button {tablename column keyword} {
-  global fout
-  puts $fout "<button class=\"w3-button w3-round w3-blue-gray\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$keyword</button>"
+proc ghtm_keyword_button {tablename column keyword args} {
+  upvar fout fout
+
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name NA
+  }
+# }}}
+
+  if {$opt(-name)} {
+    puts $fout "<button class=\"w3-button w3-round w3-blue-gray\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$name</button>"
+  } else {
+    puts $fout "<button class=\"w3-button w3-round w3-blue-gray\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$keyword</button>"
+  }
 }
 # }}}
 # ghtm_ls
