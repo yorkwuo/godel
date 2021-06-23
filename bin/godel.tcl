@@ -1,6 +1,7 @@
 # auto_kw_button
 # {{{
 proc auto_kw_button {} {
+  upvar fout fout
   set dirs [glob -type d *-*]
   
   set names ""

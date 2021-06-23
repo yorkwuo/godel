@@ -2,6 +2,12 @@
 # the next line restarts using tclsh \
 exec tclsh "$0" ${1+"$@"}
 
+if {$argv eq ""} {
+  puts "Usage:"
+  puts "fname.tcl -remove \" foo - bar\" *.html -commit"
+  return
+}
+
 # -from (replace from)
 # {{{
   set opt(-from) 0
@@ -98,7 +104,7 @@ foreach f $flist {
     }
   }
 
-      #puts "$newname"
+  puts "$newname"
 
   if {$opt(-commit)} {
     if {$f eq $newname} {
