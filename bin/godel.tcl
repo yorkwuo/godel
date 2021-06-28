@@ -1012,7 +1012,7 @@ proc ghtm_ls {args} {
 # }}}
 
   if {$opt(-exclude)} {
-    set exfiles [glob {*}$exclude_pattern]
+    set exfiles [glob -nocomplain {*}$exclude_pattern]
   }
 
   set pattern [lindex $args 0]
@@ -1069,6 +1069,7 @@ proc ghtm_ls {args} {
     } else {
       set fsize [num_symbol $fsize B]
     }
+    puts $full
     if [regexp {\.htm} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
     } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $full] {
@@ -1078,7 +1079,7 @@ proc ghtm_ls {args} {
     } elseif [regexp {\.pdf} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/pdf>$fname</a><br></div>"]
     } elseif [regexp {\.epub} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/epub>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
     } else {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
     }
@@ -2340,7 +2341,7 @@ proc local_table {name args} {
   # }}}
   #
   if {$opt(-exclude)} {
-    set exdirs [glob {*}$exclude_pattern]
+    set exdirs [glob -nocomplain {*}$exclude_pattern]
   }
 
   if {$opt(-save)} {
