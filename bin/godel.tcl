@@ -4101,6 +4101,7 @@ proc math_sum {alist} {
 # godel_draw
 # {{{
 proc godel_draw {{target_path NA}} {
+  upvar env env
   if {$target_path == "NA" || $target_path == ""} {
   } else {
     set orgpath [pwd]
@@ -4113,6 +4114,12 @@ proc godel_draw {{target_path NA}} {
     return
   }
 # }}}
+
+  if [info exist env(GODEL_PLUGIN)] {
+    if [file exist $env(GODEL_PLUGIN)] {
+      source $env(GODEL_PLUGIN)
+    }
+  }
 
   package require gmarkdown
   upvar vars vars
