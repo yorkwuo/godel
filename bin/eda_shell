@@ -16,6 +16,9 @@ set ::product_build_date 2017.12.16
 set ::synthetic_library ""
 set ::do_redirect 0
 
+proc get_mismatch_types {args} {procname}
+proc set_top_module {args} {procname}
+proc set_pvt_configuration {args} {procname}
 proc add_to_collection {args} {procname}
 proc add_to_collection {args} {procname}
 proc cdn_set_cases {args} {procname}
@@ -1014,11 +1017,11 @@ proc set_routing_rule {args} {procname}
 proc get_nets {args} {procname}
 proc get_layers {args} {procname}
 proc remove_ignored_layers {args} {procname}
-proc set_app_option {args} {procname}
+proc set_app_option {args} {}
 proc report_app_options {args} {procname}
 proc set_pocvm_corner_sigma {args} {procname}
 proc list_attributes {args} {procname}
-proc set_app_options {args} {procname}
+proc set_app_options {args} {}
 proc create_net {args} {procname}
 proc connect_pg_net {args} {procname}
 proc save_block {args} {procname}

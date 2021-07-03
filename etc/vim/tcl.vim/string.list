@@ -1,4 +1,6 @@
 -i
+-target
+-test_point
 -1801
 -use_hooks
 

@@ -800,38 +800,109 @@ proc gproc_tstamp {gpage name} {
 
 # fdiff
 # {{{
-proc fdiff {} {
+proc fdiff {args} {
   upvar vars  vars
   upvar files files
 
-  source .godel/dyvars.tcl
-  if ![info exist dyvars(srcpath)] {
-    puts "Error: vars not exist... \$dyvars(srcpath)"
+  # ci
+# {{{
+  set opt(ci) 0
+  set idx [lsearch $args {ci}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(ci) 1
+  }
+# }}}
+  # co
+# {{{
+  set opt(co) 0
+  set idx [lsearch $args {co}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(co) 1
+  }
+# }}}
+
+  set target_num [lindex $args 0]
+
+  if [file exist .godel/dyvars.tcl] {
+    source .godel/dyvars.tcl
+  } else {
+    puts "fdiff: not exist... .godel/dyvars.tcl"
     return
   }
+
+  if ![info exist dyvars(srcpath)] {
+    puts "fdiff: \$dyvars(srcpath)... missed in .godel/dyvars.tcl"
+    return
+  }
+
   set srcpath $dyvars(srcpath)
 
+
+  set num 1
   foreach f $files {
+    if ![file exist $f] {
+      if {$opt(co)} {
+        puts "co not exist file... $f"
+        exec cp $srcpath/$f $f
+      } else {
+        puts "not exist... $f"
+      }
+      continue
+    }
     set dir [file dirname $srcpath/$f]
     if [file exist $dir] {
       catch {exec diff $f $srcpath/$f | wc -l} result
+
       if {$result > 0} {
-        puts "\033\[0;92m# $f\033\[0m"
-        puts [lindex $result 0]
-        puts "tkdiff $f $srcpath/$f &"
-        puts "cp     $f $srcpath/$f"
-        puts "cp     $srcpath/$f $f"
+
+        set tlocal  [file mtime $f]
+        set tremote [file mtime $srcpath/$f]
+        if {$tlocal > $tremote} {
+          set status newer
+        } else {
+          set status older
+        }
+
+
+# ci
+        if {$opt(ci)} {
+          if {$target_num eq ""} {
+            puts [format "%-2d %s %s ......ci" $num $status $f]
+            exec cp $f $srcpath/$f
+          } elseif {$target_num eq $num} {
+            puts [format "%-2d %s %s ......ci" $num $status $f]
+            exec cp $f $srcpath/$f
+          } else {
+            puts [format "%-2d %s %s" $num $status $f]
+          }
+# co
+        } elseif {$opt(co)} {
+          if {$target_num eq ""} {
+            puts [format "%-2d %s %s ......co" $num $status $f]
+            exec cp $srcpath/$f $f
+          } elseif {$target_num eq $num} {
+            puts [format "%-2d %s %s ......co" $num $status $f]
+            exec cp $srcpath/$f $f
+          } else {
+            puts [format "%-2d %s %s" $num $status $f]
+          }
+# tkdiff
+        } else {
+            puts [format "%-2d %s %s" $num $status $f]
+          if {$target_num eq $num} {
+            puts "   tkdiff $f $srcpath/$f"
+            catch {exec tkdiff $f $srcpath/$f}
+          }
+        }
+
+        incr num
       }
 
-    } else {
-      if {[file tail $dir] eq ".godel"} {
-        puts "gdir [file dirname $dir]"
-      } else {
-        puts "mkdir $dir"
-      }
     }
-    #puts $result
   }
+
 }
 # }}}
 # ftkdiff
@@ -855,9 +926,20 @@ proc ftkdiff {} {
 # }}}
 # fpush
 # {{{
-proc fpush {} {
+proc fpush {args} {
   upvar vars vars
   upvar files files
+
+  # -cm
+# {{{
+  set opt(-cm) 0
+  set idx [lsearch $args {-cm}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-cm) 1
+  }
+# }}}
+
   source .godel/dyvars.tcl
   if ![info exist dyvars(srcpath)] {
     puts "Error: dyvars not exist... \$dyvars(srcpath)"
@@ -865,12 +947,23 @@ proc fpush {} {
   }
   set srcpath $dyvars(srcpath)
 
+  if {$opt(-cm)} {
+    puts ""
+    puts "Commit..."
+    puts ""
+  }
+
   foreach f $files {
     set dir [file dirname $srcpath/$f]
     if [file exist $dir] {
       catch {exec diff $f $srcpath/$f | wc -l} result
       if {$result > 0} {
-        puts [format "cp %-30s %s" $f $srcpath/$f]
+        if {$opt(-cm)} {
+          puts [format "cp %-30s %s" $f $srcpath/$f]
+          exec cp $f $srcpath/$f
+        } else {
+          puts [format "cp %-30s %s" $f $srcpath/$f]
+        }
       }
     }
     #puts $result
@@ -4421,7 +4514,7 @@ proc godel_get_vars {key} {
 proc gget {pagename args} {
   global env
   source $env(GODEL_CENTER)/meta.tcl
-  
+
   if [file exist $pagename] {
     set meta($pagename,where) [pwd]/$pagename
   }
@@ -4430,7 +4523,13 @@ proc gget {pagename args} {
     set meta(.,where) .
   }
 
-  source $meta($pagename,where)/.godel/vars.tcl
+  set varfile $meta($pagename,where)/.godel/vars.tcl
+  if [file exist $varfile] {
+    source $varfile
+  } else {
+    puts "gget: not exist... $varfile"
+    return
+  }
   set where $meta($pagename,where)
 
   if [file exist $meta($pagename,where)/.godel/proc.tcl] {

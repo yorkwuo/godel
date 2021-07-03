@@ -4,11 +4,11 @@ compile_fusion
 list_svg
 ghtm_keyword_button
 gexe_button
-
+set_clock_gating_options
 ghtm_panel_end
 find_runtcl
 iproc_source
-
+set_clock_gate_style
 set_hdl_option
 set_naming_rule
 set_ref_libs
