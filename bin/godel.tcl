@@ -1,21 +1,3 @@
-# auto_kw_button
-# {{{
-proc auto_kw_button {} {
-  upvar fout fout
-  set dirs [glob -type d *-*]
-  
-  set names ""
-  foreach dir $dirs {
-    regexp {(\w*)-} $dir whole name
-    lappend names $name
-  }
-  set names [lsort -unique $names]
-  
-  foreach nn $names {
-    ghtm_keyword_button tbl 5 $nn
-  }
-}
-# }}}
 # ss2hhmmss
 # {{{
 proc ss2hhmmss {sec} {
@@ -1162,7 +1144,6 @@ proc ghtm_ls {args} {
     } else {
       set fsize [num_symbol $fsize B]
     }
-    puts $full
     if [regexp {\.htm} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
     } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $full] {
@@ -1178,7 +1159,6 @@ proc ghtm_ls {args} {
     }
     incr count
   }
-  #puts $fout </p>
   
 }
 # }}}
@@ -2698,8 +2678,8 @@ proc cshpath {} {
 # }}}
 # lremove
 # {{{
-proc lremove {target_list item} {
-  set a [lsearch -all -inline -not -exact $target_list $item]
+proc lremove {tlist item} {
+  set a [lsearch -all -inline -not -exact $tlist $item]
   return $a
 }
 # }}}
