@@ -824,6 +824,8 @@ proc fdiff {args} {
 
   set num 1
   foreach f $files {
+
+# local not exist
     if ![file exist $f] {
       if {$opt(co)} {
         puts "co not exist file... $f"
@@ -833,6 +835,17 @@ proc fdiff {args} {
       }
       continue
     }
+# remote not exist
+    if ![file exist $srcpath/$f] {
+      if {$opt(ci)} {
+        puts "ci not exist file... $srcpath/$f"
+        exec cp $f $srcpath/$f
+      } else {
+        puts "not exist... $srcpath/$f"
+      }
+      continue
+    }
+
     set dir [file dirname $srcpath/$f]
     if [file exist $dir] {
       catch {exec diff $f $srcpath/$f | wc -l} result
