@@ -804,6 +804,15 @@ proc fdiff {args} {
     set opt(co) 1
   }
 # }}}
+  # src
+# {{{
+  set opt(src) 0
+  set idx [lsearch $args {src}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(src) 1
+  }
+# }}}
 
   set target_num [lindex $args 0]
 
@@ -821,6 +830,10 @@ proc fdiff {args} {
 
   set srcpath $dyvars(srcpath)
 
+  if {$opt(src)} {
+    puts $srcpath
+    return
+  }
 
   set num 1
   foreach f $files {
@@ -4527,6 +4540,39 @@ proc gget {pagename args} {
 
   if [file exist $meta($pagename,where)/.godel/proc.tcl] {
     source $meta($pagename,where)/.godel/proc.tcl
+  }
+
+  # -bless
+# {{{
+  set opt(-bless) 0
+  set idx [lsearch $args {-bless}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-bless) 1
+  }
+# }}}
+  if {$opt(-bless)} {
+    set target $args
+    godel_draw
+    lsetdyvar . srcpath $where/$target
+    set procfile $where/$target/.godel/proc.tcl
+    if ![file exist $procfile] {
+      puts "gget: not exist... $procfile"
+      return
+    } else {
+      source $procfile
+      foreach f $files {
+        puts $f
+        set dir   [file dirname $f]
+        if ![file exist $dir] {
+          file mkdir $dir
+        } else {
+          exec cp $where/$target/$f $f
+        }
+      }
+    }
+    
+    return
   }
 
   if {$args == ""} {
