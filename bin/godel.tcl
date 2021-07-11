@@ -1,3 +1,26 @@
+# godel_level_up
+# {{{
+proc godel_level_up {gpage key args} {
+  # -prefix (sort by...)
+# {{{
+  set opt(-prefix) 0
+  set idx [lsearch $args {-prefix}]
+  if {$idx != "-1"} {
+    set val(-prefix) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-prefix) 1
+  }
+# }}}
+
+  set value [lvars $gpage $key]
+  if {$opt(-prefix)} {
+    lsetvar . $val(-prefix),$key $value
+  } else {
+    lsetvar . $key $value
+  }
+
+}
+# }}}
 # ss2hhmmss
 # {{{
 proc ss2hhmmss {sec} {
