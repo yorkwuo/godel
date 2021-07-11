@@ -4214,11 +4214,6 @@ proc godel_draw {{target_path NA}} {
   }
 # }}}
 
-  if [info exist env(GODEL_PLUGIN)] {
-    if [file exist $env(GODEL_PLUGIN)] {
-      source $env(GODEL_PLUGIN)
-    }
-  }
 
   package require gmarkdown
   upvar vars vars
@@ -5119,5 +5114,11 @@ proc read_file_ret_list {afile} {
   }
 }
 # }}}
+
+if [info exist env(GODEL_PLUGIN)] {
+  if [file exist $env(GODEL_PLUGIN)] {
+    source $env(GODEL_PLUGIN)
+  }
+}
 
 # vim:fdm=marker
