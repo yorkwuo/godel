@@ -1,3 +1,13 @@
+# qsetvar
+# {{{
+proc qsetvar {gpage key value} {
+  if [file exist $value] {
+    lsetvar $gpage $key $value
+  } else {
+    puts "Error: qsetvar: not exist... $value"
+  }
+}
+# }}}
 # godel_level_up
 # {{{
 proc godel_level_up {gpage key args} {
