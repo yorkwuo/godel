@@ -1,3 +1,31 @@
+# linkox_not_looped
+# {{{
+proc linkbox_not_looped {} {
+  upvar fout fout
+
+  set dirs [glob -nocomplain */.godel]
+  foreach dir $dirs {
+    set gpage [file dirname $dir]
+    set looped [lvars $gpage looped]
+    if {$looped} {
+    } else {
+      puts $fout "<a class=\"w3-light-gray w3-padding w3-section w3-large w3-round-large\" style=\"text-decoration:none\" href=$gpage/.index.htm>$gpage</a>"
+    }
+  }
+
+}
+# }}}
+# linkox_reset
+# {{{
+proc linkbox_reset {} {
+  set dirs [glob -nocomplain */.godel]
+  foreach dir $dirs {
+    set gpage [file dirname $dir]
+    lsetvar $gpage looped 0
+  }
+
+}
+# }}}
 # linkbox
 # {{{
 proc linkbox {args} {
@@ -20,6 +48,9 @@ proc linkbox {args} {
     puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-section w3-large w3-round-large\" style=\"text-decoration:none\" href=$target/.index.htm>$target</a>"
   } else {
     puts $fout "<a class=\"w3-blue-gray w3-padding w3-section w3-large w3-round-large\" style=\"text-decoration:none\" href=$target/.index.htm>$target</a>"
+  }
+  if [file exist $target/.godel/vars.tcl] {
+    lsetvar $target looped 1
   }
 }
 # }}}
