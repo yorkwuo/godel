@@ -16,7 +16,11 @@ proc linkbox {args} {
 # }}}
 
   set target [lindex $args 0]
-  puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-section w3-blue w3-large w3-round-large\" style=\"text-decoration:none\" href=$target/.index.htm>$target</a>"
+  if [file exist $target/.index.htm] {
+    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-section w3-large w3-round-large\" style=\"text-decoration:none\" href=$target/.index.htm>$target</a>"
+  } else {
+    puts $fout "<a class=\"w3-blue-gray w3-padding w3-section w3-large w3-round-large\" style=\"text-decoration:none\" href=$target/.index.htm>$target</a>"
+  }
 }
 # }}}
 # qsetvar
