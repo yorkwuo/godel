@@ -63,9 +63,9 @@ proc linkbox {args} {
   }
 
   if [file exist $target] {
-    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-section w3-large w3-round-large\" style=\"text-decoration:none\" href=$target>$name</a>"
+    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-section w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=$target>$name</a>"
   } else {
-    puts $fout "<a class=\"w3-blue-gray w3-padding w3-section w3-large w3-round-large\" style=\"text-decoration:none\" href=$target>$name</a>"
+    puts $fout "<a class=\"w3-blue-gray w3-padding w3-section w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=$target>$name</a>"
   }
 
   if [file exist $name/.godel/vars.tcl] {
@@ -1188,15 +1188,41 @@ proc ghtm_keyword_button {args} {
     set val(-bgcolor) blue-gray
   }
 # }}}
+  # -key
+# {{{
+  set opt(-key) 0
+  set idx [lsearch $args {-key}]
+  if {$idx != "-1"} {
+    set val(-key) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-key) 1
+  } else {
+    set val(-key) nan
+  }
+# }}}
 
   set tablename [lindex $args 0]
   set column    [lindex $args 1]
   set keyword   [lindex $args 2]
 
-  if {$opt(-name)} {
-    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$name</button>"
+  set count 0
+  if {$opt(-key)} {
+    set dirs [glob -nocomplain -type d *]
+    foreach dir $dirs {
+      set value [lvars $dir $val(-key)]
+      if [regexp $keyword $value] {
+        incr count
+      }
+    }
+    set total "\($count\)"
   } else {
-    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$keyword</button>"
+    set total ""
+  }
+
+  if {$opt(-name)} {
+    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${name}$total</button>"
+  } else {
+    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}$total</button>"
   }
 }
 # }}}
