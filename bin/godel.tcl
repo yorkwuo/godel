@@ -42,15 +42,34 @@ proc linkbox {args} {
     set val(-bgcolor) pale-green
   }
 # }}}
-
-  set target [lindex $args 0]
-  if [file exist $target/.index.htm] {
-    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-section w3-large w3-round-large\" style=\"text-decoration:none\" href=$target/.index.htm>$target</a>"
+  # -target
+# {{{
+  set opt(-target) 0
+  set idx [lsearch $args {-target}]
+  if {$idx != "-1"} {
+    set val(-target) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-target) 1
   } else {
-    puts $fout "<a class=\"w3-blue-gray w3-padding w3-section w3-large w3-round-large\" style=\"text-decoration:none\" href=$target/.index.htm>$target</a>"
+    set val(-target) pale-green
   }
-  if [file exist $target/.godel/vars.tcl] {
-    lsetvar $target looped 1
+# }}}
+
+  set name [lindex $args 0]
+  if {$opt(-target)} {
+    set target $val(-target)
+  } else {
+    set target $name/.index.htm
+  }
+
+  if [file exist $target] {
+    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-section w3-large w3-round-large\" style=\"text-decoration:none\" href=$target>$name</a>"
+  } else {
+    puts $fout "<a class=\"w3-blue-gray w3-padding w3-section w3-large w3-round-large\" style=\"text-decoration:none\" href=$target>$name</a>"
+  }
+
+  if [file exist $name/.godel/vars.tcl] {
+    lsetvar $name looped 1
   }
 }
 # }}}
