@@ -1,3 +1,24 @@
+# linkbox
+# {{{
+proc linkbox {args} {
+  upvar fout fout
+  # -bgcolor
+# {{{
+  set opt(-bgcolor) 0
+  set idx [lsearch $args {-bgcolor}]
+  if {$idx != "-1"} {
+    set val(-bgcolor) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-bgcolor) 1
+  } else {
+    set val(-bgcolor) pale-green
+  }
+# }}}
+
+  set target [lindex $args 0]
+  puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-section w3-blue w3-large w3-round-large\" style=\"text-decoration:none\" href=$target/.index.htm>$target</a>"
+}
+# }}}
 # qsetvar
 # {{{
 proc qsetvar {gpage key value} {
@@ -363,13 +384,13 @@ proc ghtm_panel_begin {args} {
   }
 # }}}
 
-  if {$opt(-bg)} {
-    puts $fout "<div class=\"w3-panel w3-$bgcolor w3-leftbar\">"
-  } else {
-    puts $fout "<div class=\"w3-panel w3-pale-blue w3-leftbar\">"
-  }
   if {$opt(-title)} {
-    puts $fout "<p>$title</p>"
+    puts $fout "<h2 class=\"w3-margin-bottom\">$title</h2>"
+  }
+  if {$opt(-bg)} {
+    puts $fout "<div class=\"w3-panel w3-sand w3-$bgcolor \">"
+  } else {
+    puts $fout "<div class=\"w3-panel w3-white\">"
   }
 }
 # }}}
@@ -1086,7 +1107,7 @@ proc getcol {args} {
 # }}}
 # ghtm_keyword_button
 # {{{
-proc ghtm_keyword_button {tablename column keyword args} {
+proc ghtm_keyword_button {args} {
   upvar fout fout
 
   # -name
@@ -1101,11 +1122,27 @@ proc ghtm_keyword_button {tablename column keyword args} {
     set name NA
   }
 # }}}
+  # -bgcolor
+# {{{
+  set opt(-bgcolor) 0
+  set idx [lsearch $args {-bgcolor}]
+  if {$idx != "-1"} {
+    set val(-bgcolor) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-bgcolor) 1
+  } else {
+    set val(-bgcolor) blue-gray
+  }
+# }}}
+
+  set tablename [lindex $args 0]
+  set column    [lindex $args 1]
+  set keyword   [lindex $args 2]
 
   if {$opt(-name)} {
-    puts $fout "<button class=\"w3-button w3-round w3-blue-gray\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$name</button>"
+    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$name</button>"
   } else {
-    puts $fout "<button class=\"w3-button w3-round w3-blue-gray\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$keyword</button>"
+    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>$keyword</button>"
   }
 }
 # }}}
