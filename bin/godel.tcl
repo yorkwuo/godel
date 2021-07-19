@@ -9,7 +9,7 @@ proc linkbox_not_looped {} {
     set looped [lvars $gpage looped]
     if {$looped} {
     } else {
-      puts $fout "<a class=\"w3-light-gray w3-padding w3-section w3-large w3-round-large\" style=\"text-decoration:none\" href=$gpage/.index.htm>$gpage</a>"
+      puts $fout "<a class=\"w3-light-gray w3-padding w3-large w3-round-large\" style=\"text-decoration:none\" href=$gpage/.index.htm>$gpage</a>"
     }
   }
 
@@ -1185,7 +1185,7 @@ proc ghtm_keyword_button {args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-bgcolor) 1
   } else {
-    set val(-bgcolor) blue-gray
+    set val(-bgcolor) pale-blue
   }
 # }}}
   # -key
@@ -1210,11 +1210,12 @@ proc ghtm_keyword_button {args} {
     set dirs [glob -nocomplain -type d *]
     foreach dir $dirs {
       set value [lvars $dir $val(-key)]
-      if [regexp $keyword $value] {
+      if [regexp -nocase $keyword $value] {
         incr count
       }
     }
-    set total "\($count\)"
+    #set total "\($count\)"
+    set total " $count"
   } else {
     set total ""
   }
@@ -3517,6 +3518,18 @@ proc gmd_file {afile} {
 proc csv_table {args} {
   global fout
 
+  # -css (css class)
+# {{{
+  set opt(-css) 0
+  set idx [lsearch $args {-css}]
+  if {$idx != "-1"} {
+    set css_class [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-css) 1
+  } else {
+    set css_class table1
+  }
+# }}}
   # -delim (delimiter)
 # {{{
   set opt(-delim) 0
@@ -3564,7 +3577,7 @@ proc csv_table {args} {
   }
   set lines [split $content \n]
 
-  puts $fout "<table class=table1>"
+  puts $fout "<table class=$css_class>"
   foreach line $lines {
     set cols [split $line $delim]
     puts $fout "<tr>"
