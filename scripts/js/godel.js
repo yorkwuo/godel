@@ -426,13 +426,16 @@ function filter_table_keyword(tname, column_no, input) {
   //input = keyword;
   console.log(input);
   //filter = input.value.toUpperCase();
-  filter = input.toUpperCase();
+  //filter = input.toUpperCase();
+  var filter = input;
 
   //if(e.keyCode === 13){
     //e.preventDefault(); // Ensure it is only this code that rusn
+          //if (td.innerHTML.toUpperCase().indexOf(filter[j]) > -1) 
 
-    filter = filter.split(" ");
+    //filter = filter.split(" ");
     //alert("kkk");
+    var patt = new RegExp(filter);
 
     table = document.getElementById(tname);
     tr = table.getElementsByTagName("tr");
@@ -442,7 +445,7 @@ function filter_table_keyword(tname, column_no, input) {
       if (td) {
         var found = 1
         for (j = 0; j < filter.length; j++) {
-          if (td.innerHTML.toUpperCase().indexOf(filter[j]) > -1) {
+          if (patt.test(td.innerHTML)) {
             found = found && 1;
           } else {
             found = found && 0;

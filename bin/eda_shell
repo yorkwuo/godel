@@ -16,6 +16,17 @@ set ::product_build_date 2017.12.16
 set ::synthetic_library ""
 set ::do_redirect 0
 
+proc libin {args} {procname}
+proc lefin {args} {procname}
+proc check_lef_quality {args} {procname}
+proc check_def_quality {args} {procname}
+proc verilogin {args} {procname}
+proc set_verilog_top_cell {args} {procname}
+proc begin_corner {args} {procname}
+proc end_corner {args} {procname}
+proc set_group {args} {procname}
+proc twfin {args} {procname}
+proc slackin {args} {procname}
 proc get_mismatch_types {args} {procname}
 proc set_top_module {args} {procname}
 proc set_pvt_configuration {args} {procname}
