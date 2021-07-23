@@ -352,6 +352,7 @@ proc ltbl_play {} {
       puts $kout "} else {"
       puts $kout "  exec xterm -hold -e \"echo Not exist... \$pfile\""
       puts $kout "}"
+      puts $kout "cd .."
     close $kout
   }
 

@@ -435,7 +435,7 @@ function filter_table_keyword(tname, column_no, input) {
 
     //filter = filter.split(" ");
     //alert("kkk");
-    var patt = new RegExp(filter);
+    var patt = new RegExp(filter, "i");
 
     table = document.getElementById(tname);
     tr = table.getElementsByTagName("tr");
