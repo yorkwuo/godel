@@ -1426,6 +1426,16 @@ proc ghtm_top_bar {args} {
     set opt(-filter) 1
   }
 # }}}
+  # -p1
+# {{{
+  set opt(-p1) 0
+  set idx [lsearch $args {-p1}]
+  if {$idx != "-1"} {
+    set saveid [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-p1) 1
+  }
+# }}}
   # -save
 # {{{
   set opt(-save) 0
@@ -1499,6 +1509,14 @@ proc ghtm_top_bar {args} {
   puts $fout "<li style=float:right><a>$timestamp</a></li>"
   puts $fout "</ul>"
   puts $fout "<br>"
+  if {$opt(-p1)} {
+    puts $fout "<style>"
+    puts $fout "p {"
+    puts $fout "  margin: 30px 0px 5px 0px;"
+    puts $fout "  font-size     : 20px;"
+    puts $fout "}"
+    puts $fout "</style>"
+  }
 
   if [file exist .godel/.qn.md] {
     gmd -f .godel/.qn.md
@@ -4489,19 +4507,6 @@ proc godel_draw {{target_path NA}} {
     source .godel/ghtm.tcl
   }
 
-# highlight words
-# {{{
-  if [info exist rwords] {
-  puts $fout "<script>"
-    puts $fout "var target_words = \["
-    foreach rword $rwords {
-      puts $fout "\'$rword\',"
-    }
-    puts $fout "\];"
-    puts $fout "word_highlight(target_words)"
-  puts $fout "</script>"
-  }
-# }}}
   if {$env(GODEL_ALONE)} {
     file mkdir .godel/js
     exec cp $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
