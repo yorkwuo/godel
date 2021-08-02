@@ -1484,31 +1484,72 @@ proc ghtm_top_bar {args} {
 
   #puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
   #puts $fout "<script src=.godel/js/godel.js></script>"
-
-  puts $fout "<ul id=stickymenu class=solidblockmenu>"
-  puts $fout "<li><a href=.godel/ghtm.tcl type=text/txt>Edit</a></li>"
-  puts $fout "<li><a href=.godel/vars.tcl type=text/txt>Value</a></li>"
-  if {$opt(-save)} {
-    if {$saveid eq ""} {set saveid "save"}
-    puts $fout "<li><button id=\"$saveid\" style=\"margin: 10px 6px\">Save</button></li>"
+ 
+  puts $fout {
+  
+  <style>
+  .content {
+    padding: 19px;
   }
-  if {$opt(-csv)} {
-    if {$csvid eq ""} {set csvid "csv"}
-    puts $fout "<li><button id=\"$csvid\" style=\"margin: 10px 6px\">CSV</button></li>"
+  
+  .sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+  }
+  .sticky + .content {
+    padding-top: 60px;
+  }
+  </style>
+  }
+  
+  puts $fout {
+    <div id="navbar" class="w3-bar w3-indigo" style="margin:0px">
+    <a href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
+    <a href=".godel/vars.tcl"  type=text/txt  class="w3-bar-item w3-button">Value</a>
+    <a href="../.index.htm"                   class="w3-bar-item w3-button">Parent</a>
+    <a href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
   }
   if {$opt(-filter)} {
-    puts $fout "<li><input type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\"></li>"
+    puts $fout "<input style=\"margin: 5px 0px\" type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\">"
   }
-  if {$opt(-js)} {
-    puts $fout "<li style=float:right><a href=local.js type=text/txt>JS</a></li>"
+  puts $fout "
+    <a class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
+  "
+  puts $fout {
+    <a href=".godel/open.gtcl" type=text/gtcl class="w3-bar-item w3-button w3-right">Open</a>
+    <a href=".index.htm" type=text/txt class="w3-bar-item w3-button w3-right">HTML</a>
   }
-  puts $fout "<li><a href=../.index.htm>Parent</a></li>"
-  puts $fout "<li><a href=.godel/draw.gtcl type=text/gtcl>Draw</a></li>"
-  puts $fout "<li style=float:right><a href=.godel/open.gtcl type=text/gtcl>Open</a></li>"
-  puts $fout "<li style=float:right><a href=.index.htm type=text/txt>HTML</a></li>"
-  puts $fout "<li style=float:right><a>$timestamp</a></li>"
-  puts $fout "</ul>"
-  puts $fout "<br>"
+
+  if {$opt(-save)} {
+    if {$saveid eq ""} {set saveid "save"}
+    puts $fout "<button id=\"$saveid\" class=\"w3-bar-item w3-button w3-right\" style=\"margin: 0px 0px\">Save</button>"
+  }
+  puts $fout "</div>"
+
+  puts $fout {
+  <script>
+  window.onscroll = function() {myFunction()};
+  
+  var navbar = document.getElementById("navbar");
+  var sticky = navbar.offsetTop;
+  
+  function myFunction() {
+    if (window.pageYOffset >= sticky) {
+      navbar.classList.add("sticky")
+      nav2.classList.add("content")
+    } else {
+      navbar.classList.remove("sticky");
+      nav2.classList.remove("content");
+    }
+  }
+  </script>
+  
+  <div id=nav2 class=> </div>
+  
+  }
+
+
   if {$opt(-p1)} {
     puts $fout "<style>"
     puts $fout "p {"
@@ -1518,12 +1559,12 @@ proc ghtm_top_bar {args} {
     puts $fout "</style>"
   }
 
-  if [file exist .godel/.qn.md] {
-    gmd -f .godel/.qn.md
-  } else {
-    set kout [open ".godel/.qn.md" w]
-    close $kout
-  }
+  #if [file exist .godel/.qn.md] {
+  #  gmd -f .godel/.qn.md
+  #} else {
+  #  set kout [open ".godel/.qn.md" w]
+  #  close $kout
+  #}
 }
 # }}}
 # akey
@@ -3742,7 +3783,7 @@ proc gnotes {args} {
   }
 # }}}
 
-  puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
+  puts $fout "<div class=\"w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
   puts $fout $aftermd
   puts $fout "</div>"
 }
