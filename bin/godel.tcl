@@ -1514,16 +1514,14 @@ proc ghtm_top_bar {args} {
     puts $fout "<input style=\"margin: 5px 0px\" type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\">"
   }
   puts $fout "
-    <a class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
+    <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
   "
-  puts $fout {
-    <a href=".godel/open.gtcl" type=text/gtcl class="w3-bar-item w3-button w3-right">Open</a>
-    <a href=".index.htm" type=text/txt class="w3-bar-item w3-button w3-right">HTML</a>
-  }
+  puts $fout {<a href=".godel/open.gtcl" type=text/gtcl class="w3-bar-item w3-button w3-right">Open</a>}
+  #puts $fout {<a href=".index.htm" type=text/txt class="w3-bar-item w3-button w3-right">HTML</a>}
 
   if {$opt(-save)} {
     if {$saveid eq ""} {set saveid "save"}
-    puts $fout "<button id=\"$saveid\" class=\"w3-bar-item w3-button w3-right\" style=\"margin: 0px 0px\">Save</button>"
+    puts $fout "<button id=\"$saveid\" class=\"w3-bar-item w3-button w3-blue-gray\" style=\"margin: 0px 0px\">Save</button>"
   }
   puts $fout "</div>"
 
