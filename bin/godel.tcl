@@ -63,9 +63,9 @@ proc linkbox {args} {
   }
 
   if [file exist $target] {
-    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-section w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=$target>$name</a>"
+    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=$target>$name</a>"
   } else {
-    puts $fout "<a class=\"w3-blue-gray w3-padding w3-section w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=$target>$name</a>"
+    puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=$target>$name</a>"
   }
 
   if [file exist $name/.godel/vars.tcl] {
@@ -443,9 +443,9 @@ proc ghtm_panel_begin {args} {
     puts $fout "<h2 class=\"w3-margin-bottom\">$title</h2>"
   }
   if {$opt(-bg)} {
-    puts $fout "<div class=\"w3-panel w3-sand w3-$bgcolor \">"
+    puts $fout "<div class=\"w3-panel w3-sand w3-$bgcolor w3-margin-top\">"
   } else {
-    puts $fout "<div class=\"w3-panel w3-white\">"
+    puts $fout "<div class=\"w3-panel w3-white w3-margin-top\">"
   }
 }
 # }}}
