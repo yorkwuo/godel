@@ -1209,6 +1209,7 @@ proc ghtm_keyword_button {args} {
   set count 0
   if {$opt(-key)} {
     set dirs [glob -nocomplain -type d *]
+
     foreach dir $dirs {
       set value [lvars $dir $val(-key)]
       if [regexp -nocase $keyword $value] {
@@ -1218,7 +1219,10 @@ proc ghtm_keyword_button {args} {
     #set total "\($count\)"
     set total " $count"
   } else {
-    set total ""
+    set dirs [glob -nocomplain -type d *]
+    set matches [lsearch -all -inline -regexp $dirs $keyword]
+    set count [llength $matches]
+    set total " $count"
   }
 
   if {$opt(-name)} {
