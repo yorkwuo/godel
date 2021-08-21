@@ -31,7 +31,7 @@ set path = (\
 setenv PATH ${PATH}:/usr/X11R6/bin
 
 # Where my perl module installed
-setenv PERL5LIB    $HOME/usr/perllib/lib64/perl5/site_perl/5.8.8/x86_64-linux-thread-multi:$HOME/usr/perllib/lib/perl5/site_perl/5.8.8:$HOME/usr/perllib
+setenv PERL5LIB    $HOME/usr/perllib
 # Where my tcl package installed
 setenv TCLLIBPATH  "/lib $HOME/usr/local/lib $HOME/usr/lib"
 #-----------------------------------------------
