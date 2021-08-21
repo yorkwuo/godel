@@ -110,7 +110,7 @@ $(document).ready(function(){
                 $(this).attr('changed', false);
               }
             } else {
-              var cmd = "lsetvar " + gname + " " + colname + " \"" + value + "\"\n";
+              var cmd = "lsetvar " + " \"" + gname + "\"" + " " + colname + " \"" + value + "\"\n";
               cmds = cmds + cmd;
             }
             $(this).css('backgroundColor', "");
