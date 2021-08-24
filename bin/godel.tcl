@@ -1,3 +1,76 @@
+# msg_start
+# {{{
+proc msg_start {} {
+  global gtime
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d %H:%M}]
+
+  puts "# INFO : Start at $timestamp"
+
+  set gtime(begin,date) $timestamp
+  set gtime(begin,seconds) [clock seconds]
+
+}
+# }}}
+# msg_end
+# {{{
+proc msg_end {} {
+  global gtime
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d %H:%M}]
+
+
+  set gtime(end,date) $timestamp
+  set gtime(end,seconds) [clock seconds]
+
+  set total  [ss2hhmmss [expr [clock seconds] - $gtime(begin,seconds)]]
+
+  lsetvar . runtime $total
+
+  puts "# INFO : End at $timestamp"
+  puts "# INFO : Total runtime $total"
+
+}
+# }}}
+# msg_section
+# {{{
+proc msg_section {args} {
+  global gtime
+  # -begin
+# {{{
+  set opt(-begin) 0
+  set idx [lsearch $args {-begin}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-begin) 1
+  }
+# }}}
+  # -end
+# {{{
+  set opt(-end) 0
+  set idx [lsearch $args {-end}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-end) 1
+  }
+# }}}
+  set secname [lindex $args 0]
+
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d %H:%M}]
+
+  if {$opt(-begin)} {
+    set total  [ss2hhmmss [expr [clock seconds] - $gtime(begin,seconds)]]
+    set gtime($secname,begin) [clock seconds]
+    puts "# SECTION_BEGIN : $secname : $timestamp : $total"
+
+  }
+  if {$opt(-end)} {
+    set total  [ss2hhmmss [expr [clock seconds] - $gtime(begin,seconds)]]
+    set gtime($secname,end) [clock seconds]
+    set elaspe [ss2hhmmss [expr $gtime($secname,end) - $gtime($secname,begin)]]
+    puts "# SECTION_END : $secname : $timestamp : $total : $elaspe"
+  }
+
+}
+# }}}
 # linkox_not_looped
 # {{{
 proc linkbox_not_looped {} {
