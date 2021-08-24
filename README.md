@@ -1,4 +1,4 @@
 # Godel
 
-Godel is a solution for collecting, processing, presenting and connecting information.
+Godel is an off-line solution to connect information with HTML page.
 

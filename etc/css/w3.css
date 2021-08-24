@@ -369,38 +369,6 @@ a,button,input {
   margin: 0px;
   font-size     : 15px;
 }
-.solidblockmenu{
-	margin: 0;
-	padding: 0;
-	float: left;
-	font: 14px Arial;
-	width: 100%;
-	overflow: hidden;
-	top: 0;
-	position: sticky;
-	margin-bottom: 0em;
-	background: #3f51b5;
-}
-
-.solidblockmenu input{
-  margin: 5px;
-}
-.solidblockmenu li{
-	display: inline;
-}
-
-.solidblockmenu li a{
-	float: left;
-	color: white;
-	padding: 12px 11px;
-	text-decoration: none;
-	border-right: 0px ;
-  outline : 0;
-}
-
-.solidblockmenu li a:hover{
-	background: red;
-}
 
 tr:hover {background-color:#f5f5f5;}
 

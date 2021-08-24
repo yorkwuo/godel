@@ -7,7 +7,7 @@ proc linkbox_not_looped {} {
   foreach dir $dirs {
     set gpage [file dirname $dir]
     set looped [lvars $gpage looped]
-    if {$looped} {
+    if {$looped eq "1"} {
     } else {
       puts $fout "<a class=\"w3-light-gray w3-padding w3-large w3-round-large\" style=\"text-decoration:none\" href=$gpage/.index.htm>$gpage</a>"
     }
@@ -132,7 +132,7 @@ proc ltbl_chkbox {} {
   upvar celltxt celltxt
   upvar row     row
 
-  set celltxt "<td gname=$row colname=chkbox><input type=checkbox id=cb_$row></td>"
+  set celltxt "<td gname=\"$row\" colname=chkbox><input type=checkbox id=cb_$row></td>"
 }
 # }}}
 # bton_set
@@ -336,7 +336,15 @@ proc ltbl_play {} {
       puts $kout "cd \$pagepath"
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
       puts $kout ""
-      puts $kout "set hit \[lvars . hit]"
+      puts $kout "set kin \[open \"playlist.f\" r\]"
+      puts $kout "gets \$kin line"
+      puts $kout "if \[file exist \$line] {"
+      puts $kout "  set hit 1"
+      puts $kout "} else {"
+      puts $kout "  set hit 0"
+      puts $kout "  lsetvar . hit 0"
+      puts $kout "}"
+      puts $kout "close \$kin"
       puts $kout ""
       puts $kout "if {\$hit eq \"1\"} {"
       puts $kout "  catch {exec mpv --playlist=playlist.f}"
@@ -350,7 +358,7 @@ proc ltbl_play {} {
       puts $kout "  set timestamp \[clock format \[clock seconds] -format {%Y-%m-%d}]"
       puts $kout "  lsetvar . last \$timestamp"
       puts $kout "} else {"
-      puts $kout "  exec xterm -hold -e \"echo Not exist... \$pfile\""
+      puts $kout "  exec xterm -e \"echo Not exist...;sleep 1\""
       puts $kout "}"
       puts $kout "cd .."
     close $kout
@@ -1209,6 +1217,7 @@ proc ghtm_keyword_button {args} {
   set count 0
   if {$opt(-key)} {
     set dirs [glob -nocomplain -type d *]
+
     foreach dir $dirs {
       set value [lvars $dir $val(-key)]
       if [regexp -nocase $keyword $value] {
@@ -1218,7 +1227,10 @@ proc ghtm_keyword_button {args} {
     #set total "\($count\)"
     set total " $count"
   } else {
-    set total ""
+    set dirs [glob -nocomplain -type d *]
+    set matches [lsearch -all -inline -regexp $dirs $keyword]
+    set count [llength $matches]
+    set total " $count"
   }
 
   if {$opt(-name)} {
@@ -2574,14 +2586,20 @@ proc local_table {name args} {
   set idx [lsearch $args {-sortby}]
   if {$idx != "-1"} {
     set sortby [lindex $args [expr $idx + 1]]
-    if {[regexp {;d} $sortby]} {
-      regsub {;d} $sortby {} sortby
-      set sort_direction "-decreasing"
-    } else {
-      set sort_direction "-increasing"
-    }
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-sortby) 1
+  }
+# }}}
+  # -sortopt (sort options"
+# {{{
+  set opt(-sortopt) 0
+  set idx [lsearch $args {-sortopt}]
+  if {$idx != "-1"} {
+    set val(-sortopt) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-sortopt) 1
+  } else {
+    set val(-sortopt) ""
   }
 # }}}
   # -serial (serial numbers)
@@ -2703,7 +2721,7 @@ proc local_table {name args} {
     }
 
     ## Sorting...
-    set row_items [lsort -index 1 $sort_direction $row_items]
+    set row_items [lsort -index 1 {*}$val(-sortopt) $row_items]
 
     # Re-create rows based on sorted row_items
     set rows {}
@@ -2732,7 +2750,7 @@ proc local_table {name args} {
     puts $fout "<tr style=\"$row_style\">"
 
     if {$opt(-serial)} {
-      puts $fout "<td><a href=$row/.index.htm>$serial</a></td>"
+      puts $fout "<td><a href=\"$row/.index.htm\">$serial</a></td>"
     }
     #----------------------
     # For each table column
@@ -2815,7 +2833,7 @@ proc local_table {name args} {
         if {$col_data eq "NA"} {
           set col_data ""
         }
-        append celltxt "<td gname=$page_path colname=$page_key contenteditable=true>$col_data</td>"
+        append celltxt "<td gname=\"$page_path\" colname=$page_key contenteditable=true>$col_data</td>"
       # ed:
       } elseif [regexp {ed:} $col] {
         regsub {ed:} $col {} col
