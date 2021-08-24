@@ -4226,6 +4226,7 @@ proc num_symbol {num {symbol B}} {
   set s(T) 1000000000000
   if {$num eq "NA"} {
     return "NA"
+  } elseif {$num eq ""} {
   } elseif {$symbol eq "B"} {
     return [format_3digit [expr $num]]$symbol
   } else {
