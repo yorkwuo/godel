@@ -533,28 +533,28 @@ function chklist_examine() {
 }
 // }}}
 // hide_table_row
-# {{{
-function hide_table_row(row,col) {
-  table = document.getElementById("tbl");
-  tr = table.getElementsByTagName("tr");
-
-  //console.log(row);
-  td = tr[row].getElementsByTagName("td");
-  var pvalue = td[1].innerText;
-  console.log(pvalue);
-
-  var start = row + 1;
-  for (i = start; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td");
-    var level = td[1].innerText;
-    if (level > pvalue) {
-      tr[i].classList.toggle("hidden");
-    } else if (level == pvalue) {
-      break;
-    }
-  }
-}
-# }}}
+// {{{
+//function hide_table_row(row,col) {
+//  table = document.getElementById("tbl");
+//  tr = table.getElementsByTagName("tr");
+//
+//  //console.log(row);
+//  td = tr[row].getElementsByTagName("td");
+//  var pvalue = td[1].innerText;
+//  console.log(pvalue);
+//
+//  var start = row + 1;
+//  for (i = start; i < tr.length; i++) {
+//    td = tr[i].getElementsByTagName("td");
+//    var level = td[1].innerText;
+//    if (level > pvalue) {
+//      tr[i].classList.toggle("hidden");
+//    } else if (level == pvalue) {
+//      break;
+//    }
+//  }
+//}
+// }}}
 // add event listener for hide_table_row
 //# {{{
 //table = document.getElementById("tbl");
