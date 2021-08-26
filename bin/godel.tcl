@@ -2566,6 +2566,18 @@ proc local_table {name args} {
     set ltblrows ""
   }
 
+  # -pattern
+# {{{
+  set opt(-pattern) 0
+  set idx [lsearch $args {-pattern}]
+  if {$idx != "-1"} {
+    set pattern [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-pattern) 1
+  } else {
+    set pattern *
+  }
+# }}}
   # -exclude
 # {{{
   set opt(-exclude) 0
@@ -2726,9 +2738,9 @@ proc local_table {name args} {
       }
     } else {
       if {$opt(-revert)} {
-        set flist [lsort -decreasing [glob -nocomplain */.godel]]
+        set flist [lsort -decreasing [glob -nocomplain $pattern/.godel]]
       } else {
-        set flist [lsort [glob -nocomplain */.godel]]
+        set flist [lsort [glob -nocomplain $pattern/.godel]]
       }
       foreach f $flist {
         lappend rows [file dirname $f]
