@@ -475,6 +475,7 @@ proc ltbl_hit {dispcol} {
 proc ltbl_iname {dispcol} {
   upvar celltxt celltxt
   upvar row     row
+  upvar textalign textalign
 
   #set iname [lvars $row g:iname]
   set tick_status [lvars $row tick_status]
@@ -485,9 +486,9 @@ proc ltbl_iname {dispcol} {
 
   
   if {$tick_status eq "1"} {
-    set celltxt "<td bgcolor=palegreen><a href=$row/.index.htm>$disp</a></td>"
+    set celltxt "<td $textalign bgcolor=palegreen><a href=$row/.index.htm>$disp</a></td>"
   } else {
-    set celltxt "<td><a href=$row/.index.htm>$disp</a></td>"
+    set celltxt "<td $textalign><a href=$row/.index.htm>$disp</a></td>"
   }
 }
 # }}}
@@ -722,7 +723,8 @@ proc gexe_button {args} {
         puts $kout "exec ./$exefile"
       } else {
         #puts $kout "exec xterm -e \"./$exefile;sleep 0.5\""
-        puts $kout "exec xterm -e \"./$exefile\""
+        #puts $kout "exec xterm -e \"./$exefile\""
+        puts $kout "exec xterm -geometry 150x30+5+800 -e \"./$exefile\""
       }
     close $kout
   } else {
@@ -2252,7 +2254,7 @@ proc lchart_bar {args} {
   }
 # }}}
   if {$opt(-f)} {
-    set ilist [read_file_ret_list $listfile]
+    set ilist [read_as_list $listfile]
     set rowlist $ilist
   } else {
     set flist [glob -nocomplain */.godel]
@@ -2360,7 +2362,7 @@ proc lchart_line {args} {
   }
 # }}}
   if {$opt(-f)} {
-    set ilist [read_file_ret_list $listfile]
+    set ilist [read_as_list $listfile]
   } else {
     set flist [glob -nocomplain */.godel]
     foreach f $flist {
@@ -2488,6 +2490,72 @@ proc lsetdyvar {name key value} {
   }
 
   godel_array_save dyvars $varfile
+}
+# }}}
+# ldyvars
+# {{{
+proc ldyvars {args} {
+
+  # -k (keyword)
+# {{{
+  set opt(-k) 0
+  set idx [lsearch $args {-k}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-k) 1
+  }
+# }}}
+  # -pvar (path var)
+# {{{
+  set opt(-pvar) 0
+  set idx [lsearch $args {-pvar}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-pvar) 1
+  }
+# }}}
+  set gpage [lindex $args 0]
+  set vname  [lindex $args 1]
+
+  if {$gpage == ""} {
+    set gpage "."
+  }
+  if ![file exist $gpage/.godel/dyvars.tcl] {
+    #puts "Error: not exist... $gpage/.godel/vars.tcl"
+    return
+  }
+  source $gpage/.godel/dyvars.tcl
+
+  set vlist ""
+  if {$vname == ""} {
+    parray vars
+  } else {
+    if {$opt(-k)} {
+      foreach name [lsort [array names dyvars]] {
+        if [setop_and_hit $vname $name] {
+          puts [format "%-20s = %s" $name $dyvars($name)]
+          lappend klist [list $name $dyvars($name)]
+          set vlist [concat $vlist $dyvars($name)]
+        }
+      }
+    } else {
+      if [info exist dyvars($vname)] {
+
+        if {$opt(-pvar)} {
+          set txt ""
+          foreach path $dyvars($vname) {
+            set fname [file tail $path]
+            append txt "$fname\n"
+          }
+          return $txt
+        } else {
+          return $dyvars($vname)
+        }
+      } else {
+        return NA
+      }
+    }
+  }
 }
 # }}}
 # lvars
@@ -2622,12 +2690,12 @@ proc local_table {name args} {
 # }}}
   # -row_style_proc (row_style_proc)
 # {{{
-  set opt(-row_style_proc) 0
-  set idx [lsearch $args {-row_style_proc}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-row_style_proc) 1
-  }
+#  set opt(-row_style_proc) 0
+#  set idx [lsearch $args {-row_style_proc}]
+#  if {$idx != "-1"} {
+#    set args [lreplace $args $idx $idx]
+#    set opt(-row_style_proc) 1
+#  }
 # }}}
   # -css (css class)
 # {{{
@@ -2684,7 +2752,7 @@ proc local_table {name args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-sortopt) 1
   } else {
-    set val(-sortopt) ""
+    set val(-sortopt) "-ascii"
   }
 # }}}
   # -serial (serial numbers)
@@ -2721,7 +2789,7 @@ proc local_table {name args} {
   if {$ltblrows eq ""} {
     if {$opt(-f)} {
       if [file exist $listfile] {
-        #set rows [read_file_ret_list $listfile]
+        #set rows [read_as_list $listfile]
         set kin [open $listfile r]
 
         while {[gets $kin line] >= 0} {
@@ -2775,7 +2843,8 @@ proc local_table {name args} {
   foreach col $columns {
     set colname ""
     if [regexp {;} $col] {
-      regexp {;(\S+)} $col -> colname
+      set cs [split $col ";"]
+      set colname [lindex $cs 1]
 
       if {$colname == ""} {
         puts $fout "<th></th>"
@@ -2793,14 +2862,16 @@ proc local_table {name args} {
   # Sort by...
 # {{{
   if {$opt(-sortby)} {
-    set index_num 1
-
     ## Create row_items for sorting
     set row_items {}
     foreach row $rows {
       set sdata [lvars $row $sortby]
       if {$sdata eq ""} {
-        set sdata "NA"
+        if {$val(-sortopt) eq "-ascii"} {
+          set sdata "ZZZ"
+        } else {
+          set sdata 0
+        }
       }
       lappend row_items [concat $row $sdata]
     }
@@ -2825,25 +2896,36 @@ proc local_table {name args} {
 # For each table row
 #--------------------
   foreach row $rows {
-    set row_style {}
-
-    # row_style_proc
-    if {$opt(-row_style_proc)} {
-      row_style_proc
-    }
-
-    puts $fout "<tr style=\"$row_style\">"
+    # York: consider to remove row style function
+    #set row_style {}
+    #if {$opt(-row_style_proc)} {
+    #  row_style_proc
+    #}
+    #puts $fout "<tr style=\"$row_style\">"
+    puts $fout "<tr>"
 
     if {$opt(-serial)} {
-      puts $fout "<td><a href=\"$row/.index.htm\">$serial</a></td>"
+      #puts $fout "<td><a href=\"$row/.index.htm\">$serial</a></td>"
+      puts $fout "<td>$serial</td>"
     }
     #----------------------
     # For each table column
     #----------------------
     foreach col $columns {
+      set cs [split $col ";"]
+
+      set col [lindex $cs 0]
+      regsub {\s+$} $col {} col
+
+      set align [lindex $cs 2]
+      regsub -all {\s} $align {} align
+      if {$align eq "right"} {
+        set textalign "style=text-align:right"
+      } else {
+        set textalign ""
+      }
+
       set celltxt {}
-      # Remove column width
-      regsub {;\S+} $col {} col
 
       # Get column data
       # img:
@@ -2854,12 +2936,6 @@ proc local_table {name args} {
           set coverfile "cover.jpg"
         }
         append celltxt "<td><a href=$coverfile><img height=100px src=$coverfile></a></td>"
-      # exe_button:
-      } elseif [regexp {exe_button:} $col] {
-        regsub {exe_button:} $col {} col
-        set execmd [lvars $row execmd]
-        append celltxt "<td><a href=$row/.$execmd.gtcl class=\"w3-btn w3-teal\" type=text/gtcl>$execmd</a><a class=\"w3-button w3-lime\" href=$row/$execmd type=text/txt>cmd</a></td>"
-
       # proc:
       } elseif [regexp {proc:} $col] {
         regsub {proc:} $col {} col
@@ -2930,13 +3006,9 @@ proc local_table {name args} {
         }
       } else {
         set dirname [file dirname $col]
-        if {$dirname eq "."} {
-          set page_path $row
-          set page_key  $col
-        } else {
-          set page_path $row/$dirname
-          set page_key  [file tail $col]
-        }
+        set page_path $row
+        set page_key  $col
+        #puts "$page_path $page_key"
         set col_data [lvars $page_path $page_key]
         if {$col_data eq "NA"} {
           set col_data ""
@@ -2945,7 +3017,7 @@ proc local_table {name args} {
         if {$col == "g:pagename"} {
           set col_data "<a href=\"$row/.index.htm\">$col_data</a>"
         }
-        append celltxt "<td>$col_data</td>"
+        append celltxt "<td $textalign>$col_data</td>"
       }
       puts $fout $celltxt
     }
@@ -5409,10 +5481,10 @@ proc gscreen {pattern_list {ofile NA}} {
   }
 }
 # }}}
-# read_file_ret_list
+# read_as_list
 # {{{
 # read a file and retrun a list
-proc read_file_ret_list {afile} {
+proc read_as_list {afile} {
   set fin [open $afile r]
     while {[gets $fin line] >= 0} {
       lappend lines $line
