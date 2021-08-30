@@ -103,6 +103,18 @@ proc linkbox_reset {} {
 # {{{
 proc linkbox {args} {
   upvar fout fout
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set val(-name) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set val(-name) ""
+  }
+# }}}
   # -bgcolor
 # {{{
   set opt(-bgcolor) 0
@@ -129,6 +141,13 @@ proc linkbox {args} {
 # }}}
 
   set name [lindex $args 0]
+
+  if {$opt(-name) eq "1"} {
+    set dispname  $val(-name)
+  } else {
+    set dispname  $name
+  }
+
   if {$opt(-target)} {
     set target $val(-target)
   } else {
@@ -136,9 +155,9 @@ proc linkbox {args} {
   }
 
   if [file exist $target] {
-    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=$target>$name</a>"
+    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=$target>$dispname</a>"
   } else {
-    puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=$target>$name</a>"
+    puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=$target>$dispname</a>"
   }
 
   if [file exist $name/.godel/vars.tcl] {
@@ -2866,15 +2885,16 @@ proc local_table {name args} {
     set row_items {}
     foreach row $rows {
       set sdata [lvars $row $sortby]
-      if {$sdata eq "NA"} {
+      if {$sdata eq "NA" || $sdata eq ""} {
         if [regexp {\-ascii} $val(-sortopt)] {
-          set sdata "ZZZ"
+          set sdata "~"
         } else {
           set sdata 0
         }
       }
       lappend row_items [concat $row $sdata]
     }
+    plist $row_items
 
     ## Sorting...
     set row_items [lsort -index 1 {*}$val(-sortopt) $row_items]
