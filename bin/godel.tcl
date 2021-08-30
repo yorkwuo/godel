@@ -2866,8 +2866,8 @@ proc local_table {name args} {
     set row_items {}
     foreach row $rows {
       set sdata [lvars $row $sortby]
-      if {$sdata eq ""} {
-        if {$val(-sortopt) eq "-ascii"} {
+      if {$sdata eq "NA"} {
+        if [regexp {\-ascii} $val(-sortopt)] {
           set sdata "ZZZ"
         } else {
           set sdata 0
