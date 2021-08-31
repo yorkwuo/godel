@@ -2894,7 +2894,7 @@ proc local_table {name args} {
       }
       lappend row_items [concat $row $sdata]
     }
-    plist $row_items
+    #plist $row_items
 
     ## Sorting...
     set row_items [lsort -index 1 {*}$val(-sortopt) $row_items]
