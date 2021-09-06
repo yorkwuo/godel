@@ -155,9 +155,9 @@ proc linkbox {args} {
   }
 
   if [file exist $target] {
-    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=$target>$dispname</a>"
+    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname</a>"
   } else {
-    puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=$target>$dispname</a>"
+    puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname</a>"
   }
 
   if [file exist $name/.godel/vars.tcl] {
@@ -505,9 +505,9 @@ proc ltbl_iname {dispcol} {
 
   
   if {$tick_status eq "1"} {
-    set celltxt "<td $textalign bgcolor=palegreen><a href=$row/.index.htm>$disp</a></td>"
+    set celltxt "<td $textalign bgcolor=palegreen><a href=\"$row/.index.htm\">$disp</a></td>"
   } else {
-    set celltxt "<td $textalign><a href=$row/.index.htm>$disp</a></td>"
+    set celltxt "<td $textalign><a href=\"$row/.index.htm\">$disp</a></td>"
   }
 }
 # }}}
@@ -590,16 +590,22 @@ proc bton_delete {{name ""}} {
   if [file exist $row/.delete.gtcl] {
   } else {
     set kout [open $row/.delete.gtcl w]
-      puts $kout "set pagepath \[file dirname \[file dirname \[info script]]]"
+      puts $kout "set pagepath \[file dirname \[info script]]"
       puts $kout "cd \$pagepath"
-      puts $kout "exec xterm -e \"rm -rf $row\""
+      #puts $kout "puts \$pagepath"
+      puts $kout "set dname \[file tail \$pagepath\]"
+      #puts $kout "puts \$dname"
+      puts $kout "cd .."
+      puts $kout "file delete -force \$dname"
+      puts $kout "puts \"Deleted... \$pagepath\""
+      #puts $kout "exec xterm -e \"rm -rf $row\""
       #puts $kout "exec godel_draw.tcl"
       #puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
     close $kout
   }
 
   if [file exist "$row/.delete.gtcl"] {
-    set celltxt "<td><a href=$row/.delete.gtcl class=\"w3-btn w3-teal w3-round\" type=text/gtcl>D</a></td>"
+    set celltxt "<td><a href=\"$row/.delete.gtcl\" class=\"w3-btn w3-teal w3-round\" type=text/gtcl>D</a></td>"
   } else {
     set celltxt "<td></td>"
   }
@@ -1438,6 +1444,8 @@ proc ghtm_ls {args} {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/pdf>$fname</a><br></div>"]
     } elseif [regexp {\.epub} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+    } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $full]}  {
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/jpg>$fname</a><br></div>"]
     } else {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
     }
@@ -2892,7 +2900,8 @@ proc local_table {name args} {
           set sdata 0
         }
       }
-      lappend row_items [concat $row $sdata]
+      #lappend row_items [concat $row $sdata]
+      lappend row_items [list $row $sdata]
     }
     #plist $row_items
 
@@ -2955,7 +2964,7 @@ proc local_table {name args} {
         if {$coverfile eq ""} {
           set coverfile "cover.jpg"
         }
-        append celltxt "<td><a href=$coverfile><img height=100px src=$coverfile></a></td>"
+        append celltxt "<td><a href=\"$coverfile\"><img height=100px src=$coverfile></a></td>"
       # proc:
       } elseif [regexp {proc:} $col] {
         regsub {proc:} $col {} col
@@ -3325,10 +3334,10 @@ proc list_pages {args} {
     }
     if {$opt(-n)} {
       # With newline
-      puts $fout "<a class=hbox2 href=$page/.index.htm>$disp</a><br>"
+      puts $fout "<a class=hbox2 href=\"$page/.index.htm\">$disp</a><br>"
     } else {
       # Single line
-      puts $fout "<a class=hbox2 href=$page/.index.htm>$disp</a>"
+      puts $fout "<a class=hbox2 href=\"$page/.index.htm\">$disp</a>"
     }
   }
   puts $fout "</div>"
@@ -3688,7 +3697,7 @@ proc gmd {args} {
       #puts $kout "</div>"
       puts $kout "# $fname2"
       puts $kout ""
-      puts $kout "<a href=$fname2.md type=text/txt>edit</a>"
+      puts $kout "<a href=\"$fname2.md\" type=text/txt>edit</a>"
       puts $kout ""
       puts $kout "@? $fname1"
     close $kout
@@ -3941,7 +3950,7 @@ proc gnotes {args} {
 
     set addr [gpage_where $iname]
     set pagename [gvars $iname g:pagename]
-    set atxt "<a href=$addr>$pagename</a>"
+    set atxt "<a href=\"$addr\">$pagename</a>"
     regsub -all "@~$iname" $aftermd $atxt aftermd
   }
 # }}}
@@ -3956,7 +3965,7 @@ proc gnotes {args} {
     #set addr [gpage_where $iname]
     set pagename [lvars $iname g:pagename]
     puts "lvars $iname g:pagename"
-    set atxt "<a class=hbox2 href=$iname/.index.htm>$pagename</a>"
+    set atxt "<a class=hbox2 href=\"$iname/.index.htm\">$pagename</a>"
     regsub -all "@!$iname" $aftermd $atxt aftermd
   }
 # }}}
@@ -3970,7 +3979,7 @@ proc gnotes {args} {
 
 #    set addr [gpage_where $iname]
 #    set pagename [gvars $iname g:pagename]
-    set atxt "<a href=$iname><img src=$iname style=\"float:right;width:30%\"></a>"
+    set atxt "<a href=\"$iname\"><img src=$iname style=\"float:right;width:30%\"></a>"
     #regsub -all {@img\(pmos} $aftermd $atxt aftermd
     regsub -all "@img\\($iname\\)" $aftermd $atxt aftermd
   }
