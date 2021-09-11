@@ -53,6 +53,7 @@ proc list_wins {} {
       foreach row $rows {
         set id   [lindex $row 0]
         set name [lindex $row 1]
+        regsub {gnome-terminal} $name {gterm} name
         button .b$count -text "$name" -anchor w -command "exec xdotool windowactivate $id"
        .b$count configure -background lightblue
       

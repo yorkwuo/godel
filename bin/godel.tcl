@@ -4983,6 +4983,58 @@ proc godel_get_vars {key} {
   }
 }
 # }}}
+# oget
+# {{{
+proc oget {args} {
+  global env
+  source $env(GODEL_CENTER)/meta.tcl
+
+  set pagename [lindex $args 0]
+
+  regsub -all {,where} [array names meta] {} objs
+  set hits [lsearch -all -inline -regexp $objs "$pagename"]
+  if {[llength $hits] > 1} {
+    foreach i $hits {
+      puts $i
+    }
+    return
+  }
+
+  set varfile $meta($pagename,where)/.godel/vars.tcl
+  if [file exist $varfile] {
+    source $varfile
+  } else {
+    puts "oget: not exist... $varfile"
+    return
+  }
+
+  set where $meta($pagename,where)
+
+  if [file exist $where/.godel/proc.tcl] {
+    source $where/.godel/proc.tcl
+  }
+
+  set pagename [lindex $args 0]
+  set objname  [lindex $args 1]
+  set asname   [lindex $args 2]
+
+  if {$objname == ""} {
+    help
+  } else {
+    if {$asname eq ""} {
+      puts  "cp -r $where/$objname ."
+      exec  cp -r $where/$objname .
+      lsetdyvar $objname srcpath  $where/$objname
+    } else {
+      puts  "cp -r $where/$objname $asname"
+      exec  cp -r $where/$objname $asname
+      lsetdyvar $asname srcpath  $where/$objname
+      lsetvar $asname g:iname    $asname
+      lsetvar $asname g:pagename $asname
+    }
+  }
+}
+# }}}
 # gget
 # {{{
 proc gget {pagename args} {
