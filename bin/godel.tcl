@@ -2869,6 +2869,15 @@ proc local_table {name args} {
     set opt(-revert) 1
   }
 # }}}
+  # -dataTables
+# {{{
+  set idx [lsearch $args {-dataTables}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    upvar dataTables dataTables
+    set dataTables 1
+  }
+# }}}
 
   # create rows
   # {{{
@@ -2923,6 +2932,7 @@ proc local_table {name args} {
   puts $fout "<table class=$css_class id=$name>"
 # Table Headers
 # {{{
+  puts $fout "<thead>"
   puts $fout "<tr>"
   if {$opt(-serial)} {
     puts $fout "<th>Num</th>"
@@ -2944,6 +2954,7 @@ proc local_table {name args} {
     }
   }
   puts $fout "</tr>"
+  puts $fout "</thead>"
 # }}}
 
   # Sort by...
@@ -2994,8 +3005,8 @@ proc local_table {name args} {
     puts $fout "<tr>"
 
     if {$opt(-serial)} {
-      #puts $fout "<td><a href=\"$row/.index.htm\">$serial</a></td>"
-      puts $fout "<td>$serial</td>"
+      puts $fout "<td><a href=\"$row/.index.htm\">$serial</a></td>"
+      #puts $fout "<td>$serial</td>"
     }
     #----------------------
     # For each table column
@@ -4798,6 +4809,7 @@ proc godel_draw {{target_path NA}} {
     }
 # }}}
   }
+  puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
 
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
@@ -4820,6 +4832,18 @@ proc godel_draw {{target_path NA}} {
   } else {
     puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
     puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
+    if {[info exist dataTables]} {
+      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+      puts $fout "<script>"
+      puts $fout "    \$(document).ready(function() {"
+      puts $fout "    \$('#tbl').DataTable({"
+      puts $fout "       \"paging\": false,"
+      puts $fout "       \"info\": false,"
+      puts $fout "    });"
+      puts $fout "} );"
+      puts $fout "</script>"
+
+    }
   }
 
   if [info exist LOCAL_JS] {
