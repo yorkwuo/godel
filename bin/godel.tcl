@@ -1,3 +1,69 @@
+# ghtm_ls_table
+# {{{
+proc ghtm_ls_table {} {
+  upvar fout fout
+  upvar env env
+
+  set ifiles [lsort [glob -type f *]]
+  
+  set count 1
+  puts $fout "<table class=table1 id=tbl>"
+  puts $fout "<thead>"
+  puts $fout "<tr>"
+    puts $fout "<th>Num </th>"
+    puts $fout "<th>Date</th>"
+    puts $fout "<th>Size</th>"
+    puts $fout "<th>Name</th>"
+  puts $fout "</tr>"
+  puts $fout "</thead>"
+  puts $fout "<tdata>"
+  foreach ifile $ifiles {
+    set mtime [file mtime $ifile]
+    set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
+    set fsize [file size $ifile]
+    set fsize [num_symbol $fsize K]
+
+    puts $fout "<tr>"
+    puts $fout "<td>$count</td>"
+    puts $fout "<td>$timestamp</td>"
+    puts $fout "<td>$fsize</td>"
+    #puts $fout "<td gname=\"1\" colname=g:keywords contenteditable=true></td>"
+    #puts $fout "<td gname=\"1\" colname=g:keywords><input ></td>"
+    if [regexp {\.htm} $ifile] {
+      puts $fout "<td><a href=\"$ifile\"              >$ifile</a></td>"
+    } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $ifile] {
+      puts $fout "<td><a href=\"$ifile\" type=text/mp4>$ifile</a></td>"
+    } elseif [regexp {\.mp3} $ifile] {
+      puts $fout "<td><a href=\"$ifile\" type=text/mp3>$ifile</a></td>"
+    } elseif [regexp {\.pdf} $ifile] {
+      puts $fout "<td><a href=\"$ifile\" type=text/pdf>$ifile</a></td>"
+    } elseif [regexp {\.epub} $ifile] {
+      puts $fout "<td><a href=\"$ifile\"              >$ifile</a></td>"
+    } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $ifile]}  {
+      puts $fout "<td><a href=\"$ifile\" type=text/jpg>$ifile</a></td>"
+    } else {
+      puts $fout "<td><a href=\"$ifile\" type=text/txt>$ifile</a></td>"
+    }
+
+    puts $fout "</tr>"
+
+    incr count
+  }
+
+  puts $fout "</tdata>"
+  puts $fout "</table>"
+
+      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+      puts $fout "<script>"
+      puts $fout "    \$(document).ready(function() {"
+      puts $fout "    \$('#tbl').DataTable({"
+      puts $fout "       \"paging\": false,"
+      puts $fout "       \"info\": false,"
+      puts $fout "    });"
+      puts $fout "} );"
+      puts $fout "</script>"
+}
+# }}}
 # opt_bton
 # {{{
 proc opt_bton {args} {
@@ -4809,7 +4875,7 @@ proc godel_draw {{target_path NA}} {
     }
 # }}}
   }
-  puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+  puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
 
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
@@ -4830,7 +4896,6 @@ proc godel_draw {{target_path NA}} {
     puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
     puts $fout "<script src=.godel/js/godel.js></script>"
   } else {
-    puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
     puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
     if {[info exist dataTables]} {
       puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
