@@ -1463,7 +1463,11 @@ proc ghtm_keyword_button {args} {
   if {$opt(-name)} {
     puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${name}$total</button>"
   } else {
-    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}$total</button>"
+    if {$opt(-key)} {
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}$total</button>"
+    } else {
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}</button>"
+    }
   }
 }
 # }}}
@@ -4858,8 +4862,13 @@ proc godel_draw {{target_path NA}} {
 
   if {$env(GODEL_ALONE)} {
 # Standalone w3.css
-      exec cp $env(GODEL_ROOT)/etc/css/w3.css .godel/w3.css
+      file mkdir .godel/js
+      exec cp $env(GODEL_ROOT)/etc/css/w3.css                      .godel/
+      exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
+      exec cp $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
+      exec cp $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
       puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
+      puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
   } else {
 # Link to Godel's central w3.css
 # {{{
@@ -4873,10 +4882,10 @@ proc godel_draw {{target_path NA}} {
       puts $fout "</style>"
     } else {
       puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
+      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
     }
 # }}}
   }
-  puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
 
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
@@ -4891,10 +4900,7 @@ proc godel_draw {{target_path NA}} {
   }
 
   if {$env(GODEL_ALONE)} {
-    file mkdir .godel/js
-    exec cp $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
-    exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
-    puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
+    puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
     puts $fout "<script src=.godel/js/godel.js></script>"
   } else {
     puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
