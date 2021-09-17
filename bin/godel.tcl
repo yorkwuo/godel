@@ -1,10 +1,10 @@
 # ghtm_ls_table
 # {{{
-proc ghtm_ls_table {} {
+proc ghtm_ls_table {pattern} {
   upvar fout fout
   upvar env env
 
-  set ifiles [lsort [glob -type f *]]
+  set ifiles [lsort [glob -type f $pattern]]
   
   set count 1
   puts $fout "<table class=table1 id=tbl>"
@@ -22,6 +22,7 @@ proc ghtm_ls_table {} {
     set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
     set fsize [file size $ifile]
     set fsize [num_symbol $fsize K]
+    set fname [file tail $ifile]
 
     puts $fout "<tr>"
     puts $fout "<td>$count</td>"
@@ -30,19 +31,19 @@ proc ghtm_ls_table {} {
     #puts $fout "<td gname=\"1\" colname=g:keywords contenteditable=true></td>"
     #puts $fout "<td gname=\"1\" colname=g:keywords><input ></td>"
     if [regexp {\.htm} $ifile] {
-      puts $fout "<td><a href=\"$ifile\"              >$ifile</a></td>"
+      puts $fout "<td><a href=\"$ifile\"              >$fname</a></td>"
     } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $ifile] {
-      puts $fout "<td><a href=\"$ifile\" type=text/mp4>$ifile</a></td>"
+      puts $fout "<td><a href=\"$ifile\" type=text/mp4>$fname</a></td>"
     } elseif [regexp {\.mp3} $ifile] {
-      puts $fout "<td><a href=\"$ifile\" type=text/mp3>$ifile</a></td>"
+      puts $fout "<td><a href=\"$ifile\" type=text/mp3>$fname</a></td>"
     } elseif [regexp {\.pdf} $ifile] {
-      puts $fout "<td><a href=\"$ifile\" type=text/pdf>$ifile</a></td>"
+      puts $fout "<td><a href=\"$ifile\" type=text/pdf>$fname</a></td>"
     } elseif [regexp {\.epub} $ifile] {
-      puts $fout "<td><a href=\"$ifile\"              >$ifile</a></td>"
+      puts $fout "<td><a href=\"$ifile\"              >$fname</a></td>"
     } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $ifile]}  {
-      puts $fout "<td><a href=\"$ifile\" type=text/jpg>$ifile</a></td>"
+      puts $fout "<td><a href=\"$ifile\" type=text/jpg>$fname</a></td>"
     } else {
-      puts $fout "<td><a href=\"$ifile\" type=text/txt>$ifile</a></td>"
+      puts $fout "<td><a href=\"$ifile\" type=text/txt>$fname</a></td>"
     }
 
     puts $fout "</tr>"
