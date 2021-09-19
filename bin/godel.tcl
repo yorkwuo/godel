@@ -76,7 +76,7 @@ proc ghtm_ls_table {pattern} {
   puts $fout "</tdata>"
   puts $fout "</table>"
 
-      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+      puts $fout "<script src=\"$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js\"></script>"
       puts $fout "<script>"
       puts $fout "    \$(document).ready(function() {"
       puts $fout "    \$('#tbl').DataTable({"
@@ -4149,7 +4149,8 @@ proc gnotes {args} {
   }
 # }}}
 
-  puts $fout "<div class=\"w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
+  #puts $fout "<div class=\"w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
+  puts $fout "<div class=\"w3-panel\">"
   puts $fout $aftermd
   puts $fout "</div>"
 }
