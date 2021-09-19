@@ -1,3 +1,25 @@
+# gtcl_commit
+# {{{
+proc gtcl_commit {} {
+  upvar env env
+  set gtcl $env(GODEL_DOWNLOAD)/gtcl.tcl
+  if [file exist $gtcl] {
+    set kin [open $gtcl r]
+    while {[gets $kin line] >= 0} {
+      #puts $line
+      regsub -all {\s*\|#\|\s*} $line "\n" line
+      set cols [split $line "\n"]
+      set gpage [lindex $cols 0]
+      set key   [lindex $cols 1]
+      set value [lindex $cols 2]
+
+      lsetvar $gpage $key $value
+    }
+    close $kin
+  }
+  file delete $gtcl
+}
+# }}}
 # ghtm_ls_table
 # {{{
 proc ghtm_ls_table {pattern} {
@@ -351,7 +373,7 @@ proc ltbl_chkbox {} {
   upvar celltxt celltxt
   upvar row     row
 
-  set celltxt "<td gname=\"$row\" colname=chkbox><input type=checkbox id=cb_$row></td>"
+  set celltxt "<td gname=\"$row\" colname=\"chkbox\"><input type=checkbox id=cb_$row></td>"
 }
 # }}}
 # bton_set
@@ -3165,7 +3187,7 @@ proc local_table {name args} {
         if {$col_data eq "NA"} {
           set col_data ""
         }
-        append celltxt "<td gname=\"$page_path\" colname=$page_key contenteditable=true>$col_data</td>"
+        append celltxt "<td gname=\"$page_path\" colname=\"$page_key\" contenteditable=true>$col_data</td>"
       # ed:
       } elseif [regexp {ed:} $col] {
         regsub {ed:} $col {} col
@@ -4472,55 +4494,11 @@ proc ghtm_new_html {title} {
 # }}}
 # ghtm_toc
 # {{{
-# Table Of Content
-proc ghtm_toc {{mode ""} {begin_level 4} } {
-# 
-  global env
-  upvar vars vars
-
-  #upvar fout fout
-  #puts $fout "<a href=.main.htm>TOC</a>"
-  #puts $fout "<a href=.index.htm target=_top>Remove</a>"
-  #puts $fout "<a href=.toc.tcl type=text/txt>toc.tcl</a>"
-
-# toc.tcl
-  if {$mode == "auto"} {
-# always refresh .toc.tcl
-    set kout [open .toc.tcl w]
-      foreach i $vars(toc) {
-        set level [lindex $i 0]
-        # Adjust level according to begin_level
-        regsub {h} $level {} level
-        set level [expr $level - $begin_level + 1]
-        if {$level < 1} {set level 1}
-        set title [lindex $i 1]
-        set id    [lindex $i 2]
-        puts $kout "ghtm_chap $level \"$title\" \[gpage_where $vars(g:pagename)\]#$id"
-      }
-    close $kout
-  } else {
-# if .toc.tcl not exist, create it.
-    if ![file exist .toc.tcl] {
-      set kout [open .toc.tcl w]
-        puts $kout "ghtm_chap L1 \"Chapter1\" \[gpage_where tcl_cmds\]"
-      close $kout
-    }
-  }
-# Create toc.htm
-  #ghtm_new_html toc
-
-# Create main.htm
-#  set kout [open .main.htm w]
-#    puts $kout {<!DOCTYPE html>}
-#    puts $kout {<html> <head>}
-#    puts $kout "<title>$vars(g:pagename)</title>"
-#    puts $kout {<meta charset=utf-8>}
-#    puts $kout {<frameset cols=25%,75%>}
-#    puts $kout {　　<frame src=.toc.htm name=leftFrame >}
-#    puts $kout {　　<frame src=.index.htm name=rightFrame >}
-#    puts $kout {</frameset>}
-#    puts $kout {</head> <body> </body> </html>}
-#  close $kout
+proc ghtm_toc {} {
+  upvar fout fout
+  upvar toc_enable toc_enable
+  set toc_enable 1
+  puts $fout "=toc_anchor="
 }
 # }}}
 # ghtm_chap
@@ -4764,11 +4742,14 @@ proc math_sum {alist} {
   expr ([join $alist +])
 }
 # }}}
-# Godel Fundamental
+# main proc
 # godel_draw
 # {{{
 proc godel_draw {{target_path NA}} {
   upvar env env
+  set ::toc_id_count 1
+  set toc_enable     0
+
   if {$target_path == "NA" || $target_path == ""} {
   } else {
     set orgpath [pwd]
@@ -4824,10 +4805,11 @@ proc godel_draw {{target_path NA}} {
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
       puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
       puts $kout "cd \$pagepath"
-      puts $kout "if \[file exist \$env(GODEL_DOWNLOAD)/gtcl.tcl\] {"
-      puts $kout "  source      \$env(GODEL_DOWNLOAD)/gtcl.tcl"
-      puts $kout "  file delete \$env(GODEL_DOWNLOAD)/gtcl.tcl"
-      puts $kout "}"
+      puts $kout "gtcl_commit"
+      #puts $kout "if \[file exist \$env(GODEL_DOWNLOAD)/gtcl.tcl\] {"
+      #puts $kout "  source      \$env(GODEL_DOWNLOAD)/gtcl.tcl"
+      #puts $kout "  file delete \$env(GODEL_DOWNLOAD)/gtcl.tcl"
+      #puts $kout "}"
       puts $kout "godel_draw"
       puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
 
@@ -4930,6 +4912,47 @@ proc godel_draw {{target_path NA}} {
   puts $fout "</html>"
 
   close $fout
+
+# TOC
+  if {$toc_enable eq "1"} {
+    set lines [read_as_list .index.htm]
+
+    set kout [open ".index.htm" w]
+    
+    foreach line $lines {
+      if [regexp {=toc_anchor=} $line] {
+        set idcounter 1
+        set counter 0
+        foreach i $::toc_list {
+          set level    [lindex $i 0]
+          set id       [lindex $i 1]
+          #set css_ctrl [lindex $i 2]
+            if {$level eq "1"} {
+              incr counter
+              set arr($counter,2) 0
+              set arr($counter,3) 0
+            } elseif {$level eq "2"} {
+              if {$prev eq "3"} {
+                set arr($counter,3) 0
+              }
+              incr arr($counter,2)
+            } elseif {$level eq "3"} {
+              incr arr($counter,3)
+            }
+            set index $counter.$arr($counter,2).$arr($counter,3)
+            regsub -all {\.0} $index {} index
+            puts $kout "<div class=L$level><a href=#tocid$idcounter><nobr>$index $id</nobr></a></div>"
+            set prev $level
+
+            incr idcounter
+        }
+      } else {
+        puts $kout $line
+      }
+    }
+
+    close $kout
+  }
 
   if {$target_path == "NA" || $target_path == ""} {
   } else {

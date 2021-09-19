@@ -100,43 +100,6 @@ namespace eval gmarkdown {
         # PROCESS
         set ret [apply_templates markdown]
 
-# york Create main.htm
-        #set kout [open .main.htm w]
-        #  puts $kout {<!DOCTYPE html>}
-        #  puts $kout {<html> <head>}
-        #  puts $kout "<title>$vars(g:pagename)</title>"
-        #  puts $kout {<meta charset=utf-8>}
-        #  puts $kout {<frameset cols=25%,75%>}
-        #  puts $kout {　　<frame src=.toc.htm name=leftFrame >}
-        #  puts $kout {　　<frame src=.index.htm name=rightFrame >}
-        #  puts $kout {</frameset>}
-        #  puts $kout {</head> <body> </body> </html>}
-        #close $kout
-
-
-        #array set env [array get ::env]
-        #set kout [open .toc.htm w]
-        #  puts $kout "<!DOCTYPE html>"
-        #  puts $kout "<html>"
-        #  puts $kout "<head>"
-        #  puts $kout "<title>Table of Content</title>"
-        #  puts $kout "<link rel=\"stylesheet\" href=[tbox_cygpath $env(GODEL_ROOT)/etc/css/w3.css]>"
-        #  puts $kout "<link rel=\"stylesheet\" href=[tbox_cygpath $env(GODEL_ROOT)/scripts/js/prism/themes/prism-twilight.css] data-noprefix/>"
-        #  puts $kout "<meta charset=utf-8>"
-        #  puts $kout "</head>"
-        #  puts $kout "<body>"
-        #  puts $kout "<a href=.index.htm target=_top>Remove</a>"
-        #  puts $kout "<a href=.index.htm#top target=rightFrame>Top</a>"
-        #  foreach i $::toc_list {
-        #    set level    [lindex $i 0]
-        #    set id       [lindex $i 1]
-        #    set css_ctrl [lindex $i 2]
-        #    puts $kout "<div class=L$level style=$css_ctrl><a id=$id href=.index.htm#$id target=rightFrame><nobr>$id</nobr></a></div>"
-        #  }
-        #  puts $kout "</body>"
-        #  puts $kout "</html>"
-        #close $kout
-
         return $ret
     }
 
@@ -262,7 +225,8 @@ namespace eval gmarkdown {
                     regexp {@\((\S*)\)} $h_result whole css_ctrl
                     regsub { @\(\S*\)} $h_result {} h_result
 
-                    append result "<h$h_level id=$h_result style=$css_ctrl>$h_result</h$h_level>"
+                    append result "<h$h_level id=\"tocid$::toc_id_count\" style=$css_ctrl>$h_result</h$h_level>"
+                    incr ::toc_id_count
                     lappend ::toc_list [list $h_level $h_result $css_ctrl]
                 }
                 {^[ ]{0,3}\>} {
