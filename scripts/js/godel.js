@@ -1,80 +1,29 @@
-// JQuery: fm delete
-// {{{
-$(document).ready(function(){
-  var $TABLE = $('#fm');
+// Key binded to edit and draw
+// Ctrl + 1 : Edit
+// Ctrl + 2 : Draw
+document.onkeyup = function(e) {
+  if        (e.ctrlKey && e.which == 49) {
+    document.getElementById('idedit').click();
+  } else if (e.ctrlKey && e.which == 50) {
+    document.getElementById('iddraw').click();
+  }
+};
 
-  $('#fmsave').click(function () {
-
-    //var $rows = $TABLE.find('tr');
-    var $rows = $('#tbl').find('tr');
-
-    var cmds = "";
-    // foreach row
-    $rows.each(function () {
-      //var $td = $(this).find('td');
-      var $td = $(this).find('td');
-      // foreach td
-      $td.each(function () {
-        var value   = $(this).text();
-        var gname   = $(this).attr('gname');
-        //var colname = $(this).attr('colname');
-        if (typeof gname === 'undefined') {
-          return; // equal to continue
-        } else {
-          if (value === "dd" ) {
-            var cmd = "exec rm -rf \"" + gname + "\"\n";
-            cmds = cmds + cmd;
-          } else if (value === "") {
-            //var cmd = value + "\n";
-          } else {
-            //var cmd = value + "\n";
-            var cmd = "exec mkdir -p .tmp/" + value + "\n" + "exec mv {" + gname + "} .tmp/" + value + "\n";
-            cmds = cmds + cmd;
-          }
-          //var cmd = "lsetvar " + gname + " " + colname + " \"" + value + "\"\n";
-        }
-      });
-    });
-
-// Save
-    var data = cmds;
-    const textToBLOB = new Blob([data], { type: 'text/plain' });
-    const sFileName = 'gtcl.tcl';	   // The file to save the data.
-
-    var newLink = document.createElement("a");
-    newLink.download = sFileName;
-
-    if (window.webkitURL != null) {
-        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
-    }
-    else {
-        newLink.href = window.URL.createObjectURL(textToBLOB);
-        newLink.style.display = "none";
-        document.body.appendChild(newLink);
-    }
-
-    newLink.click(); 
-
-  });
-
-
-});
-// }}}
-//
+// Add event to highlight modified cells in table
 var table = document.getElementById('tbl');
-var cells = table.getElementsByTagName('td');
-
-for (var i = 0; i < cells.length; i++) {
-
-  cells[i].addEventListener('input', function(){
-    var gname   = this.getAttribute("gname");
-    var att = this.setAttribute("changed","1");
-    this.style.backgroundColor = "lightyellow";
-    //var kk   = this.getAttribute("changed");
-    //console.log(kk);
-  })
+if(typeof(table) != 'undefined' && table != null){
+  var cells = table.getElementsByTagName('td');
+  for (var i = 0; i < cells.length; i++) {
+  
+    cells[i].addEventListener('input', function(){
+      var gname   = this.getAttribute("gname");
+      var att = this.setAttribute("changed","1");
+      this.style.backgroundColor = "lightyellow";
+      //var kk   = this.getAttribute("changed");
+      //console.log(kk);
+    })
+  }
 }
-
 // JQuery: Save text to disk
 // {{{
 $(document).ready(function(){

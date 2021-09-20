@@ -1772,10 +1772,10 @@ proc ghtm_top_bar {args} {
   
   puts $fout {
     <div id="navbar" class="w3-bar w3-indigo" style="margin:0px">
-    <a href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
-    <a href=".godel/vars.tcl"  type=text/txt  class="w3-bar-item w3-button">Value</a>
-    <a href="../.index.htm"                   class="w3-bar-item w3-button">Parent</a>
-    <a href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
+    <a id="idedit" href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
+    <a id="idvalue" href=".godel/vars.tcl"  type=text/txt  class="w3-bar-item w3-button">Value</a>
+    <a id="idparent" href="../.index.htm"                   class="w3-bar-item w3-button">Parent</a>
+    <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
   }
   if {$opt(-filter)} {
     puts $fout "<input style=\"margin: 5px 0px\" type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\">"
