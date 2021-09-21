@@ -18,7 +18,8 @@ proc gtcl_commit {} {
       set key   [lindex $cols 1]
       set value [lindex $cols 2]
       
-      regsub {\n} $gpage {} gpage
+      regsub {\n}  $gpage {} gpage
+      regsub {\n$} $value {} value
       lsetvar $gpage $key $value
     }
 
