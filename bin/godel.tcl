@@ -4,20 +4,26 @@ proc gtcl_commit {} {
   upvar env env
   set gtcl $env(GODEL_DOWNLOAD)/gtcl.tcl
   if [file exist $gtcl] {
+    package require textutil
+
     set kin [open $gtcl r]
-    while {[gets $kin line] >= 0} {
-      #puts $line
-      regsub -all {\s*\|#\|\s*} $line "\n" line
-      set cols [split $line "\n"]
+      set data [read $kin]
+    close $kin
+    
+    set chunks [::textutil::split::splitx $data "\\|E\\|"]
+    
+    foreach chunk $chunks {
+      set cols [::textutil::split::splitx $chunk "\\|#\\|"]
       set gpage [lindex $cols 0]
       set key   [lindex $cols 1]
       set value [lindex $cols 2]
-
+      
+      regsub {\n} $gpage {} gpage
       lsetvar $gpage $key $value
     }
-    close $kin
+
+    file delete $gtcl
   }
-  file delete $gtcl
 }
 # }}}
 # ghtm_ls_table
@@ -3187,7 +3193,7 @@ proc local_table {name args} {
         if {$col_data eq "NA"} {
           set col_data ""
         }
-        append celltxt "<td gname=\"$page_path\" colname=\"$page_key\" contenteditable=true>$col_data</td>"
+        append celltxt "<td gname=\"$page_path\" colname=\"$page_key\" contenteditable=\"true\" style=\"white-space:pre\">$col_data</td>"
       # ed:
       } elseif [regexp {ed:} $col] {
         regsub {ed:} $col {} col
@@ -5265,6 +5271,7 @@ proc godel_array_save {aname ofile} {
     foreach key $keys {
       set newvalue [string map {\\ {\\}} $arr($key)]
       regsub -all {"}  $newvalue {\\"}  newvalue
+      regsub -all {\$}  $newvalue {\\$}  newvalue
       regsub -all {\[} $newvalue {\\[}  newvalue
       regsub -all {\]} $newvalue {\\]}  newvalue
       puts $fout [format "set %-40s \"%s\"" [set aname]($key) $newvalue]

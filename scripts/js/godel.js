@@ -41,7 +41,7 @@ $(document).ready(function(){
       var $td = $(this).find('td');
       // foreach td
       $td.each(function () {
-        var value   = $(this).text();
+        var value   = $(this).prop("innerText");
         var gname   = $(this).attr('gname');
         var colname = $(this).attr('colname');
         var changed = $(this).attr('changed');
@@ -60,7 +60,8 @@ $(document).ready(function(){
               }
             } else {
               //var cmd = "lsetvar " + " \"" + gname + "\"" + " " + colname + " \"" + value + "\"\n";
-              var cmd =   gname + " |#| " +  colname + " |#| " +  value + "\n";
+              var cmd =   gname + "|#|" +  colname + "|#|" +  value + "|E|\n";
+
               cmds = cmds + cmd;
             }
             $(this).css('backgroundColor', "");
