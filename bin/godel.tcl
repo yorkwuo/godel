@@ -11,13 +11,15 @@ proc gtcl_commit {} {
     close $kin
     
     set chunks [::textutil::split::splitx $data "\\|E\\|"]
-    
+
+    set chunks [lreplace $chunks end end] 
+
     foreach chunk $chunks {
       set cols [::textutil::split::splitx $chunk "\\|#\\|"]
       set gpage [lindex $cols 0]
       set key   [lindex $cols 1]
       set value [lindex $cols 2]
-      
+
       regsub {\n}  $gpage {} gpage
       regsub {\n$} $value {} value
       lsetvar $gpage $key $value
@@ -4870,6 +4872,11 @@ proc godel_draw {{target_path NA}} {
         }
       close $fin
       puts $fout "</style>"
+      file mkdir .godel/js
+      exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
+      exec cp $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
+      exec cp $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
+      puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
     } else {
       puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
       puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
@@ -4893,18 +4900,23 @@ proc godel_draw {{target_path NA}} {
     puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
     puts $fout "<script src=.godel/js/godel.js></script>"
   } else {
-    puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
-    if {[info exist dataTables]} {
-      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
-      puts $fout "<script>"
-      puts $fout "    \$(document).ready(function() {"
-      puts $fout "    \$('#tbl').DataTable({"
-      puts $fout "       \"paging\": false,"
-      puts $fout "       \"info\": false,"
-      puts $fout "    });"
-      puts $fout "} );"
-      puts $fout "</script>"
+    if {$env(GODEL_EMB_CSS)} {
+      puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
+      puts $fout "<script src=.godel/js/godel.js></script>"
+    } else {
+      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
+      if {[info exist dataTables]} {
+        puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+        puts $fout "<script>"
+        puts $fout "    \$(document).ready(function() {"
+        puts $fout "    \$('#tbl').DataTable({"
+        puts $fout "       \"paging\": false,"
+        puts $fout "       \"info\": false,"
+        puts $fout "    });"
+        puts $fout "} );"
+        puts $fout "</script>"
 
+      }
     }
   }
 
