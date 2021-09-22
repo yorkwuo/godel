@@ -4901,8 +4901,19 @@ proc godel_draw {{target_path NA}} {
     puts $fout "<script src=.godel/js/godel.js></script>"
   } else {
     if {$env(GODEL_EMB_CSS)} {
-      puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
       puts $fout "<script src=.godel/js/godel.js></script>"
+      if {[info exist dataTables]} {
+        puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
+        puts $fout "<script>"
+        puts $fout "    \$(document).ready(function() {"
+        puts $fout "    \$('#tbl').DataTable({"
+        puts $fout "       \"paging\": false,"
+        puts $fout "       \"info\": false,"
+        puts $fout "    });"
+        puts $fout "} );"
+        puts $fout "</script>"
+
+      }
     } else {
       puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
       if {[info exist dataTables]} {
