@@ -1426,6 +1426,83 @@ proc getcol {args} {
   puts $args
 }
 # }}}
+# ghtm_set_value
+# {{{
+proc ghtm_set_value {key value} {
+  upvar fout fout
+
+#  # -name
+## {{{
+#  set opt(-name) 0
+#  set idx [lsearch $args {-name}]
+#  if {$idx != "-1"} {
+#    set name [lindex $args [expr $idx + 1]]
+#    set args [lreplace $args $idx [expr $idx + 1]]
+#    set opt(-name) 1
+#  } else {
+#    set name NA
+#  }
+## }}}
+#  # -bgcolor
+## {{{
+#  set opt(-bgcolor) 0
+#  set idx [lsearch $args {-bgcolor}]
+#  if {$idx != "-1"} {
+#    set val(-bgcolor) [lindex $args [expr $idx + 1]]
+#    set args [lreplace $args $idx [expr $idx + 1]]
+#    set opt(-bgcolor) 1
+#  } else {
+#    set val(-bgcolor) pale-blue
+#  }
+## }}}
+#  # -key
+## {{{
+#  set opt(-key) 0
+#  set idx [lsearch $args {-key}]
+#  if {$idx != "-1"} {
+#    set val(-key) [lindex $args [expr $idx + 1]]
+#    set args [lreplace $args $idx [expr $idx + 1]]
+#    set opt(-key) 1
+#  } else {
+#    set val(-key) nan
+#  }
+## }}}
+#
+#  set tablename [lindex $args 0]
+#  set column    [lindex $args 1]
+#  set keyword   [lindex $args 2]
+#
+#  set count 0
+#  if {$opt(-key)} {
+#    set dirs [glob -nocomplain -type d *]
+#
+#    foreach dir $dirs {
+#      set value [lvars $dir $val(-key)]
+#      if [regexp -nocase $keyword $value] {
+#        incr count
+#      }
+#    }
+#    #set total "\($count\)"
+#    set total " $count"
+#  } else {
+#    set dirs [glob -nocomplain -type d *]
+#    set matches [lsearch -all -inline -regexp $dirs $keyword]
+#    set count [llength $matches]
+#    set total " $count"
+#  }
+#
+#  if {$opt(-name)} {
+#    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${name}$total</button>"
+#  } else {
+#    if {$opt(-key)} {
+#      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}$total</button>"
+#    } else {
+#      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}</button>"
+#    }
+#  }
+      puts $fout "<button class=\"w3-button w3-round \" onclick=set_value(\"$key\",\"$value\")>${value}</button>"
+}
+# }}}
 # ghtm_keyword_button
 # {{{
 proc ghtm_keyword_button {args} {
@@ -1604,7 +1681,7 @@ proc ghtm_ls {args} {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp3>$fname</a><br></div>"]
     } elseif [regexp {\.pdf} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/pdf>$fname</a><br></div>"]
-    } elseif [regexp {\.epub} $full] {
+    } elseif [regexp {\.azw3|\.mobi|\.epub} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
     } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $full]}  {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/jpg>$fname</a><br></div>"]

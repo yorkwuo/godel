@@ -24,7 +24,7 @@ if(typeof(table) != 'undefined' && table != null){
     })
   }
 }
-// JQuery: Save text to disk
+// JQuery: Save
 // {{{
 $(document).ready(function(){
   var $TABLE = $('#tbl');
@@ -89,6 +89,7 @@ $(document).ready(function(){
     }
 
     newLink.click(); 
+    document.getElementById('iddraw').click();
 
   });
 
@@ -368,6 +369,32 @@ function filter_table(tname, column_no, e) {
   }
 }
 // }}}
+// set_value
+// {{{
+function set_value(key, value) {
+// Save
+    var data =   "." + "|#|" +  key + "|#|" +  value + "|E|\n";
+    const textToBLOB = new Blob([data], { type: 'text/plain' });
+    const sFileName = 'gtcl.tcl';	   // The file to save the data.
+
+    var newLink = document.createElement("a");
+    newLink.download = sFileName;
+
+    if (window.webkitURL != null) {
+        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+    }
+    else {
+        newLink.href = window.URL.createObjectURL(textToBLOB);
+        newLink.style.display = "none";
+        document.body.appendChild(newLink);
+    }
+
+    newLink.click(); 
+    document.getElementById('iddraw').click();
+
+
+}
+// }}}
 // filter_table_keyword
 // {{{
 function filter_table_keyword(tname, column_no, input) {
@@ -375,7 +402,7 @@ function filter_table_keyword(tname, column_no, input) {
 
   //input = document.getElementById("filter_table_input");
   //input = keyword;
-  console.log(input);
+  //console.log(input);
   //filter = input.value.toUpperCase();
   //filter = input.toUpperCase();
   var filter = input;
