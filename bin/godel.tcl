@@ -1,31 +1,121 @@
+# ghtm_newdraw
+# {{{
+proc ghtm_newdraw {} {
+  upvar fout fout
+
+#  # -name
+## {{{
+#  set opt(-name) 0
+#  set idx [lsearch $args {-name}]
+#  if {$idx != "-1"} {
+#    set name [lindex $args [expr $idx + 1]]
+#    set args [lreplace $args $idx [expr $idx + 1]]
+#    set opt(-name) 1
+#  } else {
+#    set name NA
+#  }
+## }}}
+#  # -bgcolor
+## {{{
+#  set opt(-bgcolor) 0
+#  set idx [lsearch $args {-bgcolor}]
+#  if {$idx != "-1"} {
+#    set val(-bgcolor) [lindex $args [expr $idx + 1]]
+#    set args [lreplace $args $idx [expr $idx + 1]]
+#    set opt(-bgcolor) 1
+#  } else {
+#    set val(-bgcolor) pale-blue
+#  }
+## }}}
+#  # -key
+## {{{
+#  set opt(-key) 0
+#  set idx [lsearch $args {-key}]
+#  if {$idx != "-1"} {
+#    set val(-key) [lindex $args [expr $idx + 1]]
+#    set args [lreplace $args $idx [expr $idx + 1]]
+#    set opt(-key) 1
+#  } else {
+#    set val(-key) nan
+#  }
+## }}}
+#
+#  set tablename [lindex $args 0]
+#  set column    [lindex $args 1]
+#  set keyword   [lindex $args 2]
+#
+#  set count 0
+#  if {$opt(-key)} {
+#    set dirs [glob -nocomplain -type d *]
+#
+#    foreach dir $dirs {
+#      set value [lvars $dir $val(-key)]
+#      if [regexp -nocase $keyword $value] {
+#        incr count
+#      }
+#    }
+#    #set total "\($count\)"
+#    set total " $count"
+#  } else {
+#    set dirs [glob -nocomplain -type d *]
+#    set matches [lsearch -all -inline -regexp $dirs $keyword]
+#    set count [llength $matches]
+#    set total " $count"
+#  }
+#
+#  if {$opt(-name)} {
+#    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${name}$total</button>"
+#  } else {
+#    if {$opt(-key)} {
+#      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}$total</button>"
+#    } else {
+#      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}</button>"
+#    }
+#  }
+      puts $fout "<button class=\"w3-button w3-round \" onclick=newdraw()>NewDraw</button>"
+}
+# }}}
 # gtcl_commit
 # {{{
 proc gtcl_commit {} {
   upvar env env
   set gtcl $env(GODEL_DOWNLOAD)/gtcl.tcl
   if [file exist $gtcl] {
-    package require textutil
 
     set kin [open $gtcl r]
       set data [read $kin]
     close $kin
     
-    set chunks [::textutil::split::splitx $data "\\|E\\|"]
+    if [regexp {ginst} $data] {
+      set cols [split $data :]
+      set inst  [lindex $cols 1]
+      set gpage [lindex $cols 2]
+      set path  [lindex $cols 3]
+      regsub -all {\s} $path {} path
+      #puts "$path :"
+      cd $path
+      exec touch $gpage/kkk
 
-    set chunks [lreplace $chunks end end] 
+    } else {
+      package require textutil
+      set chunks [::textutil::split::splitx $data "\\|E\\|"]
 
-    foreach chunk $chunks {
-      set cols [::textutil::split::splitx $chunk "\\|#\\|"]
-      set gpage [lindex $cols 0]
-      set key   [lindex $cols 1]
-      set value [lindex $cols 2]
+      set chunks [lreplace $chunks end end] 
 
-      regsub {\n}  $gpage {} gpage
-      regsub {\n$} $value {} value
-      lsetvar $gpage $key $value
+      foreach chunk $chunks {
+        set cols [::textutil::split::splitx $chunk "\\|#\\|"]
+        set gpage [lindex $cols 0]
+        set key   [lindex $cols 1]
+        set value [lindex $cols 2]
+
+        regsub {\n}  $gpage {} gpage
+        regsub {\n$} $value {} value
+        lsetvar $gpage $key $value
+      }
+
+      file delete $gtcl
     }
-
-    file delete $gtcl
+    
   }
 }
 # }}}
@@ -150,7 +240,7 @@ proc opt_bton {args} {
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
       puts $kout "lsetvar . $key \"$value\""
       puts $kout "godel_draw"
-      puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
+      puts $kout "catch {exec xdotool search --name \"Mozilla\" key ctrl+r}"
     close $kout
   #}
   
@@ -433,7 +523,7 @@ proc bton_set {args} {
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
       puts $kout "lsetvar . $key \"$value\""
       puts $kout "godel_draw"
-      puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
+      puts $kout "catch {exec xdotool search --name \"Mozilla\" key ctrl+r}"
     close $kout
   #}
   
@@ -1500,7 +1590,15 @@ proc ghtm_set_value {key value} {
 #      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}</button>"
 #    }
 #  }
-      puts $fout "<button class=\"w3-button w3-round \" onclick=set_value(\"$key\",\"$value\")>${value}</button>"
+      set cur_value [lvars . $key]
+      if {$cur_value eq $value} {
+        #puts $fout "<a href=$exefile class=\"w3-btn w3-pink\" type=text/gtcl><b>$name</b></a>"
+        puts $fout "<a class=\"w3-button w3-round w3-pink\" onclick=\"set_value('$key','$value')\">${value}</a>"
+      } else {
+      #  puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a>"
+        puts $fout "<a class=\"w3-button w3-round w3-pale-green\" onclick=\"set_value('$key','$value')\">${value}</a>"
+      }
+      #puts $fout "<button class=\"w3-button w3-round \" onclick=\"set_value('$key','$value')\">${value}</button>"
 }
 # }}}
 # ghtm_keyword_button
@@ -1861,7 +1959,8 @@ proc ghtm_top_bar {args} {
     <a id="idedit" href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
     <a id="idvalue" href=".godel/vars.tcl"  type=text/txt  class="w3-bar-item w3-button">Value</a>
     <a id="idparent" href="../.index.htm"                   class="w3-bar-item w3-button">Parent</a>
-    <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
+    <a id="iddraw" href="#" onclick="newdraw()" class="w3-bar-item w3-button">Draw</a>
+    <a id="exedraw" href=".godel/draw.gtcl" type=text/gtcl style="display:none"></a>
   }
   if {$opt(-filter)} {
     puts $fout "<input style=\"margin: 5px 0px\" type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\">"
@@ -4892,13 +4991,19 @@ proc godel_draw {{target_path NA}} {
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
       puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
       puts $kout "cd \$pagepath"
+      puts $kout ""
+      puts $kout "set gtitle_file \$env(GODEL_DOWNLOAD)/gtitle.tcl"
+      puts $kout "if \[file exist \$gtitle_file] {"
+      puts $kout "  source \$env(GODEL_DOWNLOAD)/gtitle.tcl"
+      puts $kout "  file delete \$gtitle_file"
+      puts $kout "}"
+      puts $kout "if !\[info exist gtitle] {"
+      puts $kout "  set gtitle Mozilla"
+      puts $kout "}"
+      puts $kout ""
       puts $kout "gtcl_commit"
-      #puts $kout "if \[file exist \$env(GODEL_DOWNLOAD)/gtcl.tcl\] {"
-      #puts $kout "  source      \$env(GODEL_DOWNLOAD)/gtcl.tcl"
-      #puts $kout "  file delete \$env(GODEL_DOWNLOAD)/gtcl.tcl"
-      #puts $kout "}"
       puts $kout "godel_draw"
-      puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
+      puts $kout "catch {exec xdotool search --name \"\$gtitle.*Mozilla\" key ctrl+r}"
 
     close $kout
 # }}}

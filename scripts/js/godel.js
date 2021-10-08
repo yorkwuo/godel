@@ -24,6 +24,60 @@ if(typeof(table) != 'undefined' && table != null){
     })
   }
 }
+// inst
+// {{{
+function inst(value) {
+// Save
+    //var data =   "." + "|#|" +  key + "|#|" +  value + "|E|\n";
+    var data =  value;
+    const textToBLOB = new Blob([data], { type: 'text/plain' });
+    const sFileName = 'gtcl.tcl';	   // The file to save the data.
+
+    var newLink = document.createElement("a");
+    newLink.download = sFileName;
+
+    if (window.webkitURL != null) {
+        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+    }
+    else {
+        newLink.href = window.URL.createObjectURL(textToBLOB);
+        newLink.style.display = "none";
+        document.body.appendChild(newLink);
+    }
+
+    newLink.click(); 
+    //document.getElementById('iddraw').click();
+
+
+}
+// }}}
+// newdraw
+// {{{
+function newdraw() {
+// Save
+    //var data =   "." + "|#|" +  key + "|#|" +  value + "|E|\n";
+    var data = "set gtitle " + "\"" + document.title + "\"";
+    const textToBLOB = new Blob([data], { type: 'text/plain' });
+    const sFileName = 'gtitle.tcl';	   // The file to save the data.
+
+    var newLink = document.createElement("a");
+    newLink.download = sFileName;
+
+    if (window.webkitURL != null) {
+        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+    }
+    else {
+        newLink.href = window.URL.createObjectURL(textToBLOB);
+        newLink.style.display = "none";
+        document.body.appendChild(newLink);
+    }
+
+    newLink.click(); 
+    document.getElementById('exedraw').click();
+
+
+}
+// }}}
 // JQuery: Save
 // {{{
 $(document).ready(function(){
@@ -89,6 +143,25 @@ $(document).ready(function(){
     }
 
     newLink.click(); 
+
+    //var data2 = "set gtitle " + "\"" + document.title + "\"";
+    //const textToBLOB2 = new Blob([data2], { type: 'text/plain' });
+    //const sFileName2 = 'gtitle.tcl';	   // The file to save the data2.
+
+    //var newLink2 = document.createElement("a");
+    //newLink2.download = sFileName2;
+
+    //if (window.webkitURL != null) {
+    //    newLink2.href = window.webkitURL.createObjectURL(textToBLOB2);
+    //}
+    //else {
+    //    newLink2.href = window.URL.createObjectURL(textToBLOB2);
+    //    newLink2.style.display = "none";
+    //    document.body.appendChild(newLink2);
+    //}
+
+    //newLink2.click(); 
+
     document.getElementById('iddraw').click();
 
   });
