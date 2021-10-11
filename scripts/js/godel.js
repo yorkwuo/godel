@@ -46,7 +46,6 @@ function inst(value) {
     }
 
     newLink.click(); 
-    //document.getElementById('iddraw').click();
 
 
 }
@@ -144,25 +143,11 @@ $(document).ready(function(){
 
     newLink.click(); 
 
-    //var data2 = "set gtitle " + "\"" + document.title + "\"";
-    //const textToBLOB2 = new Blob([data2], { type: 'text/plain' });
-    //const sFileName2 = 'gtitle.tcl';	   // The file to save the data2.
+    //$('#iddraw').click();
 
-    //var newLink2 = document.createElement("a");
-    //newLink2.download = sFileName2;
 
-    //if (window.webkitURL != null) {
-    //    newLink2.href = window.webkitURL.createObjectURL(textToBLOB2);
-    //}
-    //else {
-    //    newLink2.href = window.URL.createObjectURL(textToBLOB2);
-    //    newLink2.style.display = "none";
-    //    document.body.appendChild(newLink2);
-    //}
-
-    //newLink2.click(); 
-
-    document.getElementById('iddraw').click();
+    //document.getElementById('iddraw').click();
+    //document.getElementById('exedraw').click();
 
   });
 

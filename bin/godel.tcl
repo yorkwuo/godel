@@ -81,6 +81,7 @@ proc gtcl_commit {} {
   upvar env env
   set gtcl $env(GODEL_DOWNLOAD)/gtcl.tcl
   if [file exist $gtcl] {
+    puts $gtcl
 
     set kin [open $gtcl r]
       set data [read $kin]
@@ -4995,15 +4996,16 @@ proc godel_draw {{target_path NA}} {
       puts $kout "set gtitle_file \$env(GODEL_DOWNLOAD)/gtitle.tcl"
       puts $kout "if \[file exist \$gtitle_file] {"
       puts $kout "  source \$env(GODEL_DOWNLOAD)/gtitle.tcl"
+      puts $kout "  set pattern \"\$gtitle.*Mozilla\""
       puts $kout "  file delete \$gtitle_file"
       puts $kout "}"
       puts $kout "if !\[info exist gtitle] {"
-      puts $kout "  set gtitle Mozilla"
+      puts $kout "  set pattern Mozilla"
       puts $kout "}"
       puts $kout ""
       puts $kout "gtcl_commit"
       puts $kout "godel_draw"
-      puts $kout "catch {exec xdotool search --name \"\$gtitle.*Mozilla\" key ctrl+r}"
+      puts $kout "catch {exec xdotool search --name \"\$pattern\" key ctrl+r}"
 
     close $kout
 # }}}
