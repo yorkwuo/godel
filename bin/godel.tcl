@@ -81,7 +81,6 @@ proc gtcl_commit {} {
   upvar env env
   set gtcl $env(GODEL_DOWNLOAD)/gtcl.tcl
   if [file exist $gtcl] {
-    puts $gtcl
 
     set kin [open $gtcl r]
       set data [read $kin]
