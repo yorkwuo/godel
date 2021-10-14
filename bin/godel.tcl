@@ -1957,11 +1957,11 @@ proc ghtm_top_bar {args} {
   puts $fout {
     <div id="navbar" class="w3-bar w3-indigo" style="margin:0px">
     <a id="idedit" href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
-    <a id="idvalue" href=".godel/vars.tcl"  type=text/txt  class="w3-bar-item w3-button">Value</a>
-    <a id="idparent" href="../.index.htm"                   class="w3-bar-item w3-button">Parent</a>
-    <a id="iddraw" href="#" onclick="newdraw()" class="w3-bar-item w3-button">Draw</a>
-    <a id="exedraw" href=".godel/draw.gtcl" type=text/gtcl style="display:none"></a>
+    <a id="idvalue" href=".godel/vars.tcl" type=text/txt  class="w3-bar-item w3-button">Value</a>
+    <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Parent</a>
+    <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
   }
+    #<a id="iddraw" href="#" onclick="newdraw()" class="w3-bar-item w3-button">Draw</a>
   if {$opt(-filter)} {
     puts $fout "<input style=\"margin: 5px 0px\" type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\">"
   }
@@ -4992,15 +4992,7 @@ proc godel_draw {{target_path NA}} {
       puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
       puts $kout "cd \$pagepath"
       puts $kout ""
-      puts $kout "set gtitle_file \$env(GODEL_DOWNLOAD)/gtitle.tcl"
-      puts $kout "if \[file exist \$gtitle_file] {"
-      puts $kout "  source \$env(GODEL_DOWNLOAD)/gtitle.tcl"
-      puts $kout "  set pattern \"\$gtitle.*Mozilla\""
-      puts $kout "  file delete \$gtitle_file"
-      puts $kout "}"
-      puts $kout "if !\[info exist gtitle] {"
-      puts $kout "  set pattern Mozilla"
-      puts $kout "}"
+      puts $kout "catch {exec xdotool getwindowfocus getwindowname} pattern"
       puts $kout ""
       puts $kout "gtcl_commit"
       puts $kout "godel_draw"
