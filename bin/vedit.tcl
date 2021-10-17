@@ -64,7 +64,7 @@ proc write_out {ofile} {
 # write_flat
 # {{{
 proc write_flat {ofile} {
-# `flat' in hear means `line isn't splitted'
+# `flat' in here means `a line in a verilog netlist isn't splitted'
   upvar mdata    mdata
   upvar modlist  modlist
 

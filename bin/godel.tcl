@@ -2009,12 +2009,12 @@ proc ghtm_top_bar {args} {
     puts $fout "</style>"
   }
 
-  #if [file exist .godel/.qn.md] {
-  #  gmd -f .godel/.qn.md
+  if [file exist .godel/.qn.md] {
+    gmd -f .godel/.qn.md
   #} else {
-  #  set kout [open ".godel/.qn.md" w]
-  #  close $kout
-  #}
+    #set kout [open ".godel/.qn.md" w]
+    #close $kout
+  }
 }
 # }}}
 # akey
