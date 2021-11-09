@@ -1,3 +1,18 @@
+#ghtm_win
+# {{{
+proc ghtm_win {} {
+  upvar fout fout
+
+  set kout [open win.gtcl w]
+
+  puts $kout "cd [pwd]"
+  puts $kout "catch {exec /mnt/c/Windows/explorer.exe .}"
+  close $kout
+
+  puts $fout "<td><a href=win.gtcl type=text/gtcl>win</a></td>"
+
+}
+# }}}
 # ghtm_newdraw
 # {{{
 proc ghtm_newdraw {} {
@@ -983,7 +998,7 @@ proc gexe_button {args} {
   }
 
   if [file exist $exefile] {
-    exec chmod +x $exefile
+    #exec chmod +x $exefile
     if {$opt(-nocmd)} {
       puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a>"
     } else {
@@ -1887,6 +1902,16 @@ proc ghtm_top_bar {args} {
     set opt(-p1) 1
   }
 # }}}
+  # -win
+# {{{
+  set opt(-win) 0
+  set idx [lsearch $args {-win}]
+  if {$idx != "-1"} {
+    set saveid [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-win) 1
+  }
+# }}}
   # -save
 # {{{
   set opt(-save) 0
@@ -1969,6 +1994,9 @@ proc ghtm_top_bar {args} {
     <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
   "
   puts $fout {<a href=".godel/open.gtcl" type=text/gtcl class="w3-bar-item w3-button w3-right">Open</a>}
+  if {$opt(-win)} {
+    puts $fout {<a href=".godel/win.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Win</a>}
+  }
   #puts $fout {<a href=".index.htm" type=text/txt class="w3-bar-item w3-button w3-right">HTML</a>}
 
   if {$opt(-save)} {
@@ -2007,6 +2035,15 @@ proc ghtm_top_bar {args} {
     puts $fout "  font-size     : 20px;"
     puts $fout "}"
     puts $fout "</style>"
+  }
+  if {$opt(-win)} {
+
+    set kout [open .godel/win.gtcl w]
+
+    puts $kout "cd [pwd]"
+    puts $kout "catch {exec /mnt/c/Windows/explorer.exe .}"
+    close $kout
+
   }
 
   if [file exist .godel/.qn.md] {
