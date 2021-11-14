@@ -25,6 +25,16 @@ set dicroot $env(GODEL_DIC)
     set keyword NA
   }
 # }}}
+# open_gpage
+# {{{
+proc open_gpage {} {
+  global dicroot
+  global curword
+  puts $dicroot/$curword/.index.htm
+  exec firefox $dicroot/$curword/.index.htm &
+
+}
+# }}}
 # open_ghtm
 # {{{
 proc open_ghtm {} {
@@ -383,11 +393,11 @@ proc check_answer {} {
 bind .          <Control-q>   exit
 
 wm attribute . -topmost 0
-wm geometry . 1050x650+900+700
+wm geometry . 800x650+900+700
 wm title . Dictionary
 
 # Font
-font create mynewfont -family Monospace -size 14
+font create mynewfont -family Monospace -size 12
 option add *font mynewfont
 
 # Frame
@@ -398,13 +408,15 @@ pack .fr -fill both -expand 1
 
 set nowfile "NA"
 
-if {$infile eq ""} {
-  puts "No input file"
-  return
-} else {
-  source $infile
+
+if [file exist $env(GODEL_DIC)/words] {
+  source $env(GODEL_DIC)/words
   set initlist $allwords
+} else {
+  puts "No input file"
+  set initlist "NA"
 }
+
 #set size 10
 set total [llength $initlist]
 set flist $initlist
@@ -415,6 +427,7 @@ set wrong   0
 # Total
 label .fr.lab -text "Total:$total"
 grid  .fr.lab -row 0 -column 0 -sticky w
+
 
 label .fr.correct -text "O:$correct"
 grid  .fr.correct -row 1 -column 0 -sticky w
@@ -434,20 +447,29 @@ grid  .fr.chinese -row 5 -column 0  -sticky w
 label .fr.example -text "na" -justify left -wraplength 1000
 grid  .fr.example -row 6 -column 0  -sticky w
 
+label .fr.lab0 -text "Alt+n:Next En"
+grid  .fr.lab0 -row 0 -column 1 -sticky w
+label .fr.lab1 -text "Alt+m:Next Ch"
+grid  .fr.lab1 -row 1 -column 1 -sticky w
+label .fr.lab2 -text "Alt+o:Chi answer"
+grid  .fr.lab2 -row 2 -column 1 -sticky w
+label .fr.lab3 -text "Enter:Eng answer"
+grid  .fr.lab3 -row 3 -column 1 -sticky w
+
 #nextone
 focus .fr.answer
 
-bind .          <Alt-n>   nextone
-bind .          <Alt-m>   next2
-bind .          <Alt-o>   disp_chinese
-bind .          <Alt-g>   google
-bind .          <Alt-b>   baidu
-bind .          <Alt-h>   hint
-bind .          <Alt-e>   open_qn
-bind .          <Alt-v>   open_vars
-bind .          <Alt-i>   use_ydict
-bind .fr.answer <Return>  check_answer
-bind .          <Alt-c>   {set answer ""}
-
+bind .          <Alt-n>      nextone
+bind .          <Alt-m>      next2
+bind .          <Alt-o>      disp_chinese
+bind .          <Alt-g>      google
+bind .          <Alt-b>      baidu
+bind .          <Alt-h>      hint
+bind .          <Alt-e>      open_qn
+bind .          <Alt-v>      open_vars
+bind .          <Alt-i>      use_ydict
+bind .fr.answer <Return>     check_answer
+bind .          <Alt-c>      {set answer ""}
+bind .          <Control-o>  open_gpage
 
 # vim:fdm=marker

@@ -103,9 +103,9 @@ proc folder {} {
 
 }
 # }}}
-# nextone
+# open_gpage
 # {{{
-proc nextone {} {
+proc open_gpage {} {
   global dicroot
   global filter
   puts $filter
@@ -171,6 +171,15 @@ proc filter_out {} {
   } else {
     set ::chinese $chi
   }
+
+  set ::stars [lvars $root/$filter stars]
+  .fr.lab1 configure -text $::stars
+  #if {$stars eq "NA"} {
+  #  set ::star ""
+  #  .fr.txt delete 1.0 end
+  #} else {
+  #  set ::chinese $chi
+  #}
 }
 # }}}
 # refresh_list
@@ -234,7 +243,7 @@ proc tag_window {} {
 # add
 # {{{
 proc add {} {
-  upvar vars vars
+  #upvar vars vars
   global dicroot
   global filter
   global chinese
@@ -418,6 +427,25 @@ proc delete {} {
   refresh_list
 }
 # }}}
+# star
+# {{{
+proc star {} {
+
+  global filter
+  upvar env env
+
+  set stars [lvars $env(GODEL_DIC)/$filter stars]
+  if {$stars eq "NA"} {
+    lsetvar $env(GODEL_DIC)/$filter stars 1
+    .fr.lab1 configure -text "1"
+  } else {
+    set newstars [incr stars]
+    lsetvar $env(GODEL_DIC)/$filter stars $newstars
+    .fr.lab1 configure -text $newstars
+  }
+
+}
+# }}}
 
 
 wm attribute . -topmost 0
@@ -437,14 +465,16 @@ pack .fr -fill both -expand 1
 
 
 set nowfile "NA"
+set ::stars   "NA"
 
-if {$infile eq ""} {
-  puts "No input file"
-  return
-} else {
-  source $infile
+if [file exist $env(GODEL_DIC)/words] {
+  source $env(GODEL_DIC)/words
   set initlist $allwords
+} else {
+  puts "No input file"
+  set initlist "NA"
 }
+
 set size 10
 set total [llength $initlist]
 set flist $initlist
@@ -454,9 +484,14 @@ set flist $initlist
 label .fr.lab -text "Total: $total"
 grid  .fr.lab -row 0 -column 0 -sticky sw
 
-ttk::button .fr.add -text "Add" -command add
-grid .fr.add -row 1 -column 0 -sticky e
+label .fr.lab1 -text "Stars: $stars"
+grid  .fr.lab1 -row 0 -column 0 -sticky e
 
+# Star
+ttk::button .fr.star -text "Star" -command star
+grid .fr.star -row 1 -column 0 -sticky e
+
+# Update
 ttk::button .fr.update -text "Update" -command {update_dic;refresh_list}
 grid .fr.update -row 1 -column 0 -sticky w
 
@@ -464,44 +499,48 @@ grid .fr.update -row 1 -column 0 -sticky w
 entry .fr.filter -textvar filter -width 60
 grid  .fr.filter -row 2 -column 0 
 
+# Chinese
 entry .fr.chinese -textvar chinese -width 60
 grid  .fr.chinese -row 3 -column 0
 
+# Synonym
 entry .fr.synonym -textvar synonym -width 60
 grid  .fr.synonym -row 4 -column 0
 
+# Example
 text .fr.txt -width 60 -height 12
 grid .fr.txt -row 5 -column 0
 
+# List words
 listbox .fr.l1 -width 60 -height 30
 grid    .fr.l1 -row 6 -column 0
 
 #refresh_list
 
 
-bind .fr.l1     n           nextone
-bind .fr.l1     h           open_ghtm
-bind .fr.l1     g           google
-bind .fr.l1     b           baidu
-bind .fr.l1     <B1-ButtonRelease> select
+#bind .fr.l1     n                         nextone
+#bind .fr.l1     h                         open_ghtm
+#bind .fr.l1     g                         google
+#bind .fr.l1     b                         baidu
+bind .fr.l1     <B1-ButtonRelease>        select
 bind .fr.l1     <Double-B1-ButtonRelease> baidu
-bind .          <Alt-h>     open_ghtm
-bind .          <Alt-e>     add
-bind .          <Alt-n>     nextone
-bind .          <Alt-g>     google
-bind .          <Alt-b>     baidu
-bind .          <Control-u> clear
-bind .          <Alt-c> clear
-bind .fr.filter <Return>    {filter_out;refresh_list}
-bind .          <Control-q> exit
-bind .          <Escape>    clear
-bind .          <Alt-i>     use_ydict
-bind .          <Alt-w>     {focus .fr.txt;tk::TextSetCursor .fr.txt 1.0}
+bind .          <Alt-h>                   open_ghtm
+bind .          <Alt-e>                   add
+bind .          <Alt-g>                   google
+bind .          <Alt-b>                   baidu
+bind .          <Control-u>               clear
+bind .          <Alt-c>                   clear
+bind .fr.filter <Return>                  {filter_out;refresh_list}
+bind .          <Control-q>               exit
+bind .          <Control-o>               open_gpage
+bind .          <Escape>                  clear
+bind .          <Alt-i>                   use_ydict
+bind .          <Alt-w>                   {focus .fr.txt;tk::TextSetCursor .fr.txt 1.0}
 
-bind . <Alt-f> {focus .fr.filter}
-bind . <Alt-c> clear
-bind . <Alt-p> auto_fill
-bind . <Control-d> delete
+bind .          <Alt-f>                  {focus .fr.filter}
+bind .          <Alt-c>                  clear
+bind .          <Alt-p>                  auto_fill
+bind .          <Control-d>              delete
 
 focus .fr.filter
 

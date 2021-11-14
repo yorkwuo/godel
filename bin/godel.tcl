@@ -1,3 +1,18 @@
+#ghtm_win
+# {{{
+proc ghtm_win {} {
+  upvar fout fout
+
+  set kout [open win.gtcl w]
+
+  puts $kout "cd [pwd]"
+  puts $kout "catch {exec /mnt/c/Windows/explorer.exe .}"
+  close $kout
+
+  puts $fout "<td><a href=win.gtcl type=text/gtcl>win</a></td>"
+
+}
+# }}}
 # ghtm_newdraw
 # {{{
 proc ghtm_newdraw {} {
@@ -658,7 +673,6 @@ proc insert_note_column {} {
   set note_state [lvars . note_state]
   if {$note_state eq "1"} {
     lappend cols "md:note;Note"
-    lappend cols "ed:note.md;E"
   }
 }
 # }}}
@@ -983,7 +997,7 @@ proc gexe_button {args} {
   }
 
   if [file exist $exefile] {
-    exec chmod +x $exefile
+    #exec chmod +x $exefile
     if {$opt(-nocmd)} {
       puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a>"
     } else {
@@ -1887,6 +1901,16 @@ proc ghtm_top_bar {args} {
     set opt(-p1) 1
   }
 # }}}
+  # -win
+# {{{
+  set opt(-win) 0
+  set idx [lsearch $args {-win}]
+  if {$idx != "-1"} {
+    set saveid [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-win) 1
+  }
+# }}}
   # -save
 # {{{
   set opt(-save) 0
@@ -1969,6 +1993,9 @@ proc ghtm_top_bar {args} {
     <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
   "
   puts $fout {<a href=".godel/open.gtcl" type=text/gtcl class="w3-bar-item w3-button w3-right">Open</a>}
+  if {$opt(-win)} {
+    puts $fout {<a href=".godel/win.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Win</a>}
+  }
   #puts $fout {<a href=".index.htm" type=text/txt class="w3-bar-item w3-button w3-right">HTML</a>}
 
   if {$opt(-save)} {
@@ -2008,13 +2035,22 @@ proc ghtm_top_bar {args} {
     puts $fout "}"
     puts $fout "</style>"
   }
+  if {$opt(-win)} {
 
-  #if [file exist .godel/.qn.md] {
-  #  gmd -f .godel/.qn.md
+    set kout [open .godel/win.gtcl w]
+
+    puts $kout "cd [pwd]"
+    puts $kout "catch {exec /mnt/c/Windows/explorer.exe .}"
+    close $kout
+
+  }
+
+  if [file exist .godel/.qn.md] {
+    gmd -f .godel/.qn.md
   #} else {
-  #  set kout [open ".godel/.qn.md" w]
-  #  close $kout
-  #}
+    #set kout [open ".godel/.qn.md" w]
+    #close $kout
+  }
 }
 # }}}
 # akey
@@ -3348,7 +3384,8 @@ proc local_table {name args} {
         set fname $row/$col.md
         if [file exist $fname] {
           set aftermd [gmd_file $fname]
-          append celltxt "<td>$aftermd</td>"
+          set symbol &#9808;
+          append celltxt "<td><span style=float:right><a style=text-decoration:none href=\"$row/$col.md\" type=text/txt>$symbol</a></span>$aftermd</td>"
         } else {
           set kout [open $fname w]
           puts $kout " "
