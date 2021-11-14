@@ -673,7 +673,6 @@ proc insert_note_column {} {
   set note_state [lvars . note_state]
   if {$note_state eq "1"} {
     lappend cols "md:note;Note"
-    lappend cols "ed:note.md;E"
   }
 }
 # }}}
@@ -3385,7 +3384,8 @@ proc local_table {name args} {
         set fname $row/$col.md
         if [file exist $fname] {
           set aftermd [gmd_file $fname]
-          append celltxt "<td>$aftermd</td>"
+          set symbol &#9808;
+          append celltxt "<td><span style=float:right><a style=text-decoration:none href=\"$row/$col.md\" type=text/txt>$symbol</a></span>$aftermd</td>"
         } else {
           set kout [open $fname w]
           puts $kout " "
