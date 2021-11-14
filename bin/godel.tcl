@@ -278,9 +278,9 @@ proc msg_end {} {
 
 }
 # }}}
-# msg_section
+# msg
 # {{{
-proc msg_section {args} {
+proc msg {args} {
   global gtime
   # -begin
 # {{{
