@@ -3384,7 +3384,8 @@ proc local_table {name args} {
         set fname $row/$col.md
         if [file exist $fname] {
           set aftermd [gmd_file $fname]
-          set symbol &#9808;
+          #set symbol &#9808;
+          set symbol &#9701;
           append celltxt "<td><span style=float:right><a style=text-decoration:none href=\"$row/$col.md\" type=text/txt>$symbol</a></span>$aftermd</td>"
         } else {
           set kout [open $fname w]
