@@ -762,14 +762,17 @@ proc ltbl_iname {dispcol} {
   upvar textalign textalign
 
   #set iname [lvars $row g:iname]
-  set tick_status [lvars $row tick_status]
+  set tick [lvars $row tick_status]
+  if {$tick eq "NA"} {
+    set tick [lvars $row tick]
+  }
   set disp [lvars $row $dispcol]
 
   #regsub {^\d\d\d\d-} $iname {} iname
   #regsub {_\d\d\-\d\d_\d\d} $iname {} iname
 
   
-  if {$tick_status eq "1"} {
+  if {$tick eq "1"} {
     set celltxt "<td $textalign bgcolor=palegreen><a href=\"$row/.index.htm\">$disp</a></td>"
   } else {
     set celltxt "<td $textalign><a href=\"$row/.index.htm\">$disp</a></td>"
