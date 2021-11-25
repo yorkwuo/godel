@@ -734,6 +734,9 @@ proc ltbl_hit {dispcol} {
 
   set hit  [lvars $code hit]
   set tick [lvars $code tick_status]
+  if {$tick eq "NA"} {
+    set tick [lvars $code tick]
+  }
   set disp [lvars $code $dispcol]
 
   if {$hit eq "NA"} {
