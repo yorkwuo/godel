@@ -3514,19 +3514,15 @@ proc lremove {tlist item} {
 proc gdraw_default {} {
   upvar env env
   set kout [open .godel/ghtm.tcl w]
-    puts $kout "ghtm_top_bar"
-    puts $kout "#ghtm_top_bar -save -filter 1"
-    #puts $kout "#list_img 4 100% images/*"
+    puts $kout "ghtm_top_bar -save"
+    puts $kout "gnotes {"
+    puts $kout "# "
+    puts $kout "}"
     puts $kout "#lappend cols \"proc:ltbl_iname g:iname;Name\""
     puts $kout "#lappend cols \"edtable:bday;bday\""
     puts $kout "#lappend cols \"edtable:g:keywords;Keywords\""
-    puts $kout "#local_table tbl -c \$cols"
+    puts $kout "#local_table tbl -c \$cols -serial -dataTables"
     puts $kout "ghtm_ls *"
-    #puts $kout "ghtm_list_files *"
-    #puts $kout "#ghtm_filter_notes"
-    puts $kout "gnotes {"
-    puts $kout ""
-    puts $kout "}"
   close $kout
 
   set kout [open .godel/draw.gtcl w]
