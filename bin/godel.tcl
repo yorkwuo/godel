@@ -1,4 +1,111 @@
-#ghtm_win
+# csplit_init
+# {{{
+proc csplit_init {} {
+  upvar fout fout
+  puts $fout {
+  <style>
+  * {
+    box-sizing: border-box;
+  }
+  
+  .column {
+    float: left;
+    width: 30%;
+    padding: 10px;
+  }
+  
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  </style>
+  }
+
+}
+# }}}
+# csplit_begin
+# {{{
+proc csplit_begin {} {
+  upvar fout fout
+  puts $fout {<div class="row">}
+}
+# }}}
+# csplit_sub_begin
+# {{{
+proc csplit_sub_begin {} {
+  upvar fout fout
+  puts $fout {  <div class="column">}
+}
+# }}}
+# csplit_end
+# {{{
+proc csplit_end {} {
+  upvar fout fout
+  puts $fout {</div>}
+}
+# }}}
+# csplit_sub_end
+# {{{
+proc csplit_sub_end {} {
+  upvar fout fout
+  puts $fout {  </div>}
+}
+# }}}
+# var_table
+# {{{
+proc var_table {} {
+  upvar fout fout
+  upvar rows rows
+
+  puts $fout "<table class=table1 id=tbl>"
+  foreach row $rows {
+    set cols [split $row ";"]
+    set name [lindex $cols 0]
+    set type [lindex $cols 1]
+    set fpath [lindex $cols 2]
+  
+    puts $fout "<tr>"
+      if {$type eq "mf"} {
+        puts $fout "<td>$name</td>"
+        if [file exist $fpath] {
+          set kin [open $fpath r]
+            set value ""
+            while {[gets $kin line] >= 0} {
+              if [file exist $line] {
+                append value "<a href=$line type=text/txt>$line</a><br>"
+              } else {
+                append value "<a style=background-color:lightgrey href=$line type=text/txt>$line</a><br>"
+              }
+            }
+          close $kin
+        } else {
+          set value ""
+          set kout [open $fpath w]
+          close $kout
+        }
+        set symbol &#9701;
+        puts $fout "<td><span style=float:right><a style=text-decoration:none href=\"$fpath\" type=text/txt>$symbol</a></span>$value</td>"
+      } elseif {$type eq "f"} {
+        set value [lvars . $name]
+        if [file exist $value] {
+          puts $fout "<td><a href=$value type=text/txt>$name</a></td>"
+          puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" >$value</td>"
+        } else {
+          puts $fout "<td>$name</td>"
+          puts $fout "<td bgcolor=lightgrey gname=\".\" colname=\"$name\" contenteditable=\"true\" >$value</td>"
+        }
+      } else {
+        puts $fout "<td>$name</td>"
+        set value [lvars . $name]
+        puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" >$value</td>"
+      }
+    puts $fout "</tr>"
+  }
+  puts $fout "</table>"
+}
+# }}}
+# ghtm_win
 # {{{
 proc ghtm_win {} {
   upvar fout fout
@@ -136,14 +243,62 @@ proc gtcl_commit {} {
 # }}}
 # ghtm_ls_table
 # {{{
-proc ghtm_ls_table {pattern} {
+proc ghtm_ls_table {args} {
   upvar fout fout
   upvar env env
+  # -dataTables
+# {{{
+  set idx [lsearch $args {-dataTables}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    upvar dataTables dataTables
+    set dataTables 1
+  } else {
+    set dataTables 0
+  }
+# }}}
+  # -id
+# {{{
+  set opt(-id) 0
+  set idx [lsearch $args {-id}]
+  if {$idx != "-1"} {
+    set val(-id) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-id) 1
+  } else {
+    set val(-id) na
+  }
+# }}}
+  # -pattern
+# {{{
+  set opt(-pattern) 0
+  set idx [lsearch $args {-pattern}]
+  if {$idx != "-1"} {
+    set pattern [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-pattern) 1
+    set ifiles [lsort [glob -type f $pattern]]
+  } else {
+    set pattern *
+  }
+# }}}
+  # -listvar
+# {{{
+  set opt(-listvar) 0
+  set idx [lsearch $args {-listvar}]
+  if {$idx != "-1"} {
+    set ifiles [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-listvar) 1
+  } else {
+    set val(-listvar) na
+  }
+# }}}
 
-  set ifiles [lsort [glob -type f $pattern]]
   
   set count 1
-  puts $fout "<table class=table1 id=tbl>"
+  puts $fout "<table class=table1 id=$val(-id)>"
+
   puts $fout "<thead>"
   puts $fout "<tr>"
     puts $fout "<th>Num </th>"
@@ -152,34 +307,40 @@ proc ghtm_ls_table {pattern} {
     puts $fout "<th>Name</th>"
   puts $fout "</tr>"
   puts $fout "</thead>"
+
   puts $fout "<tdata>"
   foreach ifile $ifiles {
-    set mtime [file mtime $ifile]
-    set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
-    set fsize [file size $ifile]
-    set fsize [num_symbol $fsize K]
-    set fname [file tail $ifile]
-
     puts $fout "<tr>"
-    puts $fout "<td>$count</td>"
-    puts $fout "<td>$timestamp</td>"
-    puts $fout "<td>$fsize</td>"
-    #puts $fout "<td gname=\"1\" colname=g:keywords contenteditable=true></td>"
-    #puts $fout "<td gname=\"1\" colname=g:keywords><input ></td>"
-    if [regexp {\.htm} $ifile] {
-      puts $fout "<td><a href=\"$ifile\"              >$fname</a></td>"
-    } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $ifile] {
-      puts $fout "<td><a href=\"$ifile\" type=text/mp4>$fname</a></td>"
-    } elseif [regexp {\.mp3} $ifile] {
-      puts $fout "<td><a href=\"$ifile\" type=text/mp3>$fname</a></td>"
-    } elseif [regexp {\.pdf} $ifile] {
-      puts $fout "<td><a href=\"$ifile\" type=text/pdf>$fname</a></td>"
-    } elseif [regexp {\.epub} $ifile] {
-      puts $fout "<td><a href=\"$ifile\"              >$fname</a></td>"
-    } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $ifile]}  {
-      puts $fout "<td><a href=\"$ifile\" type=text/jpg>$fname</a></td>"
+
+    if [file exist $ifile] {
+      set mtime [file mtime $ifile]
+      set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
+      set fsize [file size $ifile]
+      set fsize [num_symbol $fsize K]
+      set fname [file tail $ifile]
+      puts $fout "<td>$count</td>"
+      puts $fout "<td>$timestamp</td>"
+      puts $fout "<td>$fsize</td>"
+      if [regexp {\.htm} $ifile] {
+        puts $fout "<td><a href=\"$ifile\"              >$fname</a></td>"
+      } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $ifile] {
+        puts $fout "<td><a href=\"$ifile\" type=text/mp4>$fname</a></td>"
+      } elseif [regexp {\.mp3} $ifile] {
+        puts $fout "<td><a href=\"$ifile\" type=text/mp3>$fname</a></td>"
+      } elseif [regexp {\.pdf} $ifile] {
+        puts $fout "<td><a href=\"$ifile\" type=text/pdf>$fname</a></td>"
+      } elseif [regexp {\.epub} $ifile] {
+        puts $fout "<td><a href=\"$ifile\"              >$fname</a></td>"
+      } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $ifile]}  {
+        puts $fout "<td><a href=\"$ifile\" type=text/jpg>$fname</a></td>"
+      } else {
+        puts $fout "<td><a href=\"$ifile\" type=text/txt>$fname</a></td>"
+      }
     } else {
-      puts $fout "<td><a href=\"$ifile\" type=text/txt>$fname</a></td>"
+      puts $fout "<td>$count</td>"
+      puts $fout "<td></td>"
+      puts $fout "<td></td>"
+      puts $fout "<td bgcolor=lightgrey>$ifile</td>"
     }
 
     puts $fout "</tr>"
@@ -190,15 +351,17 @@ proc ghtm_ls_table {pattern} {
   puts $fout "</tdata>"
   puts $fout "</table>"
 
+  if {$dataTables eq "1"} {
       puts $fout "<script src=\"$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js\"></script>"
       puts $fout "<script>"
       puts $fout "    \$(document).ready(function() {"
-      puts $fout "    \$('#tbl').DataTable({"
+      puts $fout "    \$('#$val(-id)').DataTable({"
       puts $fout "       \"paging\": false,"
       puts $fout "       \"info\": false,"
       puts $fout "    });"
       puts $fout "} );"
       puts $fout "</script>"
+  }
 }
 # }}}
 # opt_bton
@@ -5994,6 +6157,8 @@ proc gscreen {pattern_list {ofile NA}} {
 proc read_as_list {afile} {
   set fin [open $afile r]
     while {[gets $fin line] >= 0} {
+      regsub {^\s*} $line {} line
+      regsub {\s$}  $line {} line
       lappend lines $line
     }
   close $fin
