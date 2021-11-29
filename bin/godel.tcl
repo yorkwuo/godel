@@ -402,14 +402,14 @@ proc opt_bton {args} {
   set exefile ".set_$name.gtcl"
 
   #if [file exist $exefile] {
-  #    puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
+  #    puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
   #} else {
-      #puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
+      #puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
       set cur_value [lvars . $key]
       if {$cur_value eq $value} {
         puts $fout "<a href=$exefile class=\"w3-btn w3-pink\" type=text/gtcl><b>$name</b></a>"
       } else {
-        puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a>"
+        puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
       }
 
     set kout [open "$exefile" w]
@@ -691,10 +691,10 @@ proc bton_set {args} {
   set exefile ".set_$name.gtcl"
 
   #if [file exist $exefile] {
-  #    puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
+  #    puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
   #} else {
-      #puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
-      puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a>"
+      #puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
+      puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
     set kout [open "$exefile" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
       puts $kout "cd \$pagepath"
@@ -826,7 +826,7 @@ proc bton_note_onoff {} {
 
   }
 
-  puts $fout "<a href=.note_onoff.gtcl class=\"w3-btn w3-teal\" type=text/gtcl><b>note on/off</b></a>"
+  puts $fout "<a href=.note_onoff.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>note on/off</b></a>"
 }
 # }}}
 # insert_note_column
@@ -1006,7 +1006,7 @@ proc bton_move {pathto {name ""}} {
   #}
 
   if [file exist "$row/.move.gtcl"] {
-    set celltxt "<td><a href=$row/.move.gtcl class=\"w3-btn w3-teal w3-round\" type=text/gtcl>M</a></td>"
+    set celltxt "<td><a href=$row/.move.gtcl class=\"w3-btn w3-blue w3-round\" type=text/gtcl>M</a></td>"
   } else {
     set celltxt "<td></td>"
   }
@@ -1036,7 +1036,7 @@ proc bton_delete {{name ""}} {
   }
 
   if [file exist "$row/.delete.gtcl"] {
-    set celltxt "<td><a href=\"$row/.delete.gtcl\" class=\"w3-btn w3-teal w3-round\" type=text/gtcl>D</a></td>"
+    set celltxt "<td><a href=\"$row/.delete.gtcl\" class=\"w3-btn w3-blue w3-round\" type=text/gtcl>D</a></td>"
   } else {
     set celltxt "<td></td>"
   }
@@ -1066,7 +1066,7 @@ proc bton_tick {{name ""}} {
   }
 
   if [file exist "$row/.tick.gtcl"] {
-    set celltxt "<td><a href=$row/.tick.gtcl class=\"w3-btn w3-teal w3-round\" type=text/gtcl>T</a></td>"
+    set celltxt "<td><a href=$row/.tick.gtcl class=\"w3-btn w3-blue w3-round\" type=text/gtcl>T</a></td>"
   } else {
     set celltxt "<td></td>"
   }
@@ -1168,7 +1168,7 @@ proc gexe_button {args} {
   if [file exist $exefile] {
     #exec chmod +x $exefile
     if {$opt(-nocmd)} {
-      puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a>"
+      puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
     } else {
       puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-blue\" type=text/gtcl>$name<span style=float:right><a class=\"w3-button w3-blue\" href=$exefile type=text/txt>&#9701</a></span></a>"
     }
@@ -1778,7 +1778,7 @@ proc ghtm_set_value {key value} {
         #puts $fout "<a href=$exefile class=\"w3-btn w3-pink\" type=text/gtcl><b>$name</b></a>"
         puts $fout "<a class=\"w3-button w3-round w3-pink\" onclick=\"set_value('$key','$value')\">${value}</a>"
       } else {
-      #  puts $fout "<a href=$exefile class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a>"
+      #  puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
         puts $fout "<a class=\"w3-button w3-round w3-pale-green\" onclick=\"set_value('$key','$value')\">${value}</a>"
       }
       #puts $fout "<button class=\"w3-button w3-round \" onclick=\"set_value('$key','$value')\">${value}</button>"
