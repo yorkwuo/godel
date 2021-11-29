@@ -10,7 +10,7 @@ proc csplit_init {} {
   
   .column {
     float: left;
-    width: 30%;
+    width: 50%;
     padding: 10px;
   }
   
@@ -1170,7 +1170,7 @@ proc gexe_button {args} {
     if {$opt(-nocmd)} {
       puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a>"
     } else {
-      puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-teal\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
+      puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-blue\" type=text/gtcl>$name<span style=float:right><a class=\"w3-button w3-blue\" href=$exefile type=text/txt>&#9701</a></span></a>"
     }
     set kout [open ".$exefile.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
