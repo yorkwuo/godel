@@ -140,7 +140,7 @@ proc ghtm_ls_table {pattern} {
   upvar fout fout
   upvar env env
 
-  set ifiles [lsort [glob -type f $pattern]]
+  set ifiles [lsort [glob -nocomplain -type f $pattern]]
   
   set count 1
   puts $fout "<table class=table1 id=tbl>"
