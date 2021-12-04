@@ -1,3 +1,15 @@
+# folder
+# {{{
+proc folder {} {
+  upvar row row
+  upvar celltxt celltxt
+  set kout [open $row/open.gtcl w]
+    puts $kout "cd [pwd]/$row"
+    puts $kout "catch {exec /mnt/c/Windows/explorer.exe .}"
+  close $kout
+  set celltxt "<td><a href=$row/open.gtcl type=text/gtcl>folder</a></td>"
+}
+# }}}
 # csplit_init
 # {{{
 proc csplit_init {} {
@@ -298,6 +310,7 @@ proc ghtm_ls_table {args} {
   }
 # }}}
 
+  set ifiles [lsort [glob -nocomplain -type f $pattern]]
   
   set count 1
   puts $fout "<table class=table1 id=$val(-id)>"
@@ -3542,6 +3555,7 @@ proc local_table {name args} {
           set name [file tail $f]
           if [regexp {\.pdf} $name] {
             append links "<a href=\"$f\" type=text/pdf>$name</a>\n"
+          } elseif [regexp {\.gtcl} $name] {
           } elseif [regexp {\.htm*} $name] {
             append links "<a href=\"$f\">$name</a>\n"
           } else {
