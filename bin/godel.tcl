@@ -66,6 +66,7 @@ proc var_table {} {
     set fpath [lindex $cols 2]
   
     puts $fout "<tr>"
+# mf:multiple files
       if {$type eq "mf"} {
         puts $fout "<td>$name</td>"
         if [file exist $fpath] {
@@ -86,6 +87,7 @@ proc var_table {} {
         }
         set symbol &#9701;
         puts $fout "<td><span style=float:right><a style=text-decoration:none href=\"$fpath\" type=text/txt>$symbol</a></span>$value</td>"
+# f:file
       } elseif {$type eq "f"} {
         set value [lvars . $name]
         if [file exist $value] {
@@ -95,6 +97,7 @@ proc var_table {} {
           puts $fout "<td>$name</td>"
           puts $fout "<td bgcolor=lightgrey gname=\".\" colname=\"$name\" contenteditable=\"true\" >$value</td>"
         }
+# value
       } else {
         puts $fout "<td>$name</td>"
         set value [lvars . $name]
@@ -3869,7 +3872,8 @@ proc list_pages {args} {
     set nlist [list {*}$args]
   }
 
-  puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
+  #puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
+  puts $fout "<div class=\"w3-panel\">"
 # Title
   if {$opt(-t)} {
     puts $fout "<h1>$title</h1>"

@@ -9,19 +9,22 @@ document.onkeyup = function(e) {
   }
 };
 
-// Add event to highlight modified cells in table
-var table = document.getElementById('tbl');
-if(typeof(table) != 'undefined' && table != null){
-  var cells = table.getElementsByTagName('td');
-  for (var i = 0; i < cells.length; i++) {
+// Add event to highlight modified cells in tables
+var tables = document.getElementsByTagName('table');
+if(typeof(tables) != 'undefined' && tables != null){
+  for (var k = 0; k < tables.length; k++) {
   
-    cells[i].addEventListener('input', function(){
-      var gname   = this.getAttribute("gname");
-      var att = this.setAttribute("changed","1");
-      this.style.backgroundColor = "lightyellow";
-      //var kk   = this.getAttribute("changed");
-      //console.log(kk);
-    })
+      var cells = tables[k].getElementsByTagName('td');
+      for (var i = 0; i < cells.length; i++) {
+      
+        cells[i].addEventListener('input', function(){
+          var gname   = this.getAttribute("gname");
+          var att = this.setAttribute("changed","1");
+          this.style.backgroundColor = "lightyellow";
+          //var kk   = this.getAttribute("changed");
+          //console.log(kk);
+        })
+      }
   }
 }
 // inst
@@ -80,12 +83,12 @@ function newdraw() {
 // JQuery: Save
 // {{{
 $(document).ready(function(){
-  var $TABLE = $('#tbl');
+  //var $TABLE = $('#tbl');
 
   $('#save').click(function () {
 
     //var $rows = $TABLE.find('tr');
-    var $rows = $('#tbl').find('tr');
+    var $rows = $('table').find('tr');
 
     var cmds = "";
     // foreach row
