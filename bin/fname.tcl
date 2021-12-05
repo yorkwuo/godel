@@ -109,7 +109,11 @@ foreach f $flist {
   if {$opt(-commit)} {
     if {$f eq $newname} {
     } else {
-      exec mv $f $newname
+      #puts "mv $f $newname"
+      exec mv -- $f $newname
+      #regsub -all {\-} $f {-} f
+      #puts $f
+      #file rename -force "$f" $newname
     }
   }
 }
