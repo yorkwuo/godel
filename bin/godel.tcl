@@ -2178,9 +2178,7 @@ proc ghtm_top_bar {args} {
     <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
   "
   puts $fout {<a href=".godel/open.gtcl" type=text/gtcl class="w3-bar-item w3-button w3-right">Open</a>}
-  if {$opt(-win)} {
-    puts $fout {<a href=".godel/win.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Win</a>}
-  }
+  puts $fout {<a href=".godel/win.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Win</a>}
   #puts $fout {<a href=".index.htm" type=text/txt class="w3-bar-item w3-button w3-right">HTML</a>}
 
   if {$opt(-save)} {
@@ -2220,7 +2218,7 @@ proc ghtm_top_bar {args} {
     puts $fout "}"
     puts $fout "</style>"
   }
-  if {$opt(-win)} {
+  if {$env(GODEL_WSL)} {
 
     set kout [open .godel/win.gtcl w]
 
@@ -5206,8 +5204,7 @@ proc godel_draw {{target_path NA}} {
 
 # create draw.gtcl
 # {{{
-  #if ![file exist .godel/draw.gtcl] {
-  #}
+  if ![file exist .godel/draw.gtcl] {
     set kout [open .godel/draw.gtcl w]
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
       puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
@@ -5220,14 +5217,29 @@ proc godel_draw {{target_path NA}} {
       puts $kout "catch {exec xdotool search --name \"\$pattern\" key ctrl+r}"
 
     close $kout
+  }
 # }}}
-  set kout [open .godel/open.gtcl w]
-    puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
-    puts $kout "cd \$pagepath"
-    #puts $kout "exec nautilus . &"
-    puts $kout "exec xterm -T xterm.\[pwd] &"
+# create open.gtcl
+  if ![file exist .godel/open.gtcl] {
+    set kout [open .godel/open.gtcl w]
+      puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
+      puts $kout "cd \$pagepath"
+      #puts $kout "exec nautilus . &"
+      puts $kout "exec xterm -T xterm.\[pwd] &"
 
-  close $kout
+    close $kout
+  }
+# create win.gtcl
+  if ![file exist .godel/win.gtcl] {
+    set kout [open .godel/win.gtcl w]
+      puts $kout "cd [pwd]"
+      if {$env(GODEL_WSL)} {
+        puts $kout "catch {exec /mnt/c/Windows/explorer.exe .}"
+      } else {
+        puts $kout "exec nautilus ."
+      }
+    close $kout
+  }
 
 #----------------------------
 # Start creating .index.htm
