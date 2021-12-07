@@ -3709,25 +3709,6 @@ proc gdraw_default {} {
     puts $kout "ghtm_ls *"
   close $kout
 
-  set kout [open .godel/draw.gtcl w]
-    puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
-    puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
-    puts $kout "cd \$pagepath"
-    puts $kout "if \[file exist \$env(GODEL_DOWNLOAD)/gtcl.tcl\] {"
-    puts $kout "  source      \$env(GODEL_DOWNLOAD)/gtcl.tcl"
-    puts $kout "  file delete \$env(GODEL_DOWNLOAD)/gtcl.tcl"
-    puts $kout "}"
-    puts $kout "godel_draw"
-    puts $kout "exec xdotool search --name \"Mozilla\" key ctrl+r"
-  close $kout
-
-  set kout [open .godel/open.gtcl w]
-    puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
-    puts $kout "cd \$pagepath"
-    #puts $kout "exec nautilus . &"
-    puts $kout "exec xterm -T xterm.\[pwd] &"
-
-  close $kout
 }
 # }}}
 # datediff
