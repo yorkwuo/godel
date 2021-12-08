@@ -302,7 +302,7 @@ proc ghtm_ls_table {args} {
   set opt(-listvar) 0
   set idx [lsearch $args {-listvar}]
   if {$idx != "-1"} {
-    set ifiles [lindex $args [expr $idx + 1]]
+    set varfiles [lindex $args [expr $idx + 1]]
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-listvar) 1
   } else {
@@ -310,7 +310,11 @@ proc ghtm_ls_table {args} {
   }
 # }}}
 
-  set ifiles [lsort [glob -nocomplain -type f $pattern]]
+  if {$opt(-pattern)} {
+    set ifiles [lsort [glob -nocomplain -type f $pattern]]
+  } elseif {$opt(-listvar)} {
+    set ifiles $varfiles
+  }
   
   set count 1
   puts $fout "<table class=table1 id=$val(-id)>"
