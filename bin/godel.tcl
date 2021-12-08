@@ -12,8 +12,20 @@ proc folder {} {
 # }}}
 # csplit_init
 # {{{
-proc csplit_init {} {
+proc csplit_init {args} {
   upvar fout fout
+  # -width
+# {{{
+  set opt(-width) 0
+  set idx [lsearch $args {-width}]
+  if {$idx != "-1"} {
+    set val(-width) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-width) 1
+  } else {
+    set val(-width) 50% 
+  }
+# }}}
   puts $fout {
   <style>
   * {
@@ -22,7 +34,7 @@ proc csplit_init {} {
   
   .column {
     float: left;
-    width: 50%;
+    width: $val(-width);
     padding: 10px;
   }
   
