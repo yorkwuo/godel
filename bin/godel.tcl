@@ -346,7 +346,8 @@ proc ghtm_ls_table {args} {
 
     if [file exist $ifile] {
       set mtime [file mtime $ifile]
-      set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
+      #set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
+      set timestamp [clock format $mtime -format {%m-%d_%H:%M}]
       set fsize [file size $ifile]
       set fsize [num_symbol $fsize K]
       set fname [file tail $ifile]
@@ -4676,8 +4677,8 @@ proc gvi {keywords} {
 # {{{
 proc gok {keywords} {
   global env
-  if [file exist $env(HOME)/.goklist.tcl] {
-    source       $env(HOME)/.goklist.tcl
+  if [file exist $env(GOK_HOME)/goklist.tcl] {
+    source       $env(GOK_HOME)/goklist.tcl
   } else {
     return
   }

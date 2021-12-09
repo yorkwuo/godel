@@ -4,7 +4,7 @@ source $env(GODEL_ROOT)/bin/godel.tcl
 set pagename    [lindex $argv 0]
 
 # gok_list.tcl
-set mfile $env(HOME)/.goklist.tcl
+set mfile $env(GOK_HOME)/goklist.tcl
 if [file exist $mfile] {
   source $mfile
 } else {
@@ -19,7 +19,7 @@ if [info exist meta($pagename,where)] {
   puts "Success: $pagename"
   set meta($pagename,where)    [pwd]
   set meta($pagename,keywords) $argv
-  godel_array_save  meta $env(HOME)/.goklist.tcl
+  godel_array_save  meta $env(GOK_HOME)/goklist.tcl
 }
 
 
