@@ -430,6 +430,32 @@ function filter_table(tname, column_no, e) {
   }
 }
 // }}}
+// open_folder
+// {{{
+function open_folder(dirpath) {
+// Save
+    var data = "ginst : nautilus : kkk:" +  dirpath + "\n";
+    const textToBLOB = new Blob([data], { type: 'text/plain' });
+    const sFileName = 'gtcl.tcl';	   // The file to save the data.
+
+    var newLink = document.createElement("a");
+    newLink.download = sFileName;
+
+    if (window.webkitURL != null) {
+        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+    }
+    else {
+        newLink.href = window.URL.createObjectURL(textToBLOB);
+        newLink.style.display = "none";
+        document.body.appendChild(newLink);
+    }
+
+    newLink.click(); 
+    document.getElementById('iddraw').click();
+
+
+}
+// }}}
 // set_value
 // {{{
 function set_value(key, value) {

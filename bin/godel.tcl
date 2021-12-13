@@ -1,3 +1,17 @@
+# ghtm_localjs
+# {{{
+proc ghtm_localjs {fname} {
+  upvar fout fout 
+
+  if ![file exist $fname] {
+    set kout [open $fname w]
+    close $kout
+  }
+  puts $fout "<br><a href=\"$fname\" type=text/txt>$fname</a>"
+
+  puts $fout "<script src=\"$fname\"></script>"
+}
+# }}}
 # folder
 # {{{
 proc folder {} {
@@ -241,9 +255,9 @@ proc gtcl_commit {} {
       set gpage [lindex $cols 2]
       set path  [lindex $cols 3]
       regsub -all {\s} $path {} path
-      #puts "$path :"
       cd $path
-      exec touch $gpage/kkk
+      exec tcsh -fc "$inst ."
+      file delete $gtcl
 
     } else {
       package require textutil
@@ -1736,85 +1750,19 @@ proc getcol {args} {
 # {{{
 proc ghtm_set_value {key value} {
   upvar fout fout
-
-#  # -name
-## {{{
-#  set opt(-name) 0
-#  set idx [lsearch $args {-name}]
-#  if {$idx != "-1"} {
-#    set name [lindex $args [expr $idx + 1]]
-#    set args [lreplace $args $idx [expr $idx + 1]]
-#    set opt(-name) 1
-#  } else {
-#    set name NA
-#  }
-## }}}
-#  # -bgcolor
-## {{{
-#  set opt(-bgcolor) 0
-#  set idx [lsearch $args {-bgcolor}]
-#  if {$idx != "-1"} {
-#    set val(-bgcolor) [lindex $args [expr $idx + 1]]
-#    set args [lreplace $args $idx [expr $idx + 1]]
-#    set opt(-bgcolor) 1
-#  } else {
-#    set val(-bgcolor) pale-blue
-#  }
-## }}}
-#  # -key
-## {{{
-#  set opt(-key) 0
-#  set idx [lsearch $args {-key}]
-#  if {$idx != "-1"} {
-#    set val(-key) [lindex $args [expr $idx + 1]]
-#    set args [lreplace $args $idx [expr $idx + 1]]
-#    set opt(-key) 1
-#  } else {
-#    set val(-key) nan
-#  }
-## }}}
-#
-#  set tablename [lindex $args 0]
-#  set column    [lindex $args 1]
-#  set keyword   [lindex $args 2]
-#
-#  set count 0
-#  if {$opt(-key)} {
-#    set dirs [glob -nocomplain -type d *]
-#
-#    foreach dir $dirs {
-#      set value [lvars $dir $val(-key)]
-#      if [regexp -nocase $keyword $value] {
-#        incr count
-#      }
-#    }
-#    #set total "\($count\)"
-#    set total " $count"
-#  } else {
-#    set dirs [glob -nocomplain -type d *]
-#    set matches [lsearch -all -inline -regexp $dirs $keyword]
-#    set count [llength $matches]
-#    set total " $count"
-#  }
-#
-#  if {$opt(-name)} {
-#    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${name}$total</button>"
-#  } else {
-#    if {$opt(-key)} {
-#      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}$total</button>"
-#    } else {
-#      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}</button>"
-#    }
-#  }
-      set cur_value [lvars . $key]
-      if {$cur_value eq $value} {
-        #puts $fout "<a href=$exefile class=\"w3-btn w3-pink\" type=text/gtcl><b>$name</b></a>"
-        puts $fout "<a class=\"w3-button w3-round w3-pink\" onclick=\"set_value('$key','$value')\">${value}</a>"
-      } else {
-      #  puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
-        puts $fout "<a class=\"w3-button w3-round w3-pale-green\" onclick=\"set_value('$key','$value')\">${value}</a>"
-      }
-      #puts $fout "<button class=\"w3-button w3-round \" onclick=\"set_value('$key','$value')\">${value}</button>"
+  set cur_value [lvars . $key]
+  if {$cur_value eq $value} {
+    puts $fout "<a class=\"w3-button w3-round w3-pink\" onclick=\"set_value('$key','$value')\">${value}</a>"
+  } else {
+    puts $fout "<a class=\"w3-button w3-round w3-pale-green\" onclick=\"set_value('$key','$value')\">${value}</a>"
+  }
+}
+# }}}
+# ghtm_open_folder
+# {{{
+proc ghtm_open_folder {dirpath} {
+  upvar fout fout
+  puts $fout "<a class=\"w3-button w3-round w3-pale-blue\" onclick=\"open_folder('$dirpath')\">folder</a>"
 }
 # }}}
 # ghtm_keyword_button
@@ -5158,6 +5106,8 @@ proc godel_draw {{target_path NA}} {
     set orgpath [pwd]
     cd $target_path
   }
+
+  set gtype [lvars . gtype]
   # If .freeze exist, do nothing. Page keeps the same.
 # {{{
   if [file exist .freeze] {
@@ -5202,7 +5152,7 @@ proc godel_draw {{target_path NA}} {
 
 # create draw.gtcl
 # {{{
-  if ![file exist .godel/draw.gtcl] {
+  #if ![file exist .godel/draw.gtcl] {
     set kout [open .godel/draw.gtcl w]
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
       puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
@@ -5215,7 +5165,7 @@ proc godel_draw {{target_path NA}} {
       puts $kout "catch {exec xdotool search --name \"\$pattern\" key ctrl+r}"
 
     close $kout
-  }
+  #}
 # }}}
 # create open.gtcl
   if ![file exist .godel/open.gtcl] {
@@ -5266,7 +5216,10 @@ proc godel_draw {{target_path NA}} {
       exec cp $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
       exec cp $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
       puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
-      puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
+      if {$gtype eq "raw"} {
+      } else {
+        puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
+      }
   } else {
 # Link to Godel's central w3.css
 # {{{
@@ -5285,7 +5238,10 @@ proc godel_draw {{target_path NA}} {
       puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
     } else {
       puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
-      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
+      if {$gtype eq "raw"} {
+      } else {
+        puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
+      }
     }
 # }}}
   }
@@ -5321,18 +5277,21 @@ proc godel_draw {{target_path NA}} {
 
       }
     } else {
-      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
-      if {[info exist dataTables]} {
-        puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
-        puts $fout "<script>"
-        puts $fout "    \$(document).ready(function() {"
-        puts $fout "    \$('#tbl').DataTable({"
-        puts $fout "       \"paging\": false,"
-        puts $fout "       \"info\": false,"
-        puts $fout "    });"
-        puts $fout "} );"
-        puts $fout "</script>"
+      if {$gtype eq "raw"} {
+      } else {
+        puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
+        if {[info exist dataTables]} {
+          puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+          puts $fout "<script>"
+          puts $fout "    \$(document).ready(function() {"
+          puts $fout "    \$('#tbl').DataTable({"
+          puts $fout "       \"paging\": false,"
+          puts $fout "       \"info\": false,"
+          puts $fout "    });"
+          puts $fout "} );"
+          puts $fout "</script>"
 
+        }
       }
     }
   }
