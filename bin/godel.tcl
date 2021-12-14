@@ -1,3 +1,34 @@
+# svg_line
+# {{{
+proc svg_line {x1 y1 x2 y2} {
+  upvar ymax ymax
+  upvar shrink shrink
+  upvar fout fout
+  set x1 [expr $x1/$shrink]
+  set y1 [expr $y1/$shrink]
+  set x2 [expr $x2/$shrink]
+  set y2 [expr $y2/$shrink]
+
+  set newx1 $x1
+  set newy1 [expr $ymax/$shrink - $y1 ]
+  set newx2 $x2
+  set newy2 [expr $ymax/$shrink - $y2 ]
+  puts $fout "<line x1=$newx1 y1=$newy1 x2=$newx2 y2=$newy2 stroke=black />"
+}
+# }}}
+# svg_point
+# {{{
+proc svg_point {x y} {
+  upvar shrink shrink
+  upvar fout fout
+  upvar ymax ymax
+  set x [expr $x/$shrink]
+  set y [expr $y/$shrink]
+  set newx $x
+  set newy [expr $ymax/$shrink - $y ]
+  puts $fout "<circle cx=$newx cy=$newy r=3 />"
+}
+# }}}
 # ghtm_localjs
 # {{{
 proc ghtm_localjs {fname} {
@@ -3404,15 +3435,17 @@ proc local_table {name args} {
     if [regexp {;} $col] {
       set cs [split $col ";"]
       set colname [lindex $cs 1]
+      set page_key [lindex $cs 0]
+      regsub {edtable:} $page_key {} page_key
 
       if {$colname == ""} {
         puts $fout "<th></th>"
       } else {
-        puts $fout "<th>$colname</th>"
+        puts $fout "<th colname=\"$page_key\">$colname</th>"
       }
     } else {
       set colname $col
-      puts $fout "<th>$colname</th>"
+      puts $fout "<th colname=\"$page_key\">$colname</th>"
     }
   }
   puts $fout "</tr>"
