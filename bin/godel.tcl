@@ -766,13 +766,19 @@ proc bton_set {args} {
   }
 # }}}
 
+  set cur_value [lvars . $key]
+  
   set exefile ".set_$name.gtcl"
 
   #if [file exist $exefile] {
   #    puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
   #} else {
       #puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
-      puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
+      if {$cur_value eq $value} {
+        puts $fout "<a href=$exefile class=\"w3-btn w3-pink\" type=text/gtcl><b>$name</b></a>"
+      } else {
+        puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
+      }
     set kout [open "$exefile" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
       puts $kout "cd \$pagepath"
@@ -3615,7 +3621,7 @@ proc local_table {name args} {
         if {$col == "g:pagename"} {
           set col_data "<a href=\"$row/.index.htm\">$col_data</a>"
         }
-        append celltxt "<td $textalign>$col_data</td>"
+        append celltxt "<td $textalign colname=\"$page_key\">$col_data</td>"
       }
       puts $fout $celltxt
     }
