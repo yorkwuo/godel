@@ -27,6 +27,108 @@ if(typeof(tables) != 'undefined' && tables != null){
       }
   }
 }
+// TableColSelect
+// {{{
+function TableColSelect (thisobj, iarray) {
+
+  var selected = thisobj.getAttribute("selected");
+
+  if (selected == 1) {
+    selected = 0;
+    thisobj.setAttribute("selected","0");
+  } else {
+    selected = 1;
+    thisobj.setAttribute("selected","1");
+  }
+
+  var table = document.getElementById('tbl');
+
+  if (selected == 1) {
+    thisobj.classList.add("w3-red");
+    var cells = table.getElementsByTagName('th');
+    for (var i = 0; i < cells.length; i++) {
+      var colname = cells[i].getAttribute("colname");
+      for (let x of iarray) {
+        if (colname === x) {
+          cells[i].style.display = "";
+        }
+      }
+    }
+    var cells = table.getElementsByTagName('td');
+    for (var i = 0; i < cells.length; i++) {
+      var colname = cells[i].getAttribute("colname");
+      for (let x of iarray) {
+        if (colname === x) {
+          cells[i].style.display = "";
+        }
+      }
+    }
+  } else {
+    thisobj.classList.remove("w3-red");
+    var cells = table.getElementsByTagName('th');
+    for (var i = 0; i < cells.length; i++) {
+      var colname = cells[i].getAttribute("colname");
+      for (let x of iarray) {
+        if (colname === x) {
+          cells[i].style.display = "none";
+        }
+      }
+    }
+    var cells = table.getElementsByTagName('td');
+    for (var i = 0; i < cells.length; i++) {
+      var colname = cells[i].getAttribute("colname");
+      for (let x of iarray) {
+        if (colname === x) {
+          cells[i].style.display = "none";
+        }
+      }
+    }
+  }
+}
+// }}}
+// TableColDisp
+// {{{
+function TableColDisp (thisobj, person) {
+   
+  var atags = document.getElementsByClassName('coldisp');
+  for (var i = 0; i < atags.length; i++) {
+    atags[i].classList.remove("w3-red");
+  }
+
+  thisobj.classList.add("w3-red");
+  
+  var table = document.getElementById('tbl');
+  
+  var cells = table.getElementsByTagName('th');
+  for (var i = 0; i < cells.length; i++) {
+    cells[i].style.display = "none";
+  }
+  var cells = table.getElementsByTagName('td');
+  for (var i = 0; i < cells.length; i++) {
+    cells[i].style.display = "none";
+  }
+
+  var cells = table.getElementsByTagName('th');
+  for (var i = 0; i < cells.length; i++) {
+    var colname = cells[i].getAttribute("colname");
+    for (let x of person) {
+      if (colname === x) {
+        cells[i].style.display = "";
+      }
+    }
+  }
+  
+  var cells = table.getElementsByTagName('td');
+  for (var i = 0; i < cells.length; i++) {
+    var colname = cells[i].getAttribute("colname");
+    for (let x of person) {
+      if (colname === x) {
+        cells[i].style.display = "";
+      }
+    }
+  }
+}
+// }}}
 // inst
 // {{{
 function inst(value) {

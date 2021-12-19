@@ -1,3 +1,19 @@
+# ghtm_col_select
+# {{{
+proc ghtm_col_select {clist name} {
+  upvar fout fout
+
+  puts $fout "<a selected=0 class=\"w3-button w3-round w3-blue\" onclick=\"TableColSelect(this,\[$clist\])\">$name</a>"
+}
+# }}}
+# ghtm_col_display
+# {{{
+proc ghtm_col_display {clist name} {
+  upvar fout fout
+
+  puts $fout "<a class=\"coldisp w3-button w3-round w3-blue\" onclick=\"TableColDisp(this,\[$clist\])\">$name</a>"
+}
+# }}}
 # svg_line
 # {{{
 proc svg_line {x1 y1 x2 y2} {
@@ -1020,9 +1036,9 @@ proc ltbl_iname {dispcol} {
 
   
   if {$tick eq "1"} {
-    set celltxt "<td $textalign bgcolor=palegreen><a href=\"$row/.index.htm\">$disp</a></td>"
+    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=palegreen><a href=\"$row/.index.htm\">$disp</a></td>"
   } else {
-    set celltxt "<td $textalign><a href=\"$row/.index.htm\">$disp</a></td>"
+    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign><a href=\"$row/.index.htm\">$disp</a></td>"
   }
 }
 # }}}
