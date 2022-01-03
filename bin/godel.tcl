@@ -1,3 +1,18 @@
+# ltbl_linkurl
+# {{{
+proc ltbl_linkurl {key} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set urlvalue [lvars $row $key]
+
+  if {$urlvalue eq "NA"} {
+    set celltxt "<td gname=\"$row\" colname=\"$key\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
+  } else {
+    set celltxt "<td><a href=\"$urlvalue\">$key</td>"
+  }
+}
+# }}}
 # ghtm_col_select
 # {{{
 proc ghtm_col_select {clist name} {
@@ -1129,9 +1144,9 @@ proc bton_delete {{name ""}} {
       puts $kout "cd .."
       puts $kout "file delete -force \$dname"
       puts $kout "puts \"Deleted... \$pagepath\""
-      #puts $kout "exec xterm -e \"rm -rf $row\""
-      #puts $kout "exec godel_draw.tcl"
-      #puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
+      puts $kout "exec xterm -e \"rm -rf $row\""
+      puts $kout "exec godel_draw.tcl"
+      puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
     close $kout
   }
 
@@ -3232,9 +3247,6 @@ proc local_table {name args} {
   global fout
   upvar vars vars
   upvar ltblrows ltblrows
-  if ![info exist ltblrows] {
-    set ltblrows ""
-  }
 
   # -pattern
 # {{{
@@ -3397,7 +3409,7 @@ proc local_table {name args} {
   # create rows
   # {{{
   set rows ""
-  if {$ltblrows eq ""} {
+  if ![info exist ltblrows] {
     if {$opt(-f)} {
       if [file exist $listfile] {
         #set rows [read_as_list $listfile]
@@ -3467,7 +3479,7 @@ proc local_table {name args} {
       }
     } else {
       set colname $col
-      puts $fout "<th colname=\"$page_key\">$colname</th>"
+      puts $fout "<th colname=\"$colname\">$colname</th>"
     }
   }
   puts $fout "</tr>"
@@ -3488,10 +3500,8 @@ proc local_table {name args} {
           set sdata 0
         }
       }
-      #lappend row_items [concat $row $sdata]
       lappend row_items [list $row $sdata]
     }
-    #plist $row_items
 
     ## Sorting...
     set row_items [lsort -index 1 {*}$val(-sortopt) $row_items]
@@ -3721,6 +3731,8 @@ proc gdraw_default {} {
     puts $kout "ghtm_top_bar -save"
     puts $kout "gnotes {"
     puts $kout "# "
+    puts $kout ""
+    puts $kout ""
     puts $kout "}"
     puts $kout "#lappend cols \"proc:ltbl_iname g:iname;Name\""
     puts $kout "#lappend cols \"edtable:bday;bday\""
@@ -5239,7 +5251,7 @@ proc godel_draw {{target_path NA}} {
       if {$env(GODEL_WSL)} {
         puts $kout "catch {exec /mnt/c/Windows/explorer.exe .}"
       } else {
-        puts $kout "exec nautilus ."
+        puts $kout "exec thunar ."
       }
     close $kout
   }
