@@ -129,6 +129,42 @@ function TableColDisp (thisobj, person) {
   }
 }
 // }}}
+// TableColInit
+// {{{
+function TableColInit (dispcol) {
+   
+  var table = document.getElementById('tbl');
+  
+  var cells = table.getElementsByTagName('th');
+  for (var i = 0; i < cells.length; i++) {
+    cells[i].style.display = "none";
+  }
+  var cells = table.getElementsByTagName('td');
+  for (var i = 0; i < cells.length; i++) {
+    cells[i].style.display = "none";
+  }
+
+  var cells = table.getElementsByTagName('th');
+  for (var i = 0; i < cells.length; i++) {
+    var colname = cells[i].getAttribute("colname");
+    for (let x of dispcol) {
+      if (colname === x) {
+        cells[i].style.display = "";
+      }
+    }
+  }
+  
+  var cells = table.getElementsByTagName('td');
+  for (var i = 0; i < cells.length; i++) {
+    var colname = cells[i].getAttribute("colname");
+    for (let x of dispcol) {
+      if (colname === x) {
+        cells[i].style.display = "";
+      }
+    }
+  }
+}
+// }}}
 // inst
 // {{{
 function inst(value) {

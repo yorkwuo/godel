@@ -2135,7 +2135,7 @@ proc ghtm_top_bar {args} {
   set idx [lsearch $args {-save}]
   if {$idx != "-1"} {
     set saveid [lindex $args [expr $idx + 1]]
-    set args [lreplace $args $idx [expr $idx + 1]]
+    set args [lreplace $args $idx $idx]
     set opt(-save) 1
   }
 # }}}
