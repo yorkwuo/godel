@@ -1121,7 +1121,7 @@ proc bton_move {pathto {name ""}} {
   #}
 
   if [file exist "$row/.move.gtcl"] {
-    set celltxt "<td><a href=$row/.move.gtcl class=\"w3-btn w3-blue w3-round\" type=text/gtcl>M</a></td>"
+    set celltxt "<td colname=\"proc:bton_move $pathto\"><a href=$row/.move.gtcl class=\"w3-btn w3-blue w3-round\" type=text/gtcl>M</a></td>"
   } else {
     set celltxt "<td></td>"
   }
