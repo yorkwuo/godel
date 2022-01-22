@@ -5849,6 +5849,7 @@ proc tbox_grep_filelist {re filelist} {
 # tbox_grep_filelist foo [list a.txt.b.txt c.txt]
 #
     foreach file $filelist {
+      puts $file
         set fp [open $file r]
         while {[gets $fp line] >= 0} {
             if [regexp -- $re $line] {
