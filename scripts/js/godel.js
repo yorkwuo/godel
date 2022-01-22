@@ -235,10 +235,17 @@ $(document).ready(function(){
       var $td = $(this).find('td');
       // foreach td
       $td.each(function () {
-        var value   = $(this).prop("innerText");
+        var gtype   = $(this).attr('gtype');
+        if (gtype == 'innerHTML') {
+          var value   = $(this).prop("innerHTML");
+        } else {
+          var value   = $(this).prop("innerText");
+        }
         var gname   = $(this).attr('gname');
         var colname = $(this).attr('colname');
         var changed = $(this).attr('changed');
+        //console.log(value);
+        //console.log(this);
         if (typeof gname === 'undefined') {
           return; // equal to continue
         } else {
