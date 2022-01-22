@@ -3607,23 +3607,17 @@ proc local_table {name args} {
           append celltxt "<td> </td>"
         }
       # edtable:
-      } elseif [regexp {edtable:} $col] {
-        regsub {edtable:} $col {} col
-        set dirname [file dirname $col]
-        if {$dirname eq "."} {
-          #puts "$col $dirname"
-          set page_path $row
-          set page_key  $col
-        } else {
-          set page_path $row/$dirname
-          set page_key  [file tail $col]
-          #puts $page_path
-        }
-        set col_data [lvars $page_path $page_key]
+      } elseif [regexp {edtable[2-9]*:} $col] {
+        regsub {edtable[2-9]*:} $col {} page_key
+        set col_data [lvars $row $page_key]
         if {$col_data eq "NA"} {
           set col_data ""
         }
-        append celltxt "<td gname=\"$page_path\" colname=\"$page_key\" contenteditable=\"true\" style=\"white-space:pre\">$col_data</td>"
+        if [regexp {edtable2} $col] {
+          append celltxt "<td gtype=\"innerHTML\" gname=\"$row\" colname=\"$page_key\" contenteditable=\"true\" style=\"white-space:pre\">$col_data</td>"
+        } else {
+          append celltxt "<td gname=\"$row\" colname=\"$page_key\" contenteditable=\"true\" style=\"white-space:pre\">$col_data</td>"
+        }
       # ed:
       } elseif [regexp {ed:} $col] {
         regsub {ed:} $col {} col
