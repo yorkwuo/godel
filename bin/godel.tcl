@@ -1011,7 +1011,7 @@ proc ltbl_hit {dispcol} {
   set code $row
 
   set hit  [lvars $code hit]
-  set tick [lvars $code tick_status]
+  set tick [lvars $code tick]
   if {$tick eq "NA"} {
     set tick [lvars $code tick]
   }
@@ -1040,7 +1040,7 @@ proc ltbl_iname {dispcol} {
   upvar textalign textalign
 
   #set iname [lvars $row g:iname]
-  set tick [lvars $row tick_status]
+  set tick [lvars $row tick]
   if {$tick eq "NA"} {
     set tick [lvars $row tick]
   }
@@ -1169,11 +1169,11 @@ proc bton_tick {{name ""}} {
       puts $kout "set pagepath \[file dirname \[file dirname \[info script]]]"
       puts $kout "cd \$pagepath"
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
-      puts $kout "set tick_status \[lvars $row tick_status]"
-      puts $kout "if {\$tick_status eq \"\" | \$tick_status eq \"1\"} {"
-      puts $kout "  lsetvar $row tick_status 0"
+      puts $kout "set tick \[lvars $row tick]"
+      puts $kout "if {\$tick eq \"\" | \$tick eq \"1\"} {"
+      puts $kout "  lsetvar $row tick 0"
       puts $kout "} else {"
-      puts $kout "  lsetvar $row tick_status 1"
+      puts $kout "  lsetvar $row tick 1"
       puts $kout "}"
       puts $kout "exec godel_draw.tcl"
       puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
