@@ -1,5 +1,5 @@
 1:
-	gcc -fPIC -c tclreadline.c -I/usr/include/tcl
+	gcc -fPIC -c tclreadline.c -I/usr/include/tcl8.6
 2:
 	gcc -shared -o libtclreadline.so tclreadline.o -lreadline -lncurses -ltcl8.6
 

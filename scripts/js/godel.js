@@ -27,6 +27,10 @@ if(typeof(tables) != 'undefined' && tables != null){
       }
   }
 }
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
 // TableColSelect
 // {{{
 function TableColSelect (thisobj, iarray) {

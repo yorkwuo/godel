@@ -397,14 +397,41 @@ proc ghtm_ls_table {args} {
     set val(-listvar) na
   }
 # }}}
+  # -srcdirs
+# {{{
+  set opt(-srcdirs) 0
+  set idx [lsearch $args {-srcdirs}]
+  if {$idx != "-1"} {
+    set val(-srcdirs) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-srcdirs) 1
+  } else {
+    set val(-srcdirs) na
+  }
+# }}}
 
+  set ifiles ""
   if {$opt(-pattern)} {
-    set ifiles [lsort [glob -nocomplain -type f $pattern]]
+    if {$opt(-srcdirs)} {
+      foreach dir $val(-srcdirs) {
+        set ifiles [concat $ifiles [glob -nocomplain -type f $dir/$pattern]]
+      }
+      set ifiles [lsort $ifiles]
+    } else {
+      set ifiles [lsort [glob -nocomplain -type f $pattern]]
+    }
   } elseif {$opt(-listvar)} {
     set ifiles $varfiles
   }
   
   set count 1
+    puts $fout "<pre>"
+  if {$opt(-srcdirs)} {
+    foreach dir $val(-srcdirs) {
+      puts $fout $dir
+    }
+  }
+    puts $fout "</pre>"
   puts $fout "<table class=table1 id=$val(-id)>"
 
   puts $fout "<thead>"
@@ -438,6 +465,8 @@ proc ghtm_ls_table {args} {
         puts $fout "<td><a href=\"$ifile\" type=text/mp3>$fname</a></td>"
       } elseif [regexp {\.pdf} $ifile] {
         puts $fout "<td><a href=\"$ifile\" type=text/pdf>$fname</a></td>"
+      } elseif [regexp {\.svg} $ifile] {
+        puts $fout "<td><a href=\"$ifile\" type=text/svg>$fname</a></td>"
       } elseif [regexp {\.epub} $ifile] {
         puts $fout "<td><a href=\"$ifile\"              >$fname</a></td>"
       } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $ifile]}  {
@@ -2207,6 +2236,8 @@ proc ghtm_top_bar {args} {
   if {$opt(-filter)} {
     puts $fout "<input style=\"margin: 5px 0px\" type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\">"
   }
+
+
   puts $fout "
     <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
   "
@@ -2217,6 +2248,7 @@ proc ghtm_top_bar {args} {
   if {$opt(-save)} {
     puts $fout "<button id=\"save\" class=\"w3-bar-item w3-button w3-blue-gray\" style=\"margin: 0px 0px\">Save</button>"
   }
+    puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
   puts $fout "</div>"
 
   puts $fout {
