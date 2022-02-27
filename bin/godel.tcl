@@ -1,3 +1,46 @@
+
+# atable
+# {{{
+proc atable {args} {
+  upvar fout fout
+  upvar atrows atrows
+  upvar atcols atcols
+
+  set atfname [lindex $args 0]
+
+  source $atfname
+
+# Buttons
+  puts $fout "<button onclick=\"at_save('$atfname')\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
+  puts $fout "<a href=\".godel/draw.gtcl\" type=text/gtcl class=\"w3-bar-item w3-button w3-blue-gray\">Draw</a>"
+  puts $fout "<a href=\"$atfname\" type=text/txt>$atfname</a>"
+
+
+# Header
+  puts $fout "<table id=tbl class=table2>"
+  puts $fout "<tr>"
+  puts $fout "<th>id</th>"
+  foreach colname $atcols {
+    puts $fout "<th>$colname</th>"
+  }
+  puts $fout "</tr>"
+
+# Data
+  foreach row $atrows {
+    puts $fout "<tr>"
+    puts $fout "<td gname=\"$row\" colname=\"id\" contenteditable=\"true\" style=\"white-space:pre\">$row</td>"
+    foreach key $atcols {
+      if ![info exist atvar($row,$key)] {
+        set atvar($row,$key) ""
+      }
+      set value $atvar($row,$key)
+      puts $fout "<td gname=\"$row\" colname=\"$key\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
+    }
+    puts $fout "</tr>"
+  }
+  puts $fout "</table>"
+}
+# }}}
 # ltbl_linkurl
 # {{{
 proc ltbl_linkurl {key} {
@@ -311,14 +354,9 @@ proc gtcl_commit {} {
       set data [read $kin]
     close $kin
     
-    if [regexp {ginst} $data] {
-      set cols [split $data :]
-      set inst  [lindex $cols 1]
-      set gpage [lindex $cols 2]
-      set path  [lindex $cols 3]
-      regsub -all {\s} $path {} path
-      cd $path
-      exec tcsh -fc "$inst ."
+    if [file exist $env(GODEL_DOWNLOAD)/ginst.tcl] {
+      source      $env(GODEL_DOWNLOAD)/ginst.tcl
+      file delete $env(GODEL_DOWNLOAD)/ginst.tcl
       file delete $gtcl
 
     } else {
@@ -5739,18 +5777,20 @@ proc godel_puts {key} {
 proc godel_array_save {aname ofile} {
   upvar $aname arr
 
-  if ![file exist $ofile] {
-    puts "Error: godel_array_save error... $ofile not exist."
-    return
-  }
+  #if ![file exist $ofile] {
+  #  puts "Error: godel_array_save error... $ofile not exist."
+  #  return
+  #}
   #parray arr
   if {[file dirname $ofile] != "."} {
     file mkdir [file dirname $ofile]
   }
+
   set fout [open $ofile w]
     set keys [lsort [array name arr]]
     foreach key $keys {
       set newvalue [string map {\\ {\\}} $arr($key)]
+      regsub -all {\[} $key {\\[} key
       regsub -all {"}  $newvalue {\\"}  newvalue
       regsub -all {\$}  $newvalue {\\$}  newvalue
       regsub -all {\[} $newvalue {\\[}  newvalue
