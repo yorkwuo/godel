@@ -1,7 +1,44 @@
+proc css_hide {} {
+  upvar fout fout
 
+  set css_ctrl [lvars . css_ctrl]
+  puts $fout "<style>"
+  if {$css_ctrl eq "hide"} {
+    puts $fout "rect:hover {"
+# }
+  } else {
+    puts $fout "rect {"
+# }
+  }
+# {
+  puts $fout "  fill: red !important;"
+  puts $fout "  cursor: pointer;"
+  puts $fout "  opacity: 0.2 !important;"
+  puts $fout "}"
+  puts $fout ".hat {"
+  puts $fout "  background-color:black;"
+  puts $fout "}"
+  puts $fout ".hat:hover {"
+  puts $fout "  background-color:white;"
+  puts $fout "}"
+  puts $fout "</style>"
+
+}
 # atable
 # {{{
 proc atable {args} {
+  # -css (css class)
+# {{{
+  set opt(-css) 0
+  set idx [lsearch $args {-css}]
+  if {$idx != "-1"} {
+    set css_class [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-css) 1
+  } else {
+    set css_class table1
+  }
+# }}}
   upvar fout fout
   upvar atrows atrows
   upvar atcols atcols
@@ -17,24 +54,54 @@ proc atable {args} {
 
 
 # Header
-  puts $fout "<table id=tbl class=table2>"
+  puts $fout "<table id=tbl class=$css_class>"
+  puts $fout "<thead>"
   puts $fout "<tr>"
   puts $fout "<th>id</th>"
-  foreach colname $atcols {
-    puts $fout "<th>$colname</th>"
+
+  foreach col $atcols {
+    set colname ""
+    if [regexp {;} $col] {
+      set cs [split $col ";"]
+      set colname [lindex $cs 1]
+      set page_key [lindex $cs 0]
+      regsub {edtable:} $page_key {} page_key
+
+      if {$colname == ""} {
+        puts $fout "<th></th>"
+      } else {
+        puts $fout "<th colname=\"$page_key\">$colname</th>"
+      }
+    } else {
+      set colname $col
+      puts $fout "<th colname=\"$colname\">$colname</th>"
+    }
   }
   puts $fout "</tr>"
+  puts $fout "</thead>"
 
 # Data
   foreach row $atrows {
     puts $fout "<tr>"
-    puts $fout "<td gname=\"$row\" colname=\"id\" contenteditable=\"true\" style=\"white-space:pre\">$row</td>"
-    foreach key $atcols {
-      if ![info exist atvar($row,$key)] {
-        set atvar($row,$key) ""
+    puts $fout "<td gname=\"$row\" colname=\"id\" style=\"white-space:pre\">$row</td>"
+    foreach col $atcols {
+      set cs [split $col ";"]
+      set col [lindex $cs 0]
+      regsub {\s+$} $col {} col
+
+      set celltxt {}
+      if [regexp {proc:} $col] {
+        regsub {proc:} $col {} col
+        set procname $col
+        eval $procname
+      } else {
+        if ![info exist atvar($row,$col)] {
+          set atvar($row,$col) ""
+        }
+        set value $atvar($row,$col)
+        append celltxt "<td gname=\"$row\" colname=\"$col\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
       }
-      set value $atvar($row,$key)
-      puts $fout "<td gname=\"$row\" colname=\"$key\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
+      puts $fout $celltxt
     }
     puts $fout "</tr>"
   }
@@ -5246,7 +5313,6 @@ proc godel_draw {{target_path NA}} {
   }
 # }}}
 
-
   package require gmarkdown
   upvar vars vars
   global env
@@ -5334,9 +5400,6 @@ proc godel_draw {{target_path NA}} {
     puts $fout "<title>$vars(g:pagename)</title>"
   }
 
-# Hardcoded w3.css in .index.htm so that you have all in one file.
-# {{{
-## }}}
 
   if {$env(GODEL_ALONE)} {
 # Standalone w3.css
