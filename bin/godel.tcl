@@ -1,3 +1,113 @@
+proc css_hide {} {
+  upvar fout fout
+
+  set css_ctrl [lvars . css_ctrl]
+  puts $fout "<style>"
+  if {$css_ctrl eq "hide"} {
+    puts $fout "rect:hover {"
+# }
+  } else {
+    puts $fout "rect {"
+# }
+  }
+# {
+  puts $fout "  fill: red !important;"
+  puts $fout "  cursor: pointer;"
+  puts $fout "  opacity: 0.2 !important;"
+  puts $fout "}"
+  puts $fout ".hat {"
+  puts $fout "  background-color:black;"
+  puts $fout "}"
+  puts $fout ".hat:hover {"
+  puts $fout "  background-color:white;"
+  puts $fout "}"
+  puts $fout "</style>"
+
+}
+# atable
+# {{{
+proc atable {args} {
+  # -css (css class)
+# {{{
+  set opt(-css) 0
+  set idx [lsearch $args {-css}]
+  if {$idx != "-1"} {
+    set css_class [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-css) 1
+  } else {
+    set css_class table1
+  }
+# }}}
+  upvar fout fout
+  upvar atrows atrows
+  upvar atcols atcols
+
+  set atfname [lindex $args 0]
+
+  source $atfname
+
+# Buttons
+  puts $fout "<button onclick=\"at_save('$atfname')\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
+  puts $fout "<a href=\".godel/draw.gtcl\" type=text/gtcl class=\"w3-bar-item w3-button w3-blue-gray\">Draw</a>"
+  puts $fout "<a href=\"$atfname\" type=text/txt>$atfname</a>"
+
+
+# Header
+  puts $fout "<table id=tbl class=$css_class>"
+  puts $fout "<thead>"
+  puts $fout "<tr>"
+  puts $fout "<th>id</th>"
+
+  foreach col $atcols {
+    set colname ""
+    if [regexp {;} $col] {
+      set cs [split $col ";"]
+      set colname [lindex $cs 1]
+      set page_key [lindex $cs 0]
+      regsub {edtable:} $page_key {} page_key
+
+      if {$colname == ""} {
+        puts $fout "<th></th>"
+      } else {
+        puts $fout "<th colname=\"$page_key\">$colname</th>"
+      }
+    } else {
+      set colname $col
+      puts $fout "<th colname=\"$colname\">$colname</th>"
+    }
+  }
+  puts $fout "</tr>"
+  puts $fout "</thead>"
+
+# Data
+  foreach row $atrows {
+    puts $fout "<tr>"
+    puts $fout "<td gname=\"$row\" colname=\"id\" style=\"white-space:pre\">$row</td>"
+    foreach col $atcols {
+      set cs [split $col ";"]
+      set col [lindex $cs 0]
+      regsub {\s+$} $col {} col
+
+      set celltxt {}
+      if [regexp {proc:} $col] {
+        regsub {proc:} $col {} col
+        set procname $col
+        eval $procname
+      } else {
+        if ![info exist atvar($row,$col)] {
+          set atvar($row,$col) ""
+        }
+        set value $atvar($row,$col)
+        append celltxt "<td gname=\"$row\" colname=\"$col\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
+      }
+      puts $fout $celltxt
+    }
+    puts $fout "</tr>"
+  }
+  puts $fout "</table>"
+}
+# }}}
 # ltbl_linkurl
 # {{{
 proc ltbl_linkurl {key} {
@@ -311,14 +421,9 @@ proc gtcl_commit {} {
       set data [read $kin]
     close $kin
     
-    if [regexp {ginst} $data] {
-      set cols [split $data :]
-      set inst  [lindex $cols 1]
-      set gpage [lindex $cols 2]
-      set path  [lindex $cols 3]
-      regsub -all {\s} $path {} path
-      cd $path
-      exec tcsh -fc "$inst ."
+    if [file exist $env(GODEL_DOWNLOAD)/ginst.tcl] {
+      source      $env(GODEL_DOWNLOAD)/ginst.tcl
+      file delete $env(GODEL_DOWNLOAD)/ginst.tcl
       file delete $gtcl
 
     } else {
@@ -5208,7 +5313,6 @@ proc godel_draw {{target_path NA}} {
   }
 # }}}
 
-
   package require gmarkdown
   upvar vars vars
   global env
@@ -5296,9 +5400,6 @@ proc godel_draw {{target_path NA}} {
     puts $fout "<title>$vars(g:pagename)</title>"
   }
 
-# Hardcoded w3.css in .index.htm so that you have all in one file.
-# {{{
-## }}}
 
   if {$env(GODEL_ALONE)} {
 # Standalone w3.css
@@ -5739,18 +5840,20 @@ proc godel_puts {key} {
 proc godel_array_save {aname ofile} {
   upvar $aname arr
 
-  if ![file exist $ofile] {
-    puts "Error: godel_array_save error... $ofile not exist."
-    return
-  }
+  #if ![file exist $ofile] {
+  #  puts "Error: godel_array_save error... $ofile not exist."
+  #  return
+  #}
   #parray arr
   if {[file dirname $ofile] != "."} {
     file mkdir [file dirname $ofile]
   }
+
   set fout [open $ofile w]
     set keys [lsort [array name arr]]
     foreach key $keys {
       set newvalue [string map {\\ {\\}} $arr($key)]
+      regsub -all {\[} $key {\\[} key
       regsub -all {"}  $newvalue {\\"}  newvalue
       regsub -all {\$}  $newvalue {\\$}  newvalue
       regsub -all {\[} $newvalue {\\[}  newvalue
