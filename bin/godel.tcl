@@ -3651,7 +3651,7 @@ proc local_table {name args} {
   puts $fout "<thead>"
   puts $fout "<tr>"
   if {$opt(-serial)} {
-    puts $fout "<th>Num</th>"
+    puts $fout "<th colname=\"num\">Num</th>"
   }
   foreach col $columns {
     set colname ""
@@ -3721,7 +3721,7 @@ proc local_table {name args} {
     puts $fout "<tr>"
 
     if {$opt(-serial)} {
-      puts $fout "<td><a href=\"$row/.index.htm\">$serial</a></td>"
+      puts $fout "<td colname=\"num\"><a href=\"$row/.index.htm\">$serial</a></td>"
       #puts $fout "<td>$serial</td>"
     }
     #----------------------

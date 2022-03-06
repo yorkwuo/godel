@@ -16,6 +16,8 @@ set ::product_build_date 2017.12.16
 set ::synthetic_library ""
 set ::do_redirect 0
 
+proc set_clock_group {args} {procname}
+proc set_clock_transition {args} {procname}
 proc libin {args} {procname}
 proc lefin {args} {procname}
 proc check_lef_quality {args} {procname}
