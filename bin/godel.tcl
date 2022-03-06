@@ -956,6 +956,59 @@ proc bton_set {args} {
   
 }
 # }}}
+# bton_onoff
+# {{{
+proc bton_onoff {args} {
+  upvar fout fout
+  # -key 
+# {{{
+  set opt(-key) 0
+  set idx [lsearch $args {-key}]
+  if {$idx != "-1"} {
+    set key [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-key) 1
+  }
+# }}}
+  # -name 
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  }
+# }}}
+
+  set cur_value [lvars . $key]
+  
+  set exefile ".onoff_$name.gtcl"
+
+      if {$cur_value eq "1"} {
+        puts $fout "<a href=$exefile class=\"w3-btn w3-green\" type=text/gtcl><b>$name</b></a>"
+      } else {
+        puts $fout "<a href=$exefile class=\"w3-btn w3-light-grey\" type=text/gtcl><b>$name</b></a>"
+      }
+
+  if ![file exist $exefile] {
+    set kout [open "$exefile" w]
+      puts $kout "set pagepath \[file dirname \[info script]]"
+      puts $kout "cd \$pagepath"
+      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
+      puts $kout "set cur_value \[lvars . $key]"
+      puts $kout "if {\$cur_value eq \"1\"} {"
+      puts $kout "  lsetvar . $key \"0\""
+      puts $kout "} else {"
+      puts $kout "  lsetvar . $key \"1\""
+      puts $kout "}"
+      puts $kout "godel_draw"
+      puts $kout "catch {exec xdotool search --name \"Mozilla\" key ctrl+r}"
+    close $kout
+  }
+  
+}
+# }}}
 # godel_csv
 # {{{
 proc godel_csv {args} {
