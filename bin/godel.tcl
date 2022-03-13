@@ -2407,6 +2407,7 @@ proc ghtm_top_bar {args} {
     puts $fout "<button id=\"save\" class=\"w3-bar-item w3-button w3-blue-gray\" style=\"margin: 0px 0px\">Save</button>"
   }
     puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
+    puts $fout {<a href=".godel/tools.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Tools</a>}
   puts $fout "</div>"
 
   puts $fout {
@@ -2450,11 +2451,17 @@ proc ghtm_top_bar {args} {
 
   }
 
-  if [file exist .godel/.qn.md] {
-    gmd -f .godel/.qn.md
-  #} else {
-    #set kout [open ".godel/.qn.md" w]
-    #close $kout
+  # York: not sure if I want this feature
+  #if [file exist .godel/.qn.md] {
+  #  gmd -f .godel/.qn.md
+  ##} else {
+  #  #set kout [open ".godel/.qn.md" w]
+  #  #close $kout
+  #}
+  if {[lvars . tools_display] eq "1"} {
+    if [file exist .tools.tcl] {
+      source .tools.tcl
+    }
   }
 }
 # }}}
@@ -5401,7 +5408,7 @@ proc godel_draw {{target_path NA}} {
 
 # create draw.gtcl
 # {{{
-  #if ![file exist .godel/draw.gtcl] {
+  if ![file exist .godel/draw.gtcl] {
     set kout [open .godel/draw.gtcl w]
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
       puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
@@ -5414,8 +5421,26 @@ proc godel_draw {{target_path NA}} {
       puts $kout "catch {exec xdotool search --name \"\$pattern\" key ctrl+r}"
 
     close $kout
-  #}
+  }
 # }}}
+# create .godel/tools.gtcl
+  if ![file exist .godel/tools.gtcl] {
+    set kout [open .godel/tools.gtcl w]
+      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
+      puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
+      puts $kout "cd \$pagepath"
+      puts $kout ""
+      puts $kout "set cur_value \[lvars . tools_display]"
+      puts $kout "if {\$cur_value eq \"1\"} {"
+      puts $kout "  lsetvar . tools_display \"0\""
+      puts $kout "} else {"
+      puts $kout "  lsetvar . tools_display \"1\""
+      puts $kout "}"
+      puts $kout ""
+      puts $kout "godel_draw"
+      puts $kout "catch {exec xdotool search --name \"Mozilla\" key ctrl+r}"
+    close $kout
+  }
 # create open.gtcl
   if ![file exist .godel/open.gtcl] {
     set kout [open .godel/open.gtcl w]
