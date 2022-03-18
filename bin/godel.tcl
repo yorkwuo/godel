@@ -3442,7 +3442,6 @@ proc lvars {args} {
 proc local_table {name args} {
   global fout
   upvar vars vars
-  upvar ltblrows ltblrows
 
   # -pattern
 # {{{
@@ -3605,7 +3604,7 @@ proc local_table {name args} {
   # create rows
   # {{{
   set rows ""
-  if ![info exist ltblrows] {
+  if ![info exist ::ltblrows] {
     if {$opt(-f)} {
       if [file exist $listfile] {
         #set rows [read_as_list $listfile]
@@ -3634,7 +3633,7 @@ proc local_table {name args} {
       }
     }
   } else {
-    set rows $ltblrows
+    set rows $::ltblrows
   }
   # }}}
   #
