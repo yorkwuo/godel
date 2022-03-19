@@ -43,13 +43,33 @@ proc atable {args} {
   upvar atrows atrows
   upvar atcols atcols
 
+
   set atfname [lindex $args 0]
 
   source $atfname
 
+# atcols
+  set ns ""
+  if ![info exist atcols] {
+    foreach n [array names atvar] {
+      regsub {^\S+,} $n {} n
+      lappend ns $n
+    }
+    set atcols [lsort -unique $ns]
+  }
+# atrows
+  set ns ""
+  if ![info exist atrows] {
+    foreach n [array names atvar] {
+      regsub {,.*$} $n {} n
+      lappend ns $n
+    }
+    set atrows [lsort -unique $ns]
+  }
+
 # Buttons
-  puts $fout "<button onclick=\"at_save('$atfname')\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
   puts $fout "<a href=\".godel/draw.gtcl\" type=text/gtcl class=\"w3-bar-item w3-button w3-blue-gray\">Draw</a>"
+  puts $fout "<button onclick=\"at_save('$atfname')\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
   puts $fout "<a href=\"$atfname\" type=text/txt>$atfname</a>"
 
 
@@ -2018,6 +2038,91 @@ proc ghtm_set_value {key value} {
 proc ghtm_open_folder {dirpath} {
   upvar fout fout
   puts $fout "<a class=\"w3-button w3-round w3-pale-blue\" onclick=\"open_folder('$dirpath')\">folder</a>"
+}
+# }}}
+proc at_allrows {aname} {
+  upvar $aname atvar
+    foreach n [array names atvar] {
+      regsub {,.*$} $n {} n
+      lappend ns $n
+    }
+  return [lsort -unique $ns]
+}
+# at_keyword_button
+# {{{
+proc at_keyword_button {args} {
+  upvar fout fout
+  upvar atvar atvar
+
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name NA
+  }
+# }}}
+  # -bgcolor
+# {{{
+  set opt(-bgcolor) 0
+  set idx [lsearch $args {-bgcolor}]
+  if {$idx != "-1"} {
+    set val(-bgcolor) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-bgcolor) 1
+  } else {
+    set val(-bgcolor) pale-blue
+  }
+# }}}
+  # -key
+# {{{
+  set opt(-key) 0
+  set idx [lsearch $args {-key}]
+  if {$idx != "-1"} {
+    set val(-key) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-key) 1
+  } else {
+    set val(-key) nan
+  }
+# }}}
+
+  set tablename [lindex $args 0]
+  set column    [lindex $args 1]
+  set keyword   [lindex $args 2]
+
+  set count 0
+  if {$opt(-key)} {
+    set rows [at_allrows atvar]
+
+    foreach row $rows {
+      set value $atvar($row,$val(-key))
+      if [regexp -nocase $keyword $value] {
+        incr count
+      }
+    }
+    #set total "\($count\)"
+    set total " $count"
+  } else {
+    set dirs [glob -nocomplain -type d *]
+    set matches [lsearch -all -inline -regexp $dirs $keyword]
+    set count [llength $matches]
+    set total " $count"
+  }
+
+  if {$opt(-name)} {
+    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${name}$total</button>"
+  } else {
+    if {$opt(-key)} {
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}$total</button>"
+    } else {
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}</button>"
+    }
+  }
 }
 # }}}
 # ghtm_keyword_button
