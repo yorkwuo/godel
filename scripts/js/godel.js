@@ -825,6 +825,7 @@ function at_save(atfname) {
               if (value.length == '1') {
                 var cmd = "set atvar("+gname+","+colname+") "+ '""' + "\n";
               } else {
+                value = value.replace(/\n$/,'');
                 var cmd = "set atvar("+gname+","+colname+") "+'"'+value+"\"\n";
               }
 

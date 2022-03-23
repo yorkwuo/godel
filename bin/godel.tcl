@@ -1,3 +1,129 @@
+# ltable_exe
+# {{{
+proc ltable_exe {name exefile} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set runfile "$row/$exefile"
+
+  set celltxt "<td><a href=\"$runfile\" type=text/gtcl>$name</a></td>"
+}
+# }}}
+# ltable_edfile
+# {{{
+proc ltable_edfile {vname} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set linkopen [lvars . linkopen]
+  set value    [lvars $row $vname]
+
+  if {$linkopen eq "1"} {
+    if {$value eq "NA" || $value eq ""} {
+      set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\"></td>"
+    } else {
+      if [file exist $row/$value] {
+        set celltxt "<td><a href=\"$row/$value\" type=text/txt>$value</a></td>"
+      } elseif [file exist $value] {
+        set celltxt "<td><a href=\"$value\" type=text/txt>$value</a></td>"
+      } else {
+        set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\">$value</td>"
+      }
+    }
+  } else {
+    if {$value eq "NA"} {
+      set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\"></td>"
+    } else {
+      set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\">$value</td>"
+    }
+  }
+}
+# }}}
+# at_filter
+# {{{
+proc at_filter {key filter_value} {
+  upvar atvar atvar
+  upvar atrows atrows
+
+  set trows ""
+
+  foreach row $atrows {
+    if {$key eq "id"} {
+      set value $row
+      if [regexp "$filter_value" $value] {
+        lappend trows $row
+      }
+    } else {
+      if [info exist atvar($row,$key)] {
+        set value $atvar($row,$key)
+        if [regexp "$filter_value" $value] {
+          lappend trows $row
+        }
+      }
+    }
+  }
+  set atrows $trows
+}
+# }}}
+# at_cover
+# {{{
+proc at_cover {args} {
+  upvar atvar atvar
+  upvar atrows atrows
+  # -col
+# {{{
+  set opt(-col) 0
+  set idx [lsearch $args {-col}]
+  if {$idx != "-1"} {
+    set val(-col) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-col) 1
+  } else {
+    set pattern *
+  }
+# }}}
+  # -pattern
+# {{{
+  set opt(-pattern) 0
+  set idx [lsearch $args {-pattern}]
+  if {$idx != "-1"} {
+    set val(-pattern) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-pattern) 1
+  } else {
+    set pattern *
+  }
+# }}}
+
+  set trows ""
+  set count 0
+    if {$val(-col) eq "id"} {
+      foreach row $atrows {
+        set value $row
+        if [regexp "$val(-pattern)" $value] {
+          incr count
+        } else {
+          lappend trows $row
+        }
+      }
+    } else {
+      foreach row $atrows {
+        if [info exist atvar($row,$val(-col))] {
+          set value $atvar($row,$val(-col))
+          if [regexp "$val(-pattern)" $value] {
+            incr count
+          } else {
+            lappend trows $row
+          }
+        }
+      }
+    }
+  set atrows $trows
+  lsetvar . $val(-pattern),count $count
+}
+# }}}
+# css_hide
+# {{{
 proc css_hide {} {
   upvar fout fout
 
@@ -24,9 +150,11 @@ proc css_hide {} {
   puts $fout "</style>"
 
 }
+# }}}
 # atable
 # {{{
 proc atable {args} {
+  upvar env env
   # -css (css class)
 # {{{
   set opt(-css) 0
@@ -37,6 +165,15 @@ proc atable {args} {
     set opt(-css) 1
   } else {
     set css_class table1
+  }
+# }}}
+  # -dataTables
+# {{{
+  set opt(-dataTables) 0
+  set idx [lsearch $args {-dataTables}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-dataTables) 1
   }
 # }}}
   upvar fout fout
@@ -68,6 +205,7 @@ proc atable {args} {
   }
 
 # Buttons
+  puts $fout "Total: [llength $atrows]"
   puts $fout "<a href=\".godel/draw.gtcl\" type=text/gtcl class=\"w3-bar-item w3-button w3-blue-gray\">Draw</a>"
   puts $fout "<button onclick=\"at_save('$atfname')\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
   puts $fout "<a href=\"$atfname\" type=text/txt>$atfname</a>"
@@ -77,6 +215,7 @@ proc atable {args} {
   puts $fout "<table id=tbl class=$css_class>"
   puts $fout "<thead>"
   puts $fout "<tr>"
+  puts $fout "<th>Num</th>"
   puts $fout "<th>id</th>"
 
   foreach col $atcols {
@@ -101,8 +240,10 @@ proc atable {args} {
   puts $fout "</thead>"
 
 # Data
+  set num 1
   foreach row $atrows {
     puts $fout "<tr>"
+    puts $fout "<td>$num</td>"
     puts $fout "<td gname=\"$row\" colname=\"id\" style=\"white-space:pre\">$row</td>"
     foreach col $atcols {
       set cs [split $col ";"]
@@ -124,8 +265,21 @@ proc atable {args} {
       puts $fout $celltxt
     }
     puts $fout "</tr>"
+    incr num
   }
   puts $fout "</table>"
+
+  if {$opt(-dataTables) eq "1"} {
+          puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+          puts $fout "<script>"
+          puts $fout "    \$(document).ready(function() {"
+          puts $fout "    \$('#tbl').DataTable({"
+          puts $fout "       \"paging\": false,"
+          puts $fout "       \"info\": false,"
+          puts $fout "    });"
+          puts $fout "} );"
+          puts $fout "</script>"
+  }
 }
 # }}}
 # ltbl_linkurl
@@ -1000,15 +1154,44 @@ proc bton_onoff {args} {
     set opt(-name) 1
   }
 # }}}
+  # -value 
+# {{{
+  set opt(-value) 0
+  set idx [lsearch $args {-value}]
+  if {$idx != "-1"} {
+    set val(-value) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-value) 1
+  }
+# }}}
+  # -count
+# {{{
+  set idx [lsearch $args {-count}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-count) 1
+  } else {
+    set opt(-count) 0
+  }
+# }}}
 
   set cur_value [lvars . $key]
+  set count     [lvars . $key,count]
   
   set exefile ".onoff_$name.gtcl"
 
       if {$cur_value eq "1"} {
-        puts $fout "<a href=$exefile class=\"w3-btn w3-green\" type=text/gtcl><b>$name</b></a>"
+        if {$opt(-count) eq "1"} {
+          puts $fout "<a href=$exefile class=\"w3-btn w3-green\" type=text/gtcl><b>$name ($count)</b></a>"
+        } else {
+          puts $fout "<a href=$exefile class=\"w3-btn w3-green\" type=text/gtcl><b>$name</b></a>"
+        }
       } else {
-        puts $fout "<a href=$exefile class=\"w3-btn w3-light-grey\" type=text/gtcl><b>$name</b></a>"
+        if {$opt(-count) eq "1"} {
+          puts $fout "<a href=$exefile class=\"w3-btn w3-light-grey\" type=text/gtcl><b>$name ($count)</b></a>"
+        } else {
+          puts $fout "<a href=$exefile class=\"w3-btn w3-light-grey\" type=text/gtcl><b>$name</b></a>"
+        }
       }
 
   if ![file exist $exefile] {
@@ -1017,6 +1200,9 @@ proc bton_onoff {args} {
       puts $kout "cd \$pagepath"
       puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
       puts $kout "set cur_value \[lvars . $key]"
+      if {$opt(-value) eq "1"} {
+        puts $kout "lsetvar . $key,value \"$val(-value)\""
+      }
       puts $kout "if {\$cur_value eq \"1\"} {"
       puts $kout "  lsetvar . $key \"0\""
       puts $kout "} else {"
@@ -2040,8 +2226,8 @@ proc ghtm_open_folder {dirpath} {
   puts $fout "<a class=\"w3-button w3-round w3-pale-blue\" onclick=\"open_folder('$dirpath')\">folder</a>"
 }
 # }}}
-proc at_allrows {aname} {
-  upvar $aname atvar
+proc at_allrows {} {
+  upvar atvar atvar
     foreach n [array names atvar] {
       regsub {,.*$} $n {} n
       lappend ns $n
@@ -2097,7 +2283,7 @@ proc at_keyword_button {args} {
 
   set count 0
   if {$opt(-key)} {
-    set rows [at_allrows atvar]
+    set rows [at_allrows]
 
     foreach row $rows {
       set value $atvar($row,$val(-key))
@@ -5921,6 +6107,7 @@ proc oget {args} {
       lsetdyvar $asname srcpath  $where/$objname
       lsetvar $asname g:iname    $asname
       lsetvar $asname g:pagename $asname
+      lsetvar $asname runpath    [pwd]/$asname
     }
   }
 }
