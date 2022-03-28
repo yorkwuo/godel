@@ -1,3 +1,67 @@
+# at_fdel_status
+# {{{
+proc at_fdel_status {} {
+  upvar celltxt celltxt
+  upvar row row
+  upvar atvar atvar
+  
+  if [info exist atvar($row,fdel)] {
+    if {$atvar($row,fdel) eq "1"} {
+      set celltxt "<td bgcolor=pink></td>"
+    } else {
+      set celltxt "<td></td>"
+    }
+  } else {
+    set celltxt "<td></td>"
+  }
+}
+# }}}
+# at_fdel
+# {{{
+proc at_fdel {} {
+  upvar celltxt celltxt
+  upvar row row
+  upvar atvar atvar
+
+  set celltxt "<td><button onclick=\"at_fdel('at.tcl','$row')\" class=\"w3-button w3-blue-gray\">fdel</button></td>"
+}
+# }}}
+# at_delete
+#j {{{
+proc at_delete {} {
+  upvar celltxt celltxt
+  upvar row row
+  upvar atvar atvar
+
+  set celltxt "<td><button onclick=\"at_delete('at.tcl','$row')\" class=\"w3-button w3-blue-gray\">del</button></td>"
+}
+# }}}
+# at_ebook
+# {{{
+proc at_ebook {} {
+  upvar celltxt celltxt
+  upvar row row
+  upvar atvar atvar
+
+  if [regexp {\.epub} $atvar($row,path)] {
+    set exe "ebook-viewer"
+  } else {
+    set exe "okular"
+  }
+
+  set celltxt "<td><button onclick=\"at_ebook('at.tcl','$exe','$row')\" class=\"w3-button w3-blue-gray\">open</button></td>"
+}
+# }}}
+# at_mpv
+# {{{
+proc at_mpv {} {
+  upvar celltxt celltxt
+  upvar row row
+  upvar atvar atvar
+
+  set celltxt "<td><button onclick=\"at_mpv('at.tcl','$row')\" class=\"w3-button w3-blue-gray\">mpv</button></td>"
+}
+# }}}
 # ltable_exe
 # {{{
 proc ltable_exe {name exefile} {
@@ -206,7 +270,7 @@ proc atable {args} {
 
 # Buttons
   puts $fout "Total: [llength $atrows]"
-  puts $fout "<a href=\".godel/draw.gtcl\" type=text/gtcl class=\"w3-bar-item w3-button w3-blue-gray\">Draw</a>"
+  #puts $fout "<a href=\".godel/draw.gtcl\" type=text/gtcl class=\"w3-bar-item w3-button w3-blue-gray\">Draw</a>"
   puts $fout "<button onclick=\"at_save('$atfname')\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
   puts $fout "<a href=\"$atfname\" type=text/txt>$atfname</a>"
 
