@@ -1,3 +1,34 @@
+# openfile
+# {{{
+proc openfile {fpath} {
+  if [regexp {\.pdf} $fpath] {
+    catch {exec okular $fpath}
+  } elseif [regexp {\.pptx} $fpath] {
+    regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
+    regsub -all {\/}         $fpath {\\\\}   fpath
+    catch {exec /mnt/c/Program\ Files\ \(x86\)/Microsoft\ Office/root/Office16/POWERPNT.EXE  $fpath &}
+  } elseif [regexp {\.xlsx} $fpath] {
+    regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
+    regsub -all {\/}         $fpath {\\\\}   fpath
+    catch {exec /mnt/c/Program\ Files\ \(x86\)/Microsoft\ Office/root/Office16/EXCEL.EXE  $fpath &}
+  } elseif [regexp {\.docx} $fpath] {
+    regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
+    regsub -all {\/}         $fpath {\\\\}   fpath
+    catch {exec /mnt/c/Program\ Files\ \(x86\)/Microsoft\ Office/root/Office16/WINWORD.EXE  $fpath &}
+  } elseif [regexp {\.vsdx} $fpath] {
+    #regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
+    #regsub -all {\/}         $fpath {\\\\}   fpath
+    #puts $fpath
+    #catch {exec /mnt/c/Program\ Files\ \(x86\)/Internet\ Explorer/iexplore.exe $fpath}
+    set orig [pwd]
+    cd [file dirname $fpath]
+    catch {exec /mnt/c/Windows/explorer.exe .}
+    cd $orig
+  } else {
+    puts "Error: Unkonwn filetype... $fpath"
+  }
+}
+# }}}
 # at_fdel_status
 # {{{
 proc at_fdel_status {} {
@@ -36,20 +67,14 @@ proc at_delete {} {
   set celltxt "<td><button onclick=\"at_delete('at.tcl','$row')\" class=\"w3-button w3-blue-gray\">del</button></td>"
 }
 # }}}
-# at_ebook
+# at_open
 # {{{
-proc at_ebook {} {
+proc at_open {} {
   upvar celltxt celltxt
   upvar row row
   upvar atvar atvar
 
-  if [regexp {\.epub} $atvar($row,path)] {
-    set exe "ebook-viewer"
-  } else {
-    set exe "okular"
-  }
-
-  set celltxt "<td><button onclick=\"at_ebook('at.tcl','$exe','$row')\" class=\"w3-button w3-blue-gray\">open</button></td>"
+  set celltxt "<td><button onclick=\"at_open('at.tcl','$row')\" class=\"w3-button w3-blue-gray\">open</button></td>"
 }
 # }}}
 # at_mpv

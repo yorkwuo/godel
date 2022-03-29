@@ -1058,9 +1058,9 @@ function at_fdel (atfname,id) {
     document.getElementById('iddraw').click();
 }
 // }}}
-// at_ebook
+// at_open
 // {{{
-function at_ebook (atfname,exe,id) {
+function at_open (atfname,id) {
 
     var header = "#!/usr/bin/tclsh\n";
     header = header + "source $env(GODEL_ROOT)/bin/godel.tcl\n";
@@ -1074,7 +1074,8 @@ function at_ebook (atfname,exe,id) {
     footer = footer + "  set atvar(" + id + ",Vs) 1\n";
     footer = footer + "}\n";
     footer = footer + "set atvar(" + id + ",last) [clock format [clock seconds] -format {%Y-%m-%d}]\n";
-    footer = footer + "catch {exec " + exe + " $atvar(" + id + ",path) &}\n";
+    //footer = footer + "catch {exec " + exe + " $atvar(" + id + ",path) &}\n";
+    footer = footer + "openfile $atvar(" + id + ",path)\n";
     footer = footer + "godel_array_save atvar " + atfname + "\n";
 
 // Save gtcl.tcl
