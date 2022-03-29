@@ -1,8 +1,15 @@
 # openfile
 # {{{
 proc openfile {fpath} {
+  global env
   if [regexp {\.pdf} $fpath] {
-    catch {exec okular $fpath}
+    if {$env(GODEL_WSL) eq "1"} {
+      regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
+      regsub -all {\/}         $fpath {\\\\}   fpath
+      catch {exec /mnt/c/Program\ Files\ \(x86\)/Foxit\ Software/Foxit\ PDF\ Reader/FoxitPDFReader.exe $fpath &}
+    } else {
+      catch {exec okular $fpath&}
+    }
   } elseif [regexp {\.pptx} $fpath] {
     regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
     regsub -all {\/}         $fpath {\\\\}   fpath
@@ -19,12 +26,16 @@ proc openfile {fpath} {
     #regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
     #regsub -all {\/}         $fpath {\\\\}   fpath
     #puts $fpath
-    #catch {exec /mnt/c/Program\ Files\ \(x86\)/Internet\ Explorer/iexplore.exe $fpath}
+    #catch {exec /mnt/c/Program\ Files\ \(x86\)/Internet\ Explorer/iexplore.exe $fpath &}
     set orig [pwd]
     cd [file dirname $fpath]
-    catch {exec /mnt/c/Windows/explorer.exe .}
+    catch {exec /mnt/c/Windows/explorer.exe . &}
     cd $orig
   } else {
+    set orig [pwd]
+    cd [file dirname $fpath]
+    catch {exec /mnt/c/Windows/explorer.exe . &}
+    cd $orig
     puts "Error: Unkonwn filetype... $fpath"
   }
 }
