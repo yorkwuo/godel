@@ -8,8 +8,14 @@ proc openfile {fpath} {
       regsub -all {\/}         $fpath {\\\\}   fpath
       catch {exec /mnt/c/Program\ Files\ \(x86\)/Foxit\ Software/Foxit\ PDF\ Reader/FoxitPDFReader.exe $fpath &}
     } else {
-      catch {exec okular $fpath&}
+      catch {exec okular $fpath &}
     }
+  } elseif [regexp {\.epub} $fpath] {
+      catch {exec ebook-viewer $fpath &}
+  } elseif [regexp {\.mobi} $fpath] {
+      catch {exec ebook-viewer $fpath &}
+  } elseif [regexp {\.djvu} $fpath] {
+      catch {exec okular $fpath &}
   } elseif [regexp {\.pptx} $fpath] {
     regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
     regsub -all {\/}         $fpath {\\\\}   fpath
