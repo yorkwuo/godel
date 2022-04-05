@@ -1,3 +1,32 @@
+# asave
+# {{{
+proc asave {aname ofile newname} {
+  upvar $aname arr
+
+  #if ![file exist $ofile] {
+  #  puts "Error: godel_array_save error... $ofile not exist."
+  #  return
+  #}
+  #parray arr
+  if {[file dirname $ofile] != "."} {
+    file mkdir [file dirname $ofile]
+  }
+
+  set fout [open $ofile w]
+    set keys [lsort [array name arr]]
+    foreach key $keys {
+      set newvalue [string map {\\ {\\}} $arr($key)]
+      regsub -all {\[} $key {\\[} key
+      regsub -all {"}  $newvalue {\\"}  newvalue
+      regsub -all {\$}  $newvalue {\\$}  newvalue
+      regsub -all {\[} $newvalue {\\[}  newvalue
+      regsub -all {\]} $newvalue {\\]}  newvalue
+      puts $fout [format "set %-40s \"%s\"" [set newname]($key) $newvalue]
+    }
+  close $fout
+
+}
+# }}}
 # openfile
 # {{{
 proc openfile {fpath} {
@@ -282,6 +311,15 @@ proc atable {args} {
     set opt(-dataTables) 1
   }
 # }}}
+  # -noshow
+# {{{
+  set opt(-noshow) 0
+  set idx [lsearch $args {-noshow}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-noshow) 1
+  }
+# }}}
   upvar fout fout
   upvar atrows atrows
   upvar atcols atcols
@@ -311,17 +349,22 @@ proc atable {args} {
   }
 
 # Buttons
+if {$opt(-noshow) eq "1"} {
+} else {
   puts $fout "Total: [llength $atrows]"
   #puts $fout "<a href=\".godel/draw.gtcl\" type=text/gtcl class=\"w3-bar-item w3-button w3-blue-gray\">Draw</a>"
   puts $fout "<button onclick=\"at_save('$atfname')\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
   puts $fout "<a href=\"$atfname\" type=text/txt>$atfname</a>"
-
+  if [file exist "src.tcl"] {
+    puts $fout "<a href=\"src.tcl\" type=text/txt>src.tcl</a>"
+  }
+}
 
 # Header
   puts $fout "<table id=tbl class=$css_class>"
   puts $fout "<thead>"
   puts $fout "<tr>"
-  puts $fout "<th>Num</th>"
+  #puts $fout "<th>Num</th>"
   puts $fout "<th>id</th>"
 
   foreach col $atcols {
@@ -349,7 +392,7 @@ proc atable {args} {
   set num 1
   foreach row $atrows {
     puts $fout "<tr>"
-    puts $fout "<td>$num</td>"
+    #puts $fout "<td>$num</td>"
     puts $fout "<td gname=\"$row\" colname=\"id\" style=\"white-space:pre\">$row</td>"
     foreach col $atcols {
       set cs [split $col ";"]
@@ -2801,7 +2844,12 @@ proc ghtm_top_bar {args} {
   #puts $fout {<a href=".index.htm" type=text/txt class="w3-bar-item w3-button w3-right">HTML</a>}
 
   if {$opt(-save)} {
-    puts $fout "<button id=\"save\" class=\"w3-bar-item w3-button w3-blue-gray\" style=\"margin: 0px 0px\">Save</button>"
+    #puts $fout "<button id=\"save\" class=\"w3-bar-item w3-button w3-blue-gray\" style=\"margin: 0px 0px\">Save</button>"
+    if [info exist env(GODEL_SAVEnDRAW)] {
+      puts $fout "<button onclick=\"g_save()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
+    } else {
+      puts $fout "<button onclick=\"g_save_nodraw()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
+    }
   }
     puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
     puts $fout {<a href=".godel/tools.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Tools</a>}
@@ -3839,6 +3887,7 @@ proc lvars {args} {
 proc local_table {name args} {
   global fout
   upvar vars vars
+  upvar env env
 
   # -pattern
 # {{{
@@ -3990,11 +4039,12 @@ proc local_table {name args} {
 # }}}
   # -dataTables
 # {{{
+  set opt(-dataTables) 0
   set idx [lsearch $args {-dataTables}]
   if {$idx != "-1"} {
     set args [lreplace $args $idx $idx]
-    upvar dataTables dataTables
-    set dataTables 1
+    #upvar dataTables dataTables
+    set opt(-dataTables) 1
   }
 # }}}
 
@@ -4242,6 +4292,17 @@ proc local_table {name args} {
     incr serial
   }
   puts $fout "</table>"
+  if {$opt(-dataTables) eq "1"} {
+          puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+          puts $fout "<script>"
+          puts $fout "    \$(document).ready(function() {"
+          puts $fout "    \$('#tbl').DataTable({"
+          puts $fout "       \"paging\": false,"
+          puts $fout "       \"info\": false,"
+          puts $fout "    });"
+          puts $fout "} );"
+          puts $fout "</script>"
+  }
 
 }
 # }}}
