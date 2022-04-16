@@ -39,6 +39,8 @@ proc openfile {fpath} {
     } else {
       catch {exec okular $fpath &}
     }
+  } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb} $fpath] {
+      catch {exec mpv $fpath &}
   } elseif [regexp {\.epub} $fpath] {
       catch {exec ebook-viewer $fpath &}
   } elseif [regexp {\.mobi} $fpath] {
@@ -320,6 +322,18 @@ proc atable {args} {
     set opt(-noshow) 1
   }
 # }}}
+  # -f (filelist name)
+# {{{
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
+  if {$idx != "-1"} {
+    set listfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-f) 1
+  } else {
+    set listfile NA
+  }
+# }}}
   upvar fout fout
   upvar atrows atrows
   upvar atcols atcols
@@ -339,13 +353,26 @@ proc atable {args} {
     set atcols [lsort -unique $ns]
   }
 # atrows
-  set ns ""
-  if ![info exist atrows] {
-    foreach n [array names atvar] {
-      regsub {,.*$} $n {} n
-      lappend ns $n
+  if {$opt(-f) eq "1"} {
+    set kin [open $listfile r]
+
+    while {[gets $kin line] >= 0} {
+      if {[regexp {^\s*#} $line]} {
+      } elseif {[regexp {^\s*$} $line]} {
+      } else {
+        lappend atrows $line
+      }
     }
-    set atrows [lsort -unique $ns]
+    close $kin
+  } else {
+    set ns ""
+    if ![info exist atrows] {
+      foreach n [array names atvar] {
+        regsub {,.*$} $n {} n
+        lappend ns $n
+      }
+      set atrows [lsort -unique $ns]
+    }
   }
 
 # Buttons
@@ -357,6 +384,9 @@ if {$opt(-noshow) eq "1"} {
   puts $fout "<a href=\"$atfname\" type=text/txt>$atfname</a>"
   if [file exist "src.tcl"] {
     puts $fout "<a href=\"src.tcl\" type=text/txt>src.tcl</a>"
+  }
+  if [file exist $listfile] {
+    puts $fout "<a href=\"$listfile\" type=text/txt>$listfile</a>"
   }
 }
 
@@ -418,16 +448,20 @@ if {$opt(-noshow) eq "1"} {
   }
   puts $fout "</table>"
 
-  if {$opt(-dataTables) eq "1"} {
-          puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
-          puts $fout "<script>"
-          puts $fout "    \$(document).ready(function() {"
-          puts $fout "    \$('#tbl').DataTable({"
-          puts $fout "       \"paging\": false,"
-          puts $fout "       \"info\": false,"
-          puts $fout "    });"
-          puts $fout "} );"
-          puts $fout "</script>"
+  if {$opt(-f) eq "1"} {
+  } else {
+    if {$opt(-dataTables) eq "1"} {
+            puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+            puts $fout "<script>"
+            puts $fout "    \$(document).ready(function() {"
+            puts $fout "    \$('#tbl').DataTable({"
+            puts $fout "       \"paging\": false,"
+            puts $fout "       \"info\": false,"
+            puts $fout "       \"searching\": true,"
+            puts $fout "    });"
+            puts $fout "} );"
+            puts $fout "</script>"
+    }
   }
 }
 # }}}
@@ -443,6 +477,21 @@ proc ltbl_linkurl {key} {
     set celltxt "<td gname=\"$row\" colname=\"$key\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
   } else {
     set celltxt "<td><a href=\"$urlvalue\">$key</td>"
+  }
+}
+# }}}
+# ltbl_star
+# {{{
+proc ltbl_star {} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set value [lvars $row star]
+
+  if {$value eq "NA"} {
+    set celltxt "<td gname=\"$row\" colname=\"star\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
+  } else {
+    set celltxt "<td bgcolor=yellow>$value</td>"
   }
 }
 # }}}
