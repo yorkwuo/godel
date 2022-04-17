@@ -259,6 +259,21 @@ proc at_cover {args} {
   lsetvar . $val(-pattern),count $count
 }
 # }}}
+proc hattool {} {
+  upvar fout fout
+  ghtm_set_value css_ctrl hide
+  ghtm_set_value css_ctrl display
+  css_hide
+}
+proc ghat {txt} {
+  upvar fout fout
+  puts $fout <pre>
+  regsub -all {<<} $txt {<span class=hat>} txt
+  regsub -all {>>} $txt {</span>} txt
+  puts $fout $txt
+  puts $fout </pre>
+}
+
 # css_hide
 # {{{
 proc css_hide {} {
@@ -278,11 +293,20 @@ proc css_hide {} {
   puts $fout "  cursor: pointer;"
   puts $fout "  opacity: 0.2 !important;"
   puts $fout "}"
-  puts $fout ".hat {"
-  puts $fout "  background-color:black;"
-  puts $fout "}"
+  if {$css_ctrl eq "hide"} {
+    puts $fout ".hat {"
+    puts $fout "  background-color:lightgreen;"
+    puts $fout "  color           :lightgreen;"
+    puts $fout "}"
+  } else {
+    puts $fout ".hat {"
+    puts $fout "  background-color:white;"
+    puts $fout "  color           :red;"
+    puts $fout "}"
+  }
   puts $fout ".hat:hover {"
   puts $fout "  background-color:white;"
+  puts $fout "  color           :red;"
   puts $fout "}"
   puts $fout "</style>"
 
@@ -334,6 +358,29 @@ proc atable {args} {
     set listfile NA
   }
 # }}}
+  # -sortby (sort by...)
+# {{{
+  set opt(-sortby) 0
+  set idx [lsearch $args {-sortby}]
+  if {$idx != "-1"} {
+    set sortby [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-sortby) 1
+  }
+# }}}
+  # -sortopt (sort options"
+# {{{
+  set opt(-sortopt) 0
+  set idx [lsearch $args {-sortopt}]
+  if {$idx != "-1"} {
+    set val(-sortopt) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-sortopt) 1
+  } else {
+    set val(-sortopt) "-ascii"
+  }
+# }}}
+
   upvar fout fout
   upvar atrows atrows
   upvar atcols atcols
@@ -375,6 +422,38 @@ proc atable {args} {
     }
   }
 
+  # Sort by...
+# {{{
+  if {$opt(-sortby)} {
+    ## Create row_items for sorting
+    set row_items {}
+    foreach atrow $atrows {
+      if [info exist atvar($atrow,$sortby)] {
+        set sdata $atvar($atrow,$sortby)
+      } else {
+        set sdata ""
+      }
+      if {$sdata eq "NA" || $sdata eq ""} {
+        if [regexp {\-ascii} $val(-sortopt)] {
+          set sdata "~"
+        } else {
+          set sdata 0
+        }
+      }
+      lappend row_items [list $atrow $sdata]
+    }
+
+    ## Sorting...
+    set row_items [lsort -index 1 {*}$val(-sortopt) $row_items]
+
+    # Re-create rows based on sorted row_items
+    set atrows {}
+    foreach i $row_items {
+      puts $i
+      lappend atrows [lindex $i 0]
+    }
+  }
+# }}}
 # Buttons
 if {$opt(-noshow) eq "1"} {
 } else {
@@ -4204,7 +4283,7 @@ proc local_table {name args} {
     }
   }
 # }}}
-#
+
   if {$opt(-exclude)} {
     set rows [setop_restrict $rows $exdirs]
   }
