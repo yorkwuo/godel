@@ -346,6 +346,24 @@ proc atable {args} {
     set opt(-noshow) 1
   }
 # }}}
+  # -noid
+# {{{
+  set opt(-noid) 0
+  set idx [lsearch $args {-noid}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-noid) 1
+  }
+# }}}
+  # -num
+# {{{
+  set opt(-num) 0
+  set idx [lsearch $args {-num}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-num) 1
+  }
+# }}}
   # -f (filelist name)
 # {{{
   set opt(-f) 0
@@ -473,8 +491,13 @@ if {$opt(-noshow) eq "1"} {
   puts $fout "<table id=tbl class=$css_class>"
   puts $fout "<thead>"
   puts $fout "<tr>"
-  #puts $fout "<th>Num</th>"
-  puts $fout "<th>id</th>"
+  if {$opt(-num) eq "1"} {
+    puts $fout "<th>num</th>"
+  }
+  if {$opt(-noid) eq "1"} {
+  } else {
+    puts $fout "<th>id</th>"
+  }
 
   foreach col $atcols {
     set colname ""
@@ -497,12 +520,17 @@ if {$opt(-noshow) eq "1"} {
   puts $fout "</tr>"
   puts $fout "</thead>"
 
-# Data
+# foreach atrows
   set num 1
   foreach row $atrows {
     puts $fout "<tr>"
-    #puts $fout "<td>$num</td>"
-    puts $fout "<td gname=\"$row\" colname=\"id\" style=\"white-space:pre\">$row</td>"
+    if {$opt(-num) eq "1"} {
+      puts $fout "<td>$num</td>"
+    }
+    if {$opt(-noid) eq "1"} {
+    } else {
+      puts $fout "<td gname=\"$row\" colname=\"id\" style=\"white-space:pre\">$row</td>"
+    }
     foreach col $atcols {
       set cs [split $col ";"]
       set col [lindex $cs 0]
