@@ -449,7 +449,6 @@ proc atable {args} {
     # Re-create rows based on sorted row_items
     set atrows {}
     foreach i $row_items {
-      puts $i
       lappend atrows [lindex $i 0]
     }
   }
