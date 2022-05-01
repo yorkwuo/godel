@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # flist_table
 # {{{
 proc flist_table {files} {
@@ -23,8 +22,6 @@ proc flist_table {files} {
   puts $fout "</table>"
 }
 # }}}
-||||||| merged common ancestors
-=======
 # svg_create
 # {{{
 proc svg_create {x y} {
@@ -333,7 +330,6 @@ proc pin_connect {pin1 pin2 args} {
   svg_connect [svg_attr $pin1_inst $pin1_name] [svg_attr $pin2_inst $pin2_name] {*}$args
 }
 # }}}
->>>>>>> 468834dc40b90e8cf9793539b4863a4b0d852d1f
 # asave
 # {{{
 proc asave {aname ofile newname} {
