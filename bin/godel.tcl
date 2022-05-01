@@ -1,3 +1,27 @@
+# flist_table
+# {{{
+proc flist_table {files} {
+  upvar fout fout
+
+  puts $fout "<table class=table1>"
+  puts $fout "<th>Date</th>"
+  puts $fout "<th>Name</th>"
+  puts $fout "<th>Full Path</th>"
+
+  foreach f $files {
+    puts $fout "<tr>"
+    set fname [file tail $f]
+    set mtime [file mtime $f]
+    set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
+
+    puts $fout "<td>$timestamp</td>"
+    puts $fout "<td><a href=$f type=text/txt>$fname</a></td>"
+    puts $fout "<td>$f</td>"
+    puts $fout "</tr>"
+  }
+  puts $fout "</table>"
+}
+# }}}
 # asave
 # {{{
 proc asave {aname ofile newname} {
