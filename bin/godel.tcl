@@ -1,3 +1,311 @@
+# svg_create
+# {{{
+proc svg_create {x y} {
+  upvar fout fout
+  puts $fout "<svg viewBox=\"0 0 $x $y\" style=\"border: blue solid;\">"
+
+  set xcount [expr $x/10]
+  set ycount [expr $y/10]
+
+  for {set i 1} {$i < $xcount} {incr i} {
+    set stride [expr $i * 10]
+    puts $fout "<path stroke=\"blue\" stroke-width=\"0.2\" d=\"M$stride 0 V$y\" />"
+  }
+
+  for {set i 1} {$i < $ycount} {incr i} {
+    set stride [expr $i * 10]
+    puts $fout "<path stroke=\"blue\" stroke-width=\"0.2\" d=\"M0 $stride H$x\" />"
+  }
+  
+
+}
+# }}}
+# svg_circle
+# {{{
+proc svg_circle {xy} {
+  upvar fout fout
+  foreach {x y} [split $xy ,] {}
+  puts $fout "<circle cx=\"$x\" cy=\"$y\" r=\"3\" fill=\"purple\" />"
+}
+# }}}
+# svg_rect
+# {{{
+proc svg_rect {x y width height} {
+  upvar fout fout
+  puts $fout "<rect stroke=\"purple\" stroke-width=\"1\" x=\"$x\" y=\"$y\" width=\"$width\" height=\"$height\" fill=\"none\" />"
+}
+# }}}
+# svg_connect
+# {{{
+proc svg_connect {x1y1 x2y2 args} {
+  upvar fout fout
+  foreach {x1 y1} [split $x1y1 ,] {}
+  foreach {x2 y2} [split $x2y2 ,] {}
+  # -color
+# {{{
+  set opt(-color) 0
+  set idx [lsearch $args {-color}]
+  if {$idx != "-1"} {
+    set color [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-color) 1
+  } else {
+    set color blue
+  }
+# }}}
+  # -width
+# {{{
+  set opt(-width) 0
+  set idx [lsearch $args {-width}]
+  if {$idx != "-1"} {
+    set width [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-width) 1
+  } else {
+    set width 1
+  }
+# }}}
+  # -ofs
+# {{{
+  set opt(-ofs) 0
+  set idx [lsearch $args {-ofs}]
+  if {$idx != "-1"} {
+    set ofs [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-ofs) 1
+  } else {
+    set ofs ""
+  }
+# }}}
+  # -di
+# {{{
+  set opt(-di) 0
+  set idx [lsearch $args {-di}]
+  if {$idx != "-1"} {
+    set direction [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-di) 1
+  } else {
+    set direction v
+  }
+# }}}
+
+  if {$ofs eq ""} {
+      puts $fout "<path stroke=\"$color\" stroke-width=\"$width\" fill=\"none\" d=\"M$x1 $y1 L$x2 $y2\" />"
+  } else {
+    set xmid $x1
+    set ymid $y1
+    foreach offset $ofs {
+      regexp {(\w)(.*)} $offset whole dir value
+      if {$dir eq "h"} {
+        set xmid [expr $xmid + $value]
+      } else {
+        set ymid [expr $ymid + $value]
+      }
+    }
+    #svg_circle $xmid,$ymid
+    if {$direction eq "v"} {
+      set vlast [expr $y2 - $ymid]
+      set hlast [expr $x2 - $xmid]
+      puts $fout "<path stroke=\"$color\" stroke-width=\"$width\" fill=\"none\" d=\"M$x1 $y1 $ofs v$vlast h$hlast\" />"
+    } else {
+      set vlast [expr $y2 - $ymid]
+      set hlast [expr $x2 - $xmid]
+      puts $fout "<path stroke=\"$color\" stroke-width=\"$width\" fill=\"none\" d=\"M$x1 $y1 $ofs h$hlast v$vlast\" />"
+    }
+  }
+}
+# }}}
+# svg_flop
+# {{{
+proc svg_flop {xy name} {
+  upvar svar svar
+  upvar fout fout
+  foreach {x y} [split $xy ,] {}
+  puts $fout "
+                <path d=\"M$x,$y h30 v50 h-30 v-50\" stroke=purple stroke-width=1 fill=white />
+                <line x1=$x y1=[expr $y+30] x2=[expr $x+10] y2=[expr $y+35] stroke=purple stroke-width=1 />
+                <line x1=$x y1=[expr $y+40] x2=[expr $x+10] y2=[expr $y+35] stroke=purple stroke-width=1 />
+              "
+  puts $fout "<text x=$x y=[expr $y-1] style=\"font-family:monospace;font-size:8px\">$name</text>"
+  set svar($name,x) $x
+  set svar($name,y) $y
+  set svar($name,xy) $x,$y
+  set svar($name,Q)  [expr $x+30],[expr $y+10]
+  set svar($name,D)  [expr $x],[expr $y+10]
+  set svar($name,CK) [expr $x],[expr $y+35]
+}
+# }}}
+# svg_inv
+# {{{
+proc svg_inv {xy name {ofs ""}} {
+  upvar svar svar
+  upvar fout fout
+  foreach {x y} [split $xy ,] {}
+  if {$ofs eq ""} {
+  } else {
+    foreach {xofs yofs} [split $ofs ,] {}
+    set x [expr $x + $xofs]
+    set y [expr $y + $yofs]
+  }
+
+  set x1 $x
+  set y1 [expr $y - 10]
+  set x2 [expr $x + 10]
+  set y2 $y
+  set x3 $x
+  set y3 [expr $y+10]
+ 
+  puts $fout "
+                <polygon points=\"$x,$y $x1,$y1 $x2,$y2 $x3,$y3 $x,$y\" stroke=purple stroke-width=1 fill=white />
+                <circle cx=\"$x2\" cy=\"$y2\" r=\"2\" fill=\"white\" stroke=purple stroke-width=1 />
+             "
+  puts $fout "<text x=$x1 y=$y1 style=\"font-family:monospace;font-size:8px\">$name</text>"
+  set svar($name,xy) $x,$y
+  set svar($name,I)  $x,$y
+  set svar($name,Z)  [expr $x+12],$y
+}
+# }}}
+# svg_buf
+# {{{
+proc svg_buf {xy name {ofs ""}} {
+  upvar svar svar
+  upvar fout fout
+  foreach {x y} [split $xy ,] {}
+  if {$ofs eq ""} {
+  } else {
+    foreach {xofs yofs} [split $ofs ,] {}
+    set x [expr $x + $xofs]
+    set y [expr $y + $yofs]
+  }
+
+  set x1 $x
+  set y1 [expr $y - 10]
+  set x2 [expr $x + 10]
+  set y2 $y
+  set x3 $x
+  set y3 [expr $y+10]
+ 
+  puts $fout "
+                <polygon points=\"$x,$y $x1,$y1 $x2,$y2 $x3,$y3 $x,$y\" stroke=purple stroke-width=1 fill=white />
+             "
+  puts $fout "<text x=$x1 y=$y1 style=\"font-family:monospace;font-size:8px\">$name</text>"
+  set svar($name,xy) $x,$y
+  set svar($name,I)  $x,$y
+  set svar($name,Z)  [expr $x+10],$y
+}
+# }}}
+# svg_mux
+# {{{
+proc svg_mux {xy name {ofs ""}} {
+  upvar svar svar
+  upvar fout fout
+  foreach {x y} [split $xy ,] {}
+
+  if {$ofs eq ""} {
+  } else {
+    foreach {xofs yofs} [split $ofs ,] {}
+    set x [expr $x + $xofs]
+    set y [expr $y + $yofs]
+  }
+
+  set x1 $x
+  set y1 [expr $y - 20]
+  puts $fout "
+                <path d=\"M$x,$y v-20 L[expr $x+15] [expr $y-10] v20 L$x [expr $y+20] Z\" stroke=purple stroke-width=1 fill=white />
+             "
+  puts $fout "<text x=$x1 y=$y1 style=\"font-family:monospace;font-size:8px\">$name</text>"
+  set svar($name,xy) $x,$y
+  #svg_circle $x,$y
+  set svar($name,I0)  $x,[expr $y-10]
+  set svar($name,I1)  $x,[expr $y+10]
+  set svar($name,Z)   [expr $x+15],$y
+}
+# }}}
+# svg_icg
+# {{{
+proc svg_icg {xy name} {
+  upvar svar svar
+  upvar fout fout
+
+  foreach {x y} [split $xy ,] {}
+  set x1 $x
+  set y1 [expr $y - 20]
+  set x2 [expr $x1 + 15]
+  set y2 $y1
+  set x3 $x2
+  set y3 [expr $y2 + 30]
+  set x4 $x
+  set y4 $y3
+  puts $fout "
+             <polygon points=\"$x,$y $x1,$y1 $x2,$y2 $x3,$y3 $x4,$y4 $x,$y\" stroke=purple stroke-width=1 fill=white />
+             <text x=[expr $x+1] y=[expr $y+3] style=\"font-family:monospace;font-size:8px\">CK</text>
+             <text x=[expr $x+1] y=[expr $y-10] style=\"font-family:monospace;font-size:8px\">EN</text>
+             <text x=[expr $x]   y=[expr $y-23] style=\"font-family:monospace;font-size:8px\">$name</text>
+             "
+  set svar($name,xy)  $x,$y
+  set svar($name,CK)  $x,$y
+  set svar($name,GCK) [expr $x+15],$y
+}
+# }}}
+# svg_port
+# {{{
+proc svg_port {xy name {ofs ""}} {
+  upvar svar svar
+  upvar fout fout
+  foreach {x y} [split $xy ,] {}
+
+  if {$ofs eq ""} {
+  } else {
+    foreach {xofs yofs} [split $ofs ,] {}
+    set x [expr $x + $xofs]
+    set y [expr $y + $yofs]
+  }
+
+  puts $fout "
+                <path d=\"M$x,$y v-3 h15 
+                L[expr $x + 20] $y 
+                L[expr $x + 15] [expr $y+3] h-15 Z\" stroke=purple stroke-width=1 fill=white />
+             "
+  puts $fout "<text x=$x y=[expr $y-6] style=\"font-family:monospace;font-size:8px\">$name</text>"
+
+  set svar($name,xy) $x,$y
+  set svar($name,I)  $x,$y
+  set svar($name,O)  [expr $x+20],$y
+}
+# }}}
+# svg_create_clock
+# {{{
+proc svg_create_clock {x y high low count} {
+  upvar fout fout
+  
+  #puts $fout "<text x=\"30\" y=\"35\" style=\"font-size:8px;font-family:monospace;\">test</text>"
+  puts $fout "<path stroke=\"blue\" stroke-width=\"1\" fill=\"none\" d=\"M$x $y h10 "
+  for {set i 0} {$i < $count} {incr i} {
+    puts $fout "v-20 h$high v20 h$low"
+  }
+  puts $fout "v-20 h10\"/>"
+}
+# }}}
+# svg_attr
+# {{{
+proc svg_attr {name attr} {
+  upvar svar svar
+  return $svar($name,$attr)
+}
+# }}}
+# pin_connect
+# {{{
+proc pin_connect {pin1 pin2 args} {
+  upvar svar svar
+  upvar fout fout
+  set pin1_name [file tail $pin1]
+  set pin1_inst [file dirname $pin1]
+  set pin2_name [file tail $pin2]
+  set pin2_inst [file dirname $pin2]
+  svg_connect [svg_attr $pin1_inst $pin1_name] [svg_attr $pin2_inst $pin2_name] {*}$args
+}
+# }}}
 # asave
 # {{{
 proc asave {aname ofile newname} {
@@ -259,12 +567,17 @@ proc at_cover {args} {
   lsetvar . $val(-pattern),count $count
 }
 # }}}
+# hattool
+# {{{
 proc hattool {} {
   upvar fout fout
   ghtm_set_value css_ctrl hide
   ghtm_set_value css_ctrl display
   css_hide
 }
+# }}}
+# ghat
+# {{{
 proc ghat {txt} {
   upvar fout fout
   puts $fout <pre>
@@ -273,7 +586,7 @@ proc ghat {txt} {
   puts $fout $txt
   puts $fout </pre>
 }
-
+# }}}
 # css_hide
 # {{{
 proc css_hide {} {

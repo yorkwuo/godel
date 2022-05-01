@@ -364,7 +364,7 @@ p {
   margin: 5px 0px 5px 0px;
   font-size     : 15px;
 }
-a,button,input {
+a,button,input,li {
   font-family: monospace,Consolas,san-serif;
   margin: 0px;
   font-size     : 15px;
