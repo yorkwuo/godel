@@ -36,6 +36,8 @@ proc svg_blk {xy name args} {
               "
   puts $fout "<text x=$x y=[expr $y-2] style=\"font-family:monospace;font-size:8px\">$name</text>"
   set svar($name,xy) $x,$y
+  set svar($name,I)  $x,[expr $y + [expr $width/2]]
+  set svar($name,O)  [expr $x+$width],[expr $y + [expr $width/2]]
 }
 # }}}
 # flist_table
@@ -62,9 +64,9 @@ proc flist_table {files} {
   puts $fout "</table>"
 }
 # }}}
-# svg_create
+# svg_init
 # {{{
-proc svg_create {x y} {
+proc svg_init {x y} {
   upvar fout fout
   puts $fout "<svg viewBox=\"0 0 $x $y\" style=\"border: blue solid;\">"
 
@@ -73,12 +75,12 @@ proc svg_create {x y} {
 
   for {set i 1} {$i < $xcount} {incr i} {
     set stride [expr $i * 10]
-    puts $fout "<path stroke=\"blue\" stroke-width=\"0.2\" d=\"M$stride 0 V$y\" />"
+    puts $fout "<path stroke=\"blue\" stroke-width=\"0.1\" d=\"M$stride 0 V$y\" />"
   }
 
   for {set i 1} {$i < $ycount} {incr i} {
     set stride [expr $i * 10]
-    puts $fout "<path stroke=\"blue\" stroke-width=\"0.2\" d=\"M0 $stride H$x\" />"
+    puts $fout "<path stroke=\"blue\" stroke-width=\"0.1\" d=\"M0 $stride H$x\" />"
   }
   
 
@@ -336,6 +338,52 @@ proc svg_port {xy name {ofs ""}} {
   set svar($name,xy) $x,$y
   set svar($name,I)  $x,$y
   set svar($name,O)  [expr $x+20],$y
+}
+# }}}
+# svg_in_pin
+# {{{
+proc svg_in_pin {xy name {ofs ""}} {
+  upvar svar svar
+  upvar fout fout
+  foreach {x y} [split $xy ,] {}
+
+  if {$ofs eq ""} {
+  } else {
+    foreach {xofs yofs} [split $ofs ,] {}
+    set x [expr $x + $xofs]
+    set y [expr $y + $yofs]
+  }
+
+  puts $fout "
+                <path d=\"M$x,$y v-1 h5 v2 h-5 Z\" stroke=purple stroke-width=1 fill=purple />
+             "
+  puts $fout "<text x=[expr $x+1] y=[expr $y-4] style=\"font-family:monospace;font-size:6px\">$name</text>"
+
+  set svar($name,I)  $x,$y
+  set svar($name,O)  [expr $x+5],$y
+}
+# }}}
+# svg_out_pin
+# {{{
+proc svg_out_pin {xy name {ofs ""}} {
+  upvar svar svar
+  upvar fout fout
+  foreach {x y} [split $xy ,] {}
+
+  if {$ofs eq ""} {
+  } else {
+    foreach {xofs yofs} [split $ofs ,] {}
+    set x [expr $x + $xofs]
+    set y [expr $y + $yofs]
+  }
+
+  puts $fout "
+                <path d=\"M$x,$y v-1 h-5 v2 h5 Z\" stroke=purple stroke-width=1 fill=purple />
+             "
+  puts $fout "<text text-anchor=end x=[expr $x-1] y=[expr $y-3] style=\"font-family:monospace;font-size:6px\">$name</text>"
+
+  set svar($name,I)  $x,$y
+  set svar($name,O)  $x,$y
 }
 # }}}
 # svg_create_clock
