@@ -1,3 +1,43 @@
+# svg_blk
+# {{{
+proc svg_blk {xy name args} {
+  upvar svar svar
+  upvar fout fout
+  # -w
+# {{{
+  set opt(-w) 0
+  set idx [lsearch $args {-w}]
+  if {$idx != "-1"} {
+    set width [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-w) 1
+  } else {
+    set width 1
+  }
+# }}}
+  # -h
+# {{{
+  set opt(-h) 0
+  set idx [lsearch $args {-h}]
+  if {$idx != "-1"} {
+    set height [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-h) 1
+  } else {
+    set height 1
+  }
+# }}}
+
+
+  foreach {x y} [split $xy ,] {}
+
+  puts $fout "
+                <path d=\"M$x,$y h$width v$height h-$width v-$height\" stroke=\"purple\" stroke-width=\"1\" fill=\"none\" />
+              "
+  puts $fout "<text x=$x y=[expr $y-2] style=\"font-family:monospace;font-size:8px\">$name</text>"
+  set svar($name,xy) $x,$y
+}
+# }}}
 # flist_table
 # {{{
 proc flist_table {files} {
@@ -859,6 +899,7 @@ if {$opt(-noshow) eq "1"} {
 # foreach atrows
   set num 1
   foreach row $atrows {
+    regsub {^\s+} $row {} row
     puts $fout "<tr>"
     if {$opt(-num) eq "1"} {
       puts $fout "<td>$num</td>"
