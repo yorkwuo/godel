@@ -1,0 +1,226 @@
+#!/usr/bin/wish
+
+# update
+# {{{
+proc update {} {
+  upvar types types
+
+  set wlist [winfo children .]
+  foreach w $wlist {
+    if [regexp {\.b} $w] {
+      destroy $w
+    }
+  }
+  list_wins
+  frame .bfr
+  pack .bfr -pady 10
+}
+# }}}
+# list_wins
+# {{{
+proc list_wins {} {
+  upvar types types
+  set count 0
+  foreach type $types {
+    set pids {}
+    set rows {}
+    catch "exec xdotool search --onlyvisible --class $type" ids
+    if {$ids eq {}} {
+    } elseif {[regexp {child process} $ids]} {
+    } else {
+      set pids [concat $pids $ids]
+    }
+  
+    if {$pids eq {}} {
+      #puts "No pids..."
+      continue
+    } else {
+      foreach pid $pids {
+        #puts $pid
+        set name [exec xdotool getwindowname $pid]
+        if {$name eq "rses.csh"} {
+        } elseif {$name eq "Firefox"} {
+        } elseif [regexp {Verdi} $name] {
+          lappend rows [list $pid "$type"]
+        } else {
+          lappend rows [list $pid "$type - $name"]
+        }
+      }
+      
+      set rows [lsort -index 1 $rows]
+      
+      
+      foreach row $rows {
+        set id   [lindex $row 0]
+        set name [lindex $row 1]
+        button .b$count -text "$name" -anchor w -command "exec xdotool windowactivate $id"
+       .b$count configure -background lightblue
+      
+        pack .b$count -anchor sw -fill x
+      
+        incr count
+      }
+    }
+  
+  }
+}
+# }}}
+# p_report_timing
+# {{{
+proc p_report_timing {} {
+  upvar cur_win_id cur_win_id
+  set from $::efrom
+  set to   $::eto
+  set through   $::ethr
+  exec xdotool windowactivate $cur_win_id 
+  if {$::efrom eq ""} { set from "" } else { set from "-from $::efrom" }
+  if {$::ethr   eq ""} { set through   "" } else { set through   "-through   $::ethr"   }
+  if {$::eto   eq ""} { set to   "" } else { set to   "-to   $::eto"   }
+
+  set cmd "report_timing -nosplit $from $through $to"
+  exec xdotool type --delay .1 $cmd
+  #exec xdotool key KP_Enter
+
+}
+# }}}
+# p_all_connected
+# {{{
+proc p_all_connected {} {
+  upvar cur_win_id cur_win_id
+
+  set from $::efrom
+  set to   $::eto
+  set through   $::ethr
+
+  exec xdotool windowactivate $cur_win_id 
+
+  if {$::efrom eq ""} { set from "" } else { set from "$::efrom" }
+
+  set cmd "dio_all_connected $from "
+
+  exec xdotool type --delay .1 $cmd
+  #exec xdotool key KP_Enter
+
+}
+# }}}
+# p_all_fanout
+# {{{
+proc p_all_fanout {} {
+  upvar cur_win_id cur_win_id
+
+  set from $::efrom
+
+  exec xdotool windowactivate $cur_win_id 
+
+  if {$::efrom eq ""} { set from "" } else { set from "$::efrom" }
+
+  set cmd "dio_all_fanout $from 1"
+
+  exec xdotool type --delay .1 $cmd
+  #exec xdotool key KP_Enter
+
+}
+# }}}
+# p_all_fanin
+# {{{
+proc p_all_fanin {} {
+  upvar cur_win_id cur_win_id
+
+  set to   $::eto
+
+  exec xdotool windowactivate $cur_win_id 
+
+  if {$::eto eq ""} { set to "" } else { set from "$::eto" }
+
+  set cmd "dio_all_fanin $to 1"
+
+  exec xdotool type --delay .1 $cmd
+  #exec xdotool key KP_Enter
+
+}
+# }}}
+
+lappend types firefox
+lappend types gnome-terminal
+lappend types rtm
+lappend types xterm
+lappend types vim
+lappend types inkscape
+lappend types IC
+lappend types novas
+
+#==============
+# Main Start
+#==============
+
+wm attribute . -topmost 1
+wm geometry . +1800+0
+
+font create mynewfont -family Clean -size 16
+option add *font mynewfont
+
+proc new_focus {} {
+  upvar cur_win_id cur_win_id
+  set cur_win_id [exec xdotool key alt+Tab; exec xdotool getwindowfocus]
+  puts $cur_win_id
+}
+
+frame .fr -padx 5 -pady 5
+pack .fr -fill both -expand 1
+
+button .fr.update -text "New Focus" -command {new_focus}
+grid .fr.update -row 0 -column 0  -sticky w
+
+# -from
+label  .fr.lfrom -text "-from"
+entry  .fr.efrom -textvar efrom
+button .fr.bfrom -text "Clear" -command {set efrom ""}
+grid   .fr.lfrom -row 1 -column 0 -sticky w
+grid   .fr.efrom -row 1 -column 1 -sticky w
+grid   .fr.bfrom -row 1 -column 2 -sticky w
+# -to
+label  .fr.lto -text "-to"
+entry  .fr.eto -textvar eto
+button .fr.bto -text "Clear" -command {set eto ""}
+grid   .fr.lto -row 2 -column 0 -sticky w
+grid   .fr.eto -row 2 -column 1 -sticky w
+grid   .fr.bto -row 2 -column 2 -sticky w
+# -thr 
+label  .fr.lthr -text "-through"
+entry  .fr.ethr -textvar ethr
+button .fr.bthr -text "Clear" -command {set ethr ""}
+grid   .fr.lthr -row 3 -column 0 -sticky w
+grid   .fr.ethr -row 3 -column 1 -sticky w
+grid   .fr.bthr -row 3 -column 2 -sticky w
+
+
+proc list_cmds {} {
+  lappend cmds {report_timing p_report_timing}
+  lappend cmds {all_connected p_all_connected}
+  lappend cmds {all_fanout    p_all_fanout}
+  lappend cmds {all_fanin     p_all_fanin}
+
+  set count 0
+  foreach cmd $cmds {
+    set cname [lindex $cmd 0]
+    set cbody [lindex $cmd 1]
+    button .b$count -text $cname -anchor w -command "$cbody"
+    .b$count configure -background lightblue
+    pack .b$count -anchor sw -fill x
+    incr count
+  }
+
+}
+
+proc exec_cmd {cmd} {
+  upvar cur_win_id cur_win_id
+  exec xdotool windowactivate $cur_win_id 
+  exec xdotool type --delay .1 $cmd
+  exec xdotool key KP_Enter
+}
+
+list_cmds
+
+bind . q exit
+
+# vim:fdm=marker ft=tcl

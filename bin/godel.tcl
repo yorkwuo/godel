@@ -1,8 +1,20 @@
 # svg_blk
 # {{{
-proc svg_blk {xy name args} {
+proc svg_blk {args} {
   upvar svar svar
   upvar fout fout
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name 1
+  }
+# }}}
   # -w
 # {{{
   set opt(-w) 0
@@ -27,6 +39,18 @@ proc svg_blk {xy name args} {
     set height 1
   }
 # }}}
+  # -xy
+# {{{
+  set opt(-xy) 0
+  set idx [lsearch $args {-xy}]
+  if {$idx != "-1"} {
+    set xy [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-xy) 1
+  } else {
+    set xy 0,0
+  }
+# }}}
 
 
   foreach {x y} [split $xy ,] {}
@@ -36,6 +60,9 @@ proc svg_blk {xy name args} {
               "
   puts $fout "<text x=$x y=[expr $y-2] style=\"font-family:monospace;font-size:8px\">$name</text>"
   set svar($name,xy) $x,$y
+  set svar($name,Ox) [expr $x+$width]
+  set svar($name,x)  $x
+  set svar($name,y)  $y
   set svar($name,I)  $x,[expr $y + [expr $width/2]]
   set svar($name,O)  [expr $x+$width],[expr $y + [expr $width/2]]
 }
@@ -184,9 +211,34 @@ proc svg_connect {x1y1 x2y2 args} {
 # }}}
 # svg_flop
 # {{{
-proc svg_flop {xy name} {
+proc svg_flop {args} {
   upvar svar svar
   upvar fout fout
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name 1
+  }
+# }}}
+  # -xy
+# {{{
+  set opt(-xy) 0
+  set idx [lsearch $args {-xy}]
+  if {$idx != "-1"} {
+    set xy [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-xy) 1
+  } else {
+    set xy 0,0
+  }
+# }}}
+
   foreach {x y} [split $xy ,] {}
   puts $fout "
                 <path d=\"M$x,$y h30 v50 h-30 v-50\" stroke=purple stroke-width=1 fill=white />
@@ -342,9 +394,47 @@ proc svg_port {xy name {ofs ""}} {
 # }}}
 # svg_in_pin
 # {{{
-proc svg_in_pin {xy name {ofs ""}} {
+proc svg_in_pin {args} {
   upvar svar svar
   upvar fout fout
+
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name 1
+  }
+# }}}
+  # -xy
+# {{{
+  set opt(-xy) 0
+  set idx [lsearch $args {-xy}]
+  if {$idx != "-1"} {
+    set xy [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-xy) 1
+  } else {
+    set xy 0,0
+  }
+# }}}
+  # -ofs
+# {{{
+  set opt(-ofs) 0
+  set idx [lsearch $args {-ofs}]
+  if {$idx != "-1"} {
+    set ofs [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-ofs) 1
+  } else {
+    set ofs ""
+  }
+# }}}
+
   foreach {x y} [split $xy ,] {}
 
   if {$ofs eq ""} {
@@ -365,9 +455,45 @@ proc svg_in_pin {xy name {ofs ""}} {
 # }}}
 # svg_out_pin
 # {{{
-proc svg_out_pin {xy name {ofs ""}} {
+proc svg_out_pin {args} {
   upvar svar svar
   upvar fout fout
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name 1
+  }
+# }}}
+  # -xy
+# {{{
+  set opt(-xy) 0
+  set idx [lsearch $args {-xy}]
+  if {$idx != "-1"} {
+    set xy [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-xy) 1
+  } else {
+    set xy 0,0
+  }
+# }}}
+  # -ofs
+# {{{
+  set opt(-ofs) 0
+  set idx [lsearch $args {-ofs}]
+  if {$idx != "-1"} {
+    set ofs [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-ofs) 1
+  } else {
+    set ofs ""
+  }
+# }}}
   foreach {x y} [split $xy ,] {}
 
   if {$ofs eq ""} {
@@ -382,7 +508,7 @@ proc svg_out_pin {xy name {ofs ""}} {
              "
   puts $fout "<text text-anchor=end x=[expr $x-1] y=[expr $y-3] style=\"font-family:monospace;font-size:6px\">$name</text>"
 
-  set svar($name,I)  $x,$y
+  set svar($name,I)  [expr $x-5],$y
   set svar($name,O)  $x,$y
 }
 # }}}
