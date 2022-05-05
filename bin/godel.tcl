@@ -3344,6 +3344,8 @@ proc ghtm_ls {args} {
     }
     if {[file type $full] eq "link"} {
       set linktarget [file readlink $full]
+    } else {
+      set linktarget $full
     }
     if [regexp {\.htm} $full] {
       puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\">$fname</a><br></div>"]
