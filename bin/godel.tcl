@@ -1584,6 +1584,11 @@ proc ghtm_ls_table {args} {
 
     if [file exist $ifile] {
       set mtime [file mtime $ifile]
+      if {[file type $ifile] eq "link"} {
+        set linktarget [file readlink $ifile]
+      } else {
+        set linktarget $ifile
+      }
       #set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
       set timestamp [clock format $mtime -format {%m-%d_%H:%M}]
       set fsize [file size $ifile]
@@ -1593,21 +1598,21 @@ proc ghtm_ls_table {args} {
       puts $fout "<td>$timestamp</td>"
       puts $fout "<td>$fsize</td>"
       if [regexp {\.htm} $ifile] {
-        puts $fout "<td><a href=\"$ifile\"              >$fname</a></td>"
+        puts $fout "<td><a href=\"$linktarget\"              >$fname</a></td>"
       } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $ifile] {
-        puts $fout "<td><a href=\"$ifile\" type=text/mp4>$fname</a></td>"
+        puts $fout "<td><a href=\"$linktarget\" type=text/mp4>$fname</a></td>"
       } elseif [regexp {\.mp3} $ifile] {
-        puts $fout "<td><a href=\"$ifile\" type=text/mp3>$fname</a></td>"
+        puts $fout "<td><a href=\"$linktarget\" type=text/mp3>$fname</a></td>"
       } elseif [regexp {\.pdf} $ifile] {
-        puts $fout "<td><a href=\"$ifile\" type=text/pdf>$fname</a></td>"
+        puts $fout "<td><a href=\"$linktarget\" type=text/pdf>$fname</a></td>"
       } elseif [regexp {\.svg} $ifile] {
-        puts $fout "<td><a href=\"$ifile\" type=text/svg>$fname</a></td>"
+        puts $fout "<td><a href=\"$linktarget\" type=text/svg>$fname</a></td>"
       } elseif [regexp {\.epub} $ifile] {
-        puts $fout "<td><a href=\"$ifile\"              >$fname</a></td>"
+        puts $fout "<td><a href=\"$linktarget\"              >$fname</a></td>"
       } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $ifile]}  {
-        puts $fout "<td><a href=\"$ifile\" type=text/jpg>$fname</a></td>"
+        puts $fout "<td><a href=\"$linktarget\" type=text/jpg>$fname</a></td>"
       } else {
-        puts $fout "<td><a href=\"$ifile\" type=text/txt>$fname</a></td>"
+        puts $fout "<td><a href=\"$linktarget\" type=text/txt>$fname</a></td>"
       }
     } else {
       puts $fout "<td>$count</td>"
@@ -2504,13 +2509,13 @@ proc gexe_button {args} {
     set opt(-nowin) 1
   }
 # }}}
-  # -nocmd
+  # -cmd
 # {{{
-  set opt(-nocmd) 0
-  set idx [lsearch $args {-nocmd}]
+  set opt(-cmd) 0
+  set idx [lsearch $args {-cmd}]
   if {$idx != "-1"} {
     set args [lreplace $args $idx $idx]
-    set opt(-nocmd) 1
+    set opt(-cmd) 1
   }
 # }}}
   # -name 
@@ -2531,10 +2536,10 @@ proc gexe_button {args} {
 
   if [file exist $exefile] {
     #exec chmod +x $exefile
-    if {$opt(-nocmd)} {
-      puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
-    } else {
+    if {$opt(-cmd)} {
       puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-blue\" type=text/gtcl>$name<span style=float:right><a class=\"w3-button w3-blue\" href=$exefile type=text/txt>&#9701</a></span></a>"
+    } else {
+      puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
     }
     set kout [open ".$exefile.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
@@ -3337,20 +3342,23 @@ proc ghtm_ls {args} {
     } else {
       set fsize [num_symbol $fsize B]
     }
+    if {[file type $full] eq "link"} {
+      set linktarget [file readlink $full]
+    }
     if [regexp {\.htm} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\">$fname</a><br></div>"]
     } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp4>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\" type=text/mp4>$fname</a><br></div>"]
     } elseif [regexp {\.mp3} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/mp3>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\" type=text/mp3>$fname</a><br></div>"]
     } elseif [regexp {\.pdf} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/pdf>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\" type=text/pdf>$fname</a><br></div>"]
     } elseif [regexp {\.azw3|\.mobi|\.epub} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\">$fname</a><br></div>"]
     } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $full]}  {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/jpg>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\" type=text/jpg>$fname</a><br></div>"]
     } else {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full\" type=text/txt>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\" type=text/txt>$fname</a><br></div>"]
     }
     incr count
   }
