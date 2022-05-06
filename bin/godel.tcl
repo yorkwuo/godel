@@ -1,3 +1,4 @@
+
 # svg_blk
 # {{{
 proc svg_blk {args} {
@@ -140,7 +141,7 @@ proc svg_init {args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-sw) 1
   } else {
-    set stroke_width 1
+    set stroke_width 0.1
   }
 # }}}
   # -color
