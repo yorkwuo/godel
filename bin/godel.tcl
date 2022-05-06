@@ -93,21 +93,82 @@ proc flist_table {files} {
 # }}}
 # svg_init
 # {{{
-proc svg_init {x y} {
+proc svg_init {args} {
   upvar fout fout
-  puts $fout "<svg viewBox=\"0 0 $x $y\" style=\"border: blue solid;\">"
+  # -w
+# {{{
+  set opt(-w) 0
+  set idx [lsearch $args {-w}]
+  if {$idx != "-1"} {
+    set width [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-w) 1
+  } else {
+    set width 1
+  }
+# }}}
+  # -h
+# {{{
+  set opt(-h) 0
+  set idx [lsearch $args {-h}]
+  if {$idx != "-1"} {
+    set height [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-h) 1
+  } else {
+    set height 1
+  }
+# }}}
+  # -vbox
+# {{{
+  set opt(-vbox) 0
+  set idx [lsearch $args {-vbox}]
+  if {$idx != "-1"} {
+    set vbox [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-vbox) 1
+  } else {
+    set vbox 1
+  }
+# }}}
+  # -sw
+# {{{
+  set opt(-sw) 0
+  set idx [lsearch $args {-sw}]
+  if {$idx != "-1"} {
+    set stroke_width [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-sw) 1
+  } else {
+    set stroke_width 1
+  }
+# }}}
+  # -color
+# {{{
+  set opt(-color) 0
+  set idx [lsearch $args {-color}]
+  if {$idx != "-1"} {
+    set color [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-color) 1
+  } else {
+    set color blue
+  }
+# }}}
 
-  set xcount [expr $x/10]
-  set ycount [expr $y/10]
+  puts $fout "<svg width=\"$width\" height=\"$height\" viewBox=\"$vbox\" style=\"border: blue solid;\">"
+
+  set xcount [expr $width/10]
+  set ycount [expr $height/10]
 
   for {set i 1} {$i < $xcount} {incr i} {
     set stride [expr $i * 10]
-    puts $fout "<path stroke=\"blue\" stroke-width=\"0.1\" d=\"M$stride 0 V$y\" />"
+    puts $fout "<path stroke=\"$color\" stroke-width=\"$stroke_width\" d=\"M$stride 0 V$height\" />"
   }
 
   for {set i 1} {$i < $ycount} {incr i} {
     set stride [expr $i * 10]
-    puts $fout "<path stroke=\"blue\" stroke-width=\"0.1\" d=\"M0 $stride H$x\" />"
+    puts $fout "<path stroke=\"$color\" stroke-width=\"$stroke_width\" d=\"M0 $stride H$width\" />"
   }
   
 
