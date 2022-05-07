@@ -1,4 +1,147 @@
+# sd_fp_init
+# {{{
+proc sd_fp_init {width height scale} {
+  upvar sdvar sdvar
+  upvar fout fout
 
+  svg_init -w $width -h $height -vbox "0 0 [expr $width * $scale] [expr $height * $scale]"
+
+  set sdvar(die,height) $height
+}
+# }}}
+# sd_read_lef
+# {{{
+proc sd_read_lef {ifile} {
+  upvar sdvar sdvar
+
+  set fp [open $ifile r]
+    set data [read $fp]
+  close $fp
+  
+  regsub -all {PIN} $data {:PIN} data
+  regsub -all {OBS} $data {:OBS} data
+
+  set lines [split $data ":"]
+
+  set cell dwc_e32mp_phy_x4_ns
+
+  foreach line $lines {
+    if [regexp {USE CLOCK} $line] {
+      set pin [lindex $line 1]
+      set sdvar($cell,$pin,x1) [lindex $line 13]
+      set sdvar($cell,$pin,y1) [lindex $line 14]
+      set sdvar($cell,$pin,x2) [lindex $line 15]
+      set sdvar($cell,$pin,y2) [lindex $line 16]
+    }
+  }
+
+}
+# }}}
+# sd_cell
+# {{{
+proc sd_cell {args} {
+  upvar svar svar
+  upvar fout fout
+  upvar sdvar sdvar
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name 1
+  }
+# }}}
+  # -w
+# {{{
+  set opt(-w) 0
+  set idx [lsearch $args {-w}]
+  if {$idx != "-1"} {
+    set width [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-w) 1
+  } else {
+    set width 1
+  }
+# }}}
+  # -h
+# {{{
+  set opt(-h) 0
+  set idx [lsearch $args {-h}]
+  if {$idx != "-1"} {
+    set height [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-h) 1
+  } else {
+    set height 1
+  }
+# }}}
+  # -xy
+# {{{
+  set opt(-xy) 0
+  set idx [lsearch $args {-xy}]
+  if {$idx != "-1"} {
+    set xy [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-xy) 1
+  } else {
+    set xy 0,0
+  }
+# }}}
+
+  foreach {x y} [split $xy ,] {}
+
+  set fpheight $sdvar(die,height)
+
+  set y [expr $fpheight - $y]
+
+
+  puts $fout "
+                <path d=\"M$x,$y h$width v-$height h-$width v$height\" stroke=\"purple\" stroke-width=\"1\" fill=\"none\" />
+              "
+  #puts $fout "<text x=$x y=[expr $y-2] style=\"font-family:monospace;font-size:8px\">$name</text>"
+}
+# }}}
+# sd_place_cell
+# {{{
+proc sd_place_cell {xy cell} {
+  upvar sdvar sdvar
+  upvar svar svar
+  upvar fout fout
+
+  sd_cell -xy $xy -w $sdvar($cell,width) -h $sdvar($cell,height)
+}
+# }}}
+# sd_place_pin
+# {{{
+proc sd_place_pin {xy cell_pin} {
+  upvar sdvar sdvar
+  upvar svar svar
+  upvar fout fout
+
+  foreach {x y} [split $xy ,] {}
+
+  set pin  [file tail    $cell_pin]
+  set cell [file dirname $cell_pin]
+
+  set fpheight $sdvar(die,height)
+
+  set x1 [expr $sdvar($cell,$pin,x1) + $x]
+  set y1 [format "%.3f" [expr $fpheight - $sdvar($cell,$pin,y1) - $y ]]
+  set x2 [expr $sdvar($cell,$pin,x2) + $x]
+  set y2 [format "%.3f" [expr $fpheight - $sdvar($cell,$pin,y2) - $y ]]
+
+  puts $fout "
+  <path stroke=\"purple\" stroke-width=\"5\" d=\"M$x1 $y1 L$x2 $y1 L$x2 $y2 L$x1 $y2 Z\" />
+  "
+  #puts $fout "
+  #<path stroke=\"purple\" stroke-width=\"1\" d=\"M0 0 L100 100 \" />
+  #"
+}
+# }}}
 # svg_blk
 # {{{
 proc svg_blk {args} {
