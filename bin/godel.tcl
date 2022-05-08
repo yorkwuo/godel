@@ -52,7 +52,7 @@ proc sd_cell {args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-name) 1
   } else {
-    set name 1
+    set name NA
   }
 # }}}
   # -w
@@ -91,6 +91,18 @@ proc sd_cell {args} {
     set xy 0,0
   }
 # }}}
+  # -ori
+# {{{
+  set opt(-ori) 0
+  set idx [lsearch $args {-ori}]
+  if {$idx != "-1"} {
+    set ori [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-ori) 1
+  } else {
+    set ori N
+  }
+# }}}
 
   foreach {x y} [split $xy ,] {}
 
@@ -98,48 +110,230 @@ proc sd_cell {args} {
 
   set y [expr $fpheight - $y]
 
-
-  puts $fout "
-                <path d=\"M$x,$y h$width v-$height h-$width v$height\" stroke=\"purple\" stroke-width=\"1\" fill=\"none\" />
-              "
-  #puts $fout "<text x=$x y=[expr $y-2] style=\"font-family:monospace;font-size:8px\">$name</text>"
+  if {$ori eq "W"} {
+    puts $fout "
+                  <path d=\"M$x,$y h$height v-$width h-$height v$width\" stroke=\"purple\" stroke-width=\"1\" fill=\"none\" />
+                "
+  } else {
+    puts $fout "
+                  <path d=\"M$x,$y h$width v-$height h-$width v$height\" stroke=\"purple\" stroke-width=\"1\" fill=\"none\" />
+                "
+  }
 }
 # }}}
 # sd_place_cell
 # {{{
-proc sd_place_cell {xy cell} {
+proc sd_place_cell {args} {
   upvar sdvar sdvar
   upvar svar svar
   upvar fout fout
+  # -xy
+# {{{
+  set opt(-xy) 0
+  set idx [lsearch $args {-xy}]
+  if {$idx != "-1"} {
+    set xy [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-xy) 1
+  } else {
+    set xy 0,0
+  }
+# }}}
+  # -inst
+# {{{
+  set opt(-inst) 0
+  set idx [lsearch $args {-inst}]
+  if {$idx != "-1"} {
+    set inst [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-inst) 1
+  } else {
+    set inst NA/NA
+  }
+# }}}
+  # -cell
+# {{{
+  set opt(-cell) 0
+  set idx [lsearch $args {-cell}]
+  if {$idx != "-1"} {
+    set cell [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-cell) 1
+  } else {
+    set cell NA/NA
+  }
+# }}}
+  # -ori
+# {{{
+  set opt(-ori) 0
+  set idx [lsearch $args {-ori}]
+  if {$idx != "-1"} {
+    set ori [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-ori) 1
+  } else {
+    set ori N
+  }
+# }}}
 
-  sd_cell -xy $xy -w $sdvar($cell,width) -h $sdvar($cell,height)
+  sd_cell -xy $xy -w $sdvar($cell,width) -h $sdvar($cell,height) -ori $ori
+
+  set sdvar($inst,cell) $cell
+  set sdvar($inst,xy)   $xy
+  set sdvar($inst,ori)  $ori
 }
 # }}}
 # sd_place_pin
 # {{{
-proc sd_place_pin {xy cell_pin} {
+proc sd_place_pin {instpin} {
   upvar sdvar sdvar
   upvar svar svar
   upvar fout fout
+  
+  set inst [file dirname $instpin]
+  set pin  [file tail    $instpin]
+  set cell $sdvar($inst,cell)
+  set ori  $sdvar($inst,ori)
+
+  sd_pin -xy $sdvar($inst,xy) -pin $instpin -ori $ori
+}
+# }}}
+# sd_pin_connect
+# {{{
+proc sd_pin_connect {args} {
+  upvar sdvar sdvar
+  upvar svar svar
+  upvar fout fout
+  # -ofs
+# {{{
+  set opt(-ofs) 0
+  set idx [lsearch $args {-ofs}]
+  if {$idx != "-1"} {
+    set ofs [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-ofs) 1
+  } else {
+    set ofs ""
+  }
+# }}}
+  set spin [lindex $args 0]
+  set epin [lindex $args 1]
+
+  svg_connect $sdvar($spin,xy) $sdvar($epin,xy) -ofs $ofs
+  puts       "$sdvar($spin,xy) $sdvar($epin,xy) $ofs"
+
+}
+# }}}
+# sd_pin
+# {{{
+proc sd_pin {args} {
+  upvar sdvar sdvar
+  upvar svar svar
+  upvar fout fout
+  # -xy
+# {{{
+  set opt(-xy) 0
+  set idx [lsearch $args {-xy}]
+  if {$idx != "-1"} {
+    set xy [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-xy) 1
+  } else {
+    set xy 0,0
+  }
+# }}}
+  # -pin
+# {{{
+  set opt(-pin) 0
+  set idx [lsearch $args {-pin}]
+  if {$idx != "-1"} {
+    set instpin [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-pin) 1
+  } else {
+    set instpin NA/NA
+  }
+# }}}
+  # -ori
+# {{{
+  set opt(-ori) 0
+  set idx [lsearch $args {-ori}]
+  if {$idx != "-1"} {
+    set ori [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-ori) 1
+  } else {
+    set ori N
+  }
+# }}}
 
   foreach {x y} [split $xy ,] {}
 
-  set pin  [file tail    $cell_pin]
-  set cell [file dirname $cell_pin]
+  set pin  [file tail    $instpin]
+  set cell $sdvar([file dirname $instpin],cell)
+
+  set cw $sdvar($cell,width)
+  set ch $sdvar($cell,height)
 
   set fpheight $sdvar(die,height)
 
-  set x1 [expr $sdvar($cell,$pin,x1) + $x]
-  set y1 [format "%.3f" [expr $fpheight - $sdvar($cell,$pin,y1) - $y ]]
-  set x2 [expr $sdvar($cell,$pin,x2) + $x]
-  set y2 [format "%.3f" [expr $fpheight - $sdvar($cell,$pin,y2) - $y ]]
+  set x1 $sdvar($cell,$pin,x1)
+  set y1 $sdvar($cell,$pin,y1)
+  set x2 $sdvar($cell,$pin,x2)
+  set y2 $sdvar($cell,$pin,y2)
+
+  if {$ori eq "W"} {
+    set newx1 [expr $ch - $y1]
+    set newy1 $x1
+    set newx2 [expr $ch - $y2]
+    set newy2 $x2
+  } elseif {$ori eq "S"} {
+    set newx1 [expr $cw - $x1]
+    set newy1 [expr $ch - $y1]
+    set newx2 [expr $cw - $x2]
+    set newy2 [expr $ch - $y2]
+  } elseif {$ori eq "E"} {
+    set newx1 $y1
+    set newy1 [expr $cw - $x1]
+    set newx2 $y2
+    set newy2 [expr $cw - $x2]
+  } elseif {$ori eq "FS"} {
+    set newx1 $x1
+    set newy1 [expr $ch - $y1]
+    set newx2 $x2
+    set newy2 [expr $ch - $y2]
+  } elseif {$ori eq "FW"} {
+    set newx1 [expr $ch - [expr $ch - $y1]]
+    set newy1 $x1
+    set newx2 [expr $ch - [expr $ch - $y2]]
+    set newy2 $x2
+  } elseif {$ori eq "FN"} {
+    set newx1 [expr $cw - $x1]
+    set newy1 [expr $ch - [expr $ch - $y1]]
+    set newx2 [expr $cw - $x2]
+    set newy2 [expr $ch - [expr $ch - $y2]]
+  } elseif {$ori eq "FE"} {
+    set newx1 [expr $ch - $y1]
+    set newy1 [expr $cw - $x1]
+    set newx2 [expr $ch - $y2]
+    set newy2 [expr $cw - $x2]
+  } else {
+    set newx1 $x1
+    set newy1 $y1
+    set newx2 $x2
+    set newy2 $y2
+  }
+
+  set x1 [expr $newx1 + $x]
+  set y1 [format "%.3f" [expr $fpheight - $newy1 - $y ]]
+  set x2 [expr $newx2 + $x]
+  set y2 [format "%.3f" [expr $fpheight - $newy2 - $y ]]
 
   puts $fout "
   <path stroke=\"purple\" stroke-width=\"5\" d=\"M$x1 $y1 L$x2 $y1 L$x2 $y2 L$x1 $y2 Z\" />
   "
-  #puts $fout "
-  #<path stroke=\"purple\" stroke-width=\"1\" d=\"M0 0 L100 100 \" />
-  #"
+
+  set sdvar($instpin,xy) $x1,$y1
 }
 # }}}
 # svg_blk
