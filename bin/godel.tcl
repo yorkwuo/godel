@@ -17,13 +17,14 @@ proc sd_read_lef {ifile} {
   set fp [open $ifile r]
     set data [read $fp]
   close $fp
+
+  regexp {MACRO (\S+)} $data whole cell
+  regexp {SIZE (\S+) BY (\S+) ;} $data whole width height
   
   regsub -all {PIN} $data {:PIN} data
   regsub -all {OBS} $data {:OBS} data
 
   set lines [split $data ":"]
-
-  set cell dwc_e32mp_phy_x4_ns
 
   foreach line $lines {
     if [regexp {USE CLOCK} $line] {
@@ -34,6 +35,9 @@ proc sd_read_lef {ifile} {
       set sdvar($cell,$pin,y2) [lindex $line 16]
     }
   }
+
+  set sdvar($cell,width) $width
+  set sdvar($cell,height) $height
 
 }
 # }}}
@@ -282,6 +286,8 @@ proc sd_pin {args} {
   set x2 $sdvar($cell,$pin,x2)
   set y2 $sdvar($cell,$pin,y2)
 
+  # rotate/flip
+# {{{
   if {$ori eq "W"} {
     set newx1 [expr $ch - $y1]
     set newy1 $x1
@@ -323,10 +329,11 @@ proc sd_pin {args} {
     set newx2 $x2
     set newy2 $y2
   }
+# }}}
 
-  set x1 [expr $newx1 + $x]
+  set x1 [format "%.3f" [expr $newx1 + $x]]
   set y1 [format "%.3f" [expr $fpheight - $newy1 - $y ]]
-  set x2 [expr $newx2 + $x]
+  set x2 [format "%.3f" [expr $newx2 + $x]]
   set y2 [format "%.3f" [expr $fpheight - $newy2 - $y ]]
 
   puts $fout "
@@ -334,6 +341,107 @@ proc sd_pin {args} {
   "
 
   set sdvar($instpin,xy) $x1,$y1
+}
+# }}}
+# sd_create_pin
+# {{{
+proc sd_create_pin {args} {
+  upvar sdvar sdvar
+  upvar svar svar
+  upvar fout fout
+  # -xy
+# {{{
+  set opt(-xy) 0
+  set idx [lsearch $args {-xy}]
+  if {$idx != "-1"} {
+    set xy [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-xy) 1
+  } else {
+    set xy 0,0
+  }
+# }}}
+  # -pin
+# {{{
+  set opt(-pin) 0
+  set idx [lsearch $args {-pin}]
+  if {$idx != "-1"} {
+    set instpin [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-pin) 1
+  } else {
+    set instpin NA/NA
+  }
+# }}}
+
+  set pin  [file tail $instpin]
+  set inst [file dirname $instpin]
+
+  foreach {x y} [split $xy ,] {}
+  set fpheight $sdvar(die,height)
+
+  set x1 $x
+  set y1 [format "%.3f" [expr $fpheight - $y ]]
+
+  svg_rect $x1 $y1 5 5
+
+  set sdvar($inst,cell) FOOCELL
+  set sdvar($instpin,xy) $x1,$y1
+}
+# }}}
+# sd_text
+# {{{
+proc sd_text {args} {
+  upvar sdvar sdvar
+  upvar svar svar
+  upvar fout fout
+  # -xy
+# {{{
+  set opt(-xy) 0
+  set idx [lsearch $args {-xy}]
+  if {$idx != "-1"} {
+    set xy [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-xy) 1
+  } else {
+    set xy 0,0
+  }
+# }}}
+  # -txt
+# {{{
+  set opt(-txt) 0
+  set idx [lsearch $args {-txt}]
+  if {$idx != "-1"} {
+    set txt [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-txt) 1
+  } else {
+    set txt NA
+  }
+# }}}
+  # -size
+# {{{
+  set opt(-size) 0
+  set idx [lsearch $args {-size}]
+  if {$idx != "-1"} {
+    set size [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-size) 1
+  } else {
+    set size NA
+  }
+# }}}
+
+
+  foreach {x y} [split $xy ,] {}
+
+  set fpheight $sdvar(die,height)
+
+  set x1 $x
+  set y1 [format "%.3f" [expr $fpheight - $y ]]
+
+  puts $fout "<text x=\"$x1\" y=\"$y1\" style=\"font-family:monospace;font-size:${size}px\" \>$txt</text>"
+
 }
 # }}}
 # svg_blk
@@ -524,7 +632,7 @@ proc svg_circle {xy} {
 # {{{
 proc svg_rect {x y width height} {
   upvar fout fout
-  puts $fout "<rect stroke=\"purple\" stroke-width=\"1\" x=\"$x\" y=\"$y\" width=\"$width\" height=\"$height\" fill=\"none\" />"
+  puts $fout "<rect fill=\"purple\" stroke=\"purple\" stroke-width=\"1\" x=\"$x\" y=\"$y\" width=\"$width\" height=\"$height\" fill=\"none\" />"
 }
 # }}}
 # svg_connect
