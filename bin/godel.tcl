@@ -1374,6 +1374,18 @@ proc css_hide {} {
 # {{{
 proc atable {args} {
   upvar env env
+  # -rowctrl
+# {{{
+  set opt(-rowctrl) 0
+  set idx [lsearch $args {-rowctrl}]
+  if {$idx != "-1"} {
+    set rowctrl_proc [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-rowctrl) 1
+  } else {
+    set rowctrl_proc NA
+  }
+# }}}
   # -css (css class)
 # {{{
   set opt(-css) 0
@@ -1581,7 +1593,11 @@ if {$opt(-noshow) eq "1"} {
   set num 1
   foreach row $atrows {
     regsub {^\s+} $row {} row
-    puts $fout "<tr>"
+    if {$opt(-rowctrl) eq "1"} {
+      eval $rowctrl_proc
+    } else {
+      puts $fout "<tr>"
+    }
     if {$opt(-num) eq "1"} {
       puts $fout "<td>$num</td>"
     }
