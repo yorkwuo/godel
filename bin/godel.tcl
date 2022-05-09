@@ -444,6 +444,30 @@ proc sd_text {args} {
 
 }
 # }}}
+# flist_table
+# {{{
+proc flist_table {files} {
+  upvar fout fout
+
+  puts $fout "<table class=table1>"
+  puts $fout "<th>Date</th>"
+  puts $fout "<th>Name</th>"
+  puts $fout "<th>Full Path</th>"
+
+  foreach f $files {
+    puts $fout "<tr>"
+    set fname [file tail $f]
+    set mtime [file mtime $f]
+    set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
+
+    puts $fout "<td>$timestamp</td>"
+    puts $fout "<td><a href=$f type=text/txt>$fname</a></td>"
+    puts $fout "<td>$f</td>"
+    puts $fout "</tr>"
+  }
+  puts $fout "</table>"
+}
+# }}}
 # svg_blk
 # {{{
 proc svg_blk {args} {
@@ -511,30 +535,6 @@ proc svg_blk {args} {
   set svar($name,y)  $y
   set svar($name,I)  $x,[expr $y + [expr $width/2]]
   set svar($name,O)  [expr $x+$width],[expr $y + [expr $width/2]]
-}
-# }}}
-# flist_table
-# {{{
-proc flist_table {files} {
-  upvar fout fout
-
-  puts $fout "<table class=table1>"
-  puts $fout "<th>Date</th>"
-  puts $fout "<th>Name</th>"
-  puts $fout "<th>Full Path</th>"
-
-  foreach f $files {
-    puts $fout "<tr>"
-    set fname [file tail $f]
-    set mtime [file mtime $f]
-    set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
-
-    puts $fout "<td>$timestamp</td>"
-    puts $fout "<td><a href=$f type=text/txt>$fname</a></td>"
-    puts $fout "<td>$f</td>"
-    puts $fout "</tr>"
-  }
-  puts $fout "</table>"
 }
 # }}}
 # svg_init
@@ -1039,9 +1039,9 @@ proc svg_attr {name attr} {
   return $svar($name,$attr)
 }
 # }}}
-# pin_connect
+# svg_pin_connect
 # {{{
-proc pin_connect {pin1 pin2 args} {
+proc svg_pin_connect {pin1 pin2 args} {
   upvar svar svar
   upvar fout fout
   set pin1_name [file tail $pin1]
