@@ -1632,7 +1632,11 @@ if {$opt(-noshow) eq "1"} {
   if {$opt(-f) eq "1"} {
   } else {
     if {$opt(-dataTables) eq "1"} {
-            puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+            if {$env(GODEL_EMB_CSS) eq "1"} {
+              puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
+            } else {
+              puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+            }
             puts $fout "<script>"
             puts $fout "    \$(document).ready(function() {"
             puts $fout "    \$('#tbl').DataTable({"
@@ -2108,7 +2112,12 @@ proc ghtm_ls_table {args} {
     if [file exist $ifile] {
       set mtime [file mtime $ifile]
       if {[file type $ifile] eq "link"} {
-        set linktarget [file readlink $ifile]
+        set fname [file tail [file readlink $ifile]]
+        set ori [pwd]
+        cd [file dirname [file readlink $ifile]]
+        set realpath [pwd]
+        cd $ori
+        set linktarget $realpath/$fname
       } else {
         set linktarget $ifile
       }
@@ -2153,7 +2162,11 @@ proc ghtm_ls_table {args} {
   puts $fout "</table>"
 
   if {$dataTables eq "1"} {
-      puts $fout "<script src=\"$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js\"></script>"
+            if {$env(GODEL_EMB_CSS) eq "1"} {
+              puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
+            } else {
+              puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+            }
       puts $fout "<script>"
       puts $fout "    \$(document).ready(function() {"
       puts $fout "    \$('#$val(-id)').DataTable({"
@@ -5533,7 +5546,11 @@ proc local_table {name args} {
   }
   puts $fout "</table>"
   if {$opt(-dataTables) eq "1"} {
-          puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+            if {$env(GODEL_EMB_CSS) eq "1"} {
+              puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
+            } else {
+              puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+            }
           puts $fout "<script>"
           puts $fout "    \$(document).ready(function() {"
           puts $fout "    \$('#tbl').DataTable({"
