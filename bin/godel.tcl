@@ -2841,7 +2841,8 @@ proc ltbl_iname {dispcol} {
 
   
   if {$tick eq "1"} {
-    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=palegreen><a href=\"$row/.index.htm\">$disp</a></td>"
+    #set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=palegreen><a href=\"$row/.index.htm\">$disp</a></td>"
+    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=lightyellow><a href=\"$row/.index.htm\">$disp</a></td>"
   } else {
     set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign><a href=\"$row/.index.htm\">$disp</a></td>"
   }
