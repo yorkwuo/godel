@@ -1868,7 +1868,7 @@ proc var_table {} {
       } else {
         puts $fout "<td>$name</td>"
         set value [lvars . $name]
-        puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" >$value</td>"
+        puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
       }
     puts $fout "</tr>"
   }
@@ -2111,16 +2111,16 @@ proc ghtm_ls_table {args} {
 
     if [file exist $ifile] {
       set mtime [file mtime $ifile]
-      if {[file type $ifile] eq "link"} {
-        set fname [file tail [file readlink $ifile]]
-        set ori [pwd]
-        cd [file dirname [file readlink $ifile]]
-        set realpath [pwd]
-        cd $ori
-        set linktarget $realpath/$fname
-      } else {
+      #if {[file type $ifile] eq "link"} {
+      #  set fname [file tail [file readlink $ifile]]
+      #  set ori [pwd]
+      #  cd [file dirname [file readlink $ifile]]
+      #  set realpath [pwd]
+      #  cd $ori
+      #  set linktarget $realpath/$fname
+      #} else {
         set linktarget $ifile
-      }
+      #}
       #set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
       set timestamp [clock format $mtime -format {%m-%d_%H:%M}]
       set fsize [file size $ifile]
@@ -3074,7 +3074,7 @@ proc gexe_button {args} {
   if [file exist $exefile] {
     #exec chmod +x $exefile
     if {$opt(-cmd)} {
-      puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-blue\" type=text/gtcl>$name<span style=float:right><a class=\"w3-button w3-blue\" href=$exefile type=text/txt>&#9701</a></span></a>"
+      puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b><span style=float:right><a class=\"w3-button w3-blue\" href=$exefile type=text/txt>&#9701</a></span></a>"
     } else {
       puts $fout "<a href=.$exefile.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
     }
