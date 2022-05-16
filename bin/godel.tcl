@@ -1210,21 +1210,21 @@ proc ltable_edfile {vname} {
 
   if {$linkopen eq "1"} {
     if {$value eq "NA" || $value eq ""} {
-      set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\"></td>"
+      set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
     } else {
       if [file exist $row/$value] {
-        set celltxt "<td><a href=\"$row/$value\" type=text/txt>$value</a></td>"
+        set celltxt "<td style=\"white-space:pre\"><a href=\"$row/$value\" type=text/txt>$value</a></td>"
       } elseif [file exist $value] {
-        set celltxt "<td><a href=\"$value\" type=text/txt>$value</a></td>"
+        set celltxt "<td style=\"white-space:pre\"><a href=\"$value\" type=text/txt>$value</a></td>"
       } else {
-        set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\">$value</td>"
+        set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
       }
     }
   } else {
     if {$value eq "NA"} {
-      set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\"></td>"
+      set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
     } else {
-      set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\">$value</td>"
+      set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
     }
   }
 }
@@ -2042,7 +2042,7 @@ proc ghtm_ls_table {args} {
     set pattern [lindex $args [expr $idx + 1]]
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-pattern) 1
-    set ifiles [lsort [glob -type f $pattern]]
+    set ifiles [lsort [glob -nocomplain -type f $pattern]]
   } else {
     set pattern *
   }
@@ -5320,8 +5320,15 @@ proc local_table {name args} {
         }
         close $kin
       } else {
-        puts "Errors: Not exist... $listfile"
-        return
+        #puts "Errors: Not exist... $listfile"
+        if {$opt(-revert)} {
+          set flist [lsort -decreasing [glob -nocomplain $pattern/.godel]]
+        } else {
+          set flist [lsort [glob -nocomplain $pattern/.godel]]
+        }
+        foreach f $flist {
+          lappend rows [file dirname $f]
+        }
       }
     } else {
       if {$opt(-revert)} {
