@@ -1857,12 +1857,17 @@ proc var_table {} {
 # f:file
       } elseif {$type eq "f"} {
         set value [lvars . $name]
-        if [file exist $value] {
-          puts $fout "<td><a href=$value type=text/txt>$name</a></td>"
-          puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" >$value</td>"
+        if {$value eq "NA"} {
+            puts $fout "<td>$name</td>"
+            puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" ></td>"
         } else {
-          puts $fout "<td>$name</td>"
-          puts $fout "<td bgcolor=lightgrey gname=\".\" colname=\"$name\" contenteditable=\"true\" >$value</td>"
+          if [file exist $value] {
+            puts $fout "<td><a href=$value type=text/txt>$name</a></td>"
+            puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" >$value</td>"
+          } else {
+            puts $fout "<td>$name</td>"
+            puts $fout "<td bgcolor=lightgrey gname=\".\" colname=\"$name\" contenteditable=\"true\" >$value</td>"
+          }
         }
 # value
       } else {
@@ -2011,6 +2016,15 @@ proc gtcl_commit {} {
 proc ghtm_ls_table {args} {
   upvar fout fout
   upvar env env
+  # -dir
+# {{{
+  set opt(-dir) 0
+  set idx [lsearch $args {-dir}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-dir) 1
+  }
+# }}}
   # -dataTables
 # {{{
   set idx [lsearch $args {-dataTables}]
@@ -2102,6 +2116,9 @@ proc ghtm_ls_table {args} {
     puts $fout "<th>Date</th>"
     puts $fout "<th>Size</th>"
     puts $fout "<th>Name</th>"
+    if {$opt(-dir) eq "1"} {
+      puts $fout "<th>Dir</th>"
+    }
   puts $fout "</tr>"
   puts $fout "</thead>"
 
@@ -2126,6 +2143,7 @@ proc ghtm_ls_table {args} {
       set fsize [file size $ifile]
       set fsize [num_symbol $fsize K]
       set fname [file tail $ifile]
+      set dir   [file dirname $ifile]
       puts $fout "<td>$count</td>"
       puts $fout "<td>$timestamp</td>"
       puts $fout "<td>$fsize</td>"
@@ -2145,6 +2163,9 @@ proc ghtm_ls_table {args} {
         puts $fout "<td><a href=\"$linktarget\" type=text/jpg>$fname</a></td>"
       } else {
         puts $fout "<td><a href=\"$linktarget\" type=text/txt>$fname</a></td>"
+      }
+      if {$opt(-dir) eq "1"} {
+        puts $fout "<td>$dir</td>"
       }
     } else {
       puts $fout "<td>$count</td>"
@@ -5315,6 +5336,7 @@ proc local_table {name args} {
           if {[regexp {^\s*#} $line]} {
           } elseif {[regexp {^\s*$} $line]} {
           } else {
+            regsub {^\s*} $line {} line
             lappend rows $line
           }
         }
