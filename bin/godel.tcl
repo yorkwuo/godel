@@ -2834,12 +2834,12 @@ proc ltbl_hit {dispcol} {
 
   if {$hit} {
     if {$tick eq "1"} {
-      set celltxt "<td bgcolor=lightgreen>$disp</td>"
+      set celltxt "<td bgcolor=lightgreen style=\"white-space:pre\">$disp</td>"
     } else {
-      set celltxt "<td>$disp</td>"
+      set celltxt "<td style=\"white-space:pre\">$disp</td>"
     }
   } else {
-    set celltxt "<td bgcolor=lightgray>$disp</td>"
+    set celltxt "<td bgcolor=lightgray style=\"white-space:pre\">$disp</td>"
   }
 }
 # }}}
@@ -5159,7 +5159,7 @@ proc lvars {args} {
 # }}}
 # local_table
 # {{{
-proc local_table {name args} {
+proc local_table {tableid args} {
   global fout
   upvar vars vars
   upvar env env
@@ -5381,7 +5381,7 @@ proc local_table {name args} {
     puts $fout "}"
     puts $fout "</style>"
   }
-  puts $fout "<table class=$css_class id=$name>"
+  puts $fout "<table class=$css_class id=$tableid>"
 # Table Headers
 # {{{
   puts $fout "<thead>"
@@ -5583,7 +5583,7 @@ proc local_table {name args} {
             }
           puts $fout "<script>"
           puts $fout "    \$(document).ready(function() {"
-          puts $fout "    \$('#tbl').DataTable({"
+          puts $fout "    \$('#$tableid').DataTable({"
           puts $fout "       \"paging\": false,"
           puts $fout "       \"info\": false,"
           puts $fout "    });"
