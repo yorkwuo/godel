@@ -1861,12 +1861,17 @@ proc var_table {} {
             puts $fout "<td>$name</td>"
             puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" ></td>"
         } else {
-          if [file exist $value] {
-            puts $fout "<td><a href=$value type=text/txt>$name</a></td>"
-            puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" >$value</td>"
+          if {[llength $value] > 1} {
+              puts $fout "<td>$name</td>"
+              puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
           } else {
-            puts $fout "<td>$name</td>"
-            puts $fout "<td bgcolor=lightgrey gname=\".\" colname=\"$name\" contenteditable=\"true\" >$value</td>"
+            if [file exist $value] {
+              puts $fout "<td><a href=$value type=text/txt>$name</a></td>"
+              puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
+            } else {
+              puts $fout "<td>$name</td>"
+              puts $fout "<td bgcolor=lightgrey gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
+            }
           }
         }
 # value
@@ -2866,6 +2871,21 @@ proc ltbl_iname {dispcol} {
     set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=lightyellow><a href=\"$row/.index.htm\">$disp</a></td>"
   } else {
     set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign><a href=\"$row/.index.htm\">$disp</a></td>"
+  }
+}
+# }}}
+# ltbl_lnfile
+# {{{
+proc ltbl_lnfile {target lnas} {
+  upvar celltxt celltxt
+  upvar row     row
+
+  set fpath $row/$target
+  
+  if [file exist $fpath] {
+    set celltxt "<td><a href=\"$fpath\" type=text/txt>$lnas</a></td>"
+  } else {
+    set celltxt "<td bgcolor=lightgrey>$lnas</td>"
   }
 }
 # }}}

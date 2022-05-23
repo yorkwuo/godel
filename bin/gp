@@ -1,23 +1,14 @@
-#!/usr/bin/perl
-use warnings;
-use strict;
-use File::Spec;
-use File::Basename;
-use Cwd;
-my $path = shift;
-chomp $path;
-my $cwd=getcwd();
+#!/usr/bin/tclsh
 
-my @target_dirs = File::Spec->splitdir($path);
-my @cwd_dirs = File::Spec->splitdir($cwd);
+set seg1 [lindex $argv 0]
+set seg2 [pwd]
+set fullpath [file normalize $seg1]
+#set fullpath $seg2/$seg1
 
-# how many `..'?
-my $count = grep /\.\./, @target_dirs;
-
-if($count > 0){
-  splice(@cwd_dirs,"-$count");
-  splice(@target_dirs,0,$count);
+if [file exist $fullpath] {
+  puts $fullpath
+} else {
+  puts "Error: $fullpath"
 }
 
-my $newpath = File::Spec->catdir(@cwd_dirs,@target_dirs);
-print "$newpath\n";
+# vim:fdm=marker ft=tcl
