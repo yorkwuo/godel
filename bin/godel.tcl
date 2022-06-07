@@ -5081,7 +5081,7 @@ proc ldyvars {args} {
 
   set vlist ""
   if {$vname == ""} {
-    parray vars
+    parray dyvars
   } else {
     if {$opt(-k)} {
       foreach name [lsort [array names dyvars]] {
