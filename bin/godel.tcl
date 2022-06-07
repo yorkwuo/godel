@@ -5467,6 +5467,7 @@ proc local_table {tableid args} {
 #--------------------
 # For each table row
 #--------------------
+  lsetvar . $tableid,size [llength $rows]
   foreach row $rows {
     # York: consider to remove row style function
     #set row_style {}
