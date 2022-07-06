@@ -1,3 +1,4 @@
+diort
 svg_blk
 svg_in_pin
 svg_out_pin
@@ -14,21 +15,21 @@ svg_attr
 svg_create_clock
 asave
 flist_table
-
-
-
-
-
+connect_pin
+set_scan_state
+remove_port
+set_autofix_configuration
+set_size_only
 check_lef_quality
+set_scan_path
 
-
-
+set_ungroup
 extract_report
-
+read_sverilog
 
 
 check_def_quality
-
+source_if_exist
 
 
 

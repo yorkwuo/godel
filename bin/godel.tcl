@@ -632,7 +632,7 @@ proc svg_circle {xy} {
 # {{{
 proc svg_rect {x y width height} {
   upvar fout fout
-  puts $fout "<rect fill=\"purple\" stroke=\"purple\" stroke-width=\"1\" x=\"$x\" y=\"$y\" width=\"$width\" height=\"$height\" fill=\"none\" />"
+  puts $fout "<rect stroke=\"purple\" stroke-width=\"1\" x=\"$x\" y=\"$y\" width=\"$width\" height=\"$height\" fill=\"none\" />"
 }
 # }}}
 # svg_connect
@@ -745,6 +745,18 @@ proc svg_flop {args} {
     set xy 0,0
   }
 # }}}
+  # -inst
+# {{{
+  set opt(-inst) 0
+  set idx [lsearch $args {-inst}]
+  if {$idx != "-1"} {
+    set inst [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-inst) 1
+  } else {
+    set inst NA
+  }
+# }}}
 
   foreach {x y} [split $xy ,] {}
   puts $fout "
@@ -759,6 +771,7 @@ proc svg_flop {args} {
   set svar($name,Q)  [expr $x+30],[expr $y+10]
   set svar($name,D)  [expr $x],[expr $y+10]
   set svar($name,CK) [expr $x],[expr $y+35]
+  set svar($name,inst) $inst
 }
 # }}}
 # svg_inv
@@ -822,18 +835,47 @@ proc svg_buf {xy name {ofs ""}} {
 # }}}
 # svg_mux
 # {{{
-proc svg_mux {xy name {ofs ""}} {
+proc svg_mux {args} {
   upvar svar svar
   upvar fout fout
-  foreach {x y} [split $xy ,] {}
-
-  if {$ofs eq ""} {
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
   } else {
-    foreach {xofs yofs} [split $ofs ,] {}
-    set x [expr $x + $xofs]
-    set y [expr $y + $yofs]
+    set name 1
   }
+# }}}
+  # -inst
+# {{{
+  set opt(-inst) 0
+  set idx [lsearch $args {-inst}]
+  if {$idx != "-1"} {
+    set inst [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-inst) 1
+  } else {
+    set inst NA
+  }
+# }}}
+  # -xy
+# {{{
+  set opt(-xy) 0
+  set idx [lsearch $args {-xy}]
+  if {$idx != "-1"} {
+    set xy [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-xy) 1
+  } else {
+    set xy 0,0
+  }
+# }}}
 
+  foreach {x y} [split $xy ,] {}
   set x1 $x
   set y1 [expr $y - 20]
   puts $fout "
@@ -841,17 +883,53 @@ proc svg_mux {xy name {ofs ""}} {
              "
   puts $fout "<text x=$x1 y=$y1 style=\"font-family:monospace;font-size:8px\">$name</text>"
   set svar($name,xy) $x,$y
-  #svg_circle $x,$y
-  set svar($name,I0)  $x,[expr $y-10]
-  set svar($name,I1)  $x,[expr $y+10]
-  set svar($name,Z)   [expr $x+15],$y
+  set svar($name,I0)   $x,[expr $y-10]
+  set svar($name,I1)   $x,[expr $y+10]
+  set svar($name,Z)    [expr $x+15],$y
+  set svar($name,inst) $inst
 }
 # }}}
 # svg_icg
 # {{{
-proc svg_icg {xy name} {
+proc svg_icg {args} {
   upvar svar svar
   upvar fout fout
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name 1
+  }
+# }}}
+  # -inst
+# {{{
+  set opt(-inst) 0
+  set idx [lsearch $args {-inst}]
+  if {$idx != "-1"} {
+    set inst [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-inst) 1
+  } else {
+    set inst NA
+  }
+# }}}
+  # -xy
+# {{{
+  set opt(-xy) 0
+  set idx [lsearch $args {-xy}]
+  if {$idx != "-1"} {
+    set xy [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-xy) 1
+  } else {
+    set xy 0,0
+  }
+# }}}
 
   foreach {x y} [split $xy ,] {}
   set x1 $x
@@ -7531,6 +7609,52 @@ proc godel_get_vars {key} {
     return $vars($key)
   } else {
     return "NA"
+  }
+}
+# }}}
+# obless
+# {{{
+proc obless {args} {
+  global env
+  source $env(GODEL_CENTER)/meta.tcl
+
+  set pagename [lindex $args 0]
+
+  regsub -all {,where} [array names meta] {} objs
+  set hits [lsearch -all -inline -regexp $objs "$pagename"]
+  if {[llength $hits] > 1} {
+    foreach i $hits {
+      puts $i
+    }
+    return
+  }
+
+  set varfile $meta($pagename,where)/.godel/vars.tcl
+  if [file exist $varfile] {
+    source $varfile
+  } else {
+    puts "obless: not exist... $varfile"
+    return
+  }
+
+  set where $meta($pagename,where)
+
+  if [file exist $where/.godel/proc.tcl] {
+    source $where/.godel/proc.tcl
+  }
+
+  set pagename [lindex $args 0]
+  set objname  [lindex $args 1]
+
+  if {$objname == ""} {
+    help
+  } else {
+      godel_draw
+      source $where/$objname/.godel/proc.tcl
+      foreach f $files {
+        exec cp $where/$objname/$f $f
+      }
+      lsetdyvar . srcpath  $where/$objname
   }
 }
 # }}}

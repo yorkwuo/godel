@@ -16,6 +16,30 @@ proc update {} {
   pack .bfr -pady 10
 }
 # }}}
+# wl
+# {{{
+proc wl {} {
+  exec gvim $::env(GODEL_ROOT)/bin/wl.tcl &
+}
+# }}}
+# exec_cl2
+# {{{
+proc exec_cl2 {} {
+  exec $::env(OPENFLOW_ROOT)/yorkenv/bin/cl2 &
+}
+# }}}
+# cl2
+# {{{
+proc cl2 {} {
+  exec gvim $::env(OPENFLOW_ROOT)/yorkenv/bin/cl2 &
+}
+# }}}
+# dio
+# {{{
+proc dio {} {
+  exec gvim $::env(OPENFLOW_ROOT)/yorkenv/dio.tcl &
+}
+# }}}
 # list_wins
 # {{{
 proc list_wins {} {
@@ -94,8 +118,16 @@ option add *font mynewfont
 frame .fr
 pack .fr
 #
+button .fr.exec_cl2 -text "exec_cl2" -command {exec_cl2}
+pack .fr.exec_cl2 -side left
 button .fr.update -text "Update" -command {update}
 pack .fr.update -side left
+button .fr.wl -text "wl" -command {wl}
+pack .fr.wl -side left
+button .fr.cl2 -text "cl2" -command {cl2}
+pack .fr.cl2 -side left
+button .fr.dio -text "dio" -command {dio}
+pack .fr.dio -side left
 #button .fr.down -text "Down" -command {down}
 #pack .fr.down -side left
 #button .fr.up -text "Up" -command {up}
