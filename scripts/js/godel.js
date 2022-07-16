@@ -6,6 +6,8 @@ document.onkeyup = function(e) {
     document.getElementById('idedit').click();
   } else if (e.ctrlKey && e.which == 50) {
     document.getElementById('iddraw').click();
+  } else if (e.ctrlKey && e.which == 51) {
+    document.getElementById('idbutton').click();
   }
 };
 
@@ -15,14 +17,19 @@ if(typeof(tables) != 'undefined' && tables != null){
   for (var k = 0; k < tables.length; k++) {
   
       var cells = tables[k].getElementsByTagName('td');
+
       for (var i = 0; i < cells.length; i++) {
-      
         cells[i].addEventListener('input', function(){
           var gname   = this.getAttribute("gname");
           var att = this.setAttribute("changed","1");
           this.style.backgroundColor = "lightyellow";
           //var kk   = this.getAttribute("changed");
           //console.log(kk);
+        })
+      }
+      for (var i = 0; i < cells.length; i++) {
+        cells[i].addEventListener('click', function(){
+          this.style.backgroundColor = "lightyellow";
         })
       }
   }

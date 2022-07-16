@@ -4219,9 +4219,9 @@ proc ghtm_top_bar {args} {
   if {$opt(-save)} {
     #puts $fout "<button id=\"save\" class=\"w3-bar-item w3-button w3-blue-gray\" style=\"margin: 0px 0px\">Save</button>"
     if [info exist env(GODEL_SAVEnDRAW)] {
-      puts $fout "<button onclick=\"g_save()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
+      puts $fout "<button id=\"idbutton\" onclick=\"g_save()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
     } else {
-      puts $fout "<button onclick=\"g_save_nodraw()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
+      puts $fout "<button id=\"idbutton\" onclick=\"g_save_nodraw()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
     }
   }
     puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
@@ -7697,16 +7697,22 @@ proc oget {args} {
     help
   } else {
     if {$asname eq ""} {
-      puts  "cp -r $where/$objname ."
-      exec  cp -r $where/$objname .
-      lsetdyvar $objname srcpath  $where/$objname
+      if [file exist $objname] {
+        puts  "cp -r $where/$objname ."
+        exec  cp -r $where/$objname .
+        lsetdyvar $objname srcpath  $where/$objname
+      }
     } else {
-      puts  "cp -r $where/$objname $asname"
-      exec  cp -r $where/$objname $asname
-      lsetdyvar $asname srcpath  $where/$objname
-      lsetvar $asname g:iname    $asname
-      lsetvar $asname g:pagename $asname
-      lsetvar $asname runpath    [pwd]/$asname
+      if [file exist $asname] {
+        puts "Already exist... $asname"
+      } else {
+        puts  "cp -r $where/$objname $asname"
+        exec  cp -r $where/$objname $asname
+        lsetdyvar $asname srcpath  $where/$objname
+        lsetvar $asname g:iname    $asname
+        lsetvar $asname g:pagename $asname
+        lsetvar $asname runpath    [pwd]/$asname
+      }
     }
   }
 }
