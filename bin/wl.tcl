@@ -1,5 +1,11 @@
 #!/usr/bin/wish
 
+proc new_focus {} {
+  upvar cur_win_id cur_win_id
+  set cur_win_id [exec xdotool key alt+Tab; exec xdotool getwindowfocus]
+  puts $cur_win_id
+}
+
 # update
 # {{{
 proc update {} {
@@ -38,6 +44,18 @@ proc cl2 {} {
 # {{{
 proc dio {} {
   exec gvim $::env(OPENFLOW_ROOT)/yorkenv/dio.tcl &
+}
+# }}}
+# note
+# {{{
+proc note {} {
+  exec gvim $::env(HOME)/.note &
+}
+# }}}
+# openj
+# {{{
+proc openj {} {
+  exec gvim $::env(HOME)/j &
 }
 # }}}
 # list_wins
@@ -128,6 +146,10 @@ button .fr.cl2 -text "cl2" -command {cl2}
 pack .fr.cl2 -side left
 button .fr.dio -text "dio" -command {dio}
 pack .fr.dio -side left
+button .fr.note -text "note" -command {note}
+pack .fr.note -side left
+button .fr.j -text "openj" -command {openj}
+pack .fr.j -side left
 #button .fr.down -text "Down" -command {down}
 #pack .fr.down -side left
 #button .fr.up -text "Up" -command {up}
