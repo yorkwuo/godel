@@ -7710,6 +7710,8 @@ proc oget {args} {
   } else {
     if {$asname eq ""} {
       if [file exist $objname] {
+        puts "Already exist... $objname"
+      } else {
         puts  "cp -r $where/$objname ."
         exec  cp -r $where/$objname .
         lsetdyvar $objname srcpath  $where/$objname
@@ -8326,8 +8328,8 @@ proc gscreen {pattern_list {ofile NA}} {
 proc read_as_list {afile} {
   set fin [open $afile r]
     while {[gets $fin line] >= 0} {
-      regsub {^\s*} $line {} line
-      regsub {\s$}  $line {} line
+      #regsub {^\s*} $line {} line
+      #regsub {\s$}  $line {} line
       lappend lines $line
     }
   close $fin
