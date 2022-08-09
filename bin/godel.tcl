@@ -1179,17 +1179,18 @@ proc openfile {fpath} {
   } elseif [regexp {\.djvu} $fpath] {
       catch {exec okular $fpath &}
   } elseif [regexp {\.pptx} $fpath] {
+    puts $fpath
     regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
     regsub -all {\/}         $fpath {\\\\}   fpath
-    catch {exec /mnt/c/Program\ Files\ \(x86\)/Microsoft\ Office/root/Office16/POWERPNT.EXE  $fpath &}
+    catch {exec /mnt/c/Program\ Files/Microsoft\ Office/root/Office16/POWERPNT.EXE  $fpath &}
   } elseif [regexp {\.xlsx} $fpath] {
     regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
     regsub -all {\/}         $fpath {\\\\}   fpath
-    catch {exec /mnt/c/Program\ Files\ \(x86\)/Microsoft\ Office/root/Office16/EXCEL.EXE  $fpath &}
+    catch {exec /mnt/c/Program\ Files/Microsoft\ Office/root/Office16/EXCEL.EXE  $fpath &}
   } elseif [regexp {\.docx} $fpath] {
     regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
     regsub -all {\/}         $fpath {\\\\}   fpath
-    catch {exec /mnt/c/Program\ Files\ \(x86\)/Microsoft\ Office/root/Office16/WINWORD.EXE  $fpath &}
+    catch {exec /mnt/c/Program\ Files/Microsoft\ Office/root/Office16/WINWORD.EXE  $fpath &}
   } elseif [regexp {\.vsdx} $fpath] {
     #regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
     #regsub -all {\/}         $fpath {\\\\}   fpath
