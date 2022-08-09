@@ -1,13 +1,17 @@
 // Key binded to edit and draw
-// Ctrl + 1 : Edit
-// Ctrl + 2 : Draw
 document.onkeyup = function(e) {
+// Ctrl 1
   if        (e.ctrlKey && e.which == 49) {
     document.getElementById('idedit').click();
-  } else if (e.ctrlKey && e.which == 50) {
+// Alt 2
+  } else if (e.altKey && e.which == 50) {
     document.getElementById('iddraw').click();
-  } else if (e.ctrlKey && e.which == 51) {
+// Alt 3
+  } else if (e.altKey && e.which == 51) {
     document.getElementById('idbutton').click();
+// Alt 1
+  } else if (e.altKey && e.which == 49) {
+    document.getElementById('idplay').click();
   }
 };
 
