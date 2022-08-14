@@ -1449,6 +1449,15 @@ proc css_hide {} {
 
 }
 # }}}
+proc at_get_rows {} {
+  upvar atvar atvar
+  foreach n [array names atvar] {
+    regsub {,.*$} $n {} n
+    lappend ns $n
+  }
+  set atrows [lsort -unique $ns]
+  return $atrows
+}
 # atable
 # {{{
 proc atable {args} {
@@ -3538,7 +3547,12 @@ proc fdiff {args} {
     if ![file exist $srcpath/$f] {
       if {$opt(ci)} {
         puts "ci not exist file... $srcpath/$f"
-        exec cp $f $srcpath/$f
+        if [file exist [file dirname $srcpath/$f]] {
+          exec cp $f $srcpath/$f
+        } else {
+          file mkdir [file dirname $srcpath/$f]
+          exec cp $f $srcpath/$f
+        }
       } else {
         puts "not exist... $srcpath/$f"
       }
