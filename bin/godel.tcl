@@ -1449,6 +1449,20 @@ proc css_hide {} {
 
 }
 # }}}
+# get_atvar
+# {{{
+proc get_atvar {key} {
+  upvar atvar atvar
+
+  if [info exist atvar($key)] {
+    return $atvar($key)
+  } else {
+    return NA
+  }
+}
+# }}}
+# at_get_rows
+# {{{
 proc at_get_rows {} {
   upvar atvar atvar
   foreach n [array names atvar] {
@@ -1458,6 +1472,7 @@ proc at_get_rows {} {
   set atrows [lsort -unique $ns]
   return $atrows
 }
+# }}}
 # atable
 # {{{
 proc atable {args} {
@@ -3213,20 +3228,18 @@ proc gexe_button {args} {
   }
 
   if [file exist $exefile] {
-    #exec chmod +x $exefile
+    set exename [file tail $exefile]
     if {$opt(-cmd)} {
-      puts $fout "<a id=\"$id\" href=.$exefile.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b><span style=float:right><a class=\"w3-button w3-blue\" href=$exefile type=text/txt>&#9701</a></span></a>"
+      puts $fout "<a id=\"$id\" href=.$exename.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b><span style=float:right><a class=\"w3-button w3-blue\" href=$exefile type=text/txt>&#9701</a></span></a>"
     } else {
-      puts $fout "<a id=\"$id\" href=.$exefile.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
+      puts $fout "<a id=\"$id\" href=.$exename.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
     }
-    set kout [open ".$exefile.gtcl" w]
+    set kout [open ".$exename.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
       puts $kout "cd \$pagepath"
       if {$opt(-nowin)} {
         puts $kout "exec ./$exefile"
       } else {
-        #puts $kout "exec xterm -e \"./$exefile;sleep 0.5\""
-        #puts $kout "exec xterm -e \"./$exefile\""
         puts $kout "exec xterm -geometry 150x30+5+800 -e \"./$exefile\""
       }
     close $kout
@@ -7895,7 +7908,8 @@ proc lshift {ls {size 1}} {
     set LIST [lreplace $LIST 0 $size]
     return $ret
   } else {
-    error "Ran out of list elements."
+    return "EOF"
+    #error "Ran out of list elements."
   }
 }
 # }}}
