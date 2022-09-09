@@ -1,4 +1,4 @@
-ghtm_top_bar -save
+ghtm_top_bar -notime
 gnotes {
 # Godel
 

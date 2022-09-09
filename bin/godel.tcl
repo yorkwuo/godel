@@ -4194,6 +4194,16 @@ proc ghtm_top_bar {args} {
     set opt(-save) 1
   }
 # }}}
+  # -notime
+# {{{
+  set opt(-notime) 0
+  set idx [lsearch $args {-notime}]
+  if {$idx != "-1"} {
+    set saveid [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx $idx]
+    set opt(-notime) 1
+  }
+# }}}
   # -csv
 # {{{
   set opt(-csv) 0
@@ -4222,7 +4232,6 @@ proc ghtm_top_bar {args} {
     set dyvars(last_updated) Now
   }
 
-  set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M}]
 
   set cwd [pwd]
   #file copy -force $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
@@ -4264,9 +4273,13 @@ proc ghtm_top_bar {args} {
   }
 
 
-  puts $fout "
-    <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
-  "
+  if {$opt(-notime) eq "1"} {
+  } else {
+    set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M}]
+    puts $fout "
+      <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
+    "
+  }
   puts $fout {<a href=".godel/open.gtcl" type=text/gtcl class="w3-bar-item w3-button w3-right">Open</a>}
   puts $fout {<a href=".godel/win.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Win</a>}
   #puts $fout {<a href=".index.htm" type=text/txt class="w3-bar-item w3-button w3-right">HTML</a>}
