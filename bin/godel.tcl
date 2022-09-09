@@ -5556,6 +5556,7 @@ proc local_table {tableid args} {
     set row_items {}
     foreach row $rows {
       set sdata [lvars $row $sortby]
+      regsub -all {,} $sdata {} sdata
       if {$sdata eq "NA" || $sdata eq ""} {
         if [regexp {\-ascii} $val(-sortopt)] {
           set sdata "~"

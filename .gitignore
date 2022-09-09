@@ -2,3 +2,5 @@ gsh*
 *.o
 *.so
 tcl.vim
+.index.htm
+.godel
