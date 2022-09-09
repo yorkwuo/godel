@@ -1,6 +1,6 @@
 ghtm_top_bar -save
 gnotes {
-# Godel
+# 
 
 
 }
@@ -9,7 +9,4 @@ gnotes {
 #lappend cols "edtable:g:keywords;Keywords"
 #local_table tbl -c $cols -serial -dataTables
 #ghtm_ls *
-    ghtm_panel_begin
-      linkbox inkscape   -target etc/inkscape/.index.htm
-    ghtm_panel_end
-
+list_svg asic_template.svg
