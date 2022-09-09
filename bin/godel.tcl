@@ -3521,6 +3521,18 @@ proc fdiff {args} {
     set opt(src) 1
   }
 # }}}
+  # -path
+# {{{
+  set opt(-path) 0
+  set idx [lsearch $args {-path}]
+  if {$idx != "-1"} {
+    set srcpath [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-path) 1
+  } else {
+    set srcpath NA
+  }
+# }}}
 
   set target_num [lindex $args 0]
 
@@ -3536,7 +3548,10 @@ proc fdiff {args} {
     return
   }
 
-  set srcpath $dyvars(srcpath)
+  if {$opt(-path) eq "1"}  {
+  } else {
+    set srcpath $dyvars(srcpath)
+  }
 
   if {$opt(src)} {
     puts $srcpath
@@ -7709,11 +7724,15 @@ proc oget {args} {
 
   regsub -all {,where} [array names meta] {} objs
   set hits [lsearch -all -inline -regexp $objs "$pagename"]
-  if {[llength $hits] > 1} {
-    foreach i $hits {
-      puts $i
+  if [regexp $pagename $hits] {
+    # continue
+  } else {
+    if {[llength $hits] > 1} {
+      foreach i $hits {
+        puts $i
+      }
+      return
     }
-    return
   }
 
   set varfile $meta($pagename,where)/.godel/vars.tcl
@@ -7735,7 +7754,7 @@ proc oget {args} {
   set asname   [lindex $args 2]
 
   if {$objname == ""} {
-    help
+    puts [exec ls -1 $where]
   } else {
     if {$asname eq ""} {
       if [file exist $objname] {
