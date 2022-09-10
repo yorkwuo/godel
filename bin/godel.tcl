@@ -1254,7 +1254,7 @@ proc at_open {} {
   upvar row row
   upvar atvar atvar
 
-  set celltxt "<td><button onclick=\"at_open('at.tcl','$row')\" class=\"w3-button w3-blue-gray\">open</button></td>"
+  set celltxt "<td><button onclick=\"at_open('at.tcl','$row')\" class=\"w3-button w3-blue-gray\">O</button></td>"
 }
 # }}}
 # at_mpv
@@ -7903,6 +7903,7 @@ proc godel_array_save {aname ofile} {
     foreach key $keys {
       set newvalue [string map {\\ {\\}} $arr($key)]
       regsub -all {\[} $key {\\[} key
+      regsub -all { } $key {\ } key
       regsub -all {"}  $newvalue {\\"}  newvalue
       regsub -all {\$}  $newvalue {\\$}  newvalue
       regsub -all {\[} $newvalue {\\[}  newvalue
