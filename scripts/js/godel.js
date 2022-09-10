@@ -832,7 +832,8 @@ function at_save(atfname) {
             } else {
 
               gname = gname.replace(/\[/,'\\\[')
-              value = value.replace(/\[/,'\\\[')
+              gname = gname.replace(/\s/g,'\\ ')
+              value = value.replace(/\[/g,'\\\[')
 
               if (value.length == '1') {
                 var cmd = "set atvar("+gname+","+colname+") "+ '""' + "\n";
