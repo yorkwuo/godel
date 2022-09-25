@@ -1267,6 +1267,22 @@ proc at_mpv {} {
   set celltxt "<td><button onclick=\"at_mpv('at.tcl','$row')\" class=\"w3-button w3-blue-gray\">mpv</button></td>"
 }
 # }}}
+# atcols_onoff
+# {{{
+proc atcols_onoff {str} {
+  upvar atcols atcols
+
+  regsub -all {;} $str {} str
+
+  set onoff_key [lindex $str 0]
+  set key       [lindex $str 1]
+  set disp      [lindex $str 2]
+
+  if {[lvars . $onoff_key] eq "1"} {
+    lappend atcols "$key;$disp"
+  }
+}
+# }}}
 # ltable_exe
 # {{{
 proc ltable_exe {name exefile} {
