@@ -31,7 +31,7 @@ read_sverilog
 check_def_quality
 source_if_exist
 
-
+set_testability_configuration
 
 
 
