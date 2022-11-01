@@ -1,3 +1,15 @@
+
+
+
+
+-test_points
+-max_test_points
+-test_points_per_scan_cell
+-internal_clocks
+-add_test_retiming_flops
+-route_scan_serial
+-route_scan_enable
+-route_scan_clock
 -out
 -hookup_pin
 -allow_se_set_reset_fix

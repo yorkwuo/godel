@@ -1,3 +1,17 @@
+# pindex : path index
+# {{{
+proc pindex {path index} {
+  set cols [lreplace [split $path /] 0 0]
+  return [lindex $cols $index]
+}
+# }}}
+# prange : path range
+# {{{
+proc prange {path start end} {
+  set cols [lreplace [split $path /] 0 0]
+  return /[join [lrange $cols $start $end] /]
+}
+# }}}
 # sd_fp_init
 # {{{
 proc sd_fp_init {width height scale} {
@@ -1272,11 +1286,15 @@ proc at_mpv {} {
 proc atcols_onoff {str} {
   upvar atcols atcols
 
-  regsub -all {;} $str {} str
+  set cols [split $str ";"]
 
-  set onoff_key [lindex $str 0]
-  set key       [lindex $str 1]
-  set disp      [lindex $str 2]
+  set onoff_key [lindex $cols 0]
+  regsub {^\s*} $onoff_key {} onoff_key
+  regsub {\s*$} $onoff_key {} onoff_key
+  set key       [lindex $cols 1]
+  regsub {^\s*} $key {} key
+  regsub {\s*$} $key {} key
+  set disp      [lindex $cols 2]
 
   if {[lvars . $onoff_key] eq "1"} {
     lappend atcols "$key;$disp"
@@ -1493,6 +1511,18 @@ proc at_get_rows {} {
 # {{{
 proc atable {args} {
   upvar env env
+  # -local
+# {{{
+  set opt(-local) 0
+  set idx [lsearch $args {-local}]
+  if {$idx != "-1"} {
+    set localfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-local) 1
+  } else {
+    set localfile NA
+  }
+# }}}
   # -rowctrl
 # {{{
   set opt(-rowctrl) 0
@@ -1596,6 +1626,9 @@ proc atable {args} {
   set atfname [lindex $args 0]
 
   source $atfname
+  if [file exist $localfile] {
+    godel_array_read $localfile latvar atvar
+  }
 
 # atcols
   set ns ""
@@ -5906,33 +5939,6 @@ proc gdall {} {
   }
 }
 # }}}
-# deln: de-link
-# {{{
-proc deln {args} {
-  set files [glob {*}$args]
-  foreach file $files {
-    if [file exist $file] {
-      puts $file
-      set lnpath [file readlink $file]
-      exec mv $file .$file
-      exec cp $lnpath .
-    }
-  }
-}
-# }}}
-# reln: re-link
-# {{{
-proc reln {args} {
-  set files [glob {*}$args]
-  foreach file $files {
-    if [file exist .$file] {
-      puts $file
-      exec rm $file
-      exec mv .$file $file
-    }
-  }
-}
-# }}}
 # html_rows_sort
 # {{{
 proc html_rows_sort {rows args} {
@@ -7913,9 +7919,21 @@ proc godel_puts {key} {
   }
 }
 # }}}
+# godel_array_read
+# {{{
+proc godel_array_read {ifile aname newaname} {
+  upvar $newaname arr
+
+  source $ifile
+
+  array set arr [array get $aname]
+
+
+}
+# }}}
 # godel_array_save
 # {{{
-proc godel_array_save {aname ofile} {
+proc godel_array_save {aname ofile {newaname ""}} {
   upvar $aname arr
 
   #if ![file exist $ofile] {
@@ -7937,7 +7955,11 @@ proc godel_array_save {aname ofile} {
       regsub -all {\$}  $newvalue {\\$}  newvalue
       regsub -all {\[} $newvalue {\\[}  newvalue
       regsub -all {\]} $newvalue {\\]}  newvalue
-      puts $fout [format "set %-40s \"%s\"" [set aname]($key) $newvalue]
+      if {$newaname eq ""} {
+        puts $fout [format "set %-40s \"%s\"" [set aname]($key) $newvalue]
+      } else {
+        puts $fout [format "set %-40s \"%s\"" [set newaname]($key) $newvalue]
+      }
     }
   close $fout
 
@@ -8005,6 +8027,28 @@ proc godel_get_column {line num} {
 # plist
 # {{{
 proc plist {args} {
+  # -indent
+# {{{
+  set opt(-indent) 0
+  set idx [lsearch $args {-indent}]
+  if {$idx != "-1"} {
+    set indent [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-indent) 1
+  } else {
+    set indent ""
+  }
+# }}}
+  # -ohandle
+# {{{
+  set opt(-ohandle) 0
+  set idx [lsearch $args {-ohandle}]
+  if {$idx != "-1"} {
+    set ohandle [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-ohandle) 1
+  }
+# }}}
   # -s (sort)
 # {{{
   set opt(-s) 0
@@ -8015,13 +8059,18 @@ proc plist {args} {
   }
 # }}}
   set ll [lindex $args 0]
+
   if {$opt(-s)} {
-    foreach i [lsort $ll] {
-      puts $i
+    set ll [lsort $ll]
+  }
+
+  if {$opt(-ohandle) eq "1"} {
+    foreach i $ll {
+      puts $ohandle $indent$i
     }
   } else {
     foreach i $ll {
-      puts $i
+      puts $indent$i
     }
   }
 }
