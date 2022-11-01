@@ -2636,6 +2636,16 @@ proc bton_set {args} {
     set opt(-name) 1
   }
 # }}}
+  # -fname 
+# {{{
+  set opt(-fname) 0
+  set idx [lsearch $args {-fname}]
+  if {$idx != "-1"} {
+    set fname [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-fname) 1
+  }
+# }}}
   # -value 
 # {{{
   set opt(-value) 0
@@ -2648,8 +2658,11 @@ proc bton_set {args} {
 # }}}
 
   set cur_value [lvars . $key]
+  if {$opt(-fname) eq "0"} {
+    set fname $name
+  }
   
-  set exefile ".set_$name.gtcl"
+  set exefile ".set_$fname.gtcl"
 
   #if [file exist $exefile] {
   #    puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
