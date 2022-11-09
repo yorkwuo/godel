@@ -1133,6 +1133,58 @@ function at_open (atfname,id) {
     document.getElementById('iddraw').click();
 }
 // }}}
+// chrome_open
+// {{{
+function chrome_open (link) {
+
+    var header = "#!/usr/bin/tclsh\n";
+    header = header + "source $env(GODEL_ROOT)/bin/godel.tcl\n";
+
+    var footer = "";
+    footer = footer + "openfile " + link + "\n";
+
+// Save gtcl.tcl
+    //var data = header + cmds + footer;
+    var data = header + footer;
+    const textToBLOB = new Blob([data], { type: 'text/plain' });
+    const sFileName = 'gtcl.tcl';	   // The file to save the data.
+
+    var newLink = document.createElement("a");
+    newLink.download = sFileName;
+
+    if (window.webkitURL != null) {
+        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+    }
+    else {
+        newLink.href = window.URL.createObjectURL(textToBLOB);
+        newLink.style.display = "none";
+        document.body.appendChild(newLink);
+    }
+
+    newLink.click(); 
+
+// Save ginst.tcl
+    var data = 'source $env(GODEL_DOWNLOAD)/gtcl.tcl';
+    const textToBLOB2 = new Blob([data], { type: 'text/plain' });
+    const sFileName2 = 'ginst.tcl';	   // The file to save the data.
+
+    var newLink2 = document.createElement("a");
+    newLink2.download = sFileName2;
+
+    if (window.webkitURL != null) {
+        newLink2.href = window.webkitURL.createObjectURL(textToBLOB2);
+    }
+    else {
+        newLink2.href = window.URL.createObjectURL(textToBLOB2);
+        newLink2.style.display = "none";
+        document.body.appendChild(newLink2);
+    }
+
+    newLink2.click(); 
+
+    document.getElementById('iddraw').click();
+}
+// }}}
 // g_save
 // {{{
 function g_save() {

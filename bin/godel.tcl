@@ -1184,6 +1184,8 @@ proc openfile {fpath} {
     } else {
       catch {exec okular $fpath &}
     }
+  } elseif [regexp {http} $fpath] {
+    catch {exec /mnt/c/Program\ Files\ \(x86\)/Google/Chrome/Application/chrome.exe $fpath &}
   } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb} $fpath] {
       catch {exec mpv $fpath &}
   } elseif [regexp {\.epub} $fpath] {
@@ -1805,6 +1807,7 @@ if {$opt(-noshow) eq "1"} {
 # ltbl_linkurl
 # {{{
 proc ltbl_linkurl {key} {
+  upvar env env
   upvar row row
   upvar celltxt celltxt
 
@@ -1813,7 +1816,11 @@ proc ltbl_linkurl {key} {
   if {$urlvalue eq "NA"} {
     set celltxt "<td gname=\"$row\" colname=\"$key\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
   } else {
-    set celltxt "<td><a href=\"$urlvalue\">$key</td>"
+    if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
+      set celltxt "<td><button onclick=\"chrome_open('$urlvalue')\">url</button></td>"
+    } else {
+      set celltxt "<td><a href=\"$urlvalue\">$key</td>"
+    }
   }
 }
 # }}}
