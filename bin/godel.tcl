@@ -1814,7 +1814,7 @@ proc ltbl_linkurl {key} {
   set urlvalue [lvars $row $key]
 
   if {$urlvalue eq "NA"} {
-    set celltxt "<td gname=\"$row\" colname=\"$key\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
+    set celltxt "<td gname=\"$row\" colname=\"$key\" contenteditable=\"true\"></td>"
   } else {
     if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
       set celltxt "<td><button onclick=\"chrome_open('$urlvalue')\">url</button></td>"

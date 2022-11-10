@@ -26,7 +26,7 @@ ghtm_panel_end
 #-------------------------
 set filter_status [lvars . filter_status]
 
-set dirs [glob -type d *]
+set dirs [glob -nocomplain -type d *]
 set rows ""
 if {$filter_status eq "All"} {
   set rows $dirs
@@ -46,12 +46,13 @@ lappend cols "proc:bton_delete;D"
 lappend cols "proc:ltbl_linkurl url;Link"
 lappend cols "proc:severity;Svrty"
 lappend cols "edtable:status;status"
-lappend cols "edtable:title;Title"
 lappend cols "edtable:fmdate;fmdate"
-lappend cols "edtable:todate;todate"
 lappend cols "edtable:fmwho;fmwho"
 lappend cols "edtable:towho;towho"
 lappend cols "edtable:keywords;Keywords"
+lappend cols "edtable:id;id"
+lappend cols "edtable:title;Title"
+lappend cols "edtable:todate;todate"
 local_table tbl -c $cols -serial -dataTables
 
 # vim:fdm=marker
