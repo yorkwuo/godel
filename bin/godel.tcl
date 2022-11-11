@@ -3867,9 +3867,14 @@ proc ghtm_open_folder {dirpath} {
   puts $fout "<a class=\"w3-button w3-round w3-pale-blue\" onclick=\"open_folder('$dirpath')\">folder</a>"
 }
 # }}}
-proc at_allrows {} {
+proc at_allrows {{pattern NA}} {
   upvar atvar atvar
-    foreach n [array names atvar] {
+  if {$pattern eq "NA"} {
+    set names [array names atvar]
+  } else {
+    set names [array names atvar $pattern]
+  }
+    foreach n $names {
       regsub {,.*$} $n {} n
       lappend ns $n
     }
