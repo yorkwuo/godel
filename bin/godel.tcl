@@ -1796,7 +1796,6 @@ if {$opt(-noshow) eq "1"} {
             puts $fout "    \$('#tbl').DataTable({"
             puts $fout "       \"paging\": false,"
             puts $fout "       \"info\": false,"
-            puts $fout "       \"searching\": true,"
             puts $fout "    });"
             puts $fout "} );"
             puts $fout "</script>"
@@ -7738,11 +7737,15 @@ proc obless {args} {
 
   regsub -all {,where} [array names meta] {} objs
   set hits [lsearch -all -inline -regexp $objs "$pagename"]
-  if {[llength $hits] > 1} {
-    foreach i $hits {
-      puts $i
+  if [regexp $pagename $hits] {
+    # continue
+  } else {
+    if {[llength $hits] > 1} {
+      foreach i $hits {
+        puts $i
+      }
+      return
     }
-    return
   }
 
   set varfile $meta($pagename,where)/.godel/vars.tcl

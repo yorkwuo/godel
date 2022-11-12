@@ -834,6 +834,7 @@ function at_save(atfname) {
               gname = gname.replace(/\[/,'\\\[')
               gname = gname.replace(/\s/g,'\\ ')
               value = value.replace(/\[/g,'\\\[')
+              value = value.replace(/\s/g,'\\ ')
 
               if (value.length == '1') {
                 var cmd = "set atvar("+gname+","+colname+") "+ '""' + "\n";
@@ -1023,6 +1024,10 @@ function at_fdel (atfname,id) {
     header = header + "source $env(GODEL_ROOT)/bin/godel.tcl\n";
     header = header + "source " + atfname + "\n";
 
+    id = id.replace(/\s/g,'\\ ');
+    id = id.replace(/\(/g,'\\\(');
+    id = id.replace(/\)/g,'\\\)');
+
     var footer = "";
     footer = footer + "catch {exec rm $atvar(" + id + ",path) &}\n";
     footer = footer + "set atvar(" + id + ",fdel) 1\n";
@@ -1078,6 +1083,10 @@ function at_open (atfname,id) {
     var header = "#!/usr/bin/tclsh\n";
     header = header + "source $env(GODEL_ROOT)/bin/godel.tcl\n";
     header = header + "source " + atfname + "\n";
+
+    id = id.replace(/\s/g,'\\ ');
+    id = id.replace(/\(/g,'\\\(');
+    id = id.replace(/\)/g,'\\\)');
 
     //var footer = "godel_array_save atvar " + atfname + "\n";
     var footer = "";

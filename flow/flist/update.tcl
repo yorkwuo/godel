@@ -14,14 +14,18 @@ exec make f
 
 set lines [read_as_list flist]
 
-foreach line $lines {
-  set atvar($line,name) [file tail $line]
-  set atvar($line,path) $line
-  if [info exist kk($line,last)] {
-    set atvar($line,last) $kk($line,last)
+foreach fname $lines {
+  set mtime [file mtime $fname]
+  set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
+  set atvar($fname,mtime) $timestamp
+
+  set atvar($fname,name) [file tail $fname]
+  set atvar($fname,path) $fname
+  if [info exist kk($fname,last)] {
+    set atvar($fname,last) $kk($fname,last)
   }
-  if [info exist kk($line,keywords)] {
-    set atvar($line,keywords) $kk($line,keywords)
+  if [info exist kk($fname,keywords)] {
+    set atvar($fname,keywords) $kk($fname,keywords)
   }
 }
 

@@ -20,12 +20,12 @@ proc dname {} {
 }
 # }}}
 
-lappend cols "proc:bton_delete notes;Del"
-lappend cols "proc:bton_tick notes;Tick"
+#lappend cols "proc:bton_delete;Del"
+#lappend cols "proc:bton_tick;Tick"
 #lappend cols "g:pagename;DirName"
 #lappend cols "proc:dname;Dirname"
 lappend cols "edtable:title;Title"
 lappend cols "edtable:g:keywords;Keywords"
-local_table tbl -c $cols -serial -sortby "g:iname;d"
+local_table tbl -c $cols -serial -sortby "g:iname;d" -dataTables
 
 # vim:fdm=marker
