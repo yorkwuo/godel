@@ -15,6 +15,7 @@ exec make f
 set lines [read_as_list flist]
 
 foreach fname $lines {
+  regsub {^\.\/} $fname {} fname
   set mtime [file mtime $fname]
   set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
   set atvar($fname,mtime) $timestamp

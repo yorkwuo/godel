@@ -11,8 +11,9 @@ if [file exist "keywords.tcl"] {
 }
 
 set atcols ""
-lappend atcols "mtime;mtime"
 lappend atcols "proc:at_open;O"
+lappend atcols "mtime;mtime"
+lappend atcols "author;author"
 lappend atcols "proc:at_fdel_status;fdel"
 lappend atcols "proc:at_fdel;fdel"
 lappend atcols "last;last"
@@ -21,6 +22,7 @@ lappend atcols "last;last"
 lappend atcols "keywords;keywords"
 #lappend atcols "path;path"
 
-atable at.tcl -css table2 -dataTables
+atable at.tcl -css table2 -dataTables -sortby mtime -sortopt "-decreasing"
+
 #atable at.tcl
 
