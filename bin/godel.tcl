@@ -1686,7 +1686,10 @@ proc atable {args} {
     }
 
     ## Sorting...
+    plist $row_items
+    puts ""
     set row_items [lsort -index 1 {*}$val(-sortopt) $row_items]
+    plist $row_items
 
     # Re-create rows based on sorted row_items
     set atrows {}
@@ -1711,7 +1714,7 @@ if {$opt(-noshow) eq "1"} {
 }
 
 # Header
-  puts $fout "<table id=tbl class=$css_class>"
+  puts $fout "<table class=$css_class id=tbl>"
   puts $fout "<thead>"
   puts $fout "<tr>"
   if {$opt(-num) eq "1"} {
@@ -1796,6 +1799,7 @@ if {$opt(-noshow) eq "1"} {
             puts $fout "    \$('#tbl').DataTable({"
             puts $fout "       \"paging\": false,"
             puts $fout "       \"info\": false,"
+            puts $fout "       \"order\": \[\],"
             puts $fout "    });"
             puts $fout "} );"
             puts $fout "</script>"
@@ -2356,6 +2360,7 @@ proc ghtm_ls_table {args} {
       puts $fout "    \$('#$val(-id)').DataTable({"
       puts $fout "       \"paging\": false,"
       puts $fout "       \"info\": false,"
+      puts $fout "       \"order\": \[\],"
       puts $fout "    });"
       puts $fout "} );"
       puts $fout "</script>"
@@ -5827,6 +5832,7 @@ proc local_table {tableid args} {
           puts $fout "    \$('#$tableid').DataTable({"
           puts $fout "       \"paging\": false,"
           puts $fout "       \"info\": false,"
+          puts $fout "       \"order\": \[\],"
           puts $fout "    });"
           puts $fout "} );"
           puts $fout "</script>"
@@ -7500,6 +7506,7 @@ proc godel_draw {{target_path NA}} {
         puts $fout "    \$('#tbl').DataTable({"
         puts $fout "       \"paging\": false,"
         puts $fout "       \"info\": false,"
+        puts $fout "       \"order\": \[\],"
         puts $fout "    });"
         puts $fout "} );"
         puts $fout "</script>"
@@ -7516,6 +7523,7 @@ proc godel_draw {{target_path NA}} {
           puts $fout "    \$('#tbl').DataTable({"
           puts $fout "       \"paging\": false,"
           puts $fout "       \"info\": false,"
+        puts $fout "       \"order\": \[\],"
           puts $fout "    });"
           puts $fout "} );"
           puts $fout "</script>"
