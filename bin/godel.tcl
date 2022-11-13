@@ -1303,6 +1303,28 @@ proc atcols_onoff {str} {
   }
 }
 # }}}
+# cols_onoff
+# {{{
+proc cols_onoff {str} {
+  upvar cols cols
+
+  set cc [split $str ";"]
+
+  set onoff_key [lindex $cc 0]
+  regsub {^\s*} $onoff_key {} onoff_key
+  regsub {\s*$} $onoff_key {} onoff_key
+
+  set key       [lindex $cc 1]
+  regsub {^\s*} $key {} key
+  regsub {\s*$} $key {} key
+
+  set disp      [lindex $cc 2]
+
+  if {[lvars . $onoff_key] eq "1"} {
+    lappend cols "$key;$disp"
+  }
+}
+# }}}
 # ltable_exe
 # {{{
 proc ltable_exe {name exefile} {
