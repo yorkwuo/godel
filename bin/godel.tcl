@@ -1686,10 +1686,7 @@ proc atable {args} {
     }
 
     ## Sorting...
-    plist $row_items
-    puts ""
     set row_items [lsort -index 1 {*}$val(-sortopt) $row_items]
-    plist $row_items
 
     # Re-create rows based on sorted row_items
     set atrows {}
