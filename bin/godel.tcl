@@ -1783,8 +1783,6 @@ if {$opt(-noshow) eq "1"} {
   }
   puts $fout "</table>"
 
-  if {$opt(-f) eq "1"} {
-  } else {
     if {$opt(-dataTables) eq "1"} {
             if {$env(GODEL_EMB_CSS) eq "1"} {
               puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
@@ -1801,7 +1799,6 @@ if {$opt(-noshow) eq "1"} {
             puts $fout "} );"
             puts $fout "</script>"
     }
-  }
 }
 # }}}
 # ltbl_linkurl
