@@ -1303,6 +1303,28 @@ proc atcols_onoff {str} {
   }
 }
 # }}}
+# cols_onoff
+# {{{
+proc cols_onoff {str} {
+  upvar cols cols
+
+  set cc [split $str ";"]
+
+  set onoff_key [lindex $cc 0]
+  regsub {^\s*} $onoff_key {} onoff_key
+  regsub {\s*$} $onoff_key {} onoff_key
+
+  set key       [lindex $cc 1]
+  regsub {^\s*} $key {} key
+  regsub {\s*$} $key {} key
+
+  set disp      [lindex $cc 2]
+
+  if {[lvars . $onoff_key] eq "1"} {
+    lappend cols "$key;$disp"
+  }
+}
+# }}}
 # ltable_exe
 # {{{
 proc ltable_exe {name exefile} {
@@ -7776,6 +7798,9 @@ proc obless {args} {
         exec cp $where/$objname/$f $f
       }
       lsetdyvar . srcpath  $where/$objname
+      if [file exist .godel/preset.tcl] {
+        source .godel/preset.tcl
+      }
   }
 }
 # }}}
@@ -7835,6 +7860,7 @@ proc oget {args} {
       } else {
         puts  "cp -r $where/$objname $asname"
         exec  cp -r $where/$objname $asname
+        exec touch $asname/.godel/vars.tcl
         lsetdyvar $asname srcpath  $where/$objname
         lsetvar $asname g:iname    $asname
         lsetvar $asname g:pagename $asname
