@@ -7801,6 +7801,9 @@ proc obless {args} {
         exec cp $where/$objname/$f $f
       }
       lsetdyvar . srcpath  $where/$objname
+      if [file exist .godel/preset.tcl] {
+        source .godel/preset.tcl
+      }
   }
 }
 # }}}
@@ -7860,6 +7863,7 @@ proc oget {args} {
       } else {
         puts  "cp -r $where/$objname $asname"
         exec  cp -r $where/$objname $asname
+        exec touch $asname/.godel/vars.tcl
         lsetdyvar $asname srcpath  $where/$objname
         lsetvar $asname g:iname    $asname
         lsetvar $asname g:pagename $asname
