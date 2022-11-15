@@ -43,6 +43,5 @@ lappend atcols "proc:linkurl;url"
 lappend atcols "type;type"
 lappend atcols "name;name"
 
-atable at.tcl -dataTables -noid
-
+atable at.tcl -dataTables -noid -sortby name -sortopt {-increasing}
 # vim:fdm=marker

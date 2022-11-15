@@ -10,6 +10,7 @@ if [file exist "keywords.tcl"] {
 }
 ghtm_panel_begin
   gexe_button update.tcl -name update -cmd
+  bton_set -key sortby -name last -value last
   bton_set -key sortby -name mtime -value mtime
   bton_set -key sortby -name name  -value name
 ghtm_panel_end
