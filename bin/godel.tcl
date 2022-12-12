@@ -1186,7 +1186,7 @@ proc openfile {fpath} {
     }
   } elseif [regexp {http} $fpath] {
     catch {exec /mnt/c/Program\ Files\ \(x86\)/Google/Chrome/Application/chrome.exe $fpath &}
-  } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb} $fpath] {
+  } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb|\.mkv|.webm} $fpath] {
       catch {exec mpv $fpath &}
   } elseif [regexp {\.epub} $fpath] {
       catch {exec ebook-viewer $fpath &}
@@ -5789,10 +5789,12 @@ proc local_table {tableid args} {
           set symbol &#9701;
           append celltxt "<td><span style=float:right><a style=text-decoration:none href=\"$row/$col.md\" type=text/txt>$symbol</a></span>$aftermd</td>"
         } else {
-          set kout [open $fname w]
-          puts $kout " "
-          close $kout
-          append celltxt "<td> </td>"
+          if [file exist $row] {
+            set kout [open $fname w]
+            puts $kout " "
+            close $kout
+            append celltxt "<td> </td>"
+          }
         }
       # edtable:
       } elseif [regexp {edtable[2-9]*:} $col] {
