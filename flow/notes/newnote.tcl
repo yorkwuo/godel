@@ -9,4 +9,4 @@ lsetvar $dirname title ""
 
 godel_draw
 
-exec xdotool search --name "notes — Mozilla Firefox" key ctrl+r
+exec xdotool search --name "Mozilla" key ctrl+r

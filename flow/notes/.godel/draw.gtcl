@@ -1,9 +1,9 @@
 source $env(GODEL_ROOT)/bin/godel.tcl
 set pagepath [file dirname [file dirname [info script]]]
 cd $pagepath
-if [file exist $env(GODEL_DOWNLOAD)/gtcl.tcl] {
-  source      $env(GODEL_DOWNLOAD)/gtcl.tcl
-  file delete $env(GODEL_DOWNLOAD)/gtcl.tcl
-}
+
+catch {exec xdotool getwindowfocus getwindowname} pattern
+
+gtcl_commit
 godel_draw
-exec xdotool search --name "Mozilla" key ctrl+r
+catch {exec xdotool search --name "$pattern" key ctrl+r}
