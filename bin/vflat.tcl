@@ -1,5 +1,5 @@
 #!/usr/bin/tclsh
-source $env(GODEL_ROOT)/bin/ne.tcl
+source $env(GODEL_ROOT)/bin/vedit.tcl
 
 set netlist    [lindex $argv 0]
 set top_module [lindex $argv 1]

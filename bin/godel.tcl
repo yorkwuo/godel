@@ -7301,11 +7301,12 @@ proc setop_restrict {a b} {
 # {{{
 proc setop_intersection {a b} {
 # Both in a and b
-  set o {}
-  foreach i $a {
-    if {[lsearch $b $i] >= 0} {lappend o $i}
-  }
-  return $o
+  #set o {}
+  #foreach i $a {
+  #  if {[lsearch $b $i] >= 0} {lappend o $i}
+  #}
+  #return $o
+  return [lsort -unique [list {*}$a {*}$b]]
 }
 # }}}
 # setop_union
@@ -8094,6 +8095,16 @@ proc plist {args} {
     set opt(-ohandle) 1
   }
 # }}}
+  # -file
+# {{{
+  set opt(-file) 0
+  set idx [lsearch $args {-file}]
+  if {$idx != "-1"} {
+    set ofile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-file) 1
+  }
+# }}}
   # -s (sort)
 # {{{
   set opt(-s) 0
@@ -8113,6 +8124,12 @@ proc plist {args} {
     foreach i $ll {
       puts $ohandle $indent$i
     }
+  } elseif {$opt(-file) eq "1"} {
+    set kout [open $ofile w]
+      foreach i $ll {
+        puts $kout $indent$i
+      }
+    close $kout
   } else {
     foreach i $ll {
       puts $indent$i
@@ -8511,12 +8528,28 @@ proc gscreen {pattern_list {ofile NA}} {
 # read_as_list
 # {{{
 # read a file and retrun a list
-proc read_as_list {afile} {
+proc read_as_list {args} {
+  # -filter
+# {{{
+  set opt(-filter) 0
+  set idx [lsearch $args {-filter}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-filter) 1
+  }
+# }}}
+  set afile [lindex $args 0]
   set fin [open $afile r]
-    while {[gets $fin line] >= 0} {
-      #regsub {^\s*} $line {} line
-      #regsub {\s$}  $line {} line
-      lappend lines $line
+    if {$opt(-filter) eq "1"} {
+      while {[gets $fin line] >= 0} {
+        regsub {^\s*} $line {} line
+        regsub {\s$}  $line {} line
+        lappend lines $line
+      }
+    } else {
+      while {[gets $fin line] >= 0} {
+        lappend lines $line
+      }
     }
   close $fin
 
