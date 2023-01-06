@@ -834,11 +834,16 @@ function at_save(atfname) {
               gname = gname.replace(/\[/,'\\\[')
               gname = gname.replace(/\s/g,'\\ ')
               value = value.replace(/\[/g,'\\\[')
-              value = value.replace(/\s/g,'\\ ')
 
               if (value.length == '1') {
-                var cmd = "set atvar("+gname+","+colname+") "+ '""' + "\n";
+                if (value == "") {
+                  var cmd = "set atvar("+gname+","+colname+") "+ '""' + "\n";
+                } else {
+                  value = value.replace(/\n$/,'');
+                  var cmd = "set atvar("+gname+","+colname+") "+'"'+value+"\"\n";
+                }
               } else {
+                value = value.replace(/\s/g,'\\ ')
                 value = value.replace(/\n$/,'');
                 var cmd = "set atvar("+gname+","+colname+") "+'"'+value+"\"\n";
               }
