@@ -1,7 +1,18 @@
 
+-inverter_pair
+-mark_fixed
+-multiplier_width
+-multiplier_spacing
+-no_of_cells
+-remove
+-delta
 
+-only_report_magnet_cells
 
-
+-cells
+-list
+-dimensions
+-move_fixed
 -test_points
 -max_test_points
 -test_points_per_scan_cell
@@ -23,7 +34,7 @@ test_scandef_prohibit_solid_black_box_start
 -preserve_multibit_segment
 -add_lockup
 -low_level
-
+-logical_levels
 -create_down_sizing_peer_domain
 -lockup_type
 -fix_set
