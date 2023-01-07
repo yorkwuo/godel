@@ -1,3 +1,40 @@
+# omsg
+# {{{
+proc omsg {args} {
+  upvar msgvar msgvar
+
+  set name [lindex $args 0]
+  
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]
+
+
+  set msgvar($name,sec) [clock seconds]
+
+  if [info exist msgvar(current)] {
+    set msgvar(last)    $msgvar(current)
+    set msgvar(current) $name
+    lappend msgvar(names) $name
+
+    set stagetime [ss2hhmmss [expr $msgvar($name,sec) - $msgvar($msgvar(last),sec)]]
+    set totaltime [ss2hhmmss [expr $msgvar($name,sec) - $msgvar(begin,sec)]]
+
+  } else {
+    set msgvar(last)    NA
+    set msgvar(NA,sec)  0
+    set msgvar(current) $name
+    lappend msgvar(names) $name
+
+    set stagetime 0h:0m:0s
+    set totaltime [ss2hhmmss [expr $msgvar($name,sec) - $msgvar(begin,sec)]]
+  }
+
+  puts [format "#omsg: %s : %-12s : %-14s : %s" $timestamp $stagetime $totaltime $name]
+  if {$name eq "end"} {
+    lsetvar . runtime $totaltime
+  }
+
+}
+# }}}
 # pindex : path index
 # {{{
 proc pindex {path index} {
@@ -5816,7 +5853,7 @@ proc local_table {tableid args} {
         regsub {ed:} $col {} col
         set fname $row/$col
         if [file exist $fname] {
-          append celltxt "<td><a href=\"$fname\" type=text/txt>E</a></td>"
+          append celltxt "<td><a href=\"$fname\" type=text/txt>$col</a></td>"
         } else {
           append celltxt "<td></td>"
         }
