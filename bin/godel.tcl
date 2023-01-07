@@ -3865,7 +3865,10 @@ proc getcol {args} {
   }
 # }}}
   puts $cols
-  puts $args
+  foreach line $args {
+    puts $line
+  }
+  #puts $args
 }
 # }}}
 # ghtm_set_value
