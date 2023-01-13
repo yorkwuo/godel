@@ -1,3 +1,4 @@
+
 # omsg
 # {{{
 proc omsg {args} {
@@ -5287,6 +5288,21 @@ proc lapvar {name key value} {
   godel_array_save vars $varfile
 }
 # }}}
+# asetvar
+# {{{
+proc asetvar {key value} {
+
+  puts "$key $value"
+  if [file exist "at.tcl"] {
+    source at.tcl
+    set atvar($key) $value
+    godel_array_save atvar at.tcl
+  } else {
+    puts "Error: not exist... at.tcl"
+  }
+
+}
+# }}}
 # lsetvar
 # {{{
 proc lsetvar {name key value} {
@@ -5386,6 +5402,19 @@ proc ldyvars {args} {
       }
     }
   }
+}
+# }}}
+# avar
+# {{{
+proc avar {key {ifile at.tcl}} {
+  source $ifile
+
+  if [info exist atvar($key)] {
+    return $atvar($key)
+  } else {
+    return NA
+  }
+
 }
 # }}}
 # lvars
