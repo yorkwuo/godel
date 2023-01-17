@@ -1,5 +1,11 @@
 ghtm_top_bar -save -filter 1
 
+gnotes "
+# $vars(g:pagename)
+
+[pwd]
+"
+
 gexe_button newnote.tcl -nowin -name "newnote"
 
 # dname

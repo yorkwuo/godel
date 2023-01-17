@@ -5968,11 +5968,11 @@ proc gdraw_default {} {
   upvar env env
   set kout [open .godel/ghtm.tcl w]
     puts $kout "ghtm_top_bar -save"
-    puts $kout "gnotes {"
-    puts $kout "# "
+    puts $kout "gnotes \""
+    puts $kout "# \$vars(g:pagename)"
     puts $kout ""
     puts $kout ""
-    puts $kout "}"
+    puts $kout "\""
     puts $kout "#lappend cols \"proc:ltbl_iname g:iname;Name\""
     puts $kout "#lappend cols \"edtable:bday;bday\""
     puts $kout "#lappend cols \"edtable:g:keywords;Keywords\""
