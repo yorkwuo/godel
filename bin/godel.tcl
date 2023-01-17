@@ -1,3 +1,4 @@
+
 # omsg
 # {{{
 proc omsg {args} {
@@ -5290,6 +5291,21 @@ proc lapvar {name key value} {
   godel_array_save vars $varfile
 }
 # }}}
+# asetvar
+# {{{
+proc asetvar {key value} {
+
+  puts "$key $value"
+  if [file exist "at.tcl"] {
+    source at.tcl
+    set atvar($key) $value
+    godel_array_save atvar at.tcl
+  } else {
+    puts "Error: not exist... at.tcl"
+  }
+
+}
+# }}}
 # lsetvar
 # {{{
 proc lsetvar {name key value} {
@@ -5391,36 +5407,29 @@ proc ldyvars {args} {
   }
 }
 # }}}
+# avar
+# {{{
+proc avar {key {ifile at.tcl}} {
+  source $ifile
+
+  if [info exist atvar($key)] {
+    return $atvar($key)
+  } else {
+    return NA
+  }
+
+}
+# }}}
 # lvars
 # {{{
 proc lvars {args} {
-
-  # -k (keyword)
-# {{{
-  set opt(-k) 0
-  set idx [lsearch $args {-k}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-k) 1
-  }
-# }}}
-  # -pvar (path var)
-# {{{
-  set opt(-pvar) 0
-  set idx [lsearch $args {-pvar}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-pvar) 1
-  }
-# }}}
   set gpage [lindex $args 0]
-  set vname  [lindex $args 1]
+  set vname [lindex $args 1]
 
   if {$gpage == ""} {
     set gpage "."
   }
   if ![file exist $gpage/.godel/vars.tcl] {
-    #puts "Error: not exist... $gpage/.godel/vars.tcl"
     return
   }
   source $gpage/.godel/vars.tcl
@@ -5429,30 +5438,10 @@ proc lvars {args} {
   if {$vname == ""} {
     parray vars
   } else {
-    if {$opt(-k)} {
-      foreach name [lsort [array names vars]] {
-        if [setop_and_hit $vname $name] {
-          puts [format "%-20s = %s" $name $vars($name)]
-          lappend klist [list $name $vars($name)]
-          set vlist [concat $vlist $vars($name)]
-        }
-      }
+    if [info exist vars($vname)] {
+      return $vars($vname)
     } else {
-      if [info exist vars($vname)] {
-
-        if {$opt(-pvar)} {
-          set txt ""
-          foreach path $vars($vname) {
-            set fname [file tail $path]
-            append txt "$fname\n"
-          }
-          return $txt
-        } else {
-          return $vars($vname)
-        }
-      } else {
-        return NA
-      }
+      return NA
     }
   }
 }
