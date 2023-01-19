@@ -6,7 +6,7 @@ proc omsg {args} {
 
   set name [lindex $args 0]
   
-  set timestamp [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M:%S}]
 
 
   set msgvar($name,sec) [clock seconds]
