@@ -10,8 +10,15 @@ if [file exist keywords.tcl] {
 #ghtm_panel_begin
 #  ghtm_keyword_button tbl $indexcol ECO
 #ghtm_panel_end
-
 gexe_button newrow.tcl -name newrow
+ghtm_onoff coldel -name Del
+ghtm_onoff search -name Search
+ghtm_onoff path -name Path
+
+if {[lvars . path] eq "1"} {
+  puts $fout <p>[pwd]</p>
+}
+
 
 source at.tcl
 
@@ -38,10 +45,17 @@ proc linkurl {} {
 # }}}
 
 set atcols ""
-lappend atcols "proc:at_delete;del"
+if {[lvars . coldel] eq "1"} {
+  lappend atcols "proc:at_delete;del"
+}
 lappend atcols "proc:linkurl;url"
 lappend atcols "type;type"
 lappend atcols "name;name"
 
-atable at.tcl -dataTables -noid -sortby name -sortopt {-increasing}
+if {[lvars . search] eq "1"} {
+  atable at.tcl -dataTables -noid -sortby name -sortopt {-increasing}
+} else {
+  atable at.tcl -noid -sortby name -sortopt {-increasing}
+}
+
 # vim:fdm=marker

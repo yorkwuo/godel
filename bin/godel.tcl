@@ -1,4 +1,16 @@
-
+proc gen_random_num {count min max} {
+  set rnums ""
+  while {1} {
+    set rnums [lsort -unique $rnums]
+    if {[llength $rnums] < $count } {
+      set num [::math::random $min $max]
+      lappend rnums $num
+    } else {
+      break
+    }
+  }
+  return $rnums
+}
 # omsg
 # {{{
 proc omsg {args} {
@@ -1512,35 +1524,23 @@ proc ghat {txt} {
 proc css_hide {} {
   upvar fout fout
 
-  set css_ctrl [lvars . css_ctrl]
+  set css_ctrl [lvars . css_hide]
+
   puts $fout "<style>"
-  if {$css_ctrl eq "hide"} {
+
+  if {$css_ctrl eq "1"} {
     puts $fout "rect:hover {"
-# }
+    #puts $fout "  fill: red !important;"
+    puts $fout "  cursor: pointer;"
+    #puts $fout "  opacity: 0.1 !important;"
+    puts $fout "}"
   } else {
     puts $fout "rect {"
-# }
-  }
-# {
-  puts $fout "  fill: red !important;"
-  puts $fout "  cursor: pointer;"
-  puts $fout "  opacity: 0.2 !important;"
-  puts $fout "}"
-  if {$css_ctrl eq "hide"} {
-    puts $fout ".hat {"
-    puts $fout "  background-color:lightgreen;"
-    puts $fout "  color           :lightgreen;"
-    puts $fout "}"
-  } else {
-    puts $fout ".hat {"
-    puts $fout "  background-color:white;"
-    puts $fout "  color           :red;"
+    puts $fout "  fill: none !important;"
     puts $fout "}"
   }
-  puts $fout ".hat:hover {"
-  puts $fout "  background-color:white;"
-  puts $fout "  color           :red;"
-  puts $fout "}"
+
+
   puts $fout "</style>"
 
 }
@@ -3911,13 +3911,52 @@ proc getcol {args} {
 # }}}
 # ghtm_set_value
 # {{{
-proc ghtm_set_value {key value} {
+proc ghtm_set_value {key value args} {
   upvar fout fout
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name NA
+  }
+# }}}
+  if {$name eq "NA"} {
+    set name $value
+  }
   set cur_value [lvars . $key]
   if {$cur_value eq $value} {
-    puts $fout "<a class=\"w3-button w3-round w3-pink\" onclick=\"set_value('$key','$value')\">${value}</a>"
+    puts $fout "<a class=\"w3-button w3-round w3-pink\" onclick=\"set_value('$key','$value')\">${name}</a>"
   } else {
-    puts $fout "<a class=\"w3-button w3-round w3-pale-green\" onclick=\"set_value('$key','$value')\">${value}</a>"
+    puts $fout "<a class=\"w3-button w3-round w3-pale-green\" onclick=\"set_value('$key','$value')\">${name}</a>"
+  }
+}
+# }}}
+# ghtm_onoff
+# {{{
+proc ghtm_onoff {key args} {
+  upvar fout fout
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name NA
+  }
+# }}}
+  set cur_value [lvars . $key]
+  if {$cur_value eq "1"} {
+    puts $fout "<a class=\"w3-button w3-round w3-pink\" onclick=\"onoff('$key', '0')\">${name}</a>"
+  } else {
+    puts $fout "<a class=\"w3-button w3-round w3-pale-green\" onclick=\"onoff('$key', '1')\">${name}</a>"
   }
 }
 # }}}
@@ -5294,8 +5333,6 @@ proc lapvar {name key value} {
 # asetvar
 # {{{
 proc asetvar {key value} {
-
-  puts "$key $value"
   if [file exist "at.tcl"] {
     source at.tcl
     set atvar($key) $value
@@ -5303,7 +5340,6 @@ proc asetvar {key value} {
   } else {
     puts "Error: not exist... at.tcl"
   }
-
 }
 # }}}
 # lsetvar
@@ -7825,7 +7861,9 @@ proc obless {args} {
     help
   } else {
       godel_draw
-      source $where/$objname/.godel/proc.tcl
+      if [file exist $where/$objname/.godel/proc.tcl] {
+        source $where/$objname/.godel/proc.tcl
+      }
       foreach f $files {
         exec cp $where/$objname/$f $f
       }

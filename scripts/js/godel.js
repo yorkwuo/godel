@@ -3,15 +3,18 @@ document.onkeyup = function(e) {
 // Ctrl 1
   if        (e.ctrlKey && e.which == 49) {
     document.getElementById('idedit').click();
-// Alt 2
-  } else if (e.altKey && e.which == 50) {
-    document.getElementById('iddraw').click();
-// Alt 3
-  } else if (e.altKey && e.which == 51) {
+// Ctrl 2
+  } else if (e.ctrlKey && e.which == 50) {
     document.getElementById('idbutton').click();
+// Alt 2
+//  } else if (e.altKey && e.which == 50) {
+//    document.getElementById('iddraw').click();
+// Alt 3
+//  } else if (e.altKey && e.which == 51) {
+//    document.getElementById('idbutton').click();
 // Alt 1
-  } else if (e.altKey && e.which == 49) {
-    document.getElementById('idplay').click();
+//  } else if (e.altKey && e.which == 49) {
+//    document.getElementById('idplay').click();
   }
 };
 
@@ -620,6 +623,32 @@ function open_folder(dirpath) {
 // set_value
 // {{{
 function set_value(key, value) {
+// Save
+    var data =   "." + "|#|" +  key + "|#|" +  value + "|E|\n";
+    const textToBLOB = new Blob([data], { type: 'text/plain' });
+    const sFileName = 'gtcl.tcl';	   // The file to save the data.
+
+    var newLink = document.createElement("a");
+    newLink.download = sFileName;
+
+    if (window.webkitURL != null) {
+        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+    }
+    else {
+        newLink.href = window.URL.createObjectURL(textToBLOB);
+        newLink.style.display = "none";
+        document.body.appendChild(newLink);
+    }
+
+    newLink.click(); 
+    document.getElementById('iddraw').click();
+
+
+}
+// }}}
+// onoff
+// {{{
+function onoff(key, value) {
 // Save
     var data =   "." + "|#|" +  key + "|#|" +  value + "|E|\n";
     const textToBLOB = new Blob([data], { type: 'text/plain' });

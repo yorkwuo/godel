@@ -3,9 +3,12 @@ source $env(GODEL_ROOT)/bin/godel.tcl
 
 set dirname [clock format [clock seconds] -format {%Y-%m-%d_%H-%M_%S}]
 
-file mkdir $dirname
-godel_draw $dirname
-lsetvar $dirname g:pagename ""
+if [file exist at.tcl] {
+} else {
+  exec touch at.tcl
+}
+
+asetvar $dirname,title ""
 
 godel_draw
 
