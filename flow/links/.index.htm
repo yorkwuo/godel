@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>links</title>
+<link rel="stylesheet" type="text/css" href=".godel/w3.css">
+<script src=.godel/js/jquery-3.3.1.min.js></script>
+<meta charset=utf-8>
+</head>
+<body>
+
+  
+  <style>
+  .content {
+    padding: 19px;
+  }
+  
+  .sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+  }
+  .sticky + .content {
+    padding-top: 60px;
+  }
+  </style>
+  
+
+    <div id="navbar" class="w3-bar w3-indigo" style="margin:0px">
+    <a id="idedit" href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
+    <a id="idvalue" href=".godel/vars.tcl" type=text/txt  class="w3-bar-item w3-button">Value</a>
+    <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Parent</a>
+    <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
+  
+
+      <a href=.index.htm type=text/txt class="w3-bar-item w3-button w3-right">2023-01-24_08:48</a>
+    
+<a href=".godel/open.gtcl" type=text/gtcl class="w3-bar-item w3-button w3-right">Open</a>
+<a href=".godel/win.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Win</a>
+<button id="idbutton" onclick="g_save()" class="w3-bar-item w3-button w3-blue-gray">Save</button>
+<button class="w3-bar-item w3-button" onclick="topFunction()" style="margin: 0px 0px">Top</button>
+<a href=".godel/tools.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Tools</a>
+</div>
+
+  <script>
+  window.onscroll = function() {myFunction()};
+  
+  var navbar = document.getElementById("navbar");
+  var sticky = navbar.offsetTop;
+  
+  function myFunction() {
+    if (window.pageYOffset >= sticky) {
+      navbar.classList.add("sticky")
+      nav2.classList.add("content")
+    } else {
+      navbar.classList.remove("sticky");
+      nav2.classList.remove("content");
+    }
+  }
+  </script>
+  
+  <div id=nav2 class=> </div>
+  
+  
+<div class="w3-panel">
+<h1 id="tocid1" style=>links</h1>
+</div>
+<a id="NA" href=.newrow.tcl.gtcl class="w3-btn w3-blue" type=text/gtcl><b>newrow</b></a>
+<a class="w3-button w3-round w3-pale-green" onclick="onoff('coldel', '1')">Del</a>
+<a class="w3-button w3-round w3-pale-green" onclick="onoff('search', '1')">Search</a>
+<a class="w3-button w3-round w3-pale-green" onclick="onoff('path', '1')">Path</a>
+Total: 0
+<button onclick="at_save('at.tcl')" class="w3-bar-item w3-button w3-blue-gray">Save</button>
+<a href="at.tcl" type=text/txt>at.tcl</a>
+<table class=table1 id=tbl>
+<thead>
+<tr>
+<th colname="proc:linkurl">url</th>
+<th colname="type">type</th>
+<th colname="name">name</th>
+</tr>
+</thead>
+</table>
+<script src=.godel/js/jquery.dataTables.min.js></script>
+<script src=.godel/js/godel.js></script>
+</body>
+</html>
