@@ -1943,20 +1943,6 @@ proc svg_point {x y} {
   puts $fout "<circle cx=$newx cy=$newy r=3 />"
 }
 # }}}
-# ghtm_localjs
-# {{{
-proc ghtm_localjs {fname} {
-  upvar fout fout 
-
-  if ![file exist $fname] {
-    set kout [open $fname w]
-    close $kout
-  }
-  puts $fout "<br><a href=\"$fname\" type=text/txt>$fname</a>"
-
-  puts $fout "<script src=\"$fname\"></script>"
-}
-# }}}
 # folder
 # {{{
 proc folder {} {
@@ -4467,7 +4453,10 @@ proc ghtm_top_bar {args} {
     }
   }
     puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
-    puts $fout {<a href=".godel/tools.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Tools</a>}
+    #puts $fout {<a href=".godel/tools.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Tools</a>}
+    if {$opt(-js) eq "1"} {
+      puts $fout {<a href="local.js"  type=text/txt class="w3-bar-item w3-button w3-right">JS</a>}
+    }
   puts $fout "</div>"
 
   puts $fout {
@@ -4518,11 +4507,11 @@ proc ghtm_top_bar {args} {
   #  #set kout [open ".godel/.qn.md" w]
   #  #close $kout
   #}
-  if {[lvars . tools_display] eq "1"} {
-    if [file exist .tools.tcl] {
-      source .tools.tcl
-    }
-  }
+  #if {[lvars . tools_display] eq "1"} {
+  #  if [file exist .tools.tcl] {
+  #    source .tools.tcl
+  #  }
+  #}
 }
 # }}}
 # akey
@@ -7472,23 +7461,23 @@ proc godel_draw {{target_path NA}} {
   }
 # }}}
 # create .godel/tools.gtcl
-  if ![file exist .godel/tools.gtcl] {
-    set kout [open .godel/tools.gtcl w]
-      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
-      puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
-      puts $kout "cd \$pagepath"
-      puts $kout ""
-      puts $kout "set cur_value \[lvars . tools_display]"
-      puts $kout "if {\$cur_value eq \"1\"} {"
-      puts $kout "  lsetvar . tools_display \"0\""
-      puts $kout "} else {"
-      puts $kout "  lsetvar . tools_display \"1\""
-      puts $kout "}"
-      puts $kout ""
-      puts $kout "godel_draw"
-      puts $kout "catch {exec xdotool search --name \"Mozilla\" key ctrl+r}"
-    close $kout
-  }
+  #if ![file exist .godel/tools.gtcl] {
+  #  set kout [open .godel/tools.gtcl w]
+  #    puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
+  #    puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
+  #    puts $kout "cd \$pagepath"
+  #    puts $kout ""
+  #    puts $kout "set cur_value \[lvars . tools_display]"
+  #    puts $kout "if {\$cur_value eq \"1\"} {"
+  #    puts $kout "  lsetvar . tools_display \"0\""
+  #    puts $kout "} else {"
+  #    puts $kout "  lsetvar . tools_display \"1\""
+  #    puts $kout "}"
+  #    puts $kout ""
+  #    puts $kout "godel_draw"
+  #    puts $kout "catch {exec xdotool search --name \"Mozilla\" key ctrl+r}"
+  #  close $kout
+  #}
 # create open.gtcl
   if ![file exist .godel/open.gtcl] {
     set kout [open .godel/open.gtcl w]
