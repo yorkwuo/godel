@@ -397,53 +397,6 @@ function word_highlight (target_words) {
   }
 }
 // }}}
-// scan_table
-// {{{
-function aaa (tname) {
-  //alert("jjj")
-  table = document.getElementById(tname);
-  tr = table.getElementsByTagName("tr");
-  for (i = 0; i < tr.length; i++) {
-    //td = tr[i].getElementsByTagName("td")[4];
-    td = tr[i].getElementsByTagName("td");
-    for (j = 0; j < td.length; j++) {
-      console.log(td[j].innerHTML)
-    }
-    //console.log(td.length)
-    //if (td) {
-    //  console.log(td.innerHTML)
-    //    //if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-    //    //  tr[i].style.display = "";
-    //    //} else {
-    //    //  tr[i].style.display = "none";
-    //    //}
-    //}       
-  }
-}
-// }}}
-// do_gg
-// {{{
-function do_gg() {
-  var disp = "";
-  disp = disp + "gg ";
-
-  var dir = window.location.href;
-
-  // Assemble disp to: gg /path/to/.index.htm
-  disp = disp + dir + "\n";
-
-  document.getElementById("text_board").value =  disp;
-  var copyText = document.getElementById("text_board");
-  document.getElementById("text_board").style.display = "inline"
-
-  // Select the text
-  copyText.select();
-
-  // Copy to system clipboard
-  document.execCommand("Copy");
-  document.getElementById("text_board").style.display = "none"
-}
-// }}}
 // cd2dir
 // {{{
 function cd2dir() {
@@ -718,42 +671,6 @@ function filter_table_keyword(tname, column_no, input) {
   //}
 }
 // }}}
-// refresh
-// {{{
-function refresh() {
-  var disp = "";
-  disp = disp + "<inst>\n";
-  disp = disp + "<command>cd ";
-  var dir = window.location.href;
-  var newdir = dir.replace("file:///C:/cygwin64","");
-  newdir = newdir.substr(0, newdir.lastIndexOf("/"));
-  disp = disp + newdir + "</command>" + "\n";
-  disp = disp + "<command>godel_draw</command>\n";
-  disp = disp + "</inst>\n";
-  document.getElementById("text_board").value =  disp;
-  var copyText = document.getElementById("text_board");
-  document.getElementById("text_board").style.display = "inline"
-  copyText.select();
-  document.execCommand("Copy");
-}
-// }}}
-// paste2clipb
-// {{{
-function paste2clipb(tfile) {
-  var disp = "";
-  disp = disp + "<inst>\n";
-  disp = disp + "<command>exec tcsh -fc \"xterm -hold -e " + tfile + "\"</command>\n";
-  disp = disp + "</inst>\n";
-
-  document.getElementById("text_board").value =  disp;
-  var copyText = document.getElementById("text_board");
-  document.getElementById("text_board").style.display = "inline"
-  copyText.select();
-  document.execCommand("Copy");
-  document.getElementById("text_board").style.display = "none"
-
-}
-// }}}
 // chklist_examine
 // {{{
 function chklist_examine() {
@@ -891,6 +808,10 @@ function at_save(atfname) {
     header = header + "source " + atfname + "\n";
     var footer = "godel_array_save atvar " + atfname + "\n";
 
+    var data = header + cmds + footer;
+    document.getElementById('result').innerHTML = data;
+    //console.log(data);
+
 // Save gtcl.tcl
     var data = header + cmds + footer;
     const textToBLOB = new Blob([data], { type: 'text/plain' });
@@ -929,7 +850,7 @@ function at_save(atfname) {
 
     newLink2.click(); 
 
-    document.getElementById('iddraw').click();
+//    document.getElementById('iddraw').click();
 
 }
 // }}}
@@ -1228,58 +1149,103 @@ function chrome_open (link) {
     document.getElementById('iddraw').click();
 }
 // }}}
+// save_gtable
+// {{{
+function save_gtable(tableobj) {
+  console.log("gtabe");
+  var cells = tableobj.getElementsByTagName('td');
+
+  var cmds = "";
+  for (var i = 0; i < cells.length; i++) {
+    var value   = cells[i].innerText
+    var gname   = cells[i].getAttribute("gname");
+    var colname = cells[i].getAttribute("colname");
+    var changed = cells[i].getAttribute("changed");
+
+    if (typeof gname === 'undefined') {
+      return; // equal to continue
+    } else {
+        if (changed) {
+          if (typeof gname === 'undefined') {
+            return; // equal to continue
+          } else {
+            if (changed) {
+              if (colname == "chkbox") {
+                //var n = 'cb_' + gname;
+                //var v = document.getElementById(n).checked;
+                //if (v) {
+                //  var cmd = "exec rm -rf " + gname + "\n";
+                //  cmds = cmds + cmd;
+                //  document.getElementById(n).checked = false;
+                //  $(this).attr('changed', false);
+                //}
+              } else {
+                var cmd =  "g" + gname + "|#|" +  colname + "|#|" +  value + "|E|\n";
+                cmds = cmds + cmd;
+              }
+              cells[i].style.backgroundColor = "";
+            }
+          }
+        }
+    }
+  }
+  return cmds;
+}
+// }}}
+// save_atable
+// {{{
+function save_atable(tableobj) {
+  console.log("atabe");
+  var cells = tableobj.getElementsByTagName('td');
+
+  var cmds = "";
+  for (var i = 0; i < cells.length; i++) {
+    var value   = cells[i].innerText
+    var gname   = cells[i].getAttribute("gname");
+    var colname = cells[i].getAttribute("colname");
+    var changed = cells[i].getAttribute("changed");
+
+    if (typeof gname === 'undefined') {
+      return; // equal to continue
+    } else {
+        if (changed) {
+          if (colname == "chkbox") {
+            //var n = 'cb_' + gname;
+            //var v = document.getElementById(n).checked;
+            //if (v) {
+            //  var cmd = "exec rm -rf " + gname + "\n";
+            //  cmds = cmds + cmd;
+            //  document.getElementById(n).checked = false;
+            //  $(this).attr('changed', false);
+            //}
+          } else {
+            var cmd =   "a" + gname + "|#|" +  colname + "|#|" +  value + "|E|\n";
+            cmds = cmds + cmd;
+          }
+          cells[i].style.backgroundColor = "";
+        }
+    }
+  }
+  return cmds;
+}
+// }}}
 // g_save
 // {{{
 function g_save() {
+  var tables = document.getElementsByTagName('table');
 
-    //var $rows = $TABLE.find('tr');
-    var $rows = $('table').find('tr');
+  var cmds = "";
+  for (var k = 0; k < tables.length; k++) {
+    var tbltype = tables[k].getAttribute('tbltype');
 
-    var cmds = "";
-    // foreach row
-    $rows.each(function () {
-      //var $td = $(this).find('td');
-      var $td = $(this).find('td');
-      // foreach td
-      $td.each(function () {
-        var gtype   = $(this).attr('gtype');
-        if (gtype == 'innerHTML') {
-          var value   = $(this).prop("innerHTML");
-        } else {
-          var value   = $(this).prop("innerText");
-        }
-        var gname   = $(this).attr('gname');
-        var colname = $(this).attr('colname');
-        var changed = $(this).attr('changed');
-        //console.log(value);
-        //console.log(this);
-        if (typeof gname === 'undefined') {
-          return; // equal to continue
-        } else {
-          if (changed) {
-            if (colname == "chkbox") {
-              var n = 'cb_' + gname;
-              var v = document.getElementById(n).checked;
-              if (v) {
-                var cmd = "exec rm -rf " + gname + "\n";
-                cmds = cmds + cmd;
-                document.getElementById(n).checked = false;
-                $(this).attr('changed', false);
-              }
-            } else {
-              //var cmd = "lsetvar " + " \"" + gname + "\"" + " " + colname + " \"" + value + "\"\n";
-              var cmd =   gname + "|#|" +  colname + "|#|" +  value + "|E|\n";
+    if (tbltype === "atable") {
+      cmds = cmds + save_atable(tables[k]);
+    } else {
+      cmds = cmds + save_gtable(tables[k]);
+    }
+  }
+  console.log(cmds);
 
-              cmds = cmds + cmd;
-            }
-            $(this).css('backgroundColor', "");
-          }
-
-        }
-      });
-    });
-
-// Save
     var data = cmds;
     const textToBLOB = new Blob([data], { type: 'text/plain' });
     const sFileName = 'gtcl.tcl';	   // The file to save the data.
@@ -1298,91 +1264,7 @@ function g_save() {
 
     newLink.click(); 
 
-    //$('#iddraw').click();
-
-
-    //document.getElementById('iddraw').click();
-    //document.getElementById('exedraw').click();
     document.getElementById('iddraw').click();
-
-}
-// }}}
-// g_save_nodraw
-// {{{
-function g_save_nodraw() {
-
-    //var $rows = $TABLE.find('tr');
-    var $rows = $('table').find('tr');
-
-    var cmds = "";
-    // foreach row
-    $rows.each(function () {
-      //var $td = $(this).find('td');
-      var $td = $(this).find('td');
-      // foreach td
-      $td.each(function () {
-        var gtype   = $(this).attr('gtype');
-        if (gtype == 'innerHTML') {
-          var value   = $(this).prop("innerHTML");
-        } else {
-          var value   = $(this).prop("innerText");
-        }
-        var gname   = $(this).attr('gname');
-        var colname = $(this).attr('colname');
-        var changed = $(this).attr('changed');
-        //console.log(value);
-        //console.log(this);
-        if (typeof gname === 'undefined') {
-          return; // equal to continue
-        } else {
-          if (changed) {
-            if (colname == "chkbox") {
-              var n = 'cb_' + gname;
-              var v = document.getElementById(n).checked;
-              if (v) {
-                var cmd = "exec rm -rf " + gname + "\n";
-                cmds = cmds + cmd;
-                document.getElementById(n).checked = false;
-                $(this).attr('changed', false);
-              }
-            } else {
-              //var cmd = "lsetvar " + " \"" + gname + "\"" + " " + colname + " \"" + value + "\"\n";
-              var cmd =   gname + "|#|" +  colname + "|#|" +  value + "|E|\n";
-
-              cmds = cmds + cmd;
-            }
-            $(this).css('backgroundColor', "");
-          }
-
-        }
-      });
-    });
-
-// Save
-    var data = cmds;
-    const textToBLOB = new Blob([data], { type: 'text/plain' });
-    const sFileName = 'gtcl.tcl';	   // The file to save the data.
-
-    var newLink = document.createElement("a");
-    newLink.download = sFileName;
-
-    if (window.webkitURL != null) {
-        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
-    }
-    else {
-        newLink.href = window.URL.createObjectURL(textToBLOB);
-        newLink.style.display = "none";
-        document.body.appendChild(newLink);
-    }
-
-    newLink.click(); 
-
-    //$('#iddraw').click();
-
-
-    //document.getElementById('iddraw').click();
-    //document.getElementById('exedraw').click();
-    //document.getElementById('iddraw').click();
 
 }
 // }}}

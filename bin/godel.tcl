@@ -1,3 +1,5 @@
+# gen_random_num
+# {{{
 proc gen_random_num {count min max} {
   set rnums ""
   while {1} {
@@ -11,6 +13,7 @@ proc gen_random_num {count min max} {
   }
   return $rnums
 }
+# }}}
 # omsg
 # {{{
 proc omsg {args} {
@@ -1244,6 +1247,8 @@ proc openfile {fpath} {
       catch {exec ebook-viewer $fpath &}
   } elseif [regexp {\.djvu} $fpath] {
       catch {exec okular $fpath &}
+  } elseif [regexp {\.html} $fpath] {
+      catch {exec firefox $fpath &}
   } elseif [regexp {\.pptx} $fpath] {
     puts $fpath
     regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
@@ -1758,10 +1763,10 @@ proc atable {args} {
 # Buttons
 if {$opt(-noshow) eq "1"} {
 } else {
-  puts $fout "Total: [llength $atrows]"
+  #puts $fout "Total: [llength $atrows]"
   #puts $fout "<a href=\".godel/draw.gtcl\" type=text/gtcl class=\"w3-bar-item w3-button w3-blue-gray\">Draw</a>"
-  puts $fout "<button onclick=\"at_save('$atfname')\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
-  puts $fout "<a href=\"$atfname\" type=text/txt>$atfname</a>"
+  #puts $fout "<button onclick=\"at_save('$atfname')\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
+  #puts $fout "<a href=\"$atfname\" type=text/txt>$atfname</a>"
   if [file exist "src.tcl"] {
     puts $fout "<a href=\"src.tcl\" type=text/txt>src.tcl</a>"
   }
@@ -1771,7 +1776,7 @@ if {$opt(-noshow) eq "1"} {
 }
 
 # Header
-  puts $fout "<table class=$css_class id=tbl>"
+  puts $fout "<table class=$css_class id=tbl tbltype=atable>"
   puts $fout "<thead>"
   puts $fout "<tr>"
   if {$opt(-num) eq "1"} {
@@ -2080,6 +2085,9 @@ proc var_table {} {
       } else {
         puts $fout "<td>$name</td>"
         set value [lvars . $name]
+        if {$value eq "NA"} {
+          set value ""
+        }
         puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
       }
     puts $fout "</tr>"
@@ -2203,13 +2211,21 @@ proc gtcl_commit {} {
 
       foreach chunk $chunks {
         set cols [::textutil::split::splitx $chunk "\\|#\\|"]
-        set gpage [lindex $cols 0]
+        set gpage_tmp [lindex $cols 0]
         set key   [lindex $cols 1]
         set value [lindex $cols 2]
 
-        regsub {\n}  $gpage {} gpage
+        regsub {\n}  $gpage_tmp {} gpage_tmp
         regsub {\n$} $value {} value
-        lsetvar $gpage $key $value
+
+        regexp {^(\w)(.*)} $gpage_tmp whole tbltype gpage
+
+        if {$tbltype eq "a"} {
+          asetvar $gpage,$key $value
+        } else {
+          lsetvar $gpage $key $value
+        }
+
       }
 
       file delete $gtcl
@@ -3953,6 +3969,8 @@ proc ghtm_open_folder {dirpath} {
   puts $fout "<a class=\"w3-button w3-round w3-pale-blue\" onclick=\"open_folder('$dirpath')\">folder</a>"
 }
 # }}}
+# at_allrows
+# {{{
 proc at_allrows {{pattern NA}} {
   upvar atvar atvar
   if {$pattern eq "NA"} {
@@ -3966,6 +3984,7 @@ proc at_allrows {{pattern NA}} {
     }
   return [lsort -unique $ns]
 }
+# }}}
 # at_keyword_button
 # {{{
 proc at_keyword_button {args} {
@@ -5695,7 +5714,7 @@ proc local_table {tableid args} {
     puts $fout "}"
     puts $fout "</style>"
   }
-  puts $fout "<table class=$css_class id=$tableid>"
+  puts $fout "<table class=$css_class id=$tableid tbltype=gtable>"
 # Table Headers
 # {{{
   puts $fout "<thead>"
@@ -7567,8 +7586,11 @@ proc godel_draw {{target_path NA}} {
   }
 
   if {$env(GODEL_ALONE)} {
-    puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
-    puts $fout "<script src=.godel/js/godel.js></script>"
+    if {$gtype eq "raw"} {
+    } else {
+      puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
+      puts $fout "<script src=.godel/js/godel.js></script>"
+    }
   } else {
     if {$env(GODEL_EMB_CSS)} {
       puts $fout "<script src=.godel/js/godel.js></script>"
@@ -8614,6 +8636,15 @@ proc read_as_list {args} {
   } else {
     return ""
   }
+}
+# }}}
+# read_as_data
+# {{{
+proc read_as_data {ifile} {
+  set kin [open $ifile r]
+    set data [read $kin]
+  close $kin
+  return $data
 }
 # }}}
 

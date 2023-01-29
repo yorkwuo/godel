@@ -1,6 +1,17 @@
 ghtm_top_bar -save
 gnotes " # $vars(g:pagename)"
 ghtm_newnote
+ghtm_onoff coldelete   -name D
+ghtm_onoff collink     -name link
+ghtm_onoff colseverity -name severity
+ghtm_onoff colstatus   -name status
+ghtm_onoff colfmdate   -name fmdate
+ghtm_onoff colfmwho    -name fmwho
+ghtm_onoff coltowho    -name towho
+ghtm_onoff colkeywords -name keywords
+ghtm_onoff colid       -name id
+ghtm_onoff coltitle    -name title
+ghtm_onoff coltodate   -name todate
 
 # severity
 # {{{
@@ -41,18 +52,17 @@ if {$filter_status eq "All"} {
 set ::ltblrows $rows
 
 set     cols ""
-lappend cols "proc:bton_delete;D"
-#lappend cols "proc:ltbl_iname g:iname;Date"
-lappend cols "proc:ltbl_linkurl url;Link"
-lappend cols "proc:severity;Svrty"
-lappend cols "edtable:status;status"
-lappend cols "edtable:fmdate;fmdate"
-lappend cols "edtable:fmwho;fmwho"
-lappend cols "edtable:towho;towho"
-lappend cols "edtable:keywords;Keywords"
-lappend cols "edtable:id;id"
-lappend cols "edtable:title;Title"
-lappend cols "edtable:todate;todate"
+cols_onoff "coldelete  ; proc:bton_delete      ; D"
+cols_onoff "collink    ; proc:ltbl_linkurl url ; Link"
+cols_onoff "colseverity ; proc:severity         ; Svrty"
+cols_onoff "colstatus   ; edtable:status        ; status"
+cols_onoff "colfmdate   ; edtable:fmdate        ; fmdate"
+cols_onoff "colfmwho    ; edtable:fmwho         ; fmwho"
+cols_onoff "coltowho    ; edtable:towho         ; towho"
+cols_onoff "colkeywords ; edtable:keywords      ; Keywords"
+cols_onoff "colid       ; edtable:id            ; id"
+cols_onoff "coltitle    ; edtable:title         ; Title"
+cols_onoff "coltodate   ; edtable:todate        ; todate"
 local_table tbl -c $cols -serial -dataTables
 
 # vim:fdm=marker
