@@ -1,3 +1,9 @@
+proc funcbtn {type name} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set celltxt "<td gname=\"$row\" bgcolor=lightblue colname=\"$type\">$name</td>"
+}
 # gen_random_num
 # {{{
 proc gen_random_num {count min max} {
@@ -1894,10 +1900,10 @@ proc ltbl_star {} {
 
   set value [lvars $row star]
 
-  if {$value eq "NA"} {
-    set celltxt "<td gname=\"$row\" colname=\"star\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
+  if {$value eq "1"} {
+    set celltxt "<td gclass=\"onoff\" gname=\"$row\" colname=\"star\" bgcolor=\"yellow\" onoff=\"1\">1</td>"
   } else {
-    set celltxt "<td bgcolor=yellow>$value</td>"
+    set celltxt "<td gclass=\"onoff\" gname=\"$row\" colname=\"star\" onoff=\"0\"></td>"
   }
 }
 # }}}
@@ -2220,10 +2226,20 @@ proc gtcl_commit {} {
 
         regexp {^(\w)(.*)} $gpage_tmp whole tbltype gpage
 
+        set dels ""
         if {$tbltype eq "a"} {
           asetvar $gpage,$key $value
         } else {
-          lsetvar $gpage $key $value
+          if {$key eq "DEL"} {
+            lappend dels $gpage
+          } else {
+            lsetvar $gpage $key $value
+          }
+        }
+
+        if {$dels eq ""} {
+        } else {
+          catch {exec rm -rf $dels}
         }
 
       }
@@ -3197,28 +3213,8 @@ proc bton_delete {{name ""}} {
   upvar celltxt celltxt
   upvar row     row
 
-  if [file exist $row/.delete.gtcl] {
-  } else {
-    set kout [open $row/.delete.gtcl w]
-      puts $kout "set pagepath \[file dirname \[info script]]"
-      puts $kout "cd \$pagepath"
-      #puts $kout "puts \$pagepath"
-      puts $kout "set dname \[file tail \$pagepath\]"
-      #puts $kout "puts \$dname"
-      puts $kout "cd .."
-      puts $kout "file delete -force \$dname"
-      puts $kout "puts \"Deleted... \$pagepath\""
-      puts $kout "exec xterm -e \"rm -rf $row\""
-      puts $kout "exec godel_draw.tcl"
-      puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
-    close $kout
-  }
+  set celltxt "<td gname=\"$row\" bgcolor=lightblue colname=\"DEL\">D</td>"
 
-  if [file exist "$row/.delete.gtcl"] {
-    set celltxt "<td><a href=\"$row/.delete.gtcl\" class=\"w3-btn w3-blue w3-round\" type=text/gtcl>D</a></td>"
-  } else {
-    set celltxt "<td></td>"
-  }
 }
 # }}}
 # bton_tick
@@ -3227,27 +3223,12 @@ proc bton_tick {{name ""}} {
   upvar celltxt celltxt
   upvar row     row
 
-  if [file exist $row/.tick.gtcl] {
-  } else {
-    set kout [open $row/.tick.gtcl w]
-      puts $kout "set pagepath \[file dirname \[file dirname \[info script]]]"
-      puts $kout "cd \$pagepath"
-      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
-      puts $kout "set tick \[lvars $row tick]"
-      puts $kout "if {\$tick eq \"\" | \$tick eq \"1\"} {"
-      puts $kout "  lsetvar $row tick 0"
-      puts $kout "} else {"
-      puts $kout "  lsetvar $row tick 1"
-      puts $kout "}"
-      puts $kout "exec godel_draw.tcl"
-      puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
-    close $kout
-  }
+  set tick [lvars $row tick]
 
-  if [file exist "$row/.tick.gtcl"] {
-    set celltxt "<td><a href=$row/.tick.gtcl class=\"w3-btn w3-blue w3-round\" type=text/gtcl>T</a></td>"
+  if {$tick eq "1"} {
+    set celltxt "<td gclass=\"onoff\" gname=\"$row\" colname=\"tick\" bgcolor=\"lightgreen\" onoff=\"1\">1</td>"
   } else {
-    set celltxt "<td></td>"
+    set celltxt "<td gclass=\"onoff\" gname=\"$row\" colname=\"tick\" onoff=\"0\"></td>"
   }
 }
 # }}}

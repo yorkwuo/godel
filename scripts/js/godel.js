@@ -28,16 +28,65 @@ if(typeof(tables) != 'undefined' && tables != null){
       for (var i = 0; i < cells.length; i++) {
         cells[i].addEventListener('input', function(){
           var gname   = this.getAttribute("gname");
-          var att = this.setAttribute("changed","1");
+          this.setAttribute("changed","1");
           this.style.backgroundColor = "lightyellow";
-          //var kk   = this.getAttribute("changed");
-          //console.log(kk);
         })
       }
       for (var i = 0; i < cells.length; i++) {
-        cells[i].addEventListener('click', function(){
-          this.style.backgroundColor = "lightyellow";
-        })
+        var colname = cells[i].getAttribute("colname");
+        if (colname === "DEL") {
+          cells[i].addEventListener('click', function(){
+            this.style.backgroundColor = "gray";
+            this.setAttribute("changed","1");
+            this.setAttribute("onoff","1");
+          })
+        } else if (colname === "tick") {
+          cells[i].addEventListener('click', function(){
+            this.setAttribute("changed","1");
+            var onoff   = this.getAttribute("onoff");
+            if (onoff === "1") {
+              this.setAttribute("bgcolor","")
+              this.setAttribute("onoff","0");
+              this.innerText = "";
+            } else {
+              this.setAttribute("bgcolor","lightgreen")
+              this.setAttribute("onoff","1");
+              this.innerText = 1;
+            }
+          })
+        } else if (colname === "ctitle") {
+          cells[i].addEventListener('click', function(){
+            this.setAttribute("changed","1");
+            var onoff   = this.getAttribute("onoff");
+            if (onoff === "1") {
+              this.setAttribute("bgcolor","")
+              this.setAttribute("onoff","0");
+              this.innerText = "";
+            } else {
+              this.setAttribute("bgcolor","pink")
+              this.setAttribute("onoff","1");
+              this.innerText = 1;
+            }
+          })
+        } else if (colname === "star") {
+          cells[i].addEventListener('click', function(){
+            this.setAttribute("changed","1");
+            var onoff   = this.getAttribute("onoff");
+            if (onoff === "1") {
+              this.setAttribute("bgcolor","")
+              this.setAttribute("onoff","0");
+              this.innerText = "";
+            } else {
+              this.setAttribute("bgcolor","yellow")
+              this.setAttribute("onoff","1");
+              this.innerText = 1;
+            }
+          })
+        } else {
+          cells[i].addEventListener('click', function(){
+            this.style.backgroundColor = "lightyellow";
+          })
+        }
       }
   }
 }
@@ -577,7 +626,7 @@ function open_folder(dirpath) {
 // {{{
 function set_value(key, value) {
 // Save
-    var data =   "." + "|#|" +  key + "|#|" +  value + "|E|\n";
+    var data =   "g." + "|#|" +  key + "|#|" +  value + "|E|\n";
     const textToBLOB = new Blob([data], { type: 'text/plain' });
     const sFileName = 'gtcl.tcl';	   // The file to save the data.
 
@@ -603,7 +652,7 @@ function set_value(key, value) {
 // {{{
 function onoff(key, value) {
 // Save
-    var data =   "." + "|#|" +  key + "|#|" +  value + "|E|\n";
+    var data =   "g." + "|#|" +  key + "|#|" +  value + "|E|\n";
     const textToBLOB = new Blob([data], { type: 'text/plain' });
     const sFileName = 'gtcl.tcl';	   // The file to save the data.
 
@@ -1161,6 +1210,8 @@ function save_gtable(tableobj) {
     var gname   = cells[i].getAttribute("gname");
     var colname = cells[i].getAttribute("colname");
     var changed = cells[i].getAttribute("changed");
+    var onoff   = cells[i].getAttribute("onoff");
+    var gclass  = cells[i].getAttribute("gclass");
 
     if (typeof gname === 'undefined') {
       return; // equal to continue
@@ -1170,17 +1221,11 @@ function save_gtable(tableobj) {
             return; // equal to continue
           } else {
             if (changed) {
-              if (colname == "chkbox") {
-                //var n = 'cb_' + gname;
-                //var v = document.getElementById(n).checked;
-                //if (v) {
-                //  var cmd = "exec rm -rf " + gname + "\n";
-                //  cmds = cmds + cmd;
-                //  document.getElementById(n).checked = false;
-                //  $(this).attr('changed', false);
-                //}
+              if (gclass === "onoff") {
+                var cmd =  "g" + gname + "|#|" +  colname + "|#|" + onoff + "|E|\n";
+                cmds = cmds + cmd;
               } else {
-                var cmd =  "g" + gname + "|#|" +  colname + "|#|" +  value + "|E|\n";
+                var cmd =  "g" + gname + "|#|" +  colname + "|#|" + value + "|E|\n";
                 cmds = cmds + cmd;
               }
               cells[i].style.backgroundColor = "";
@@ -1244,7 +1289,7 @@ function g_save() {
       cmds = cmds + save_gtable(tables[k]);
     }
   }
-  console.log(cmds);
+  //console.log(cmds);
 
     var data = cmds;
     const textToBLOB = new Blob([data], { type: 'text/plain' });

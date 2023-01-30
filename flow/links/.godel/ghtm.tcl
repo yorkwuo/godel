@@ -53,9 +53,9 @@ lappend atcols "type;type"
 lappend atcols "name;name"
 
 if {[lvars . search] eq "1"} {
-  atable at.tcl -dataTables -noid -sortby name -sortopt {-increasing}
+  atable at.tcl -dataTables -noid -sortby name -sortopt {-increasing} -num
 } else {
-  atable at.tcl -noid -sortby name -sortopt {-increasing}
+  atable at.tcl -noid -sortby name -sortopt {-increasing} -num
 }
 
 # vim:fdm=marker
