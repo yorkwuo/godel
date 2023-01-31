@@ -1,3 +1,16 @@
+proc toolarea_begin {} {
+  upvar fout fout
+  set toolarea [lvars . toolarea]
+  if {$toolarea eq "1"} {
+    puts $fout "<div id=\"toolarea\" style=\"display:block\">"
+  } else {
+    puts $fout "<div id=\"toolarea\" style=\"display:none\">"
+  }
+}
+proc toolarea_end {} {
+  upvar fout fout
+  puts $fout "</div>"
+}
 proc alinkname {} {
   upvar row row
   upvar celltxt celltxt
@@ -1902,17 +1915,18 @@ proc alinkurl {} {
   upvar row     row
   upvar celltxt celltxt
 
-  set urlvalue [get_atvar $row,url]
+  set value [get_atvar $row,url]
+  set celltxt "<td style=\"font-size:1px\" gname=\"$row\" colname=\"url\" contenteditable=\"true\">$value</td>"
 
-  if {$urlvalue eq "NA"} {
-    set celltxt "<td gname=\"$row\" colname=\"url\" contenteditable=\"true\"></td>"
-  } else {
-    if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
-      set celltxt "<td><button onclick=\"chrome_open('$urlvalue')\">url</button></td>"
-    } else {
-      set celltxt "<td><a href=\"$urlvalue\">url</td>"
-    }
-  }
+  #if {$urlvalue eq "NA"} {
+  #  set celltxt "<td gname=\"$row\" colname=\"url\" contenteditable=\"true\"></td>"
+  #} else {
+  #  if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
+  #    set celltxt "<td><button onclick=\"chrome_open('$urlvalue')\">url</button></td>"
+  #  } else {
+  #    set celltxt "<td><a href=\"$urlvalue\">url</td>"
+  #  }
+  #}
 }
 # }}}
 # ltbl_linkurl
@@ -3166,15 +3180,10 @@ proc ltbl_iname {dispcol} {
   }
   set disp [lvars $row $dispcol]
 
-  #regsub {^\d\d\d\d-} $iname {} iname
-  #regsub {_\d\d\-\d\d_\d\d} $iname {} iname
-
-  
   if {$tick eq "1"} {
-    #set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=palegreen><a href=\"$row/.index.htm\">$disp</a></td>"
-    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=lightyellow><a href=\"$row/.index.htm\">$disp</a></td>"
+    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=lightyellow><a href=\"$row/.index.htm\" style=\"white-space:pre\">$disp</a></td>"
   } else {
-    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign><a href=\"$row/.index.htm\">$disp</a></td>"
+    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign style=\"white-space:pre\"><a href=\"$row/.index.htm\">$disp</a></td>"
   }
 }
 # }}}
@@ -4525,6 +4534,7 @@ proc ghtm_top_bar {args} {
     }
   }
     puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
+    puts $fout "<button class=\"w3-bar-item w3-button w3-right\" onclick=\"toolarea()\" style=\"margin: 0px 0px\">Tools</button>"
     #puts $fout {<a href=".godel/tools.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Tools</a>}
     if {$opt(-js) eq "1"} {
       puts $fout {<a href="local.js"  type=text/txt class="w3-bar-item w3-button w3-right">JS</a>}

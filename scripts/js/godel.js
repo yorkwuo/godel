@@ -2,10 +2,13 @@
 document.onkeyup = function(e) {
 // Ctrl 1
   if        (e.ctrlKey && e.which == 49) {
-    document.getElementById('idedit').click();
+    document.getElementById('iddraw').click();
 // Ctrl 2
   } else if (e.ctrlKey && e.which == 50) {
     document.getElementById('idbutton').click();
+// Ctrl 3
+  } else if (e.ctrlKey && e.which == 51) {
+    document.getElementById('idedit').click();
 // Alt 2
 //  } else if (e.altKey && e.which == 50) {
 //    document.getElementById('iddraw').click();
@@ -1306,6 +1309,19 @@ function g_save() {
     newLink.click(); 
 
     document.getElementById('iddraw').click();
+
+}
+// }}}
+// toolarea
+// {{{
+function toolarea() {
+  var value = document.getElementById("toolarea").style.display;
+
+  if (value === "none") {
+    document.getElementById("toolarea").style.display = "block";
+  } else {
+    document.getElementById("toolarea").style.display = "none";
+  }
 
 }
 // }}}

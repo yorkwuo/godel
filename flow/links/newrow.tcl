@@ -6,6 +6,7 @@ if [file exist at.tcl] {
 }
 set rowid [clock format [clock seconds] -format {%Y-%m-%d_%H-%M_%S}]
 set atvar($rowid,name) ""
+set atvar($rowid,id) $rowid
 
 godel_array_save atvar at.tcl
 
