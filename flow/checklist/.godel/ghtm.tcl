@@ -2,10 +2,12 @@ ghtm_top_bar -save -filter 1
 
 gnotes "#$vars(g:pagename)"
 
-gexe_button newnote.tcl -nowin -name "newnote"
 
 ghtm_panel_begin
-  bton_onoff -key del     -name del
+  gexe_button newnote.tcl -nowin -name "new"
+  ghtm_onoff coldel  -name Del
+  ghtm_onoff coltick -name Tick
+
 ghtm_panel_end
 
 # dname
@@ -27,12 +29,13 @@ proc dname {} {
 # }}}
 
 set cols ""
-cols_onoff "del ; proc:bton_delete ; Del"
-#lappend cols "proc:bton_tick;Tick"
-#lappend cols "g:pagename;DirName"
-#lappend cols "proc:dname;Dirname"
-lappend cols "edtable:title;Title"
-lappend cols "edtable:g:keywords;Keywords"
-local_table tbl -c $cols -serial -sortby "g:iname;d" -dataTables
+cols_onoff "coldel      ; proc:bton_delete   ; D"
+cols_onoff "coltick     ; proc:bton_tick     ; T"
+lappend cols "edtable:class      ; Class"
+lappend cols "edtable:title      ; Title"
+lappend cols "edtable:g:keywords ; Keywords"
+
+#local_table tbl -c $cols -serial -sortby "g:iname" -dataTables
+local_table tbl -c $cols -serial -sortby "class"
 
 # vim:fdm=marker

@@ -1249,20 +1249,16 @@ function save_atable(tableobj) {
     var gname   = cells[i].getAttribute("gname");
     var colname = cells[i].getAttribute("colname");
     var changed = cells[i].getAttribute("changed");
+    var onoff   = cells[i].getAttribute("onoff");
+    var gclass  = cells[i].getAttribute("gclass");
 
     if (typeof gname === 'undefined') {
       return; // equal to continue
     } else {
         if (changed) {
-          if (colname == "chkbox") {
-            //var n = 'cb_' + gname;
-            //var v = document.getElementById(n).checked;
-            //if (v) {
-            //  var cmd = "exec rm -rf " + gname + "\n";
-            //  cmds = cmds + cmd;
-            //  document.getElementById(n).checked = false;
-            //  $(this).attr('changed', false);
-            //}
+          if (gclass == "onoff") {
+            var cmd =  "a" + gname + "|#|" +  colname + "|#|" + onoff + "|E|\n";
+            cmds = cmds + cmd;
           } else {
             var cmd =   "a" + gname + "|#|" +  colname + "|#|" +  value + "|E|\n";
             cmds = cmds + cmd;

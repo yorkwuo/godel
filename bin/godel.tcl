@@ -1,3 +1,18 @@
+proc alinkname {} {
+  upvar row row
+  upvar celltxt celltxt
+  upvar atvar atvar
+
+  set name [get_atvar $row,name]
+  set url  [get_atvar $row,url]
+  if {$name eq ""} {
+    #set celltxt "<td gname=\"$row\" colname=\"name\" contenteditable=\"true\" style=\"white-space:pre\"><a href=\"$url\"></td>"
+    set celltxt "<td gname=\"$row\" colname=\"name\" contenteditable=\"true\" ><a href=\"$url\"></td>"
+  } else {
+    set celltxt "<td><a href=\"$url\">$name</td>"
+  }
+}
+
 proc funcbtn {type name} {
   upvar row row
   upvar celltxt celltxt
@@ -1316,12 +1331,12 @@ proc at_fdel {} {
 # }}}
 # at_delete
 #j {{{
-proc at_delete {} {
+proc at_delete {name} {
   upvar celltxt celltxt
   upvar row row
   upvar atvar atvar
 
-  set celltxt "<td><button onclick=\"at_delete('at.tcl','$row')\" class=\"w3-button w3-blue-gray\">del</button></td>"
+  set celltxt "<td><button onclick=\"at_delete('at.tcl','$row')\" class=\"w3-button w3-blue-gray\">$name</button></td>"
 }
 # }}}
 # at_open
@@ -1840,12 +1855,19 @@ if {$opt(-noshow) eq "1"} {
         regsub {proc:} $col {} col
         set procname $col
         eval $procname
-      } else {
+      } elseif [regexp {^ed:} $col] {
+        regsub {^ed:} $col {} col
         if ![info exist atvar($row,$col)] {
           set atvar($row,$col) ""
         }
         set value $atvar($row,$col)
         append celltxt "<td gname=\"$row\" colname=\"$col\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
+      } else {
+        if ![info exist atvar($row,$col)] {
+          set atvar($row,$col) ""
+        }
+        set value $atvar($row,$col)
+        append celltxt "<td gname=\"$row\" colname=\"$col\" style=\"white-space:pre\">$value</td>"
       }
       puts $fout $celltxt
     }
@@ -1870,6 +1892,27 @@ if {$opt(-noshow) eq "1"} {
             puts $fout "} );"
             puts $fout "</script>"
     }
+}
+# }}}
+# alinkurl
+# {{{
+proc alinkurl {} {
+  upvar env     env
+  upvar atvar   atvar
+  upvar row     row
+  upvar celltxt celltxt
+
+  set urlvalue [get_atvar $row,url]
+
+  if {$urlvalue eq "NA"} {
+    set celltxt "<td gname=\"$row\" colname=\"url\" contenteditable=\"true\"></td>"
+  } else {
+    if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
+      set celltxt "<td><button onclick=\"chrome_open('$urlvalue')\">url</button></td>"
+    } else {
+      set celltxt "<td><a href=\"$urlvalue\">url</td>"
+    }
+  }
 }
 # }}}
 # ltbl_linkurl
@@ -2215,6 +2258,8 @@ proc gtcl_commit {} {
 
       set chunks [lreplace $chunks end end] 
 
+      set dels ""
+      set adels ""
       foreach chunk $chunks {
         set cols [::textutil::split::splitx $chunk "\\|#\\|"]
         set gpage_tmp [lindex $cols 0]
@@ -2223,12 +2268,14 @@ proc gtcl_commit {} {
 
         regsub {\n}  $gpage_tmp {} gpage_tmp
         regsub {\n$} $value {} value
-
         regexp {^(\w)(.*)} $gpage_tmp whole tbltype gpage
 
-        set dels ""
         if {$tbltype eq "a"} {
-          asetvar $gpage,$key $value
+          if {$key eq "DEL"} {
+            lappend adels $gpage
+          } else {
+            asetvar $gpage,$key $value
+          }
         } else {
           if {$key eq "DEL"} {
             lappend dels $gpage
@@ -2236,12 +2283,21 @@ proc gtcl_commit {} {
             lsetvar $gpage $key $value
           }
         }
+      }
 
-        if {$dels eq ""} {
-        } else {
-          catch {exec rm -rf $dels}
+# delete gpage
+      if {$dels eq ""} {
+      } else {
+        catch {exec rm -rf {*}$dels}
+      }
+
+      if {$adels eq ""} {
+      } else {
+        source at.tcl
+        foreach adel $adels {
+          array unset atvar $adel*
         }
-
+        godel_array_save atvar at.tcl
       }
 
       file delete $gtcl
@@ -3215,6 +3271,22 @@ proc bton_delete {{name ""}} {
 
   set celltxt "<td gname=\"$row\" bgcolor=lightblue colname=\"DEL\">D</td>"
 
+}
+# }}}
+# abton_tick
+# {{{
+proc abton_tick {{name ""}} {
+  upvar celltxt celltxt
+  upvar row     row
+  upvar atvar   atvar
+
+  set tick [get_atvar $row,tick]
+
+  if {$tick eq "1"} {
+    set celltxt "<td gclass=\"onoff\" gname=\"$row\" colname=\"tick\" bgcolor=\"lightgreen\" onoff=\"1\">1</td>"
+  } else {
+    set celltxt "<td gclass=\"onoff\" gname=\"$row\" colname=\"tick\" onoff=\"0\"></td>"
+  }
 }
 # }}}
 # bton_tick
@@ -5796,43 +5868,11 @@ proc local_table {tableid args} {
       set celltxt {}
 
       # Get column data
-      # img:
-      if [regexp {img:} $col] {
-        regsub {img:} $col {} col
-        set coverfile [glob -nocomplain $row/cover.*]
-        if {$coverfile eq ""} {
-          set coverfile "cover.jpg"
-        }
-        append celltxt "<td><a href=\"$coverfile\"><img height=100px src=$coverfile></a></td>"
       # proc:
-      } elseif [regexp {proc:} $col] {
+      if [regexp {proc:} $col] {
         regsub {proc:} $col {} col
         set procname $col
         eval $procname
-      # flist:
-      } elseif [regexp {flist:} $col] {
-        regsub {flist:} $col {} col
-        regsub -all {\[} $row {\\[} dir
-        regsub -all {\]} $dir {\\]} dir
-        #set files ""
-        #foreach co $col {
-        #  lappend files [glob -nocomplain $dir/$co]
-        #}
-        set files [glob -nocomplain $dir/$col]
-        set links {<pre>}
-        foreach f $files {
-          set name [file tail $f]
-          if [regexp {\.pdf} $name] {
-            append links "<a href=\"$f\" type=text/pdf>$name</a>\n"
-          } elseif [regexp {\.gtcl} $name] {
-          } elseif [regexp {\.htm*} $name] {
-            append links "<a href=\"$f\">$name</a>\n"
-          } else {
-            append links "<a href=\"$f\" type=text/txt>$name</a>\n"
-          }
-        }
-        append links {</pre>}
-        append celltxt "<td>$links</td>"
       # md:
       } elseif [regexp {md:} $col] {
         regsub {md:} $col {} col
@@ -5865,12 +5905,7 @@ proc local_table {tableid args} {
       # ed:
       } elseif [regexp {ed:} $col] {
         regsub {ed:} $col {} col
-        set fname $row/$col
-        if [file exist $fname] {
-          append celltxt "<td><a href=\"$fname\" type=text/txt>$col</a></td>"
-        } else {
-          append celltxt "<td></td>"
-        }
+        append celltxt "<td gname=\"$row\" colname=\"$page_key\" contenteditable=\"true\" style=\"white-space:pre\">$col_data</td>"
       } else {
         set dirname [file dirname $col]
         set page_path $row
