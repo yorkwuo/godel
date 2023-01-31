@@ -12,6 +12,7 @@ proc toolarea_end {} {
   puts $fout "</div>"
 }
 proc alinkname {} {
+  upvar env env
   upvar row row
   upvar celltxt celltxt
   upvar atvar atvar
@@ -19,10 +20,14 @@ proc alinkname {} {
   set name [get_atvar $row,name]
   set url  [get_atvar $row,url]
   if {$name eq ""} {
-    #set celltxt "<td gname=\"$row\" colname=\"name\" contenteditable=\"true\" style=\"white-space:pre\"><a href=\"$url\"></td>"
     set celltxt "<td gname=\"$row\" colname=\"name\" contenteditable=\"true\" ><a href=\"$url\"></td>"
   } else {
-    set celltxt "<td><a href=\"$url\">$name</td>"
+    #set celltxt "<td><a href=\"$url\">$name</td>"
+    if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
+      set celltxt "<td><div onclick=\"chrome_open('$url')\">$name</div></td>"
+    } else {
+      set celltxt "<td><a href=\"$url\">$name</td>"
+    }
   }
 }
 
