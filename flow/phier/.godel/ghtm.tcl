@@ -31,35 +31,37 @@ proc hiername {} {
 # }}}
 
 ghtm_newnote
-bton_onoff -key level    -name level
-bton_onoff -key rptto    -name rptto
-bton_onoff -key D        -name D
-bton_onoff -key Link     -name Link
-bton_onoff -key role     -name role
-bton_onoff -key area   -name area
-bton_onoff -key fullname -name fullname
-bton_onoff -key where    -name where
-bton_onoff -key Keywords -name Keywords
-bton_onoff -key id       -name id
-bton_onoff -key Title    -name Title
-bton_onoff -key name     -name name
-bton_onoff -key hiername -name hiername
+ghtm_onoff collevel    -name level
+ghtm_onoff colrptto    -name rptto
+ghtm_onoff colD        -name D
+ghtm_onoff colLink     -name Link
+ghtm_onoff colrole     -name role
+ghtm_onoff colfullname -name fullname
+ghtm_onoff colwhere    -name where
+ghtm_onoff colKeywords -name Keywords
+ghtm_onoff colorg      -name org
+ghtm_onoff colid       -name id
+ghtm_onoff colTitle    -name Title
+ghtm_onoff colname     -name name
+ghtm_onoff colhiername -name hiername
+ghtm_onoff colnotes    -name notes
 
 set     cols ""
-cols_onoff "level    ; edtable:level         ; level"
-cols_onoff "rptto    ; edtable:rptto         ; rptto"
-cols_onoff "D        ; proc:bton_delete      ; D"
-cols_onoff "Link     ; proc:ltbl_linkurl url ; Link"
-cols_onoff "area   ; edtable:area        ; area"
-cols_onoff "fullname ; edtable:fullname      ; fullname"
-cols_onoff "where    ; edtable:where         ; where"
-cols_onoff "Keywords ; edtable:keywords      ; Keywords"
-cols_onoff "id       ; edtable:id            ; id"
-cols_onoff "Title    ; edtable:g:title       ; Title"
-cols_onoff "name     ; edtable:name          ; name"
-cols_onoff "hiername ; proc:hiername         ; hiername"
-cols_onoff "role     ; edtable:role          ; role"
+cols_onoff "collevel    ; edtable:level         ; level"
+cols_onoff "colrptto    ; edtable:rptto         ; rptto"
+cols_onoff "colD        ; proc:bton_delete      ; D"
+cols_onoff "colLink     ; proc:ltbl_linkurl url ; Link"
+cols_onoff "colfullname ; edtable:fullname      ; fullname"
+cols_onoff "colwhere    ; edtable:where         ; where"
+cols_onoff "colKeywords ; edtable:keywords      ; Keywords"
+cols_onoff "colorg      ; edtable:org           ; Org"
+cols_onoff "colid       ; edtable:id            ; id"
+cols_onoff "colTitle    ; edtable:g:title       ; Title"
+cols_onoff "colname     ; edtable:name          ; name"
+cols_onoff "colhiername ; proc:hiername         ; hiername"
+cols_onoff "colrole     ; edtable:role          ; role"
+cols_onoff "colnotes    ; edtable:notes         ; notes"
 
-local_table tbl -c $cols -serial -dataTables -sortby g:iname -sortopt {-decreasing} -exclude done
+local_table tbl -c $cols -serial -dataTables -sortby g:iname -sortopt {-decreasing}
 
 # vim:fdm=marker
