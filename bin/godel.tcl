@@ -5920,7 +5920,11 @@ proc local_table {tableid args} {
       # ed:
       } elseif [regexp {ed:} $col] {
         regsub {ed:} $col {} col
-        append celltxt "<td gname=\"$row\" colname=\"$page_key\" contenteditable=\"true\" style=\"white-space:pre\">$col_data</td>"
+        set col_data [lvars $row $col]
+        if {$col_data eq "NA"} {
+          set col_data ""
+        }
+        append celltxt "<td gname=\"$row\" colname=\"$col\" contenteditable=\"true\" style=\"white-space:pre\">$col_data</td>"
       } else {
         set dirname [file dirname $col]
         set page_path $row

@@ -4,6 +4,10 @@ gnotes "
 
 "
 gexe_button newnote.tcl -name new -nowin
+# keywords
+if [file exist keywords.tcl] {
+  source keywords.tcl
+}
 
 if [file exist atcols.tcl] {
   source atcols.tcl
@@ -12,8 +16,8 @@ if [file exist atcols.tcl] {
   lappend atcols "ed:title         ; title"
   lappend atcols "ed:keywords      ; keywords"
   lappend atcols "proc:bton_delete ; D"
-  lappend atcols "proc:abton_tick  ; T"
+  #lappend atcols "proc:abton_tick  ; T"
 }
 
-atable at.tcl -noid -num
+atable at.tcl -noid -num -sortby name -sortopt {-ascii -decreasing} -dataTables
 
