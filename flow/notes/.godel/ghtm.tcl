@@ -1,52 +1,44 @@
 ghtm_top_bar -save
+set sortby [lvars . sortby]
+set search [lvars . search]
 
 gnotes "
 # $vars(g:pagename)
 "
-gexe_button newnote.tcl -nowin -name "newnote"
-ghtm_onoff coldel -name Del
-ghtm_onoff search -name Search
-ghtm_onoff path -name Path
+
+toolarea_begin
+#  set rows ""
+#  lappend rows sortby
+#  var_table
+#
+  gexe_button newnote.tcl -nowin -name "new"
+  ghtm_onoff coldel -name Del
+  ghtm_onoff search -name Search
+  ghtm_onoff path -name Path
+  ghtm_onoff toolarea -name toolarea
+toolarea_end
 
 if {[lvars . path] eq "1"} {
   puts $fout <p>[pwd]</p>
 }
 
-
-# dname
-# {{{
-proc dname {} {
-  upvar celltxt celltxt
-  upvar row     row
-
-  set tick_status [lvars $row tick_status]
-  if {$tick_status eq "NA"} {
-    set tick_status 0
-  }
-  if {$tick_status} {
-    set celltxt "<td bgcolor=palegreen><a href=$row/.index.htm>$row</a></td>"
-  } else {
-    set celltxt "<td><a href=$row/.index.htm>$row</a></td>"
-  }
-}
-# }}}
+if {[lvars . coldel] eq "1"} { lappend cols "proc:bton_delete;D" }
 
 if [file exist cols.tcl] {
   source cols.tcl
 } else {
-  lappend cols "edtable:class;Class"
-  lappend cols "edtable:g:pagename;Title"
-  lappend cols "edtable:g:keywords;Keywords"
+  lappend cols "ed:class;Class"
+  lappend cols "ed:g:pagename;Title"
+  lappend cols "ed:g:keywords;Keywords"
 }
 
-if {[lvars . coldel] eq "1"} {
-  lappend cols "proc:bton_delete;D"
+set options "-serial "
+append options "-sortby $sortby "
+if {$search eq "1"} {
+  append options "-dataTables"
 }
 
-if {[lvars . search] eq "1"} {
-  local_table tbl -c $cols -serial -sortby "g:iname;d" -dataTables
-} else {
-  local_table tbl -c $cols -serial -sortby "g:iname;d"
-}
+local_table tbl -c $cols {*}$options
+
 
 # vim:fdm=marker
