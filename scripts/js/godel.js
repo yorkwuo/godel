@@ -43,6 +43,20 @@ if(typeof(tables) != 'undefined' && tables != null){
             this.setAttribute("changed","1");
             this.setAttribute("onoff","1");
           })
+        } else if (colname === "fdel") {
+          cells[i].addEventListener('click', function(){
+            this.setAttribute("changed","1");
+            var onoff   = this.getAttribute("onoff");
+            if (onoff === "1") {
+              this.setAttribute("bgcolor","lightblue")
+              this.setAttribute("onoff","0");
+              //this.innerText = "FD";
+            } else {
+              this.setAttribute("bgcolor","gray")
+              this.setAttribute("onoff","1");
+              //this.innerText = 1;
+            }
+          })
         } else if (colname === "tick") {
           cells[i].addEventListener('click', function(){
             this.setAttribute("changed","1");

@@ -1280,6 +1280,8 @@ proc openfile {fpath} {
     catch {exec /mnt/c/Program\ Files\ \(x86\)/Google/Chrome/Application/chrome.exe $fpath &}
   } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb|\.mkv|.webm} $fpath] {
       catch {exec mpv $fpath &}
+  } elseif [regexp {\.rpt} $fpath] {
+      catch {exec gvim $fpath &}
   } elseif [regexp {\.epub} $fpath] {
       catch {exec ebook-viewer $fpath &}
   } elseif [regexp {\.mobi} $fpath] {
@@ -1287,7 +1289,7 @@ proc openfile {fpath} {
   } elseif [regexp {\.djvu} $fpath] {
       catch {exec okular $fpath &}
   } elseif [regexp {\.html} $fpath] {
-      catch {exec firefox $fpath &}
+      catch {exec /home/york/tools/firefox/firefox $fpath &}
   } elseif [regexp {\.pptx} $fpath] {
     puts $fpath
     regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
@@ -1921,17 +1923,12 @@ proc alinkurl {} {
   upvar celltxt celltxt
 
   set value [get_atvar $row,url]
-  set celltxt "<td style=\"font-size:1px\" gname=\"$row\" colname=\"url\" contenteditable=\"true\">$value</td>"
+  if {$value eq "NA"} {
+    set celltxt "<td style=\"font-size:8px\" gname=\"$row\" colname=\"url\" contenteditable=\"true\"></td>"
+  } else {
+    set celltxt "<td style=\"font-size:8px\" gname=\"$row\" colname=\"url\" contenteditable=\"true\">$value</td>"
+  }
 
-  #if {$urlvalue eq "NA"} {
-  #  set celltxt "<td gname=\"$row\" colname=\"url\" contenteditable=\"true\"></td>"
-  #} else {
-  #  if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
-  #    set celltxt "<td><button onclick=\"chrome_open('$urlvalue')\">url</button></td>"
-  #  } else {
-  #    set celltxt "<td><a href=\"$urlvalue\">url</td>"
-  #  }
-  #}
 }
 # }}}
 # ltbl_linkurl
@@ -2279,6 +2276,7 @@ proc gtcl_commit {} {
 
       set dels ""
       set adels ""
+      set afdels ""
       foreach chunk $chunks {
         set cols [::textutil::split::splitx $chunk "\\|#\\|"]
         set gpage_tmp [lindex $cols 0]
@@ -2292,6 +2290,8 @@ proc gtcl_commit {} {
         if {$tbltype eq "a"} {
           if {$key eq "DEL"} {
             lappend adels $gpage
+          } elseif {$key eq "fdel"} {
+            lappend afdels $gpage
           } else {
             asetvar $gpage,$key $value
           }
@@ -2310,11 +2310,22 @@ proc gtcl_commit {} {
         catch {exec rm -rf {*}$dels}
       }
 
+# adels
       if {$adels eq ""} {
       } else {
         source at.tcl
         foreach adel $adels {
           array unset atvar $adel*
+        }
+        godel_array_save atvar at.tcl
+      }
+# afdels
+      if {$afdels eq ""} {
+      } else {
+        source at.tcl
+        foreach afdel $afdels {
+          catch {exec rm $atvar($afdel,path)}
+          array unset atvar $afdel*
         }
         godel_array_save atvar at.tcl
       }
@@ -3284,6 +3295,16 @@ proc bton_delete {{name ""}} {
   upvar row     row
 
   set celltxt "<td gname=\"$row\" bgcolor=lightblue colname=\"DEL\">D</td>"
+
+}
+# }}}
+# bton_fdelete
+# {{{
+proc bton_fdelete {{name ""}} {
+  upvar celltxt celltxt
+  upvar row     row
+
+  set celltxt "<td gname=\"$row\" bgcolor=lightblue colname=\"fdel\">FD</td>"
 
 }
 # }}}

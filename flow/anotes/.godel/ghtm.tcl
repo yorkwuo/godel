@@ -3,12 +3,20 @@ gnotes "
 # $vars(g:pagename)
 
 "
-gexe_button newnote.tcl -name new -nowin
-# keywords
-if [file exist keywords.tcl] {
-  source keywords.tcl
-}
+toolarea_begin
+  gexe_button newrow.tcl -name new -nowin
+  ghtm_onoff coldel      -name Del
+  ghtm_onoff search      -name Search
+  ghtm_onoff disppath    -name Path
+  ghtm_onoff dispatfile  -name atfile
+  ghtm_onoff toolarea    -name toolarea
+  ghtm_onoff incr        -name incr
+toolarea_end
 
+# keywords
+if [file exist keywords.tcl] { source keywords.tcl }
+
+# atcols
 if [file exist atcols.tcl] {
   source atcols.tcl
 } else {
