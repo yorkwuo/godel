@@ -1366,7 +1366,7 @@ proc at_open {} {
   upvar row row
   upvar atvar atvar
 
-  set celltxt "<td><button onclick=\"at_open('at.tcl','$row')\" class=\"w3-button w3-blue-gray\">O</button></td>"
+  set celltxt "<td bgcolor=lightblue onclick=\"at_open('at.tcl','$row')\">O</td>"
 }
 # }}}
 # at_mpv
@@ -4020,9 +4020,9 @@ proc ghtm_set_value {key value args} {
   }
   set cur_value [lvars . $key]
   if {$cur_value eq $value} {
-    puts $fout "<a class=\"w3-button w3-round w3-pink\" onclick=\"set_value('$key','$value')\">${name}</a>"
+    puts $fout "<a class=\"w3-button w3-round w3-lime\" onclick=\"set_value('$key','$value')\">${name}</a>"
   } else {
-    puts $fout "<a class=\"w3-button w3-round w3-pale-green\" onclick=\"set_value('$key','$value')\">${name}</a>"
+    puts $fout "<a class=\"w3-button w3-round w3-light-gray\" onclick=\"set_value('$key','$value')\">${name}</a>"
   }
 }
 # }}}
@@ -4044,9 +4044,9 @@ proc ghtm_onoff {key args} {
 # }}}
   set cur_value [lvars . $key]
   if {$cur_value eq "1"} {
-    puts $fout "<a class=\"w3-button w3-round w3-pink\" onclick=\"onoff('$key', '0')\">${name}</a>"
+    puts $fout "<a class=\"w3-button w3-round w3-lime\" onclick=\"onoff('$key', '0')\">${name}</a>"
   } else {
-    puts $fout "<a class=\"w3-button w3-round w3-pale-green\" onclick=\"onoff('$key', '1')\">${name}</a>"
+    puts $fout "<a class=\"w3-button w3-round w3-light-gray\" onclick=\"onoff('$key', '1')\">${name}</a>"
   }
 }
 # }}}
@@ -4533,6 +4533,7 @@ proc ghtm_top_bar {args} {
     <a id="idvalue" href=".godel/vars.tcl" type=text/txt  class="w3-bar-item w3-button">Value</a>
     <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Parent</a>
     <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
+    <a style="display:none" id="idexec" href=".godel/exec.gtcl" type=text/gtcl class="w3-bar-item w3-button">Exec</a>
   }
     #<a id="iddraw" href="#" onclick="newdraw()" class="w3-bar-item w3-button">Draw</a>
   if {$opt(-filter)} {

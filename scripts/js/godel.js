@@ -1160,7 +1160,7 @@ function at_open (atfname,id) {
 
     newLink2.click(); 
 
-    document.getElementById('iddraw').click();
+    document.getElementById('idexec').click();
 }
 // }}}
 // chrome_open

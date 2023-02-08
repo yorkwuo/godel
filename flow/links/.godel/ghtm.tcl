@@ -10,18 +10,16 @@ if [file exist keywords.tcl] {
 #ghtm_panel_begin
 #  ghtm_keyword_button tbl $indexcol ECO
 #ghtm_panel_end
-
 toolarea_begin
-  gexe_button newrow.tcl -name new -nowin
-  ghtm_onoff dispedit    -name Edit
-  #ghtm_onoff coldel     -name Del
-  ghtm_onoff search      -name Search
-  ghtm_onoff disppath    -name Path
-  ghtm_onoff dispatfile  -name atfile
-  ghtm_onoff toolarea    -name toolarea
-  ghtm_onoff incr        -name incr
+gexe_button newrow.tcl -name new -nowin
+ghtm_onoff dispedit    -name Edit
+#ghtm_onoff coldel      -name Del
+ghtm_onoff search      -name Search
+ghtm_onoff disppath    -name Path
+ghtm_onoff dispatfile  -name atfile
+ghtm_onoff toolarea  -name toolarea
+ghtm_onoff incr  -name incr
 toolarea_end
-
 if {[lvars . incr] eq "1"} {
   set direction "-increasing"
 } else {
@@ -40,10 +38,10 @@ source at.tcl
 
 set atcols ""
 atcols_onoff "dispedit         ; proc:bton_delete ; D"
-atcols_onoff "dispedit         ; proc:alinkurl    ; url"
-atcols_onoff "dispedit         ; ed:name          ; name"
 lappend atcols "ed:type           ; type"
 lappend atcols "proc:alinkname ; name"
+atcols_onoff "dispedit         ; ed:name          ; name"
+atcols_onoff "dispedit         ; proc:alinkurl    ; url"
 
 if {[lvars . search] eq "1"} {
   atable at.tcl -dataTables -noid -sortby id -sortopt $direction -num
