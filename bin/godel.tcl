@@ -24,7 +24,7 @@ proc alinkname {} {
   } else {
     #set celltxt "<td><a href=\"$url\">$name</td>"
     if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
-      set celltxt "<td><div onclick=\"chrome_open('$url')\">$name</div></td>"
+      set celltxt "<td><button onclick=\"chrome_open('$url')\">$name</button></td>"
     } else {
       set celltxt "<td><a href=\"$url\">$name</td>"
     }
