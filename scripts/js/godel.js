@@ -9,6 +9,9 @@ document.onkeyup = function(e) {
 // Ctrl 3
   } else if (e.ctrlKey && e.which == 51) {
     document.getElementById('idedit').click();
+// Ctrl F1
+  } else if (e.ctrlKey && e.which == 112) {
+    document.getElementById('idplay').click();
 // Alt 2
 //  } else if (e.altKey && e.which == 50) {
 //    document.getElementById('iddraw').click();

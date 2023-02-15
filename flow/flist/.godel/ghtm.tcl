@@ -17,30 +17,30 @@ ghtm_panel_end
 
 set sortby [lvars . sortby]
 
-ghtm_panel_begin
-  ghtm_onoff colopen     -name open
-  ghtm_onoff colmtime    -name mtime
-  ghtm_onoff colauthor   -name author
-  ghtm_onoff colfdel     -name fdel
-  ghtm_onoff collast     -name last
-  ghtm_onoff colkeywords -name keywords
-  ghtm_onoff coltitle    -name title
-  ghtm_onoff colname     -name name
-ghtm_panel_end
+if [file exist colist.tcl] {
+  source colist.tcl
+} else {
+  set colist ""
+  lappend colist  "colmtime     mtime              mtime"
+  lappend colist  "colauthor    ed:author             author"
+  lappend colist  "colfdel      proc:bton_fdelete  FD"
+  lappend colist  "collast      last               last"
+  lappend colist  "colkeywords  ed:keywords        keywords"
+  lappend colist  "colopen      proc:abton_tick     T"
+  lappend colist  "coltitle     ed:title           title"
+  lappend colist  "colopen      proc:at_open       O"
+  lappend colist  "colname      name               name"
+}
 
-set atcols ""
-atcols_onoff "colmtime    ; mtime             ; mtime"
-atcols_onoff "colauthor   ; author            ; author"
-atcols_onoff "colfdel     ; proc:bton_fdelete ; FD"
-atcols_onoff "collast     ; last              ; last"
-atcols_onoff "colkeywords ; ed:keywords       ; keywords"
-atcols_onoff "coltitle    ; ed:title          ; title"
-atcols_onoff "colopen     ; proc:at_open      ; O"
-atcols_onoff "colname     ; name              ; name"
-#lappend atcols "Vs;Vs"
-#lappend atcols "path;path"
+foreach i $colist {
+  set key  [lindex $i 0]
+  set cmd  [lindex $i 1]
+  set name [lindex $i 2]
+
+  ghtm_onoff $key -name $name
+  atcols_onoff "$key ; $cmd ; $name"
+}
 
 atable at.tcl -css table1 -dataTables -sortby $sortby -sortopt "-decreasing" -noid
 
-#atable at.tcl
 

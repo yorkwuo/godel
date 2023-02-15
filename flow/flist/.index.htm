@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>flist</title>
+<link rel="stylesheet" type="text/css" href=".godel/w3.css">
+<script src=.godel/js/jquery-3.3.1.min.js></script>
+<meta charset=utf-8>
+</head>
+<body>
+
+  
+  <style>
+  .content {
+    padding: 19px;
+  }
+  
+  .sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+  }
+  .sticky + .content {
+    padding-top: 60px;
+  }
+  </style>
+  
+
+    <div id="navbar" class="w3-bar w3-indigo" style="margin:0px">
+    <a id="idedit" href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
+    <a id="idvalue" href=".godel/vars.tcl" type=text/txt  class="w3-bar-item w3-button">Value</a>
+    <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Parent</a>
+    <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
+    <a style="display:none" id="idexec" href=".godel/exec.gtcl" type=text/gtcl class="w3-bar-item w3-button">Exec</a>
+  
+
+      <a href=.index.htm type=text/txt class="w3-bar-item w3-button w3-right">2023-02-12_06:42</a>
+    
+<a href=".godel/open.gtcl" type=text/gtcl class="w3-bar-item w3-button w3-right">Open</a>
+<a href=".godel/win.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Win</a>
+<button id="idbutton" onclick="g_save()" class="w3-bar-item w3-button w3-blue-gray">Save</button>
+<button class="w3-bar-item w3-button" onclick="toolarea()" style="margin: 0px 0px">Tools</button>
+<button class="w3-bar-item w3-button" onclick="topFunction()" style="margin: 0px 0px">Top</button>
+</div>
+
+  <script>
+  window.onscroll = function() {myFunction()};
+  
+  var navbar = document.getElementById("navbar");
+  var sticky = navbar.offsetTop;
+  
+  function myFunction() {
+    if (window.pageYOffset >= sticky) {
+      navbar.classList.add("sticky")
+      nav2.classList.add("content")
+    } else {
+      navbar.classList.remove("sticky");
+      nav2.classList.remove("content");
+    }
+  }
+  </script>
+  
+  <div id=nav2 class=> </div>
+  
+  
+<div class="w3-panel">
+<h1 id="tocid1" style=>flist</h1>
+
+<p>/home/github/godel/flow/flist</p>
+</div>
+<div class=ghtmls><pre style=background-color:white>2023-02-12 06:42     0B         <a class=keywords href="at.tcl" type=text/txt>at.tcl</a><br></div></pre>
+<div class="w3-panel w3-white w3-margin-top">
+<a id="NA" href=.update.tcl.gtcl class="w3-btn w3-blue" type=text/gtcl><b>update</b><span style=float:right><a class="w3-button w3-blue" href=update.tcl type=text/txt>&#9701</a></span></a>
+<a class="w3-button w3-round w3-light-gray" onclick="set_value('sortby','name')">name</a>
+<a class="w3-button w3-round w3-light-gray" onclick="set_value('sortby','mtime')">mtime</a>
+<a class="w3-button w3-round w3-light-gray" onclick="set_value('sortby','last')">last</a>
+</div>
+<div class="w3-panel w3-white w3-margin-top">
+<a class="w3-button w3-round w3-lime" onclick="onoff('colopen', '0')">open</a>
+<a class="w3-button w3-round w3-lime" onclick="onoff('colmtime', '0')">mtime</a>
+<a class="w3-button w3-round w3-lime" onclick="onoff('colauthor', '0')">author</a>
+<a class="w3-button w3-round w3-lime" onclick="onoff('colfdel', '0')">fdel</a>
+<a class="w3-button w3-round w3-lime" onclick="onoff('collast', '0')">last</a>
+<a class="w3-button w3-round w3-lime" onclick="onoff('colkeywords', '0')">keywords</a>
+<a class="w3-button w3-round w3-lime" onclick="onoff('coltitle', '0')">title</a>
+<a class="w3-button w3-round w3-lime" onclick="onoff('colname', '0')">name</a>
+</div>
+<table class=table1 id=tbl tbltype=atable>
+<thead>
+<tr>
+<th colname="mtime"> mtime</th>
+<th colname="author"> author</th>
+<th colname="proc:bton_fdelete"> FD</th>
+<th colname="last"> last</th>
+<th colname="ed:keywords"> keywords</th>
+<th colname="ed:title"> title</th>
+<th colname="proc:at_open"> O</th>
+<th colname="name"> name</th>
+</tr>
+</thead>
+</table>
+<script src=/home/github/godel/scripts/js/jquery.dataTables.min.js></script>
+<script>
+    $(document).ready(function() {
+    $('#tbl').DataTable({
+       "paging": false,
+       "info": false,
+       "order": [],
+    });
+} );
+</script>
+<script src=.godel/js/jquery.dataTables.min.js></script>
+<script src=.godel/js/godel.js></script>
+</body>
+</html>

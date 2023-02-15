@@ -35,6 +35,7 @@ ghtm_onoff collevel    -name level
 ghtm_onoff colrptto    -name rptto
 ghtm_onoff colD        -name D
 ghtm_onoff colLink     -name Link
+ghtm_onoff colarea     -name area
 ghtm_onoff colrole     -name role
 ghtm_onoff colfullname -name fullname
 ghtm_onoff colwhere    -name where
@@ -59,6 +60,7 @@ cols_onoff "colid       ; edtable:id            ; id"
 cols_onoff "colTitle    ; edtable:g:title       ; Title"
 cols_onoff "colname     ; edtable:name          ; name"
 cols_onoff "colhiername ; proc:hiername         ; hiername"
+cols_onoff "colarea     ; edtable:area          ; area"
 cols_onoff "colrole     ; edtable:role          ; role"
 cols_onoff "colnotes    ; edtable:notes         ; notes"
 

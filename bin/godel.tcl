@@ -1733,7 +1733,11 @@ proc atable {args} {
 
   set atfname [lindex $args 0]
 
+  if ![file exist $atfname] {
+    return
+  }
   source $atfname
+
   if [file exist $localfile] {
     godel_array_read $localfile latvar atvar
   }
@@ -1928,6 +1932,25 @@ proc alinkurl {} {
   } else {
     set celltxt "<td style=\"font-size:8px\" gname=\"$row\" colname=\"url\" contenteditable=\"true\">$value</td>"
   }
+
+}
+# }}}
+# ltbl_flist
+# {{{
+proc ltbl_flist {pattern} {
+  upvar env env
+  upvar row row
+  upvar celltxt celltxt
+
+  set ifiles [glob -nocomplain -type f $row/$pattern]
+
+      set links {<pre>}
+      foreach f $ifiles {
+        set name [file tail $f]
+        append links "<a href=\"$f\">$name</a>\n"
+      }
+      append links {</pre>}
+      append celltxt "<td>$links</td>"
 
 }
 # }}}
