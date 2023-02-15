@@ -4,7 +4,7 @@ gnotes "
 
 "
 toolarea_begin
-  gexe_button newrow.tcl -name new -nowin
+  gexe_button new.tcl -name new -nowin
   ghtm_onoff coldel      -name Del
   ghtm_onoff search      -name Search
   ghtm_onoff disppath    -name Path
@@ -21,11 +21,12 @@ if [file exist atcols.tcl] {
   source atcols.tcl
 } else {
   set atcols ""
+  lappend atcols "proc:bton_delete ; D"
   lappend atcols "ed:title         ; title"
   lappend atcols "ed:keywords      ; keywords"
-  lappend atcols "proc:bton_delete ; D"
   #lappend atcols "proc:abton_tick  ; T"
 }
 
-atable at.tcl -noid -num -sortby name -sortopt {-ascii -decreasing} -dataTables
+atable at.tcl -noid -num -sortby id -sortopt {-ascii -decreasing} -dataTables
+#atable at.tcl -noid -num -sortby id -sortopt {-ascii -increasing} -dataTables
 
