@@ -1,16 +1,24 @@
 #!/usr/bin/tclsh
 source $env(GODEL_ROOT)/bin/godel.tcl
 
+set level1 [lvars . level1]
+
 if [file exist at.tcl] {
   source at.tcl
   
   array set kk [array get atvar *,last]
   array set kk [array get atvar *,keywords]
 
-  unset atvar
+  if [info exist atvar] {
+    unset atvar
+  }
 }
 
-exec make f
+if {$level1 eq "1"} {
+  exec make f1
+} else {
+  exec make f
+}
 
 set lines [read_as_list flist]
 

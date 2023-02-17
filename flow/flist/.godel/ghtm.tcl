@@ -10,9 +10,11 @@ if [file exist "keywords.tcl"] {
 }
 ghtm_panel_begin
   gexe_button update.tcl -name update -cmd -nowin
+  gexe_button move.tcl -name move -cmd -nowin
   ghtm_set_value sortby name  -name name
   ghtm_set_value sortby mtime -name mtime
   ghtm_set_value sortby last  -name last
+  ghtm_onoff level1  -name level1
 ghtm_panel_end
 
 set sortby [lvars . sortby]
@@ -29,6 +31,7 @@ if [file exist colist.tcl] {
   lappend colist  "colopen      proc:abton_tick     T"
   lappend colist  "coltitle     ed:title           title"
   lappend colist  "colopen      proc:at_open       O"
+  lappend colist  "colname      ed:move            move"
   lappend colist  "colname      name               name"
 }
 
