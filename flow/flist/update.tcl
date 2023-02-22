@@ -8,6 +8,8 @@ if [file exist at.tcl] {
   
   array set kk [array get atvar *,last]
   array set kk [array get atvar *,keywords]
+  array set kk [array get atvar *,title]
+  array set kk [array get atvar *,author]
 
   if [info exist atvar] {
     unset atvar
@@ -30,12 +32,11 @@ foreach fname $lines {
 
   set atvar($fname,name) [file tail $fname]
   set atvar($fname,path) $fname
-  if [info exist kk($fname,last)] {
-    set atvar($fname,last) $kk($fname,last)
-  }
-  if [info exist kk($fname,keywords)] {
-    set atvar($fname,keywords) $kk($fname,keywords)
-  }
+
+  if [info exist kk($fname,last)]     { set atvar($fname,last) $kk($fname,last) }
+  if [info exist kk($fname,keywords)] { set atvar($fname,keywords) $kk($fname,keywords) }
+  if [info exist kk($fname,title)]    { set atvar($fname,title) $kk($fname,title) }
+  if [info exist kk($fname,author)]   { set atvar($fname,author) $kk($fname,author) }
 }
 
 godel_array_save atvar at.tcl

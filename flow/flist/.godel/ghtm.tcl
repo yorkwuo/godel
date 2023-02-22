@@ -31,7 +31,7 @@ if [file exist colist.tcl] {
   lappend colist  "colopen      proc:abton_tick     T"
   lappend colist  "coltitle     ed:title           title"
   lappend colist  "colopen      proc:at_open       O"
-  lappend colist  "colname      ed:move            move"
+  lappend colist  "colmove      ed:move            move"
   lappend colist  "colname      name               name"
 }
 
@@ -44,6 +44,6 @@ foreach i $colist {
   atcols_onoff "$key ; $cmd ; $name"
 }
 
-atable at.tcl -css table1 -dataTables -sortby $sortby -sortopt "-decreasing" -noid
+atable at.tcl -css table1 -dataTables -sortby $sortby -sortopt "-decreasing" -noid -num
 
 
