@@ -1964,6 +1964,28 @@ proc ltbl_linkurl {key} {
   }
 }
 # }}}
+# at_lnpage
+# {{{
+proc at_lnpage {} {
+  upvar row row
+  upvar celltxt celltxt
+  upvar atvar atvar
+
+  set value [get_atvar $row,lnpage]
+
+  if {$value eq "NA" || $value eq ""} {
+    set celltxt "<td gname=\"$row\" colname=\"lnpage\" contenteditable=\"true\"></td>"
+  } else {
+      if [file exist $value/.index.htm] {
+        set celltxt "<td><a href=\"$value/.index.htm\">$value</td>"
+      } else {
+        file mkdir $value
+        exec godel_draw.tcl $value
+        set celltxt "<td><a href=\"$value/.index.htm\">$value</td>"
+      }
+  }
+}
+# }}}
 # ltbl_star
 # {{{
 proc ltbl_star {} {

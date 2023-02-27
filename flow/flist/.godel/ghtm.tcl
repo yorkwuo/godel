@@ -33,6 +33,8 @@ if [file exist colist.tcl] {
   lappend colist  "colkeywords  ed:keywords        keywords"
   lappend colist  "colopen      proc:abton_tick     T"
   lappend colist  "coltitle     ed:title           title"
+  lappend colist  "colnotes     ed:notes           notes"
+  lappend colist  "collnpage    proc:at_lnpage     lnpage"
   lappend colist  "colopen      proc:at_open       O"
   lappend colist  "colmove      ed:move            move"
   lappend colist  "colname      name               name"
