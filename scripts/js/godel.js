@@ -40,6 +40,7 @@ if(typeof(tables) != 'undefined' && tables != null){
       }
       for (var i = 0; i < cells.length; i++) {
         var colname = cells[i].getAttribute("colname");
+        var gclass  = cells[i].getAttribute("gclass");
         if (colname === "DEL") {
           cells[i].addEventListener('click', function(){
             this.style.backgroundColor = "gray";
@@ -58,6 +59,20 @@ if(typeof(tables) != 'undefined' && tables != null){
               this.setAttribute("bgcolor","gray")
               this.setAttribute("onoff","1");
               //this.innerText = 1;
+            }
+          })
+        } else if (gclass === "onoff") {
+          cells[i].addEventListener('click', function(){
+            this.setAttribute("changed","1");
+            var onoff   = this.getAttribute("onoff");
+            if (onoff === "1") {
+              this.setAttribute("bgcolor","")
+              this.setAttribute("onoff","0");
+              this.innerText = "";
+            } else {
+              this.setAttribute("bgcolor","lightblue")
+              this.setAttribute("onoff","1");
+              this.innerText = 1;
             }
           })
         } else if (colname === "tick") {
@@ -667,47 +682,51 @@ function onoff(key, value) {
 
 }
 // }}}
+// filter_table_reset
+// {{{
+function filter_table_reset(tname) {
+    table = document.getElementById('tbl');
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+      tr[i].style.display = "";
+    }
+}
+// }}}
 // filter_table_keyword
 // {{{
-function filter_table_keyword(tname, column_no, input) {
-  var input, filter, table, tr, td, i;
+function filter_table_keyword(tname, colname, input) {
+    var input, filter, table, tr, td, i;
 
-  //input = document.getElementById("filter_table_input");
-  //input = keyword;
-  //console.log(input);
-  //filter = input.value.toUpperCase();
-  //filter = input.toUpperCase();
-  var filter = input;
-
-  //if(e.keyCode === 13){
-    //e.preventDefault(); // Ensure it is only this code that rusn
-          //if (td.innerHTML.toUpperCase().indexOf(filter[j]) > -1) 
-
-    //filter = filter.split(" ");
-    //alert("kkk");
-    var patt = new RegExp(filter, "i");
+    var filter = input;
+    var patt  = new RegExp(filter, "i");
+    var patt2 = new RegExp(colname, "i");
 
     table = document.getElementById(tname);
     tr = table.getElementsByTagName("tr");
+
+    th = tr[0].getElementsByTagName("th");
+    for (i = 0; i < th.length; i++) {
+      txt = th[i].innerHTML;
+      if (patt2.test(txt)) {
+        column_no = i;   
+      }
+    }
 
     for (i = 0; i < tr.length; i++) {
       td = tr[i].getElementsByTagName("td")[column_no];
       if (td) {
         var found = 1
-        for (j = 0; j < filter.length; j++) {
           if (patt.test(td.innerHTML)) {
             found = found && 1;
           } else {
             found = found && 0;
           }
-        }
         if (found) {
             tr[i].style.display = "";
         } else {
             tr[i].style.display = "none";
         }
-          //} else {
-          //}
       }       
     }
   //}

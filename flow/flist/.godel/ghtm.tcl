@@ -5,8 +5,8 @@ gnotes "
 [pwd]
 "
 ghtm_ls at.tcl
-if [file exist "keywords.tcl"] {
-  source keywords.tcl
+if [file exist "class.tcl"] {
+  source class.tcl
 }
 ghtm_panel_begin
   gexe_button update.tcl -name update -cmd -nowin
@@ -15,6 +15,9 @@ ghtm_panel_begin
   ghtm_set_value sortby mtime -name mtime
   ghtm_set_value sortby last  -name last
   ghtm_onoff level1  -name level1
+  if [file exist "at.tcl"]  { puts $fout "<a href=at.tcl type=text/txt>at.tcl</a>" }
+  if [file exist "class.tcl"] { puts $fout "<a href=class.tcl type=text/txt>class.tcl</a>" }
+
 ghtm_panel_end
 
 set sortby [lvars . sortby]

@@ -1355,7 +1355,7 @@ proc at_open {} {
   upvar row row
   upvar atvar atvar
 
-  set celltxt "<td bgcolor=lightblue onclick=\"at_open('at.tcl','$row')\">O</td>"
+  set celltxt "<td style=\"cursor:pointer;\" bgcolor=lightblue onclick=\"at_open('at.tcl','$row')\">O</td>"
 }
 # }}}
 # at_mpv
@@ -2655,13 +2655,19 @@ proc ss2ddhhmm {sec} {
   return "${dd}d:${hh}h:${mm}m"
 }
 # }}}
-# ltbl_chkbox
+# ltbl_chk
 # {{{
-proc ltbl_chkbox {} {
+proc ltbl_chk {name {bgcolor lightgreen}} {
   upvar celltxt celltxt
   upvar row     row
 
-  set celltxt "<td gname=\"$row\" colname=\"chkbox\"><input type=checkbox id=cb_$row></td>"
+  set value [lvars $row $name]
+
+  if {$value eq "1"} {
+    set celltxt "<td gclass=\"onoff\" gname=\"$row\" colname=\"$name\" bgcolor=\"$bgcolor\" onoff=\"1\"></td>"
+  } else {
+    set celltxt "<td gclass=\"onoff\" gname=\"$row\" colname=\"$name\" onoff=\"0\"></td>"
+  }
 }
 # }}}
 # bton_set
@@ -3134,7 +3140,7 @@ proc bton_delete {{name ""}} {
   upvar celltxt celltxt
   upvar row     row
 
-  set celltxt "<td gname=\"$row\" bgcolor=lightblue colname=\"DEL\">D</td>"
+  set celltxt "<td style=\"cursor:pointer;\" gname=\"$row\" bgcolor=lightblue colname=\"DEL\">D</td>"
 
 }
 # }}}
@@ -3144,7 +3150,7 @@ proc bton_fdelete {{name ""}} {
   upvar celltxt celltxt
   upvar row     row
 
-  set celltxt "<td gname=\"$row\" bgcolor=lightblue colname=\"fdel\">FD</td>"
+  set celltxt "<td style=\"cursor:pointer;\" gname=\"$row\" bgcolor=lightblue colname=\"fdel\">FD</td>"
 
 }
 # }}}
@@ -3158,9 +3164,9 @@ proc abton_tick {{name ""}} {
   set tick [get_atvar $row,tick]
 
   if {$tick eq "1"} {
-    set celltxt "<td gclass=\"onoff\" gname=\"$row\" colname=\"tick\" bgcolor=\"lightgreen\" onoff=\"1\">1</td>"
+    set celltxt "<td style=\"cursor:pointer;\" gclass=\"onoff\" gname=\"$row\" colname=\"tick\" bgcolor=\"lightgreen\" onoff=\"1\">1</td>"
   } else {
-    set celltxt "<td gclass=\"onoff\" gname=\"$row\" colname=\"tick\" onoff=\"0\"></td>"
+    set celltxt "<td style=\"cursor:pointer;\" gclass=\"onoff\" gname=\"$row\" colname=\"tick\" onoff=\"0\"></td>"
   }
 }
 # }}}
@@ -3836,12 +3842,12 @@ proc at_keyword_button {args} {
   }
 
   if {$opt(-name)} {
-    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${name}$total</button>"
+    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${name}$total</button>"
   } else {
     if {$opt(-key)} {
-      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}$total</button>"
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${keyword}$total</button>"
     } else {
-      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}</button>"
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${keyword}</button>"
     }
   }
 }
@@ -3912,14 +3918,22 @@ proc ghtm_keyword_button {args} {
   }
 
   if {$opt(-name)} {
-    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${name}$total</button>"
+    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${name}$total</button>"
   } else {
     if {$opt(-key)} {
-      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}$total</button>"
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${keyword}$total</button>"
     } else {
-      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",$column,\"$keyword\")>${keyword}</button>"
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${keyword}</button>"
     }
   }
+}
+# }}}
+# ghtm_reset
+# {{{
+proc ghtm_reset {} {
+  upvar fout fout
+
+  puts $fout "<button class=\"w3-button w3-round w3-pale-blue\" onclick=filter_table_reset()>reset</button>"
 }
 # }}}
 # ghtm_ls
@@ -5609,54 +5623,6 @@ proc datediff {date2 date1 {type dd}} {
 
 }
 # }}}
-# html_rows_sort
-# {{{
-proc html_rows_sort {rows args} {
-  # -c 
-# {{{
-  set opt(-c) 0
-  set idx [lsearch $args {-c}]
-  if {$idx != "-1"} {
-    set column_num [lindex $args [expr $idx + 1]]
-    set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-c) 1
-  } else {
-    set column_num 0
-  }
-# }}}
-
-  # -p 
-# {{{
-  set opt(-p) 0
-  set idx [lsearch $args {-p}]
-  if {$idx != "-1"} {
-    set parameter [lindex $args [expr $idx + 1]]
-    set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-p) 1
-  } else {
-    set parameter ""
-  }
-# }}}
-
-  set rows2 {}
-  foreach row $rows {
-    set data [lindex $row $column_num]
-    regsub -all {<[^>]*>} $data {} data
-    lappend rows2 [list $row $data]
-  }
-
-  if {$opt(-p)} {
-    set rows3 [lsort -index end {*}$parameter $rows2]
-  } else {
-    set rows3 [lsort -index end $rows2]
-  }
-
-  foreach r $rows3 {
-    lappend sorted_rows [lindex $r 0]
-  }
-  return $sorted_rows
-}
-# }}}
 # time_now
 # {{{
 proc time_now {} {
@@ -6112,18 +6078,6 @@ proc list_video {pattern} {
     #puts $fout "<video width=320 height=240 controls preload=auto>"
     puts $fout "<source src=\"$f\" type=video/mp4>"
     puts $fout "</video>"
-  }
-}
-# }}}
-# img_resize
-# {{{
-proc img_resize {pattern} {
-  file mkdir resize
-
-  set flist [glob {*}$pattern]
-  foreach f $flist {
-    puts "convert -resize 1024x -quality 80% $f resize/$f"
-    catch {exec convert -resize 1024x -quality 80% $f resize/$f}
   }
 }
 # }}}
@@ -7646,20 +7600,6 @@ proc meta_chkin {args} {
 
 }
 # }}}
-# meta_rm
-# {{{
-proc meta_rm {name} {
-  global env
-  set mfile $env(GODEL_CENTER)/meta.tcl
-  if [file exist $mfile] {
-    source $mfile
-  }
-
-  array unset meta $name,where
-
-  godel_array_save meta $env(GODEL_CENTER)/meta.tcl
-}
-# }}}
 # lgrep_inc
 # {{{
 proc lgrep_inc {pattern} {
@@ -7676,30 +7616,6 @@ proc lgrep_inc {pattern} {
     set gglist [lsearch -all -inline -regexp $gglist $pattern]
   } else {
     set gglist [lsearch $option -all -inline -regexp $gglist $pattern]
-  }
-}
-# }}}
-# gscreen
-# {{{
-proc gscreen {pattern_list {ofile NA}} {
-  upvar gscreen_list gscreen_list
-
-  set gglist $gscreen_list
-
-# Screening
-  foreach p $pattern_list {
-    lgrep_inc $p
-  }
-
-# Save to file
-  if {$ofile == "NA"} {
-    plist $gglist
-  } else {
-    set kout [open $ofile w]
-      foreach line $gglist {
-        puts $kout $line
-      }
-    close $kout
   }
 }
 # }}}

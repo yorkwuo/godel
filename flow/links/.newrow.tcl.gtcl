@@ -1,0 +1,3 @@
+set pagepath [file dirname [info script]]
+cd $pagepath
+exec ./newrow.tcl

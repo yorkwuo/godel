@@ -30,15 +30,16 @@
     <a id="idvalue" href=".godel/vars.tcl" type=text/txt  class="w3-bar-item w3-button">Value</a>
     <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Parent</a>
     <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
+    <a style="display:none" id="idexec" href=".godel/exec.gtcl" type=text/gtcl class="w3-bar-item w3-button">Exec</a>
   
 
-      <a href=.index.htm type=text/txt class="w3-bar-item w3-button w3-right">2023-01-24_08:48</a>
+      <a href=.index.htm type=text/txt class="w3-bar-item w3-button w3-right">2023-02-23_15:59</a>
     
 <a href=".godel/open.gtcl" type=text/gtcl class="w3-bar-item w3-button w3-right">Open</a>
 <a href=".godel/win.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Win</a>
 <button id="idbutton" onclick="g_save()" class="w3-bar-item w3-button w3-blue-gray">Save</button>
+<button class="w3-bar-item w3-button" onclick="toolarea()" style="margin: 0px 0px">Tools</button>
 <button class="w3-bar-item w3-button" onclick="topFunction()" style="margin: 0px 0px">Top</button>
-<a href=".godel/tools.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Tools</a>
 </div>
 
   <script>
@@ -64,17 +65,21 @@
 <div class="w3-panel">
 <h1 id="tocid1" style=>notes</h1>
 </div>
-<a id="NA" href=.newnote.tcl.gtcl class="w3-btn w3-blue" type=text/gtcl><b>newnote</b></a>
-<a class="w3-button w3-round w3-pale-green" onclick="onoff('coldel', '1')">Del</a>
-<a class="w3-button w3-round w3-pale-green" onclick="onoff('search', '1')">Search</a>
-<a class="w3-button w3-round w3-pale-green" onclick="onoff('path', '1')">Path</a>
-<table class=table1 id=tbl>
+<div id="toolarea" style="display:none">
+<a id="NA" href=.newnote.tcl.gtcl class="w3-btn w3-blue" type=text/gtcl><b>new</b></a>
+<a class="w3-button w3-round w3-light-gray" onclick="onoff('coldel', '1')">Del</a>
+<a class="w3-button w3-round w3-light-gray" onclick="onoff('coltick', '1')">Tick</a>
+<a class="w3-button w3-round w3-light-gray" onclick="onoff('search', '1')">Search</a>
+<a class="w3-button w3-round w3-light-gray" onclick="onoff('path', '1')">Path</a>
+<a class="w3-button w3-round w3-light-gray" onclick="onoff('toolarea', '1')">toolarea</a>
+</div>
+<table class=table1 id=tbl tbltype=gtable>
 <thead>
 <tr>
 <th colname="num">Num</th>
-<th colname="class">Class</th>
-<th colname="g:pagename">Title</th>
-<th colname="g:keywords">Keywords</th>
+<th colname="ed:class">Class</th>
+<th colname="ed:g:pagename">Title</th>
+<th colname="ed:g:keywords">Keywords</th>
 </tr>
 </thead>
 </table>

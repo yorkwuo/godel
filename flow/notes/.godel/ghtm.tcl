@@ -36,6 +36,7 @@ if [file exist cols.tcl] {
 if {[lvars . coldel]  eq "1"}  { lappend cols "proc:bton_delete;D" }
 if {[lvars . coltick] eq "1"}  { lappend cols "proc:bton_tick;T" }
   lappend cols "ed:g:pagename;Title"
+  lappend cols "ed:notes;Notes"
   lappend cols "ed:g:keywords;Keywords"
 }
 
