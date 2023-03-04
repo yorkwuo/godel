@@ -2171,8 +2171,10 @@ proc var_table {} {
         set value [lvars . $name]
         if {$value eq "NA"} {
           set value ""
+          puts $fout "<td width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
+        } else {
+          puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
         }
-        puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
       }
     puts $fout "</tr>"
   }
@@ -2625,6 +2627,16 @@ proc linkbox {args} {
     set val(-target) pale-green
   }
 # }}}
+  # -asize
+# {{{
+  set opt(-asize) 0
+  set idx [lsearch $args {-asize}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-asize) 1
+  }
+# }}}
+
 
   set name [lindex $args 0]
 
@@ -2640,10 +2652,20 @@ proc linkbox {args} {
     set target $name/.index.htm
   }
 
+  set txtsize ""
+  if {$opt(-asize) eq "1"} {
+    cd $name
+    source at.tcl
+    set size [llength [at_allrows]]
+    puts $size
+    cd ..
+    set txtsize "($size)"
+  }
+
   if [file exist $target] {
-    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname</a>"
+    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname$txtsize</a>"
   } else {
-    puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname</a>"
+    puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname$txtsize</a>"
   }
 }
 # }}}
