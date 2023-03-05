@@ -1,6 +1,5 @@
 ghtm_top_bar -save
 gnotes " # $vars(g:pagename)"
-ghtm_newnote
 ghtm_onoff coldelete   -name D
 ghtm_onoff collink     -name link
 ghtm_onoff colseverity -name severity

@@ -4,7 +4,6 @@ gnotes "
 
 [pwd]
 "
-ghtm_ls at.tcl
 if [file exist "class.tcl"] {
   source class.tcl
 }
