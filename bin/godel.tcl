@@ -1292,6 +1292,10 @@ proc openfile {fpath} {
     regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
     regsub -all {\/}         $fpath {\\\\}   fpath
     catch {exec /mnt/c/Program\ Files/Microsoft\ Office/root/Office16/WINWORD.EXE  $fpath &}
+  } elseif [regexp {\.msg} $fpath] {
+    regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
+    regsub -all {\/}         $fpath {\\\\}   fpath
+    catch {exec /mnt/c/Program\ Files/Microsoft\ Office/root/Office16/OUTLOOK.EXE  $fpath &}
   } elseif [regexp {\.vsdx} $fpath] {
     #regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
     #regsub -all {\/}         $fpath {\\\\}   fpath
