@@ -2636,6 +2636,15 @@ proc linkbox {args} {
     set opt(-asize) 1
   }
 # }}}
+  # -gsize
+# {{{
+  set opt(-gsize) 0
+  set idx [lsearch $args {-gsize}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-gsize) 1
+  }
+# }}}
 
 
   set name [lindex $args 0]
@@ -2657,7 +2666,11 @@ proc linkbox {args} {
     cd $name
     source at.tcl
     set size [llength [at_allrows]]
-    puts $size
+    cd ..
+    set txtsize "($size)"
+  } elseif {$opt(-gsize) eq "1"} {
+    cd $name
+    set size [llength [glob -nocomplain -type d]]
     cd ..
     set txtsize "($size)"
   }
@@ -3811,6 +3824,9 @@ proc at_allrows {{pattern NA}} {
     set names [array names atvar]
   } else {
     set names [array names atvar $pattern]
+  }
+  if {$names eq ""} {
+    return ""
   }
     foreach n $names {
       regsub {,.*$} $n {} n
@@ -7259,6 +7275,11 @@ proc oget {args} {
         puts  "cp -r $where/$objname ."
         exec  cp -r $where/$objname .
         lsetdyvar $objname srcpath  $where/$objname
+        cd $objname
+        if [file exist .godel/preset.tcl] {
+          source .godel/preset.tcl
+        }
+        cd ..
       }
     } else {
       if [file exist $asname] {
@@ -7271,6 +7292,11 @@ proc oget {args} {
         lsetvar $asname g:iname    $asname
         lsetvar $asname g:pagename $asname
         lsetvar $asname runpath    [pwd]/$asname
+        cd $asname
+        if [file exist .godel/preset.tcl] {
+          source .godel/preset.tcl
+        }
+        cd ..
       }
     }
   }
