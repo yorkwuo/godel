@@ -2674,7 +2674,8 @@ proc linkbox {args} {
     set txtsize "($size)"
   } elseif {$opt(-gsize) eq "1"} {
     cd $name
-    set size [llength [glob -nocomplain -type d]]
+    puts [pwd]
+    set size [llength [glob -nocomplain -type d *]]
     cd ..
     set txtsize "($size)"
   }
