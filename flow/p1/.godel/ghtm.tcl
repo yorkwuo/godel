@@ -5,3 +5,4 @@ gnotes "
 
 "
 source .common.tcl
+source local.tcl
