@@ -3234,7 +3234,7 @@ proc abton_tick {{name ""}} {
 # }}}
 # bton_tick
 # {{{
-proc bton_tick {{name ""}} {
+proc bton_tick {{save ""}} {
   upvar celltxt celltxt
   upvar row     row
 
@@ -3242,6 +3242,10 @@ proc bton_tick {{name ""}} {
 
   if {$tick eq "1"} {
     set celltxt "<td gclass=\"onoff\" gname=\"$row\" colname=\"tick\" bgcolor=\"lightgreen\" onoff=\"1\">1</td>"
+# To enable function of "official release"
+    if {$save eq "-save"} {
+      lsetvar . tick $row
+    }
   } else {
     set celltxt "<td gclass=\"onoff\" gname=\"$row\" colname=\"tick\" onoff=\"0\"></td>"
   }
