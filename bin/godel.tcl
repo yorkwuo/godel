@@ -1414,7 +1414,7 @@ proc cols_onoff {str} {
   }
 }
 # }}}
-# ltable_exe
+# ltable_exe (outdated)
 # {{{
 proc ltable_exe {name exefile} {
   upvar row row
@@ -1423,6 +1423,21 @@ proc ltable_exe {name exefile} {
   set runfile "$row/$exefile"
 
   set celltxt "<td><a href=\"$runfile\" type=text/gtcl>$name</a></td>"
+}
+# }}}
+# ltbl_exe
+# {{{
+proc ltbl_exe {name exefile} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set runfile "$row/$exefile"
+  if [file exist $runfile] {
+    set celltxt "<td><a href=\"$runfile\" type=text/gtcl>$name</a></td>"
+  } else {
+    set celltxt "<td>NA:$name</td>"
+  }
+
 }
 # }}}
 # ltbl_edfile
@@ -1438,6 +1453,17 @@ proc ltbl_edfile {vname} {
     if {$value eq "NA" || $value eq ""} {
       set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
     } else {
+      if {[llength $value] > 1} {
+        set txt ""
+        foreach f $value {
+          if [file exist $f] {
+            append txt "<a href=$f type=text/txt>$f</a><br>"
+          } else {
+            append txt "$f<br>"
+          }
+        }
+        set celltxt "<td>$txt</td>"
+      } else {
       if [file exist $row/$value] {
         set celltxt "<td style=\"white-space:pre\"><a href=\"$row/$value\" type=text/txt>$value</a></td>"
       } elseif [file exist $value] {
@@ -1445,12 +1471,17 @@ proc ltbl_edfile {vname} {
       } else {
         set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
       }
+      }
     }
   } else {
     if {$value eq "NA"} {
       set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
     } else {
-      set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
+      set txt ""
+      foreach f $value {
+        append txt "$f<br>"
+      }
+      set celltxt "<td gname=\"$row\" colname=\"$vname\" contenteditable=\"false\" style=\"white-space:pre\">$txt</td>"
     }
   }
 }
