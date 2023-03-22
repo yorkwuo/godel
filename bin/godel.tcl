@@ -53,6 +53,7 @@ proc alinkname {} {
 # gen_random_num
 # {{{
 proc gen_random_num {count min max} {
+  package require math
   set rnums ""
   while {1} {
     set rnums [lsort -unique $rnums]

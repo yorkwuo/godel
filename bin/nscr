@@ -1,0 +1,15 @@
+#!/bin/sh
+# the next line restarts using tclsh \
+exec $TCLSH "$0" ${1+"$@"}
+
+set fname [lindex $argv 0]
+
+if {$fname eq ""} {
+  puts "Usage: nscr <fname>"
+  return
+}
+
+puts "cp $env(GODEL_ROOT)/etc/tmpl.tcl $fname"
+exec cp $env(GODEL_ROOT)/etc/tmpl.tcl $fname
+
+
