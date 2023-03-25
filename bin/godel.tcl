@@ -1,4 +1,23 @@
+# pathbar
+# {{{
+proc pathbar {depth} {
+  upvar fout fout
+
+  set cwd [pwd]
+
+  set pathhier "<a style=\"font-size:16px\">[file tail $cwd]</a>"
+  set relative_path "../"
+  for {set i 1} {$i <= $depth} {incr i} {
+    set name [pindex $cwd end-$i]
+    set pathhier "<a style=\"font-size:16px\" href=\"$relative_path.index.htm\">$name</a> / $pathhier"
+    append relative_path "../"
+
+  }
+  puts $fout $pathhier
+}
+# }}}
 # lgrep
+# {{{
 proc lgrep {lines pattern} {
   set matches ""
   foreach line $lines {
@@ -9,6 +28,7 @@ proc lgrep {lines pattern} {
 
   return $matches
 }
+# }}}
 # toolarea_begin
 # {{{
 proc toolarea_begin {} {
@@ -1436,7 +1456,7 @@ proc ltbl_exe {name exefile} {
   if [file exist $runfile] {
     set celltxt "<td><a href=\"$runfile\" type=text/gtcl>$name</a></td>"
   } else {
-    set celltxt "<td>NA:$name</td>"
+    set celltxt "<td>NA</td>"
   }
 
 }
@@ -2375,6 +2395,16 @@ proc ghtm_ls_table {args} {
     set val(-srcdirs) na
   }
 # }}}
+  # -nonum
+# {{{
+  set idx [lsearch $args {-nonum}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-nonum) 1
+  } else {
+    set opt(-nonum) 0
+  }
+# }}}
 
   set ifiles ""
   if {$opt(-pattern)} {
@@ -2402,7 +2432,9 @@ proc ghtm_ls_table {args} {
 
   puts $fout "<thead>"
   puts $fout "<tr>"
-    puts $fout "<th>Num </th>"
+    if {$opt(-nonum) eq "0"} {
+      puts $fout "<th>Num </th>"
+    }
     puts $fout "<th>Date</th>"
     puts $fout "<th>Size</th>"
     puts $fout "<th>Name</th>"
@@ -2434,7 +2466,9 @@ proc ghtm_ls_table {args} {
       set fsize [num_symbol $fsize K]
       set fname [file tail $ifile]
       set dir   [file dirname $ifile]
-      puts $fout "<td>$count</td>"
+      if {$opt(-nonum) eq "0"} {
+        puts $fout "<td>$count</td>"
+      }
       puts $fout "<td>$timestamp</td>"
       puts $fout "<td>$fsize</td>"
       if [regexp {\.htm} $ifile] {
@@ -5772,7 +5806,7 @@ proc list_pages {args} {
   }
 
   #puts $fout "<div class=\"gnotes w3-panel w3-pale-blue w3-leftbar w3-border-blue\">"
-  puts $fout "<div class=\"w3-panel\">"
+  puts $fout "<div class=\"w3-panel w3-white w3-margin-top\">"
 # Title
   if {$opt(-t)} {
     puts $fout "<h1>$title</h1>"
@@ -6397,9 +6431,9 @@ proc gnotes {args} {
   }
 # }}}
 
-  puts $fout "<div class=\"w3-panel\">"
+  #puts $fout "<div class=\"w3-panel\">"
   puts $fout $aftermd
-  puts $fout "</div>"
+  #puts $fout "</div>"
 }
 # }}}
 # ghtm_filter_notes
