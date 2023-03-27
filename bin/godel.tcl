@@ -2492,10 +2492,12 @@ proc ghtm_ls_table {args} {
         puts $fout "<td>$dir</td>"
       }
     } else {
-      puts $fout "<td>$count</td>"
+      if {$opt(-nonum) eq "0"} {
+        puts $fout "<td>$count</td>"
+      }
       puts $fout "<td></td>"
       puts $fout "<td></td>"
-      puts $fout "<td bgcolor=lightgrey>$ifile</td>"
+      puts $fout "<td bgcolor=lightgrey>[file tail $ifile]</td>"
     }
 
     puts $fout "</tr>"
