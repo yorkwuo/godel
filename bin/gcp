@@ -1,0 +1,20 @@
+#!/bin/sh
+# the next line restarts using tclsh \
+exec $TCLSH "$0" ${1+"$@"}
+
+set from [lindex $argv 0]
+set to   [lindex $argv 1]
+
+if {$from eq ""} {
+  puts "Usage: gcp <from> <to>"
+  return
+}
+
+source $env(GODEL_ROOT)/bin/godel.tcl
+
+exec cp -r $from $to
+
+lsetvar $to g:iname    $to
+lsetvar $to g:pagename $to
+
+

@@ -2309,7 +2309,7 @@ proc gtcl_commit {} {
       } else {
         source at.tcl
         foreach afdel $afdels {
-          catch {exec rm $atvar($afdel,path)}
+          catch {exec rm -f $atvar($afdel,path)}
           array unset atvar $afdel*
         }
         godel_array_save atvar at.tcl
@@ -3080,55 +3080,6 @@ proc bton_note_onoff {} {
   puts $fout "<a href=.note_onoff.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>note on/off</b></a>"
 }
 # }}}
-# ltbl_play
-# {{{
-proc ltbl_play {} {
-  upvar celltxt celltxt
-  upvar row     row
-
-  if [file exist $row/.1play.gtcl] {
-  } else {
-    set kout [open $row/.1play.gtcl w]
-      puts $kout "#!/usr/bin/tclsh"
-      puts $kout "set pagepath \[file dirname \[info script]]"
-      puts $kout "cd \$pagepath"
-      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
-      puts $kout ""
-      puts $kout "set kin \[open \"playlist.f\" r\]"
-      puts $kout "gets \$kin line"
-      puts $kout "if \[file exist \$line] {"
-      puts $kout "  set hit 1"
-      puts $kout "} else {"
-      puts $kout "  set hit 0"
-      puts $kout "  lsetvar . hit 0"
-      puts $kout "}"
-      puts $kout "close \$kin"
-      puts $kout ""
-      puts $kout "if {\$hit eq \"1\"} {"
-      puts $kout "  catch {exec mpv --playlist=playlist.f}"
-      puts $kout "  set views \[lvars . views]"
-      puts $kout "  if {\$views eq \"NA\"} {"
-      puts $kout "    set views 1"
-      puts $kout "  } else {"
-      puts $kout "    incr views"
-      puts $kout "  }"
-      puts $kout "  lsetvar . views \$views"
-      puts $kout "  set timestamp \[clock format \[clock seconds] -format {%Y-%m-%d}]"
-      puts $kout "  lsetvar . last \$timestamp"
-      puts $kout "} else {"
-      puts $kout "  exec xterm -e \"echo Not exist...;sleep 1\""
-      puts $kout "}"
-      puts $kout "cd .."
-    close $kout
-  }
-
-  if [file exist $row/.1play.gtcl] {
-    set celltxt "<td><a href=$row/.1play.gtcl type=text/gtcl>Play</a></td>"
-  } else {
-    set celltxt "<td></td>"
-  }
-}
-# }}}
 # ltbl_hit
 # {{{
 proc ltbl_hit {dispcol} {
@@ -3191,6 +3142,21 @@ proc ltbl_lnfile {target lnas} {
     set celltxt "<td><a href=\"$fpath\" type=text/txt>$lnas</a></td>"
   } else {
     set celltxt "<td bgcolor=lightgrey>$lnas</td>"
+  }
+}
+# }}}
+# ltbl_img
+# {{{
+proc ltbl_img {target} {
+  upvar celltxt celltxt
+  upvar row     row
+
+  set fpath $row/$target
+  
+  if [file exist $fpath] {
+    set celltxt "<td><img src=\"$fpath\" width=200px height=100px></img></td>"
+  } else {
+    set celltxt "<td</td>"
   }
 }
 # }}}
@@ -3618,7 +3584,7 @@ proc fdiff {args} {
     if ![file exist $f] {
       if {$opt(co)} {
         puts "co not exist file... $f"
-        exec cp $srcpath/$f $f
+        file copy -force $srcpath/$f $f
       } else {
         puts "not exist... $f"
       }
@@ -3629,10 +3595,10 @@ proc fdiff {args} {
       if {$opt(ci)} {
         puts "ci not exist file... $srcpath/$f"
         if [file exist [file dirname $srcpath/$f]] {
-          exec cp $f $srcpath/$f
+          file copy -force $f $srcpath/$f
         } else {
           file mkdir [file dirname $srcpath/$f]
-          exec cp $f $srcpath/$f
+          file copy -force $f $srcpath/$f
         }
       } else {
         puts "not exist... $srcpath/$f"
@@ -3659,10 +3625,10 @@ proc fdiff {args} {
         if {$opt(ci)} {
           if {$target_num eq ""} {
             puts [format "%-2d %s %s ......ci" $num $status $f]
-            exec cp $f $srcpath/$f
+            file copy -force $f $srcpath/$f
           } elseif {$target_num eq $num} {
             puts [format "%-2d %s %s ......ci" $num $status $f]
-            exec cp $f $srcpath/$f
+            file copy -force $f $srcpath/$f
           } else {
             puts [format "%-2d %s %s" $num $status $f]
           }
@@ -3670,10 +3636,10 @@ proc fdiff {args} {
         } elseif {$opt(co)} {
           if {$target_num eq ""} {
             puts [format "%-2d %s %s ......co" $num $status $f]
-            exec cp $srcpath/$f $f
+            file copy -force $srcpath/$f $f
           } elseif {$target_num eq $num} {
             puts [format "%-2d %s %s ......co" $num $status $f]
-            exec cp $srcpath/$f $f
+            file copy -force $srcpath/$f $f
           } else {
             puts [format "%-2d %s %s" $num $status $f]
           }
@@ -3749,7 +3715,7 @@ proc fpush {args} {
       if {$result > 0} {
         if {$opt(-cm)} {
           puts [format "cp %-30s %s" $f $srcpath/$f]
-          exec cp $f $srcpath/$f
+          file copy -force $f $srcpath/$f
         } else {
           puts [format "cp %-30s %s" $f $srcpath/$f]
         }
@@ -3773,7 +3739,7 @@ proc fpushforce {} {
 
   foreach f $files {
     puts "Overwrite: cp $f $srcpath/$f"
-    exec cp $f $srcpath/$f
+    file copy -force $f $srcpath/$f
   }
 }
 # }}}
@@ -3809,7 +3775,7 @@ proc fpullforce {} {
 
   foreach f $files {
     puts "cp $srcpath/$f $f"
-    exec cp $srcpath/$f $f
+    file copy -force $srcpath/$f $f
   }
 }
 # }}}
@@ -5305,24 +5271,24 @@ proc lvars {args} {
   set gpage [lindex $args 0]
   set vname [lindex $args 1]
 
-  if {$gpage == ""} {
-    set gpage "."
-  }
-  if ![file exist $gpage/.godel/vars.tcl] {
-    return
-  }
-  source $gpage/.godel/vars.tcl
-
-  set vlist ""
-  if {$vname == ""} {
-    parray vars
-  } else {
-    if [info exist vars($vname)] {
-      return $vars($vname)
-    } else {
-      return NA
+    if {$gpage == ""} {
+      set gpage "."
     }
-  }
+    if ![file exist $gpage/.godel/vars.tcl] {
+      return
+    }
+    source $gpage/.godel/vars.tcl
+
+    set vlist ""
+    if {$vname == ""} {
+      parray vars
+    } else {
+      if [info exist vars($vname)] {
+        return $vars($vname)
+      } else {
+        return NA
+      }
+    }
 }
 # }}}
 # local_table
@@ -7025,10 +6991,14 @@ proc godel_draw {{target_path NA}} {
   if {$env(GODEL_ALONE)} {
 # Standalone w3.css
       file mkdir .godel/js
-      exec cp $env(GODEL_ROOT)/etc/css/w3.css                      .godel/
-      exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
-      exec cp $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
-      exec cp $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
+      file copy -force $env(GODEL_ROOT)/etc/css/w3.css                      .godel/
+      file copy -force $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
+      if ![file exist .godel/js/jquery-3.3.1.min.js] {
+        file copy -force $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
+      }
+      if ![file exist .godel/js/jquery.dataTables.min.js] {
+        file copy -force $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
+      }
       puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
       if {$gtype eq "raw"} {
       } else {
@@ -7046,9 +7016,9 @@ proc godel_draw {{target_path NA}} {
       close $fin
       puts $fout "</style>"
       file mkdir .godel/js
-      exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
-      exec cp $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
-      exec cp $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
+      file copy -force $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
+      file copy -force $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
+      file copy -force $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
       puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
     } else {
       puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
@@ -7294,7 +7264,7 @@ proc obless {args} {
         source $where/$objname/.godel/proc.tcl
       }
       foreach f $files {
-        exec cp $where/$objname/$f $f
+        file copy -force $where/$objname/$f $f
       }
       lsetdyvar . srcpath  $where/$objname
       if [file exist .godel/preset.tcl] {
@@ -7431,7 +7401,7 @@ proc gget {pagename args} {
         if ![file exist $dir] {
           file mkdir $dir
         } else {
-          exec cp $where/$target/$f $f
+          file copy -force $where/$target/$f $f
         }
       }
     }
