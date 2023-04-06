@@ -6994,10 +6994,12 @@ proc godel_draw {{target_path NA}} {
       file copy -force $env(GODEL_ROOT)/etc/css/w3.css                      .godel/
       file copy -force $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
       if ![file exist .godel/js/jquery-3.3.1.min.js] {
-        file copy -force $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
+        #file copy -force $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
+        exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
       }
       if ![file exist .godel/js/jquery.dataTables.min.js] {
-        file copy -force $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
+        #file copy -force $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
+        exec cp $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
       }
       puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
       if {$gtype eq "raw"} {
@@ -7016,9 +7018,9 @@ proc godel_draw {{target_path NA}} {
       close $fin
       puts $fout "</style>"
       file mkdir .godel/js
-      file copy -force $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
-      file copy -force $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
-      file copy -force $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
+      exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
+      exec cp $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
+      exec cp $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
       puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
     } else {
       puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
