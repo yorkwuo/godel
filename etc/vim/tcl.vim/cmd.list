@@ -1,4 +1,8 @@
 
+get_atvar
+godel_array_save
+atable
+
 create_voltage_area_rule
 set_voltage_area
 remove_voltage_area_rules
