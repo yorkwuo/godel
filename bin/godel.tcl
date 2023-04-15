@@ -2183,7 +2183,7 @@ proc var_table {} {
   upvar fout fout
   upvar rows rows
 
-  puts $fout "<table class=table1 id=tbl>"
+  puts $fout "<table class=table1 id=tbl1>"
   foreach row $rows {
     set cols [split $row ";"]
     set name [lindex $cols 0]
