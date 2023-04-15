@@ -138,6 +138,13 @@ proc prange {path start end} {
   return /[join [lrange $cols $start $end] /]
 }
 # }}}
+# pdepth : path depth
+# {{{
+proc pdepth {path} {
+  set cols [lreplace [split $path /] 0 0]
+  return [llength $cols]
+}
+# }}}
 # sd_fp_init
 # {{{
 proc sd_fp_init {width height scale} {
@@ -1430,8 +1437,12 @@ proc cols_onoff {str} {
 
   set disp      [lindex $cc 2]
 
-  if {[lvars . $onoff_key] eq "1"} {
-    lappend cols "$key;$disp"
+  if {$onoff_key eq "1"} {
+      lappend cols "$key;$disp"
+  } else {
+    if {[lvars . $onoff_key] eq "1"} {
+      lappend cols "$key;$disp"
+    }
   }
 }
 # }}}
