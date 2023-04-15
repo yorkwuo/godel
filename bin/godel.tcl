@@ -63,9 +63,9 @@ proc alinkname {} {
   } else {
     #set celltxt "<td><a href=\"$url\">$name</td>"
     if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
-      set celltxt "<td><button onclick=\"chrome_open('$url')\">$name</button></td>"
+      set celltxt "<td><button onclick=\"chrome_open('$url')\">L</button></td>"
     } else {
-      set celltxt "<td><a href=\"$url\">$name</td>"
+      set celltxt "<td><a href=\"$url\">L</td>"
     }
   }
 }
@@ -3584,7 +3584,7 @@ proc fdiff {args} {
     if ![file exist $f] {
       if {$opt(co)} {
         puts "co not exist file... $f"
-        file copy -force $srcpath/$f $f
+        exec cp $srcpath/$f $f
       } else {
         puts "not exist... $f"
       }
@@ -3595,10 +3595,10 @@ proc fdiff {args} {
       if {$opt(ci)} {
         puts "ci not exist file... $srcpath/$f"
         if [file exist [file dirname $srcpath/$f]] {
-          file copy -force $f $srcpath/$f
+          exec cp $f $srcpath/$f
         } else {
           file mkdir [file dirname $srcpath/$f]
-          file copy -force $f $srcpath/$f
+          exec cp $f $srcpath/$f
         }
       } else {
         puts "not exist... $srcpath/$f"
@@ -3636,10 +3636,10 @@ proc fdiff {args} {
         } elseif {$opt(co)} {
           if {$target_num eq ""} {
             puts [format "%-2d %s %s ......co" $num $status $f]
-            file copy -force $srcpath/$f $f
+            exec cp $srcpath/$f $f
           } elseif {$target_num eq $num} {
             puts [format "%-2d %s %s ......co" $num $status $f]
-            file copy -force $srcpath/$f $f
+            exec cp $srcpath/$f $f
           } else {
             puts [format "%-2d %s %s" $num $status $f]
           }
