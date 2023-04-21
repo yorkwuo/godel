@@ -2762,7 +2762,7 @@ proc linkbox {args} {
   if [file exist $target] {
     puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname$txtsize</a>"
   } else {
-    puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname$txtsize</a>"
+    #puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname$txtsize</a>"
   }
 }
 # }}}
@@ -7469,7 +7469,7 @@ proc godel_array_save {aname ofile {newaname ""}} {
     file mkdir [file dirname $ofile]
   }
 
-  set fout [open $ofile w]
+  set kout [open $ofile w]
     set keys [lsort [array name arr]]
     foreach key $keys {
       set newvalue [string map {\\ {\\}} $arr($key)]
@@ -7480,12 +7480,12 @@ proc godel_array_save {aname ofile {newaname ""}} {
       regsub -all {\[} $newvalue {\\[}  newvalue
       regsub -all {\]} $newvalue {\\]}  newvalue
       if {$newaname eq ""} {
-        puts $fout [format "set %-40s \"%s\"" [set aname]($key) $newvalue]
+        puts $kout [format "set %-40s \"%s\"" [set aname]($key) $newvalue]
       } else {
-        puts $fout [format "set %-40s \"%s\"" [set newaname]($key) $newvalue]
+        puts $kout [format "set %-40s \"%s\"" [set newaname]($key) $newvalue]
       }
     }
-  close $fout
+  close $kout
 
 }
 # }}}
