@@ -1100,9 +1100,15 @@ function at_open (atfname,id) {
     header = header + "source $env(GODEL_ROOT)/bin/godel.tcl\n";
     header = header + "source " + atfname + "\n";
 
+    id = id.replace(/&/g,'\\\&');
+    id = id.replace(/'/g,'\\\'');
     id = id.replace(/\s/g,'\\ ');
     id = id.replace(/\(/g,'\\\(');
     id = id.replace(/\)/g,'\\\)');
+    id = id.replace(/\[/g,'\\\[');
+    id = id.replace(/\]/g,'\\\]');
+
+    //console.log(id);
 
     //var footer = "godel_array_save atvar " + atfname + "\n";
     var footer = "";

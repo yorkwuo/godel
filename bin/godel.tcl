@@ -1336,7 +1336,11 @@ proc openfile {fpath} {
   } else {
     set orig [pwd]
     cd [file dirname $fpath]
-    catch {exec /mnt/c/Windows/explorer.exe . &}
+    if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
+      catch {exec /mnt/c/Windows/explorer.exe . &}
+    } else {
+      catch {exec thunar . &}
+    }
     cd $orig
     puts "Error: Unkonwn filetype... $fpath"
   }
@@ -1387,7 +1391,9 @@ proc at_open {} {
   upvar row row
   upvar atvar atvar
 
-  set celltxt "<td style=\"cursor:pointer;\" bgcolor=lightblue onclick=\"at_open('at.tcl','$row')\">O</td>"
+  regsub -all {'} $row {\'} txt
+
+  set celltxt "<td style=\"cursor:pointer;\" bgcolor=lightblue onclick=\"at_open('at.tcl','$txt')\">O</td>"
 }
 # }}}
 # at_mpv
@@ -1646,8 +1652,8 @@ proc get_atvar {key} {
 proc at_get_rows {} {
   upvar atvar atvar
   foreach n [array names atvar] {
-    regsub {,.*$} $n {} n
-    lappend ns $n
+    set cols [split $n ,]
+    lappend ns [join [lrange $cols 0 end-1] ","]
   }
   set atrows [lsort -unique $ns]
   return $atrows
@@ -1805,8 +1811,8 @@ proc atable {args} {
     set ns ""
     if ![info exist atrows] {
       foreach n [array names atvar] {
-        regsub {,.*$} $n {} n
-        lappend ns $n
+        set cols [split $n ,]
+        lappend ns [join [lrange $cols 0 end-1] ","]
       }
       set atrows [lsort -unique $ns]
     }
@@ -3795,21 +3801,25 @@ proc fpullforce {} {
 # getcol
 # {{{
 proc getcol {args} {
-  # -c (key)
-# {{{
-  set opt(-c) 0
-  set idx [lsearch $args {-c}]
-  if {$idx != "-1"} {
-    set cols  [lindex $args [expr $idx + 1]]
-    set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-c) 1
+#  # -c (key)
+## {{{
+#  set opt(-c) 0
+#  set idx [lsearch $args {-c}]
+#  if {$idx != "-1"} {
+#    set col  [lindex $args [expr $idx + 1]]
+#    set args [lreplace $args $idx [expr $idx + 1]]
+#    set opt(-c) 1
+#  }
+## }}}
+
+  set col   [lindex $args 0]
+  set fname [lindex $args 1]
+
+  set lines [read_as_list $fname]
+
+  foreach line $lines {
+    puts [lindex $line $col]
   }
-# }}}
-  puts $cols
-  foreach line $args {
-    puts $line
-  }
-  #puts $args
 }
 # }}}
 # ghtm_set_value
@@ -3883,8 +3893,8 @@ proc at_allrows {{pattern NA}} {
     return ""
   }
     foreach n $names {
-      regsub {,.*$} $n {} n
-      lappend ns $n
+      set cols [split $n ,]
+      lappend ns [join [lrange $cols 0 end-1] ","]
     }
   return [lsort -unique $ns]
 }
@@ -6972,7 +6982,7 @@ proc godel_draw {{target_path NA}} {
     close $kout
   }
 # create win.gtcl
-  if ![file exist .godel/win.gtcl] {
+  #if ![file exist .godel/win.gtcl] {
     set kout [open .godel/win.gtcl w]
       puts $kout "cd [pwd]"
       if {$env(GODEL_WSL)} {
@@ -6981,7 +6991,7 @@ proc godel_draw {{target_path NA}} {
         puts $kout "exec thunar ."
       }
     close $kout
-  }
+  #}
 
 #----------------------------
 # Start creating .index.htm
@@ -7475,6 +7485,8 @@ proc godel_array_save {aname ofile {newaname ""}} {
       set newvalue [string map {\\ {\\}} $arr($key)]
       regsub -all {\[} $key {\\[} key
       regsub -all { } $key {\ } key
+      regsub -all {;} $key {\;} key
+      regsub -all {\&} $key {\\&} key
       regsub -all {"}  $newvalue {\\"}  newvalue
       regsub -all {\$}  $newvalue {\\$}  newvalue
       regsub -all {\[} $newvalue {\\[}  newvalue
