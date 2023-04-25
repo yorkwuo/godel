@@ -39,9 +39,9 @@ source at.tcl
 set atcols ""
 atcols_onoff "dispedit         ; proc:bton_delete ; D"
 lappend atcols "ed:type           ; type"
+lappend atcols "proc:alinkurl    ; Link"
 lappend atcols "proc:alinkname ; name"
-atcols_onoff "dispedit         ; ed:name          ; name"
-atcols_onoff "dispedit         ; proc:alinkurl    ; url"
+#atcols_onoff "dispedit         ; ed:name          ; name"
 
 if {[lvars . search] eq "1"} {
   atable at.tcl -dataTables -noid -sortby id -sortopt $direction -num

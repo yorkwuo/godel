@@ -57,17 +57,24 @@ proc alinkname {} {
   upvar atvar atvar
 
   set name [get_atvar $row,name]
-  set url  [get_atvar $row,url]
+  #set url  [get_atvar $row,url]
+
   if {$name eq ""} {
-    set celltxt "<td gname=\"$row\" colname=\"name\" contenteditable=\"true\" ><a href=\"$url\"></td>"
+    set celltxt "<td gname=\"$row\" colname=\"name\" contenteditable=\"true\" ></td>"
   } else {
-    #set celltxt "<td><a href=\"$url\">$name</td>"
-    if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
-      set celltxt "<td><button onclick=\"chrome_open('$url')\">L</button></td>"
-    } else {
-      set celltxt "<td><a href=\"$url\">L</td>"
-    }
+    set celltxt "<td gname=\"$row\" colname=\"name\" contenteditable=\"true\" >$name</td>"
   }
+
+  #if {$name eq ""} {
+  #  set celltxt "<td gname=\"$row\" colname=\"name\" contenteditable=\"true\" ><a href=\"$url\"></td>"
+  #} else {
+  #  #set celltxt "<td><a href=\"$url\">$name</td>"
+  #  if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
+  #    set celltxt "<td><button onclick=\"chrome_open('$url')\">L</button></td>"
+  #  } else {
+  #    set celltxt "<td><a href=\"$url\">L</td>"
+  #  }
+  #}
 }
 # }}}
 # gen_random_num
@@ -1366,12 +1373,14 @@ proc at_fdel_status {} {
 # }}}
 # at_fdel
 # {{{
-proc at_fdel {} {
+proc at_fdel {{atfile at.tcl}} {
   upvar celltxt celltxt
   upvar row row
   upvar atvar atvar
 
-  set celltxt "<td><button onclick=\"at_fdel('at.tcl','$row')\" class=\"w3-button w3-blue-gray\">fdel</button></td>"
+  regsub -all {'} $row {\'} txt
+
+  set celltxt "<td><button onclick=\"at_fdel('$atfile','$txt')\" class=\"w3-button w3-blue-gray\">fdel</button></td>"
 }
 # }}}
 # at_delete
@@ -1386,14 +1395,14 @@ proc at_delete {name} {
 # }}}
 # at_open
 # {{{
-proc at_open {} {
+proc at_open {{atfile at.tcl}} {
   upvar celltxt celltxt
   upvar row row
   upvar atvar atvar
 
   regsub -all {'} $row {\'} txt
 
-  set celltxt "<td style=\"cursor:pointer;\" bgcolor=lightblue onclick=\"at_open('at.tcl','$txt')\">O</td>"
+  set celltxt "<td style=\"cursor:pointer;\" bgcolor=lightblue onclick=\"at_open('$atfile','$txt')\">O</td>"
 }
 # }}}
 # at_mpv
@@ -1769,6 +1778,18 @@ proc atable {args} {
     set val(-sortopt) "-ascii"
   }
 # }}}
+  # -tableid
+# {{{
+  set opt(-tableid) 0
+  set idx [lsearch $args {-tableid}]
+  if {$idx != "-1"} {
+    set tableid [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-tableid) 1
+  } else {
+    set tableid tbl
+  }
+# }}}
 
   upvar fout fout
   upvar atrows atrows
@@ -1865,7 +1886,7 @@ if {$opt(-noshow) eq "1"} {
 }
 
 # Header
-  puts $fout "<table class=$css_class id=tbl tbltype=atable>"
+  puts $fout "<table class=$css_class id=$tableid tbltype=atable atfname=$atfname>"
   puts $fout "<thead>"
   puts $fout "<tr>"
   if {$opt(-num) eq "1"} {
@@ -1952,7 +1973,7 @@ if {$opt(-noshow) eq "1"} {
             }
             puts $fout "<script>"
             puts $fout "    \$(document).ready(function() {"
-            puts $fout "    \$('#tbl').DataTable({"
+            puts $fout "    \$('#$tableid').DataTable({"
             puts $fout "       \"paging\": false,"
             puts $fout "       \"info\": false,"
             puts $fout "       \"order\": \[\],"
@@ -1971,10 +1992,11 @@ proc alinkurl {} {
   upvar celltxt celltxt
 
   set value [get_atvar $row,url]
+
   if {$value eq "NA"} {
     set celltxt "<td style=\"font-size:8px\" gname=\"$row\" colname=\"url\" contenteditable=\"true\"></td>"
   } else {
-    set celltxt "<td style=\"font-size:8px\" gname=\"$row\" colname=\"url\" contenteditable=\"true\">$value</td>"
+    set celltxt "<td><a href=$value target=blank>Link</a></td>"
   }
 
 }
@@ -2277,13 +2299,14 @@ proc gtcl_commit {} {
       set chunks [lreplace $chunks end end] 
 
       set dels ""
-      set adels ""
-      set afdels ""
+      array set adels {}
+      array set afdels {}
       foreach chunk $chunks {
         set cols [::textutil::split::splitx $chunk "\\|#\\|"]
         set gpage_tmp [lindex $cols 0]
-        set key   [lindex $cols 1]
-        set value [lindex $cols 2]
+        set key     [lindex $cols 1]
+        set value   [lindex $cols 2]
+        set atfname [lindex $cols 3]
 
         regsub {\n}  $gpage_tmp {} gpage_tmp
         regsub {\n$} $value {} value
@@ -2291,11 +2314,11 @@ proc gtcl_commit {} {
 
         if {$tbltype eq "a"} {
           if {$key eq "DEL"} {
-            lappend adels $gpage
+            lappend adels($atfname) $gpage
           } elseif {$key eq "fdel"} {
-            lappend afdels $gpage
+            lappend afdels($atfname) $gpage
           } else {
-            asetvar $gpage,$key $value
+            asetvar $gpage,$key $value $atfname
           }
         } else {
           if {$key eq "DEL"} {
@@ -2313,24 +2336,30 @@ proc gtcl_commit {} {
       }
 
 # adels
-      if {$adels eq ""} {
+      if {[array names adels] eq ""} {
       } else {
-        source at.tcl
-        foreach adel $adels {
-          array unset atvar $adel*
+        foreach atfname [array names adels] {
+          source $atfname
+          foreach adel $adels($atfname) {
+            array unset atvar $adel*
+          }
+          godel_array_save atvar $atfname
         }
-        godel_array_save atvar at.tcl
       }
+
 # afdels
-      if {$afdels eq ""} {
+      if {[array names afdels] eq ""} {
       } else {
-        source at.tcl
-        foreach afdel $afdels {
-          catch {exec rm -f $atvar($afdel,path)}
-          array unset atvar $afdel*
+        foreach atfname [array names afdels] {
+          source $atfname
+          foreach afdel $afdels($atfname) {
+            catch {exec rm -f $atvar($afdel,path)}
+            array unset atvar $afdel*
+          }
+          godel_array_save atvar $atfname
         }
-        godel_array_save atvar at.tcl
       }
+
 
       file delete $gtcl
     }
@@ -5162,13 +5191,13 @@ proc lapvar {name key value} {
 # }}}
 # asetvar
 # {{{
-proc asetvar {key value} {
-  if [file exist "at.tcl"] {
-    source at.tcl
+proc asetvar {key value {atfname at.tcl}} {
+  if [file exist "$atfname"] {
+    source $atfname
     set atvar($key) $value
-    godel_array_save atvar at.tcl
+    godel_array_save atvar $atfname
   } else {
-    puts "Error: not exist... at.tcl"
+    puts "Error: not exist... $atfname"
   }
 }
 # }}}
@@ -6911,9 +6940,7 @@ proc godel_draw {{target_path NA}} {
   file mkdir .godel
   # default vars
 # {{{
-  if [file exist .godel/vars.tcl] {
-    source .godel/vars.tcl
-  } else {
+  if ![file exist .godel/vars.tcl] {
     set kout [open .godel/dyvars.tcl w]
     close $kout
     set kout [open .godel/vars.tcl w]
@@ -6922,9 +6949,10 @@ proc godel_draw {{target_path NA}} {
     set vars(g:pagename) [file tail [pwd]]
     set vars(g:iname)    [file tail [pwd]]
     godel_array_save vars   .godel/vars.tcl
-
   }
 # }}}
+
+  source .godel/vars.tcl
 
   if [file exist .godel/dyvars.tcl] {
     source .godel/dyvars.tcl
@@ -6953,30 +6981,11 @@ proc godel_draw {{target_path NA}} {
     close $kout
   }
 # }}}
-# create .godel/tools.gtcl
-  #if ![file exist .godel/tools.gtcl] {
-  #  set kout [open .godel/tools.gtcl w]
-  #    puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
-  #    puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
-  #    puts $kout "cd \$pagepath"
-  #    puts $kout ""
-  #    puts $kout "set cur_value \[lvars . tools_display]"
-  #    puts $kout "if {\$cur_value eq \"1\"} {"
-  #    puts $kout "  lsetvar . tools_display \"0\""
-  #    puts $kout "} else {"
-  #    puts $kout "  lsetvar . tools_display \"1\""
-  #    puts $kout "}"
-  #    puts $kout ""
-  #    puts $kout "godel_draw"
-  #    puts $kout "catch {exec xdotool search --name \"Mozilla\" key ctrl+r}"
-  #  close $kout
-  #}
 # create open.gtcl
   if ![file exist .godel/open.gtcl] {
     set kout [open .godel/open.gtcl w]
       puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
       puts $kout "cd \$pagepath"
-      #puts $kout "exec nautilus . &"
       puts $kout "exec xterm -T xterm.\[pwd] &"
 
     close $kout
@@ -7470,11 +7479,6 @@ proc godel_array_read {ifile aname newaname} {
 proc godel_array_save {aname ofile {newaname ""}} {
   upvar $aname arr
 
-  #if ![file exist $ofile] {
-  #  puts "Error: godel_array_save error... $ofile not exist."
-  #  return
-  #}
-  #parray arr
   if {[file dirname $ofile] != "."} {
     file mkdir [file dirname $ofile]
   }
@@ -7498,6 +7502,8 @@ proc godel_array_save {aname ofile {newaname ""}} {
       }
     }
   close $kout
+
+  unset arr
 
 }
 # }}}

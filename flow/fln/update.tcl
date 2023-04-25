@@ -1,0 +1,50 @@
+#!/usr/bin/tclsh
+source $env(GODEL_ROOT)/bin/godel.tcl
+
+if [file exist flist.tcl] {
+  source flist.tcl
+  
+  array set kk [array get atvar *,last]
+  array set kk [array get atvar *,keywords]
+  array set kk [array get atvar *,title]
+  array set kk [array get atvar *,author]
+  array set kk [array get atvar *,notes]
+  array set kk [array get atvar *,lnpage]
+
+  if [info exist atvar] {
+    unset atvar
+  }
+}
+
+exec make f
+
+set lines [read_as_list flist]
+
+if {$lines eq ""} {
+  exec mv flist flist.tcl
+  return
+}
+
+foreach fname $lines {
+  regsub {^\.\/} $fname {} fname
+  set mtime [file mtime $fname]
+  set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
+  set atvar($fname,mtime) $timestamp
+
+  set atvar($fname,name) [file tail $fname]
+  set atvar($fname,path) $fname
+
+  if [info exist kk($fname,last)]     { set atvar($fname,last) $kk($fname,last) }
+  if [info exist kk($fname,keywords)] { set atvar($fname,keywords) $kk($fname,keywords) }
+  if [info exist kk($fname,title)]    { set atvar($fname,title) $kk($fname,title) }
+  if [info exist kk($fname,author)]   { set atvar($fname,author) $kk($fname,author) }
+  if [info exist kk($fname,notes)]   { set atvar($fname,notes) $kk($fname,notes) }
+  if [info exist kk($fname,lnpage)]   { set atvar($fname,lnpage) $kk($fname,lnpage) }
+}
+
+godel_array_save atvar flist.tcl
+
+exec rm flist
+
+godel_draw
+catch {exec xdotool search --name "Mozilla" key ctrl+r}

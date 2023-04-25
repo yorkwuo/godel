@@ -1258,7 +1258,10 @@ function save_gtable(tableobj) {
 // save_atable
 // {{{
 function save_atable(tableobj) {
-  console.log("atabe");
+  //console.log("atabe");
+
+  var atfname = tableobj.getAttribute('atfname');
+  //console.log(atfname);
   var cells = tableobj.getElementsByTagName('td');
 
   var cmds = "";
@@ -1275,10 +1278,10 @@ function save_atable(tableobj) {
     } else {
         if (changed) {
           if (gclass == "onoff") {
-            var cmd =  "a" + gname + "|#|" +  colname + "|#|" + onoff + "|E|\n";
+            var cmd =  "a" + gname + "|#|" +  colname + "|#|" + onoff + "|#|" + atfname + "|E|\n";
             cmds = cmds + cmd;
           } else {
-            var cmd =   "a" + gname + "|#|" +  colname + "|#|" +  value + "|E|\n";
+            var cmd =   "a" + gname + "|#|" +  colname + "|#|" +  value + "|#|" + atfname + "|E|\n";
             cmds = cmds + cmd;
           }
           cells[i].style.backgroundColor = "";
