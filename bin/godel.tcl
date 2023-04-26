@@ -4414,8 +4414,8 @@ proc ghtm_top_bar {args} {
       <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
     "
   }
-  puts $fout {<a href=".godel/open.gtcl" type=text/gtcl class="w3-bar-item w3-button w3-right">Open</a>}
-  puts $fout {<a href=".godel/win.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Win</a>}
+  puts $fout "<button onclick=\"open_terminal()\" class=\"w3-bar-item w3-button w3-darkblue w3-right\">Open</button>"
+  puts $fout "<button onclick=\"open_folder()\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
   #puts $fout {<a href=".index.htm" type=text/txt class="w3-bar-item w3-button w3-right">HTML</a>}
 
   if {$opt(-save)} {
@@ -4465,15 +4465,15 @@ proc ghtm_top_bar {args} {
     puts $fout "}"
     puts $fout "</style>"
   }
-  if {$env(GODEL_WSL)} {
+  #if {$env(GODEL_WSL)} {
 
-    set kout [open .godel/win.gtcl w]
+  #  set kout [open .godel/win.gtcl w]
 
-    puts $kout "cd [pwd]"
-    puts $kout "catch {exec /mnt/c/Windows/explorer.exe .}"
-    close $kout
+  #  puts $kout "cd [pwd]"
+  #  puts $kout "catch {exec /mnt/c/Windows/explorer.exe .}"
+  #  close $kout
 
-  }
+  #}
 
   # York: not sure if I want this feature
   #if [file exist .godel/.qn.md] {
@@ -6985,26 +6985,24 @@ proc godel_draw {{target_path NA}} {
     close $kout
   }
 # }}}
-# create open.gtcl
-  if ![file exist .godel/open.gtcl] {
-    set kout [open .godel/open.gtcl w]
+# create exec.gtcl
+# {{{
+  if ![file exist .godel/exec.gtcl] {
+    set kout [open .godel/exec.gtcl w]
+      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
       puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
       puts $kout "cd \$pagepath"
-      puts $kout "exec xterm -T xterm.\[pwd] &"
-
+      puts $kout ""
+      puts $kout "if \[file exist \"\$env(GODEL_DOWNLOAD)/gtcl.tcl\"] {"
+      puts $kout "  source  \$env(GODEL_DOWNLOAD)/gtcl.tcl"
+      puts $kout "  exec rm \$env(GODEL_DOWNLOAD)/gtcl.tcl"
+      puts $kout "} else {"
+      puts $kout "  source local.tcl"
+      puts $kout "}"
+      puts $kout ""
     close $kout
   }
-# create win.gtcl
-  #if ![file exist .godel/win.gtcl] {
-    set kout [open .godel/win.gtcl w]
-      puts $kout "cd [pwd]"
-      if {$env(GODEL_WSL)} {
-        puts $kout "catch {exec /mnt/c/Windows/explorer.exe .}"
-      } else {
-        puts $kout "exec thunar ."
-      }
-    close $kout
-  #}
+# }}}
 
 #----------------------------
 # Start creating .index.htm

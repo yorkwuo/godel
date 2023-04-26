@@ -606,29 +606,29 @@ function filter_table(tname, column_no, e) {
 // }}}
 // open_folder
 // {{{
-function open_folder(dirpath) {
-// Save
-    var data = "ginst : nautilus : kkk:" +  dirpath + "\n";
-    const textToBLOB = new Blob([data], { type: 'text/plain' });
-    const sFileName = 'gtcl.tcl';	   // The file to save the data.
-
-    var newLink = document.createElement("a");
-    newLink.download = sFileName;
-
-    if (window.webkitURL != null) {
-        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
-    }
-    else {
-        newLink.href = window.URL.createObjectURL(textToBLOB);
-        newLink.style.display = "none";
-        document.body.appendChild(newLink);
-    }
-
-    newLink.click(); 
-    document.getElementById('iddraw').click();
-
-
-}
+//function open_folder(dirpath) {
+//// Save
+//    var data = "ginst : nautilus : kkk:" +  dirpath + "\n";
+//    const textToBLOB = new Blob([data], { type: 'text/plain' });
+//    const sFileName = 'gtcl.tcl';	   // The file to save the data.
+//
+//    var newLink = document.createElement("a");
+//    newLink.download = sFileName;
+//
+//    if (window.webkitURL != null) {
+//        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+//    }
+//    else {
+//        newLink.href = window.URL.createObjectURL(textToBLOB);
+//        newLink.style.display = "none";
+//        document.body.appendChild(newLink);
+//    }
+//
+//    newLink.click(); 
+//    document.getElementById('iddraw').click();
+//
+//
+//}
 // }}}
 // set_value
 // {{{
@@ -1343,5 +1343,46 @@ function toolarea() {
 
 }
 // }}}
+// dload
+// {{{
+function dload(data,fname) {
+  const textToBLOB = new Blob([data], { type: 'text/plain' });
+  const sFileName = fname;	   // The file to save the data.
+
+  var newLink = document.createElement("a");
+  newLink.download = sFileName;
+
+  if (window.webkitURL != null) {
+      newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+  }
+  else {
+      newLink.href = window.URL.createObjectURL(textToBLOB);
+      newLink.style.display = "none";
+      document.body.appendChild(newLink);
+  }
+
+  newLink.click(); 
+}
+// }}}
+// open_terminal
+function open_terminal() {
+  var data = "";
+  data = data + 'exec xterm -T xterm.[pwd] &\n'
+
+  dload(data,'gtcl.tcl');
+
+  document.getElementById('idexec').click();
+
+}
+// open_folder
+function open_folder() {
+  var data = "";
+  data = data + 'exec thunar . &\n'
+
+  dload(data,'gtcl.tcl');
+
+  document.getElementById('idexec').click();
+
+}
 
 // vim:fdm=marker
