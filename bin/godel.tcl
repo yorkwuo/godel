@@ -1996,7 +1996,11 @@ proc alinkurl {} {
   if {$value eq "NA"} {
     set celltxt "<td style=\"font-size:8px\" gname=\"$row\" colname=\"url\" contenteditable=\"true\"></td>"
   } else {
-    set celltxt "<td><a href=$value target=blank>Link</a></td>"
+    if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
+      set celltxt "<td><button onclick=\"chrome_open('$value')\">Link</button></td>"
+    } else {
+      set celltxt "<td><a href=$value target=blank>Link</a></td>"
+    }
   }
 
 }
