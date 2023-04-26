@@ -4,7 +4,7 @@ function pp1() {
 
   var data = "";
   data = data + 'set evar(proc) pp1\n'
-  data = data + 'set evar(name) ' + first + "\n";
+  data = data + 'set evar(name) "' + first + '"\n';
 
   dload(data,'input.tcl');
 
@@ -18,7 +18,7 @@ function pp2() {
 
   var data = "";
   data = data + 'set evar(proc) pp2\n'
-  data = data + 'set evar(name) ' + first + "\n";
+  data = data + 'set evar(name) "' + first + '"\n';
 
   dload(data,'input.tcl');
 

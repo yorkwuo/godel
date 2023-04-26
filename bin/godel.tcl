@@ -6942,11 +6942,9 @@ proc godel_draw {{target_path NA}} {
   upvar argv argv
 
   file mkdir .godel
-  # default vars
+  # vars.tcl
 # {{{
   if ![file exist .godel/vars.tcl] {
-    set kout [open .godel/dyvars.tcl w]
-    close $kout
     set kout [open .godel/vars.tcl w]
     close $kout
     set vars(g:keywords) ""
@@ -6954,16 +6952,14 @@ proc godel_draw {{target_path NA}} {
     set vars(g:iname)    [file tail [pwd]]
     godel_array_save vars   .godel/vars.tcl
   }
+  source .godel/vars.tcl
 # }}}
 
-  source .godel/vars.tcl
-
-  if [file exist .godel/dyvars.tcl] {
-    source .godel/dyvars.tcl
-  } else {
+  if ![file exist .godel/dyvars.tcl] {
     set kout [open .godel/dyvars.tcl w]
     close $kout
   }
+  source .godel/dyvars.tcl
   set dyvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
   godel_array_save dyvars .godel/dyvars.tcl
 
@@ -7353,7 +7349,8 @@ proc oget {args} {
       if [file exist $objname] {
         puts "Already exist... $objname"
       } else {
-        puts  "cp -r $where/$objname ."
+        #puts  "cp -r $where/$objname ."
+        puts "  building... $objname"
         exec  cp -r $where/$objname .
         lsetdyvar $objname srcpath  $where/$objname
         cd $objname
@@ -7366,7 +7363,8 @@ proc oget {args} {
       if [file exist $asname] {
         puts "Already exist... $asname"
       } else {
-        puts  "cp -r $where/$objname $asname"
+        #puts  "cp -r $where/$objname $asname"
+        puts "  building... $asname"
         exec  cp -r $where/$objname $asname
         exec touch $asname/.godel/vars.tcl
         lsetdyvar $asname srcpath  $where/$objname
@@ -7504,9 +7502,6 @@ proc godel_array_save {aname ofile {newaname ""}} {
       }
     }
   close $kout
-
-  unset arr
-
 }
 # }}}
 # godel_array_rm

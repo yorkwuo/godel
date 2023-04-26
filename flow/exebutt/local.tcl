@@ -10,7 +10,7 @@ proc pp2 {} {
   puts "pp2: $evar(name)"
 }
 
-exec mv /home/york/downloads/input.tcl .
+exec mv $env(GODEL_DOWNLOAD)/input.tcl .
 
 source input.tcl
 
