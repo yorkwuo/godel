@@ -24,6 +24,26 @@ document.onkeyup = function(e) {
   }
 };
 
+var gbtns = document.getElementsByClassName("gbtn_onoff");
+if (typeof(gbtns) != 'undefined' && gbtns != null) {
+  for (var k = 0; k < gbtns.length; k++) {
+
+      gbtns[k].addEventListener('click', function(){
+
+        this.setAttribute("changed","1");
+        var onoff = this.getAttribute('onoff');
+        if (onoff === "1") {
+          this.className = "gbtn_onoff w3-button w3-round w3-light-gray w3-small";
+          this.setAttribute("onoff","0");
+        } else {
+          this.className = "gbtn_onoff w3-button w3-round w3-pale-blue w3-normal";
+          this.setAttribute("onoff","1");
+        }
+
+      })
+  }
+}
+
 // Add event to highlight modified cells in tables
 var tables = document.getElementsByTagName('table');
 if(typeof(tables) != 'undefined' && tables != null){
@@ -1306,27 +1326,14 @@ function g_save() {
       cmds = cmds + save_gtable(tables[k]);
     }
   }
-  //console.log(cmds);
 
-    var data = cmds;
-    const textToBLOB = new Blob([data], { type: 'text/plain' });
-    const sFileName = 'gtcl.tcl';	   // The file to save the data.
+  var data = cmds;
+  
+  data = data + save_gbtn_onoff();
 
-    var newLink = document.createElement("a");
-    newLink.download = sFileName;
+  dload(data,'gtcl.tcl');
 
-    if (window.webkitURL != null) {
-        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
-    }
-    else {
-        newLink.href = window.URL.createObjectURL(textToBLOB);
-        newLink.style.display = "none";
-        document.body.appendChild(newLink);
-    }
-
-    newLink.click(); 
-
-    document.getElementById('iddraw').click();
+  document.getElementById('iddraw').click();
 
 }
 // }}}
@@ -1393,6 +1400,23 @@ function newgpage() {
 
   document.getElementById('idexec').click();
 
+}
+// save_gbtn_onoff
+function save_gbtn_onoff() {
+  var cmd = "";
+  var gbtns = document.getElementsByClassName("gbtn_onoff");
+  for (var k = 0; k < gbtns.length; k++) {
+     var onoff   = gbtns[k].getAttribute('onoff');
+     var key     = gbtns[k].getAttribute('key');
+     var changed = gbtns[k].getAttribute('changed');
+     if (changed) {
+      console.log(key);
+      var newcmd =  "g" + '.' + "|#|" +  key + "|#|" + onoff + "|E|\n";
+      cmd = cmd + newcmd;
+     }
+
+  }
+  return cmd;
 }
 
 // vim:fdm=marker

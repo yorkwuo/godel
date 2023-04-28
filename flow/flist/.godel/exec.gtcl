@@ -1,7 +1,0 @@
-source $env(GODEL_ROOT)/bin/godel.tcl
-set pagepath [file dirname [file dirname [info script]]]
-cd $pagepath
-
-catch {exec xdotool getwindowfocus getwindowname} pattern
-
-gtcl_commit

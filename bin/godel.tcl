@@ -1,3 +1,62 @@
+# ghtm_card
+# {{{
+proc ghtm_card {name value args} {
+  upvar fout fout
+  puts $fout "
+  <div class=\"w3-bar-item\">
+    <div class=\"w3-card\" style=\"width:auto;\">
+      <header class=\"w3-container w3-blue\">
+        <p>$name</p>
+      </header>
+      <div class=\"w3-container\">
+        <p>$value</p>
+      </div>
+    </div>
+  </div>
+  "
+}
+# }}}
+# bar_begin
+# {{{
+proc bar_begin {} {
+  upvar fout fout
+  puts $fout { <div class="w3-bar "> }
+}
+# }}}
+# bar_end
+# {{{
+proc bar_end {} {
+  upvar fout fout
+  puts $fout { </div> }
+}
+# }}}
+# batch_onoff
+# {{{
+proc batch_onoff {key args} {
+  upvar fout fout
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name NA
+  }
+# }}}
+  set cur_value [lvars . $key]
+  puts $cur_value
+  if {$cur_value eq "1"} {
+    #puts $fout "<a class=\"w3-button w3-round w3-lime\" onclick=\"onoff('$key', '0')\">${name}</a>"
+    puts $fout "<button key=$key class=\"gbtn_onoff w3-button w3-round w3-light-blue w3-normal\" onoff=1>$name</button>"
+  } else {
+    #puts $fout "<a class=\"w3-button w3-round w3-light-gray\" onclick=\"onoff('$key', '1')\">${name}</a>"
+    puts $fout "<button key=$key class=\"gbtn_onoff w3-button w3-round w3-light-gray w3-small\" onoff=0>$name</button>"
+  }
+}
+# }}}
 # newgpage
 # {{{
 proc newgpage {} {
