@@ -1950,7 +1950,7 @@ if {$opt(-noshow) eq "1"} {
           set atvar($row,$col) ""
         }
         set value $atvar($row,$col)
-        append celltxt "<td gname=\"$row\" colname=\"$col\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
+        append celltxt "<td gname=\"$row\" colname=\"$col\" contenteditable=\"true\"><pre style=\"white-space:pre\">$value</pre></td>"
       } else {
         if ![info exist atvar($row,$col)] {
           set atvar($row,$col) ""
@@ -5711,7 +5711,7 @@ proc local_table {tableid args} {
         if {$col_data eq "NA"} {
           set col_data ""
         }
-        append celltxt "<td gname=\"$row\" colname=\"$col\" contenteditable=\"true\" style=\"white-space:pre\">$col_data</td>"
+        append celltxt "<td gname=\"$row\" colname=\"$col\" contenteditable=\"true\"><pre style=\"white-space:pre\">$col_data</pre></td>"
       } else {
         set dirname [file dirname $col]
         set page_path $row
