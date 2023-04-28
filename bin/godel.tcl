@@ -1,3 +1,20 @@
+# newgpage
+# {{{
+proc newgpage {} {
+  set idcounter [lvars . idcounter]
+  set rowid [format "%04d" $idcounter]
+
+  incr idcounter
+  lsetvar . idcounter $idcounter
+
+  file mkdir $rowid
+  godel_draw $rowid
+
+  godel_draw
+
+  catch {exec xdotool search --name "Mozilla" key ctrl+r}
+}
+# }}}
 # pathbar
 # {{{
 proc pathbar {depth} {
@@ -1350,6 +1367,17 @@ proc openfile {fpath} {
     }
     cd $orig
     puts "Error: Unkonwn filetype... $fpath"
+  }
+}
+# }}}
+# openfolder
+# {{{
+proc openfolder {} {
+  upvar env env
+  if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
+    catch {exec /mnt/c/Windows/explorer.exe . &}
+  } else {
+    catch {exec thunar . &}
   }
 }
 # }}}
@@ -4358,6 +4386,15 @@ proc ghtm_top_bar {args} {
     set LOCAL_JS 1
   }
 # }}}
+  # -new
+# {{{
+  set opt(-new) 0
+  set idx [lsearch $args {-new}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-new) 1
+  }
+# }}}
 
   if [file exist .godel/dyvars.tcl] {
     source .godel/dyvars.tcl
@@ -4367,13 +4404,6 @@ proc ghtm_top_bar {args} {
 
 
   set cwd [pwd]
-  #file copy -force $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
-  #exec cp $env(GODEL_ROOT)/scripts/js/godel.js .godel/js
-  #file copy -force $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
-  #exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js .godel/js
-
-  #puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
-  #puts $fout "<script src=.godel/js/godel.js></script>"
  
   puts $fout {
   
@@ -4401,7 +4431,6 @@ proc ghtm_top_bar {args} {
     <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
     <a style="display:none" id="idexec" href=".godel/exec.gtcl" type=text/gtcl class="w3-bar-item w3-button">Exec</a>
   }
-    #<a id="iddraw" href="#" onclick="newdraw()" class="w3-bar-item w3-button">Draw</a>
   if {$opt(-filter)} {
     puts $fout "<input style=\"margin: 5px 0px\" type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\">"
   }
@@ -4416,7 +4445,9 @@ proc ghtm_top_bar {args} {
   }
   puts $fout "<button onclick=\"open_terminal()\" class=\"w3-bar-item w3-button w3-darkblue w3-right\">Open</button>"
   puts $fout "<button onclick=\"open_folder()\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
-  #puts $fout {<a href=".index.htm" type=text/txt class="w3-bar-item w3-button w3-right">HTML</a>}
+  if {$opt(-new) eq "1"} {
+    puts $fout "<button onclick=\"newgpage()\"      class=\"w3-bar-item w3-button w3-darkblue w3-right\">New</button>"
+  }
 
   if {$opt(-save)} {
     #puts $fout "<button id=\"save\" class=\"w3-bar-item w3-button w3-blue-gray\" style=\"margin: 0px 0px\">Save</button>"
@@ -7294,7 +7325,8 @@ proc obless {args} {
         source $where/$objname/.godel/proc.tcl
       }
       foreach f $files {
-        file copy -force $where/$objname/$f $f
+        #file copy -force $where/$objname/$f $f
+        exec cp $where/$objname/$f $f
       }
       lsetdyvar . srcpath  $where/$objname
       if [file exist .godel/preset.tcl] {

@@ -1377,7 +1377,17 @@ function open_terminal() {
 // open_folder
 function open_folder() {
   var data = "";
-  data = data + 'exec thunar . &\n'
+  data = data + 'openfolder\n'
+
+  dload(data,'gtcl.tcl');
+
+  document.getElementById('idexec').click();
+
+}
+// newgpage
+function newgpage() {
+  var data = "";
+  data = data + 'newgpage\n'
 
   dload(data,'gtcl.tcl');
 

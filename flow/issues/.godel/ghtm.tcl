@@ -1,5 +1,6 @@
-ghtm_top_bar -save
+ghtm_top_bar -save -new
 gnotes " # $vars(g:pagename)"
+gexe_button new.tcl -cmd -name new
 ghtm_onoff coldelete   -name D
 ghtm_onoff collink     -name link
 ghtm_onoff colseverity -name severity
