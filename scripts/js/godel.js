@@ -1372,6 +1372,7 @@ function dload(data,fname) {
 }
 // }}}
 // open_terminal
+// {{{
 function open_terminal() {
   var data = "";
   data = data + 'exec xterm -T xterm.[pwd] &\n'
@@ -1381,7 +1382,9 @@ function open_terminal() {
   document.getElementById('idexec').click();
 
 }
+// }}}
 // open_folder
+// {{{
 function open_folder() {
   var data = "";
   data = data + 'openfolder\n'
@@ -1391,7 +1394,9 @@ function open_folder() {
   document.getElementById('idexec').click();
 
 }
+// }}}
 // newgpage
+// {{{
 function newgpage() {
   var data = "";
   data = data + 'newgpage\n'
@@ -1401,7 +1406,21 @@ function newgpage() {
   document.getElementById('idexec').click();
 
 }
+// }}}
+// newarow
+// {{{
+function newarow() {
+  var data = "";
+  data = data + 'newarow\n'
+
+  dload(data,'gtcl.tcl');
+
+  document.getElementById('idexec').click();
+
+}
+// }}}
 // save_gbtn_onoff
+// {{{
 function save_gbtn_onoff() {
   var cmd = "";
   var gbtns = document.getElementsByClassName("gbtn_onoff");
@@ -1418,9 +1437,10 @@ function save_gbtn_onoff() {
   }
   return cmd;
 }
+// }}}
 
 var flows = {
-    "flow": ['anotes', 'checklist', 'dict', 'docs', 'exebutt', 'filebrowser', 'flist'],
+    "flow": ['anotes', 'checklist', 'dict', 'docs', 'exebutt', 'filebrowser', 'flist', 'fln'],
     "sch": ['field', 'hide'],
     "tpl": ['pst','nocode','book','nation','cmic']
 };

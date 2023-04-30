@@ -59,14 +59,45 @@ proc batch_onoff {key args} {
 # newgpage
 # {{{
 proc newgpage {} {
-  set idcounter [lvars . idcounter]
-  set rowid [format "%04d" $idcounter]
+  set idcounter   [lvars . idcounter]
+  set idwidth     [lvars . idwidth]
+
+  if {$idwidth eq "NA"} {
+    set idwidth 4
+  }
+  set rowid [format "%0${idwidth}d" $idcounter]
 
   incr idcounter
   lsetvar . idcounter $idcounter
 
   file mkdir $rowid
   godel_draw $rowid
+
+  godel_draw
+
+  catch {exec xdotool search --name "Mozilla" key ctrl+r}
+}
+# }}}
+# newarow
+# {{{
+proc newarow {} {
+  set idacounter   [lvars . idacounter]
+  set idawidth     [lvars . idawidth]
+
+  if {$idawidth eq "NA"} {
+    set idawidth 4
+  }
+  set rowid [format "%0${idawidth}d" $idacounter]
+
+  incr idacounter
+  lsetvar . idacounter $idacounter
+
+  if [file exist at.tcl] {
+  } else {
+    exec touch at.tcl
+  }
+  
+  asetvar $rowid,id "$rowid"
 
   godel_draw
 
@@ -4453,6 +4484,15 @@ proc ghtm_top_bar {args} {
     set opt(-new) 1
   }
 # }}}
+  # -anew
+# {{{
+  set opt(-anew) 0
+  set idx [lsearch $args {-anew}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-anew) 1
+  }
+# }}}
 
   if [file exist .godel/dyvars.tcl] {
     source .godel/dyvars.tcl
@@ -4505,6 +4545,9 @@ proc ghtm_top_bar {args} {
   puts $fout "<button onclick=\"open_folder()\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
   if {$opt(-new) eq "1"} {
     puts $fout "<button onclick=\"newgpage()\"      class=\"w3-bar-item w3-button w3-darkblue w3-right\">New</button>"
+  }
+  if {$opt(-anew) eq "1"} {
+    puts $fout "<button onclick=\"newarow()\"      class=\"w3-bar-item w3-button w3-darkblue w3-right\">aNew</button>"
   }
 
   if {$opt(-save)} {
