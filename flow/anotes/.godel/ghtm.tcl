@@ -5,12 +5,12 @@ gnotes "
 "
 toolarea_begin
   gexe_button new.tcl -name new -nowin
-  ghtm_onoff coldel      -name Del
-  ghtm_onoff search      -name Search
-  ghtm_onoff disppath    -name Path
-  ghtm_onoff dispatfile  -name atfile
-  ghtm_onoff toolarea    -name toolarea
-  ghtm_onoff incr        -name incr
+  batch_onoff coldel      -name Del
+  batch_onoff search      -name Search
+  batch_onoff disppath    -name Path
+  batch_onoff dispatfile  -name atfile
+  batch_onoff toolarea    -name toolarea
+  batch_onoff incr        -name incr
 toolarea_end
 
 # keywords

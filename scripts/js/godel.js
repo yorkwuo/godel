@@ -1163,23 +1163,23 @@ function at_open (atfname,id) {
     newLink.click(); 
 
 // Save ginst.tcl
-    var data = 'source $env(GODEL_DOWNLOAD)/gtcl.tcl';
-    const textToBLOB2 = new Blob([data], { type: 'text/plain' });
-    const sFileName2 = 'ginst.tcl';	   // The file to save the data.
+    //var data = 'source $env(GODEL_DOWNLOAD)/gtcl.tcl';
+    //const textToBLOB2 = new Blob([data], { type: 'text/plain' });
+    //const sFileName2 = 'ginst.tcl';	   // The file to save the data.
 
-    var newLink2 = document.createElement("a");
-    newLink2.download = sFileName2;
+    //var newLink2 = document.createElement("a");
+    //newLink2.download = sFileName2;
 
-    if (window.webkitURL != null) {
-        newLink2.href = window.webkitURL.createObjectURL(textToBLOB2);
-    }
-    else {
-        newLink2.href = window.URL.createObjectURL(textToBLOB2);
-        newLink2.style.display = "none";
-        document.body.appendChild(newLink2);
-    }
+    //if (window.webkitURL != null) {
+    //    newLink2.href = window.webkitURL.createObjectURL(textToBLOB2);
+    //}
+    //else {
+    //    newLink2.href = window.URL.createObjectURL(textToBLOB2);
+    //    newLink2.style.display = "none";
+    //    document.body.appendChild(newLink2);
+    //}
 
-    newLink2.click(); 
+    //newLink2.click(); 
 
     document.getElementById('idexec').click();
 }
@@ -1418,5 +1418,137 @@ function save_gbtn_onoff() {
   }
   return cmd;
 }
+
+var flows = {
+    "flow": ['anotes', 'checklist', 'dict', 'docs', 'exebutt', 'filebrowser', 'flist'],
+    "sch": ['field', 'hide'],
+    "tpl": ['pst','nocode','book','nation','cmic']
+};
+
+var cur_flow1 = "";
+var cur_flow2 = "";
+    
+
+     
+// fdstatus
+// {{{
+function fdstatus () {
+
+  var data = "";
+  data += 'exec xterm -hold -e "gget . fdiff"\n'
+
+  dload(data,'gtcl.tcl');
+
+  document.getElementById('idexec').click();
+
+}
+// }}}
+// fdco
+// {{{
+function fdco () {
+
+  var data = "";
+  data += 'exec gget . fdiff co\n'
+
+  dload(data,'gtcl.tcl');
+
+  document.getElementById('idexec').click();
+
+}
+// }}}
+// obless
+// {{{
+function obless () {
+  //console.log(cur_flow1);
+  //console.log(cur_flow2);
+
+  var data = "";
+  data += 'exec obless ' + cur_flow1 + ' ' + cur_flow2 + '\n'
+
+  dload(data,'gtcl.tcl');
+
+  document.getElementById('idexec').click();
+
+}
+// }}}
+// flow2_click
+// {{{
+function flow2_click () {
+  var gbtns = document.getElementsByClassName("gbtn_flow2");
+  if (typeof(gbtns) != 'undefined' && gbtns != null) {
+    for (var k = 0; k < gbtns.length; k++) {
+  
+        gbtns[k].addEventListener('click', function(){
+  
+          var data = "";
+          var kk = this.innerText;
+          cur_flow2 = kk;
+          var btns = document.getElementsByClassName("gbtn_flow2");
+          for (var k = 0; k < btns.length; k++) {
+            var flow2 = btns[k].innerText;
+            if (flow2 == kk) {
+              btns[k].className = "gbtn_flow2 w3-button w3-round w3-light-blue w3-large";
+              btns[k].setAttribute("onoff","1");
+  
+            } else {
+              btns[k].className = "gbtn_flow2 w3-button w3-round w3-light-gray w3-normal";
+              btns[k].setAttribute("onoff","0");
+            }
+          }
+        })
+    }
+  }
+}
+// }}}
+// flow1_click
+// {{{
+function flow1_click () {
+  var data = '<pre>' + ginfo["srcpath"] + '</pre>\n';
+  data += '<pre>' + ginfo["last_updated"] + '</pre>\n';
+  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="obless()">Bless</button>';
+  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="fdco()">Pull</button>';
+  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="fdstatus()">Status</button><br>';
+  Object.keys(flows).forEach(function(k){
+    data += '<button class=\"gbtn_flow1 w3-button w3-round w3-light-gray w3-normal\" onoff=0>' + k + '</button>';
+  })
+  document.getElementById("flow1_section").innerHTML = data;
+
+  var gbtns = document.getElementsByClassName("gbtn_flow1");
+  if (typeof(gbtns) != 'undefined' && gbtns != null) {
+    for (var k = 0; k < gbtns.length; k++) {
+  
+        gbtns[k].addEventListener('click', function(){
+  
+          var data = "";
+          var kk = this.innerText;
+          cur_flow1 = kk;
+          var btns = document.getElementsByClassName("gbtn_flow1");
+          for (var k = 0; k < btns.length; k++) {
+            var flow1 = btns[k].innerText;
+            if (flow1 == kk) {
+              btns[k].className = "gbtn_flow1 w3-button w3-round w3-light-blue w3-large";
+              btns[k].setAttribute("onoff","1");
+  
+              flows[flow1].forEach(function(flow2){
+                data += '<button class=\"gbtn_flow2 w3-button w3-round w3-light-gray w3-normal\" onoff=0>' + flow2 + '</button>';
+              });
+  
+              document.getElementById("flow2_section").innerHTML = data;
+              
+              flow2_click();
+            } else {
+              btns[k].className = "gbtn_flow1 w3-button w3-round w3-light-gray w3-normal";
+              btns[k].setAttribute("onoff","0");
+            }
+          }
+  
+  
+        })
+    }
+  }
+}
+// }}}
+
+
 
 // vim:fdm=marker

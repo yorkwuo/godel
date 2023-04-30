@@ -1,4 +1,4 @@
-ghtm_top_bar -save
+ghtm_top_bar -save -new
 gnotes "
 # $vars(g:pagename)
 

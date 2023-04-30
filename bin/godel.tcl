@@ -6,10 +6,10 @@ proc ghtm_card {name value args} {
   <div class=\"w3-bar-item\">
     <div class=\"w3-card\" style=\"width:auto;\">
       <header class=\"w3-container w3-blue\">
-        <p>$name</p>
+        <pre>$name</pre>
       </header>
       <div class=\"w3-container\">
-        <p>$value</p>
+        <pre>$value</pre>
       </div>
     </div>
   </div>
@@ -47,7 +47,6 @@ proc batch_onoff {key args} {
   }
 # }}}
   set cur_value [lvars . $key]
-  puts $cur_value
   if {$cur_value eq "1"} {
     #puts $fout "<a class=\"w3-button w3-round w3-lime\" onclick=\"onoff('$key', '0')\">${name}</a>"
     puts $fout "<button key=$key class=\"gbtn_onoff w3-button w3-round w3-light-blue w3-normal\" onoff=1>$name</button>"
@@ -4486,7 +4485,7 @@ proc ghtm_top_bar {args} {
     <div id="navbar" class="w3-bar w3-indigo" style="margin:0px">
     <a id="idedit" href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
     <a id="idvalue" href=".godel/vars.tcl" type=text/txt  class="w3-bar-item w3-button">Value</a>
-    <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Parent</a>
+    <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Up</a>
     <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
     <a style="display:none" id="idexec" href=".godel/exec.gtcl" type=text/gtcl class="w3-bar-item w3-button">Exec</a>
   }
@@ -4516,6 +4515,7 @@ proc ghtm_top_bar {args} {
       puts $fout "<button id=\"idbutton\" onclick=\"g_save_nodraw()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
     }
   }
+  puts $fout "<button onclick=\"flow1_click()\"   class=\"w3-bar-item w3-button w3-darkblue\">Oget</button>"
     puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"toolarea()\" style=\"margin: 0px 0px\">Tools</button>"
     puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
     #puts $fout {<a href=".godel/tools.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Tools</a>}
@@ -4555,28 +4555,10 @@ proc ghtm_top_bar {args} {
     puts $fout "}"
     puts $fout "</style>"
   }
-  #if {$env(GODEL_WSL)} {
 
-  #  set kout [open .godel/win.gtcl w]
+  puts $fout "<div id=flow1_section></div>"
+  puts $fout "<div id=flow2_section></div>"
 
-  #  puts $kout "cd [pwd]"
-  #  puts $kout "catch {exec /mnt/c/Windows/explorer.exe .}"
-  #  close $kout
-
-  #}
-
-  # York: not sure if I want this feature
-  #if [file exist .godel/.qn.md] {
-  #  gmd -f .godel/.qn.md
-  ##} else {
-  #  #set kout [open ".godel/.qn.md" w]
-  #  #close $kout
-  #}
-  #if {[lvars . tools_display] eq "1"} {
-  #  if [file exist .tools.tcl] {
-  #    source .tools.tcl
-  #  }
-  #}
 }
 # }}}
 # akey
@@ -7054,6 +7036,7 @@ proc godel_draw {{target_path NA}} {
   godel_array_save dyvars .godel/dyvars.tcl
 
 
+
 # create draw.gtcl
 # {{{
   if ![file exist .godel/draw.gtcl] {
@@ -7154,6 +7137,16 @@ proc godel_draw {{target_path NA}} {
   puts $fout "</head>"
   puts $fout "<body>"
 
+  puts $fout "<script>"
+  puts $fout "  var ginfo = {"
+  puts $fout "      \"last_updated\": '$dyvars(last_updated)',"
+  if [info exist dyvars(srcpath)] {
+    puts $fout "      \"srcpath\"    : '$dyvars(srcpath)',"
+  } else {
+    puts $fout "      \"srcpath\"    : 'NA',"
+  }
+  puts $fout "  };"
+  puts $fout "</script>"
 # Source ghtm.tcl
   if [file exist .godel/ghtm.tcl] {
     source .godel/ghtm.tcl
