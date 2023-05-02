@@ -4664,6 +4664,7 @@ proc ghtm_top_bar {args} {
       <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
     "
   }
+  puts $fout "<button onclick=\"copy_path()\"     class=\"w3-bar-item w3-button w3-darkblue w3-right\">Path</button>"
   puts $fout "<button onclick=\"open_terminal()\" class=\"w3-bar-item w3-button w3-darkblue w3-right\">Open</button>"
   puts $fout "<button onclick=\"open_folder()\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
   if {$opt(-new) eq "1"} {

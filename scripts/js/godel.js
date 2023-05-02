@@ -474,21 +474,6 @@ function word_highlight (target_words) {
   }
 }
 // }}}
-// cd2dir
-// {{{
-function cd2dir() {
-  var disp = "";
-  disp = disp + "hcd ";
-  var dir = window.location.href;
-  disp = disp + dir + "\n";
-  document.getElementById("text_board").value =  disp;
-  var copyText = document.getElementById("text_board");
-  document.getElementById("text_board").style.display = "inline"
-  copyText.select();
-  document.execCommand("Copy");
-  document.getElementById("text_board").style.display = "none"
-}
-// }}}
 // filter_toc
 // {{{
 function filter_toc() {
@@ -1466,6 +1451,19 @@ function new_link() {
   dload(data,'gtcl.tcl');
 
   document.getElementById('idexec').click();
+}
+// }}}
+// copy_path
+// {{{
+function copy_path() {
+  var pname = window.location.pathname;
+  console.log(pname);
+
+  var dirname = pname.substr(0, pname.lastIndexOf("/"));
+
+  var tt = 'cd ' + dirname + "\n";
+
+  navigator.clipboard.writeText(tt)
 }
 // }}}
 
