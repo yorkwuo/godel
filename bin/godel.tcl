@@ -1,3 +1,123 @@
+
+proc openbook {key} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set kw [lvars $row $key]
+  set files [glob -nocomplain -type f $row/*${kw}*]
+
+  if {$files eq ""} {
+    set celltxt "<td></td>"
+  } else {
+    set celltxt "<td style=\"cursor:pointer;\" bgcolor=lightblue onclick=\"openfile_row('$row','$key')\">O</td>"
+  }
+}
+# mod_flist
+# {{{
+proc mod_flist {} {
+  upvar fout fout
+
+  puts $fout {<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="build_flist()">Update</button>}
+
+  set atcols  ""
+  lappend atcols "proc:bton_fdelete flist.tcl ; FD"
+  lappend atcols "Vs;Vs"
+  lappend atcols "last;last"
+  lappend atcols "mtime;mtime"
+  lappend atcols "proc:at_open flist.tcl ; O"
+  lappend atcols "name;name"
+
+  atable flist.tcl -tableid tbl1 -noid -num
+}
+# }}}
+# mod_links
+# {{{
+proc mod_links {} {
+  upvar fout fout
+
+  puts $fout {<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="new_link()">New Link</button>}
+
+  set atcols ""
+  lappend atcols "proc:bton_delete ; D"
+  lappend atcols "ed:type           ; type"
+  lappend atcols "proc:alinkname ; name"
+  lappend atcols "proc:alinkurl    ; url"
+
+  atable links.tcl -noid -sortby id -tableid tbl2
+  #atable flist.tcl -tableid tbl1 -noid -num
+}
+# }}}
+# new_link
+proc new_link {} {
+  if [file exist links.tcl] {
+    source links.tcl
+  }
+  set rowid [clock format [clock seconds] -format {%Y-%m-%d_%H-%M_%S}]
+  set atvar($rowid,name) ""
+  set atvar($rowid,id) $rowid
+  
+  godel_array_save atvar links.tcl
+  
+  godel_draw
+  catch {exec xdotool search --name "Mozilla" key ctrl+r}
+}
+# build_flist
+# {{{
+proc build_flist {} {
+  catch {exec find -maxdepth 1 -type f > flist.tmp}
+
+  set lines_tmp [read_as_list flist.tmp]
+
+  set lines ""
+  foreach line $lines_tmp {
+    regsub {^\./} $line {} line
+    if       [regexp {^\.} $line] {
+    } elseif [regexp {Makefile} $line] {
+    } elseif [regexp {\.tcl|\.tmp} $line] {
+    } else {
+      lappend lines $line
+    }
+  }
+
+  if [file exist flist.tcl] {
+    source flist.tcl
+    
+    array set kk [array get atvar *,last]
+    array set kk [array get atvar *,keywords]
+    array set kk [array get atvar *,title]
+    array set kk [array get atvar *,author]
+    array set kk [array get atvar *,notes]
+    array set kk [array get atvar *,lnpage]
+  
+    if [info exist atvar] {
+      unset atvar
+    }
+  }
+
+  foreach fname $lines {
+    regsub {^\.\/} $fname {} fname
+    set mtime [file mtime $fname]
+    set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
+    set atvar($fname,mtime) $timestamp
+  
+    set atvar($fname,name) [file tail $fname]
+    set atvar($fname,path) $fname
+  
+    if [info exist kk($fname,last)]     { set atvar($fname,last) $kk($fname,last) }
+    if [info exist kk($fname,keywords)] { set atvar($fname,keywords) $kk($fname,keywords) }
+    if [info exist kk($fname,title)]    { set atvar($fname,title) $kk($fname,title) }
+    if [info exist kk($fname,author)]   { set atvar($fname,author) $kk($fname,author) }
+    if [info exist kk($fname,notes)]   { set atvar($fname,notes) $kk($fname,notes) }
+    if [info exist kk($fname,lnpage)]   { set atvar($fname,lnpage) $kk($fname,lnpage) }
+  }
+  
+  godel_array_save atvar flist.tcl
+  if [info exist atvar] {
+    unset atvar
+  }
+  exec rm -rf flist.tmp
+}
+# }}}
 # ghtm_card
 # {{{
 proc ghtm_card {name value args} {
@@ -2902,17 +3022,20 @@ proc linkbox {args} {
 
   set txtsize ""
   if {$opt(-asize) eq "1"} {
-    cd $name
-    source at.tcl
-    set size [llength [at_allrows]]
-    cd ..
-    set txtsize "($size)"
+    if [file exist $name] {
+      cd $name
+      source at.tcl
+      set size [llength [at_allrows]]
+      cd ..
+      set txtsize "($size)"
+    }
   } elseif {$opt(-gsize) eq "1"} {
-    cd $name
-    puts [pwd]
-    set size [llength [glob -nocomplain -type d *]]
-    cd ..
-    set txtsize "($size)"
+    if [file exist $name] {
+      cd $name
+      set size [llength [glob -nocomplain -type d *]]
+      cd ..
+      set txtsize "($size)"
+    }
   }
 
   if [file exist $target] {

@@ -1162,24 +1162,29 @@ function at_open (atfname,id) {
 
     newLink.click(); 
 
-// Save ginst.tcl
-    //var data = 'source $env(GODEL_DOWNLOAD)/gtcl.tcl';
-    //const textToBLOB2 = new Blob([data], { type: 'text/plain' });
-    //const sFileName2 = 'ginst.tcl';	   // The file to save the data.
 
-    //var newLink2 = document.createElement("a");
-    //newLink2.download = sFileName2;
+    document.getElementById('idexec').click();
+}
+// }}}
+// openfile_row
+// {{{
+function openfile_row (row,key) {
 
-    //if (window.webkitURL != null) {
-    //    newLink2.href = window.webkitURL.createObjectURL(textToBLOB2);
-    //}
-    //else {
-    //    newLink2.href = window.URL.createObjectURL(textToBLOB2);
-    //    newLink2.style.display = "none";
-    //    document.body.appendChild(newLink2);
-    //}
+    var data = "";
+    data += "source $env(GODEL_ROOT)/bin/godel.tcl\n";
+    data += "cd " + row + '\n';
+    data += "\n";
+    data += 'set kw [lvars . ' + key + ']\n'
+    data += '\n'
+    data += 'set files [glob -type f *]\n'
+    data += '\n'
+    data += 'foreach f $files {\n'
+    data += '  if [regexp $kw $f] {\n'
+    data += '    openfile $f\n'
+    data += '  }\n'
+    data += '}\n'
 
-    //newLink2.click(); 
+    dload(data,'gtcl.tcl');
 
     document.getElementById('idexec').click();
 }
@@ -1436,6 +1441,31 @@ function save_gbtn_onoff() {
 
   }
   return cmd;
+}
+// }}}
+// build_flist
+// {{{
+function build_flist() {
+  var data = "";
+  data = data + 'build_flist\n'
+  data = data + 'exec godel_draw.tcl\n'
+  data = data + 'exec xdotool search --name "Mozilla" key ctrl+r\n'
+
+  dload(data,'gtcl.tcl');
+
+  document.getElementById('idexec').click();
+
+}
+// }}}
+// new_link
+// {{{
+function new_link() {
+  var data = "";
+  data = data + 'new_link\n'
+
+  dload(data,'gtcl.tcl');
+
+  document.getElementById('idexec').click();
 }
 // }}}
 
