@@ -1,3 +1,7 @@
+proc ghtm_padding {width} {
+  upvar fout fout
+  puts $fout "<span style=\"margin-left:$width\"></span>"
+}
 
 proc openbook {key} {
   upvar row row
