@@ -204,6 +204,9 @@ proc batch_onoff {key args} {
 # {{{
 proc newgpage {} {
   set idcounter   [lvars . idcounter]
+  if {$idcounter eq "NA"} {
+    set idcounter 1
+  }
   set idwidth     [lvars . idwidth]
 
   if {$idwidth eq "NA"} {
@@ -226,6 +229,9 @@ proc newgpage {} {
 # {{{
 proc newarow {} {
   set idacounter   [lvars . idacounter]
+  if {$idacounter eq "NA"} {
+    set idacounter 1
+  }
   set idawidth     [lvars . idawidth]
 
   if {$idawidth eq "NA"} {
@@ -252,6 +258,10 @@ proc newarow {} {
 # {{{
 proc pathbar {depth} {
   upvar fout fout
+
+  if {$depth eq "NA"} {
+    set depth 1
+  }
 
   set cwd [pwd]
 

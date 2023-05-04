@@ -1,49 +1,53 @@
-ghtm_top_bar -save
+ghtm_top_bar -save -new
 set sortby [lvars . sortby]
 set search [lvars . search]
 
-gnotes "
-# $vars(g:pagename)
-"
+pathbar [lvars . pathvar_depth]
 
 toolarea_begin
-#  set rows ""
-#  lappend rows sortby
-#  var_table
   if [file exist "class.tcl"] {
     source class.tcl
   }
 
-  gexe_button newnote.tcl -nowin -name "new"
-  ghtm_onoff coldel   -name Del
-  ghtm_onoff coltick  -name Tick
-  ghtm_onoff search   -name Search
-  ghtm_onoff path     -name Path
-  ghtm_onoff toolarea -name toolarea
+  batch_onoff col_class    -name class
+  batch_onoff coldel       -name D
+  batch_onoff coltick      -name T
+  batch_onoff col_iname    -name iname
+  batch_onoff col_ghtm     -name ghtm
+  batch_onoff col_title    -name title
+  batch_onoff col_notes    -name notes
+  batch_onoff col_keywords -name keywords
+
+  ghtm_padding 40px
+
+  batch_onoff search   -name Search
+  batch_onoff toolarea -name toolarea
   if [file exist "cols.tcl"]  { puts $fout "<a href=cols.tcl type=text/txt>cols.tcl</a>" }
   if [file exist "class.tcl"] { puts $fout "<a href=class.tcl type=text/txt>class.tcl</a>" }
 toolarea_end
-
-if {[lvars . path] eq "1"} {
-  puts $fout <p>[pwd]</p>
-}
 
 
 if [file exist cols.tcl] {
   source cols.tcl
 } else {
-  lappend cols "ed:class;Class"
-if {[lvars . coldel]  eq "1"}  { lappend cols "proc:bton_delete;D" }
-if {[lvars . coltick] eq "1"}  { lappend cols "proc:bton_tick;T" }
-  lappend cols "ed:g:pagename;Title"
-  lappend cols "ed:notes;Notes"
-  lappend cols "ed:g:keywords;Keywords"
+  cols_onoff "col_class;ed:class;Class"
+  cols_onoff "coldel;proc:bton_delete;D"
+  cols_onoff "coltick;proc:bton_tick;T"
+  cols_onoff "col_iname;proc:ltbl_iname g:iname;iname"
+  cols_onoff "col_ghtm;proc:ltbl_lnfile .godel/ghtm.tcl ghtm;ghtm"
+  cols_onoff "col_title;ed:g:pagename;Title"
+  cols_onoff "col_notes;ed:notes;Notes"
+  cols_onoff "col_keywords;ed:g:keywords;Keywords"
 }
 
 set options "-serial "
 append options "-sortby $sortby "
 if {$search eq "1"} {
   append options "-dataTables"
+}
+
+if ![info exist cols] {
+  lappend cols "g:iname;iname"
 }
 
 local_table tbl -c $cols {*}$options

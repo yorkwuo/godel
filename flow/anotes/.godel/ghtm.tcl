@@ -1,16 +1,28 @@
-ghtm_top_bar -save
+ghtm_top_bar -save -anew
 gnotes "
 # $vars(g:pagename)
 
 "
 toolarea_begin
-  gexe_button new.tcl -name new -nowin
-  batch_onoff coldel      -name Del
-  batch_onoff search      -name Search
-  batch_onoff disppath    -name Path
+  batch_onoff col_del      -name D
+  batch_onoff col_tick     -name T
+  batch_onoff col_title    -name title
+  batch_onoff col_notes    -name notes
+  batch_onoff col_keywords -name keywords
+
+  ghtm_padding 40px
+
   batch_onoff dispatfile  -name atfile
-  batch_onoff toolarea    -name toolarea
   batch_onoff incr        -name incr
+  batch_onoff search      -name Search
+
+  ghtm_padding 40px
+
+  batch_onoff toolarea    -name toolarea
+
+  if {[lvars . atfile] eq "NA"} {
+    puts $fout "<a href=at.tcl>at.tcl</a>"
+  }
 toolarea_end
 
 # keywords
@@ -21,10 +33,11 @@ if [file exist atcols.tcl] {
   source atcols.tcl
 } else {
   set atcols ""
-  lappend atcols "proc:bton_delete ; D"
-  lappend atcols "ed:title         ; title"
-  lappend atcols "ed:keywords      ; keywords"
-  #lappend atcols "proc:abton_tick  ; T"
+  atcols_onoff "col_del      ; proc:bton_delete ; D"
+  atcols_onoff "col_tick     ; proc:abton_tick  ; T"
+  atcols_onoff "col_title    ; ed:title         ; title"
+  atcols_onoff "col_notes    ; ed:notes         ; notes"
+  atcols_onoff "col_keywords ; ed:keywords      ; keywords"
 }
 
 atable at.tcl -noid -num -sortby id -sortopt {-ascii -decreasing} -dataTables
