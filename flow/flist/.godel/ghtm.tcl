@@ -1,8 +1,6 @@
 ghtm_top_bar -save
-gnotes "
-# $vars(g:pagename)
-"
-#ghtm_ls at.tcl
+pathbar 1
+
 if [file exist "class.tcl"] {
   source class.tcl
 }
@@ -18,7 +16,7 @@ if [file exist colist.tcl] {
   lappend colist  "colfdel      proc:bton_fdelete  FD"
   lappend colist  "collast      last               last"
   lappend colist  "colkeywords  ed:keywords        keywords"
-  lappend colist  "colopen      proc:abton_tick     T"
+  lappend colist  "coltick      proc:abton_tick     T"
   lappend colist  "coltitle     ed:title           title"
   lappend colist  "colnotes     ed:notes           notes"
   lappend colist  "collnpage    proc:at_lnpage     lnpage"
