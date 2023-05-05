@@ -27,7 +27,7 @@ source $env(GODEL_ROOT)/bin/godel.tcl
 
 
 set dp [expr $depth + 1]
-catch "exec find -maxdepth $dp -name \".godel\"" dirs
+catch "exec find -L -maxdepth $dp -name \".godel\"" dirs
 
 set cwd [pwd]
 foreach i $dirs {

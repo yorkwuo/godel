@@ -8,7 +8,7 @@ foreach dir $dirs {
   set id    [lvars $dir id]
   set rptto [lvars $dir rptto]
 
-  if {$rptto eq "NA"} {
+  if {$rptto eq "NA" || $rptto eq ""} {
     lappend roots $id
   } else {
     set arr($id,rptto) $rptto
@@ -30,12 +30,8 @@ proc find_child {parent people indent level} {
 }
 
 
-#set roots scpann1
 foreach root $roots {
-  #puts $root
   puts $arr($root,dir)
   lsetvar $arr($root,dir) level 1
   find_child $root $people "  " 2
 }
-#
-#puts $people
