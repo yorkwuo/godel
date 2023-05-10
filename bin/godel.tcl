@@ -4691,7 +4691,7 @@ proc ghtm_top_bar {args} {
     puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
     #puts $fout {<a href=".godel/tools.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Tools</a>}
     if {$opt(-js) eq "1"} {
-      puts $fout {<a href="local.js"  type=text/txt class="w3-bar-item w3-button w3-right">JS</a>}
+      puts $fout {<a href=".local.js"  type=text/txt class="w3-bar-item w3-button w3-right">JS</a>}
     }
   puts $fout "</div>"
 
@@ -7382,11 +7382,11 @@ proc godel_draw {{target_path NA}} {
   }
 
   if [info exist LOCAL_JS] {
-    if ![file exist "local.js"] {
-      set kout [open "local.js" w]
+    if ![file exist ".local.js"] {
+      set kout [open ".local.js" w]
       close $kout
     }
-    puts $fout "<script src=local.js></script>"
+    puts $fout "<script src=.local.js></script>"
   }
 
   puts $fout "</body>"
