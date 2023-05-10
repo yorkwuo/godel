@@ -1154,24 +1154,13 @@ function at_open (atfname,id) {
 // openfile_row
 // {{{
 function openfile_row (row,key) {
+  var data = "";
+  data += "source $env(GODEL_ROOT)/bin/godel.tcl\n";
+  data += 'openbook ' + '"' + row + '"' + ' "' + key + '"' + '\n'
 
-    var data = "";
-    data += "source $env(GODEL_ROOT)/bin/godel.tcl\n";
-    data += "cd " + row + '\n';
-    data += "\n";
-    data += 'set kw [lvars . ' + key + ']\n'
-    data += '\n'
-    data += 'set files [glob -type f *]\n'
-    data += '\n'
-    data += 'foreach f $files {\n'
-    data += '  if [regexp $kw $f] {\n'
-    data += '    openfile $f\n'
-    data += '  }\n'
-    data += '}\n'
+  dload(data,'gtcl.tcl');
 
-    dload(data,'gtcl.tcl');
-
-    document.getElementById('idexec').click();
+  document.getElementById('idexec').click();
 }
 // }}}
 // chrome_open
@@ -1497,6 +1486,8 @@ function fdco () {
 
   var data = "";
   data += 'exec gget . fdiff co\n'
+  data += 'exec godel_draw.tcl\n'
+  data += 'exec xdotool search --name "Mozilla" key ctrl+r\n'
 
   dload(data,'gtcl.tcl');
 
@@ -1512,6 +1503,8 @@ function obless () {
 
   var data = "";
   data += 'exec obless ' + cur_flow1 + ' ' + cur_flow2 + '\n'
+  data += 'exec godel_draw.tcl\n'
+  data += 'exec xdotool search --name "Mozilla" key ctrl+r\n'
 
   dload(data,'gtcl.tcl');
 

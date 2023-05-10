@@ -3,7 +3,27 @@ proc ghtm_padding {width} {
   puts $fout "<span style=\"margin-left:$width\"></span>"
 }
 
-proc openbook {key} {
+proc openbook {row kw} {
+
+  cd $row
+  set keyword [lvars . $kw]
+
+  set Vs [lvars . $kw,Vs]
+  if {$Vs eq "NA"} {
+    lsetvar . $kw,Vs 1
+  } else {
+    lsetvar . $kw,Vs [incr Vs]
+  }
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M}]
+  lsetvar . $kw,last $timestamp
+
+  set fname [glob -type f *$keyword*]
+  openfile $fname
+
+
+}
+
+proc ghtm_openbook {key} {
   upvar row row
   upvar celltxt celltxt
 
@@ -184,6 +204,9 @@ proc batch_onoff {key args} {
 # {{{
 proc newgpage {} {
   set idcounter   [lvars . idcounter]
+  if {$idcounter eq "NA"} {
+    set idcounter 1
+  }
   set idwidth     [lvars . idwidth]
 
   if {$idwidth eq "NA"} {
@@ -206,6 +229,9 @@ proc newgpage {} {
 # {{{
 proc newarow {} {
   set idacounter   [lvars . idacounter]
+  if {$idacounter eq "NA"} {
+    set idacounter 1
+  }
   set idawidth     [lvars . idawidth]
 
   if {$idawidth eq "NA"} {
@@ -232,6 +258,10 @@ proc newarow {} {
 # {{{
 proc pathbar {depth} {
   upvar fout fout
+
+  if {$depth eq "NA"} {
+    set depth 1
+  }
 
   set cwd [pwd]
 
