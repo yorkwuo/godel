@@ -1,7 +1,8 @@
 ghtm_top_bar -save -new
 gnotes " # $vars(g:pagename)"
 
-batch_onoff coldelete -name D
+batch_onoff coldone     -name done
+batch_onoff coldelete   -name D
 batch_onoff collink     -name link
 batch_onoff colseverity -name severity
 batch_onoff colstatus   -name status
@@ -54,6 +55,7 @@ set ::ltblrows $rows
 
 set     cols ""
 lappend cols "proc:ltbl_iname g:iname;Name"
+cols_onoff "coldone    ; proc:bton_move done done     ; move"
 cols_onoff "coldelete  ; proc:bton_delete      ; D"
 cols_onoff "collink    ; proc:ltbl_linkurl url ; Link"
 cols_onoff "colseverity ; proc:severity         ; Svrty"

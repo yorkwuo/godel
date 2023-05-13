@@ -1,8 +1,42 @@
+# histo_hori
+# {{{
+proc histo_hori {key {color lightblue} {width ""}} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set pp [lvars $row $key]
+
+  if {$width eq ""} {
+    set celltxt "<td style='background-image: linear-gradient($color,$color,$color);background-position: 0% 0%;background-repeat: no-repeat;background-size: ${pp}% 100%'>$pp%</td>"
+  } else {
+    set celltxt "<td width=$width style='background-image: linear-gradient($color,$color,$color);background-position: 0% 0%;background-repeat: no-repeat;background-size: ${pp}% 100%'>$pp%</td>"
+  }
+}
+# }}}
+# histo_verti
+# {{{
+proc histo_verti {key {color lightblue} {height ""}} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set pp [lvars $row $key]
+
+  if {$height eq ""} {
+    set celltxt "<td style='background-image: linear-gradient($color,$color,$color);background-position: 100% 100%;background-repeat: no-repeat;background-size: 100% ${pp}%'>$pp%</td>"
+  } else {
+    set celltxt "<td height=$height style='background-image: linear-gradient($color,$color,$color);background-position: 100% 100%;background-repeat: no-repeat;background-size: 100% ${pp}%'>$pp%</td>"
+  }
+}
+# }}}
+# ghtm_padding
+# {{{
 proc ghtm_padding {width} {
   upvar fout fout
   puts $fout "<span style=\"margin-left:$width\"></span>"
 }
-
+# }}}
+# openbook
+# {{{
 proc openbook {row kw} {
 
   cd $row
@@ -22,7 +56,9 @@ proc openbook {row kw} {
 
 
 }
-
+# }}}
+# ghtm_openbook
+# {{{
 proc ghtm_openbook {key} {
   upvar row row
   upvar celltxt celltxt
@@ -36,6 +72,7 @@ proc ghtm_openbook {key} {
     set celltxt "<td style=\"cursor:pointer;\" bgcolor=lightblue onclick=\"openfile_row('$row','$key')\">O</td>"
   }
 }
+# }}}
 # mod_flist
 # {{{
 proc mod_flist {} {
@@ -72,6 +109,7 @@ proc mod_links {} {
 }
 # }}}
 # new_link
+# {{{
 proc new_link {} {
   if [file exist links.tcl] {
     source links.tcl
@@ -85,6 +123,7 @@ proc new_link {} {
   godel_draw
   catch {exec xdotool search --name "Mozilla" key ctrl+r}
 }
+# }}}
 # build_flist
 # {{{
 proc build_flist {} {
