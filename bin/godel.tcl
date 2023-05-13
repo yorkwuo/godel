@@ -2574,6 +2574,7 @@ proc gtcl_commit {} {
       set chunks [lreplace $chunks end end] 
 
       set dels ""
+      set moves ""
       array set adels {}
       array set afdels {}
       foreach chunk $chunks {
@@ -2587,6 +2588,7 @@ proc gtcl_commit {} {
         regsub {\n$} $value {} value
         regexp {^(\w)(.*)} $gpage_tmp whole tbltype gpage
 
+# atable
         if {$tbltype eq "a"} {
           if {$key eq "DEL"} {
             lappend adels($atfname) $gpage
@@ -2595,9 +2597,12 @@ proc gtcl_commit {} {
           } else {
             asetvar $gpage,$key $value $atfname
           }
+# gtable
         } else {
           if {$key eq "DEL"} {
             lappend dels $gpage
+          } elseif {$key eq "MOVE"} {
+            catch {exec mv $gpage $value}
           } else {
             lsetvar $gpage $key $value
           }
@@ -3532,26 +3537,10 @@ proc ghtm_panel_end {} {
 # }}}
 # bton_move
 # {{{
-proc bton_move {pathto {name ""}} {
+proc bton_move {moveto disp} {
   upvar celltxt celltxt
   upvar row     row
-
-  #if [file exist $row/.move.gtcl] {
-  #} else {
-    set kout [open $row/.move.gtcl w]
-      puts $kout "set pagepath \[file dirname \[file dirname \[info script]]]"
-      puts $kout "cd \$pagepath"
-      puts $kout "exec mv $row $pathto"
-      puts $kout "exec godel_draw.tcl"
-      puts $kout "exec xdotool search --name \"${name}Mozilla Firefox\" key ctrl+r"
-    close $kout
-  #}
-
-  if [file exist "$row/.move.gtcl"] {
-    set celltxt "<td colname=\"proc:bton_move $pathto\"><a href=$row/.move.gtcl class=\"w3-btn w3-blue w3-round\" type=text/gtcl>M</a></td>"
-  } else {
-    set celltxt "<td></td>"
-  }
+  set celltxt "<td style=\"cursor:pointer;\" gname=\"$row\" bgcolor=lightblue colname=\"MOVE\" target=\"$moveto\">$disp</td>"
 }
 # }}}
 # bton_delete
@@ -3560,7 +3549,7 @@ proc bton_delete {{name ""}} {
   upvar celltxt celltxt
   upvar row     row
 
-  set celltxt "<td style=\"cursor:pointer;\" gname=\"$row\" bgcolor=lightblue colname=\"DEL\">D</td>"
+  set celltxt "<td style=\"cursor:pointer;\" gname=\"$row\" bgcolor=lightblue colname=\"DEL\" onoff=\"0\">D</td>"
 
 }
 # }}}

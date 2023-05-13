@@ -67,6 +67,20 @@ if(typeof(tables) != 'undefined' && tables != null){
             this.setAttribute("changed","1");
             this.setAttribute("onoff","1");
           })
+        } else if (colname === "MOVE") {
+          cells[i].addEventListener('click', function(){
+            this.setAttribute("changed","1");
+            var onoff   = this.getAttribute("onoff");
+            if (onoff === "1") {
+              this.setAttribute("bgcolor","lightblue")
+              this.setAttribute("onoff","0");
+              //this.innerText = "FD";
+            } else {
+              this.setAttribute("bgcolor","yellow")
+              this.setAttribute("onoff","1");
+              //this.innerText = 1;
+            }
+          })
         } else if (colname === "fdel") {
           cells[i].addEventListener('click', function(){
             this.setAttribute("changed","1");
@@ -1218,7 +1232,7 @@ function chrome_open (link) {
 // save_gtable
 // {{{
 function save_gtable(tableobj) {
-  console.log("gtabe");
+  //console.log("gtabe");
   var cells = tableobj.getElementsByTagName('td');
 
   var cmds = "";
@@ -1237,7 +1251,11 @@ function save_gtable(tableobj) {
           if (typeof gname === 'undefined') {
             return; // equal to continue
           } else {
-            if (changed) {
+            if (colname === 'MOVE') {
+              var target  = cells[i].getAttribute("target");
+              var cmd =  "g" + gname + "|#|" +  colname + "|#|" + target + "|E|\n";
+              cmds = cmds + cmd;
+            } else {
               if (gclass === "onoff") {
                 var cmd =  "g" + gname + "|#|" +  colname + "|#|" + onoff + "|E|\n";
                 cmds = cmds + cmd;
