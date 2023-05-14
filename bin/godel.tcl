@@ -239,6 +239,21 @@ proc batch_onoff {key args} {
   }
 }
 # }}}
+# gui_newpage
+# {{{
+proc gui_newpage {name} {
+
+  file mkdir $name
+  godel_draw $name
+
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M:%S}]
+  lsetvar $name cdate $timestamp
+
+  godel_draw
+
+  catch {exec xdotool search --name "Mozilla" key ctrl+r}
+}
+# }}}
 # newgpage
 # {{{
 proc newgpage {} {
@@ -258,6 +273,9 @@ proc newgpage {} {
 
   file mkdir $rowid
   godel_draw $rowid
+
+  set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M:%S}]
+  lsetvar $rowid cdate $timestamp
 
   godel_draw
 
@@ -4305,6 +4323,79 @@ proc at_keyword_button {args} {
   } else {
     if {$opt(-key)} {
       puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${keyword}$total</button>"
+    } else {
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${keyword}</button>"
+    }
+  }
+}
+# }}}
+# ghtm_a_keybutt
+# {{{
+proc ghtm_a_keybutt {args} {
+  upvar fout fout
+
+  if [file exist at.tcl] {
+    source at.tcl
+  }
+
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name NA
+  }
+# }}}
+  # -bgcolor
+# {{{
+  set opt(-bgcolor) 0
+  set idx [lsearch $args {-bgcolor}]
+  if {$idx != "-1"} {
+    set val(-bgcolor) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-bgcolor) 1
+  } else {
+    set val(-bgcolor) pale-blue
+  }
+# }}}
+  # -key
+# {{{
+  set opt(-key) 0
+  set idx [lsearch $args {-key}]
+  if {$idx != "-1"} {
+    set val(-key) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-key) 1
+  } else {
+    set val(-key) nan
+  }
+# }}}
+
+  set tablename [lindex $args 0]
+  set column    [lindex $args 1]
+  set keyword   [lindex $args 2]
+
+  set count 0
+  if {$opt(-key)} {
+    set rows [at_allrows]
+    foreach row $rows {
+      set value [get_atvar $row,$val(-key)]
+      if [regexp -nocase $keyword $value] {
+        incr count
+      }
+    }
+    set total $count
+  }
+
+  if {$opt(-name)} {
+    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${name}($total)</button>"
+  } else {
+    if {$opt(-key)} {
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${keyword}($total)</button>"
     } else {
       puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${keyword}</button>"
     }

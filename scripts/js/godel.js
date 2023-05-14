@@ -1562,7 +1562,10 @@ function flow2_click () {
 // flow1_click
 // {{{
 function flow1_click () {
-  var data = '<pre>' + ginfo["srcpath"] + '</pre>\n';
+  var data = '';
+  data += '<input class=w3-input type="text" id=newpage_name>\n';
+  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="gui_newpage()">New</button>';
+  data += '<pre>' + ginfo["srcpath"] + '</pre>\n';
   data += '<pre>' + ginfo["last_updated"] + '</pre>\n';
   data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="obless()">Bless</button>';
   data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="fdco()">Pull</button>';
@@ -1607,6 +1610,19 @@ function flow1_click () {
   }
 }
 // }}}
+function gui_newpage() {
+
+  var name = document.getElementById("newpage_name").value;
+
+  console.log(name);
+
+  var data = "";
+  data += 'gui_newpage ' + name + '\n'
+
+  dload(data,'gtcl.tcl');
+
+  document.getElementById('idexec').click();
+}
 
 
 
