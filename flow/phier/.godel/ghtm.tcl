@@ -14,7 +14,7 @@ proc hiername {} {
 
   if {$level eq "2"} {
     set indent "<span style=margin-left:30px></span>"
-    set celltxt "<td style=\"white-space:pre\">$indent$name</td>"
+    set celltxt "<td bgcolor=lightblue style=\"white-space:pre\">$indent$name</td>"
   } elseif {$level eq "3"} {
     set indent "<span style=margin-left:60px></span>"
     set celltxt "<td style=\"white-space:pre\">$indent$name</td>"
@@ -29,7 +29,7 @@ proc hiername {} {
     set celltxt "<td style=\"white-space:pre\">$indent$name</td>"
   } else {
     set indent ""
-    set celltxt "<td bgcolor=lightyellow style=\"white-space:pre\">$name</td>"
+    set celltxt "<td bgcolor=pink style=\"white-space:pre\">$name</td>"
   }
 }
 # }}}
@@ -63,11 +63,11 @@ cols_onoff "colid       ; edtable:id            ; id"
 cols_onoff "colfullname ; edtable:fullname      ; fullname"
 cols_onoff "colwhere    ; edtable:where         ; where"
 cols_onoff "colKeywords ; edtable:keywords      ; Keywords"
-cols_onoff "colorg      ; edtable:org           ; Org"
 cols_onoff "colTitle    ; edtable:g:title       ; Title"
 cols_onoff "colname     ; edtable:name          ; name"
 cols_onoff "collevel    ; edtable:level         ; L"
 cols_onoff "colhiername ; proc:hiername         ; hiername"
+cols_onoff "colorg      ; edtable:org           ; Org"
 cols_onoff "colrole     ; edtable:role          ; role"
 cols_onoff "colnotes    ; edtable:notes         ; notes"
 

@@ -27,7 +27,7 @@ toolarea_begin
     puts $fout "<a href=keywords.tcl type=text/txt>keywords.tcl</a>"
   }
   if [file exist atcols.tcl] {
-    puts $fout "<a href=keywords.tcl type=text/txt>atcols.tcl</a>"
+    puts $fout "<a href=atcols.tcl type=text/txt>atcols.tcl</a>"
   }
 toolarea_end
 

@@ -14,6 +14,8 @@ batch_onoff colid       -name id
 batch_onoff coltitle    -name title
 batch_onoff coltodate   -name todate
 
+linkbox done -gsize
+
 
 # severity
 # {{{
@@ -22,6 +24,9 @@ proc severity {} {
   upvar celltxt celltxt
 
   set seve [lvars $row severity]
+  if {$seve eq "NA"} {
+    set seve ""
+  }
   if {$seve eq "S1"} {
     set celltxt "<td gname=$row colname=severity contenteditable=\"true\" bgcolor=pink>$seve</td>"
   } else {
@@ -29,29 +34,7 @@ proc severity {} {
   }
 }
 # }}}
-ghtm_panel_begin
-  ghtm_set_value filter_status All
-  ghtm_set_value filter_status open
-ghtm_panel_end
 
-#-------------------------
-# Filter
-#-------------------------
-set filter_status [lvars . filter_status]
-
-set dirs [glob -nocomplain -type d *]
-set rows ""
-if {$filter_status eq "All"} {
-  set rows $dirs
-} else {
-  foreach dir $dirs {
-    set status [lvars $dir status]
-    if {$status eq "open"} {
-      lappend rows $dir
-    }
-  }
-}
-set ::ltblrows $rows
 
 set     cols ""
 lappend cols "proc:ltbl_iname g:iname;Name"
