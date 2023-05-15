@@ -1475,7 +1475,7 @@ function copy_path() {
 // }}}
 
 var flows = {
-    "flow": ['anotes', 'checklist', 'dict', 'docs', 'exebutt', 'filebrowser', 'flist', 'fln'],
+    "flow": ['anotes', 'checklist', 'dict', 'docs', 'exebutt', 'filebrowser', 'flist', 'fln', 'issues'],
     "sch": ['field', 'hide'],
     "tpl": ['pst','nocode','book','nation','cmic']
 };
