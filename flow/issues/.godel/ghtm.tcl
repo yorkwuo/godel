@@ -1,6 +1,6 @@
 ghtm_top_bar -save -new
-gnotes " # $vars(g:pagename)"
-
+pathbar 1
+puts $fout <br>
 batch_onoff coldone     -name done
 batch_onoff coldelete   -name D
 batch_onoff collink     -name link
