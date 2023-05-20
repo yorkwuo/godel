@@ -380,6 +380,12 @@ img {
   border        : 1px solid black;
   border-color  : #f79646 #ccc;  
 }
+.table4 td, .table1 th{
+  padding       : 5px;
+  text-align    : left;
+  border-bottom : 1px solid #ddd;
+  border        : 0px;
+}
 
 .L1 {
   padding-left: 0px;
