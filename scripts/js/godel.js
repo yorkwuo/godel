@@ -1382,9 +1382,9 @@ function open_terminal() {
 // }}}
 // open_folder
 // {{{
-function open_folder() {
+function open_folder(target) {
   var data = "";
-  data = data + 'openfolder\n'
+  data = data + 'openfolder ' + target +'\n'
 
   dload(data,'gtcl.tcl');
 

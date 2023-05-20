@@ -1670,14 +1670,29 @@ proc openfile {fpath} {
   }
 }
 # }}}
+# ltbl_openfolder
+# {{{
+proc ltbl_openfolder {} {
+  upvar env env
+  upvar row row
+  upvar celltxt celltxt
+
+  set celltxt "<td><button onclick=\"open_folder('$row')\" >F</button></td>"
+  #if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
+  #  catch {exec /mnt/c/Windows/explorer.exe . &}
+  #} else {
+  #  catch {exec thunar . &}
+  #}
+}
+# }}}
 # openfolder
 # {{{
-proc openfolder {} {
+proc openfolder {target} {
   upvar env env
   if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
-    catch {exec /mnt/c/Windows/explorer.exe . &}
+    catch "exec /mnt/c/Windows/explorer.exe $target &"
   } else {
-    catch {exec thunar . &}
+    catch "exec thunar $target &"
   }
 }
 # }}}
