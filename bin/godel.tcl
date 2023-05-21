@@ -3835,6 +3835,19 @@ proc list_svg {args} {
   close $kin
 }
 # }}}
+# insert_svg
+# {{{
+proc insert_svg {} {
+  upvar fout fout
+
+  set fname 1.svg
+
+  set kin [open $fname r]
+    set content [read $kin]
+    puts $fout $content
+  close $kin
+}
+# }}}
 # ghtm_filter_ls
 # {{{
 proc ghtm_filter_ls {} {
@@ -4784,6 +4797,15 @@ proc ghtm_top_bar {args} {
     set opt(-anew) 1
   }
 # }}}
+  # -hide
+# {{{
+  set opt(-hide) 0
+  set idx [lsearch $args {-hide}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-hide) 1
+  }
+# }}}
 
   if [file exist .godel/dyvars.tcl] {
     source .godel/dyvars.tcl
@@ -4835,6 +4857,33 @@ proc ghtm_top_bar {args} {
   puts $fout "<button onclick=\"copy_path()\"     class=\"w3-bar-item w3-button w3-darkblue w3-right\">Path</button>"
   puts $fout "<button onclick=\"open_terminal()\" class=\"w3-bar-item w3-button w3-darkblue w3-right\">Open</button>"
   puts $fout "<button onclick=\"open_folder()\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
+  if {$opt(-hide) eq "1"} {
+    if ![file exist "1.svg"] {
+      set kout [open "1.svg" w]
+        puts $kout "<svg>"
+        puts $kout "</svg>"
+      close $kout
+    }
+    puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
+    set css_hide [lvars . css_hide]
+    if {$css_hide eq "1"} {
+      puts $fout {<a class="w3-bar-item w3-button w3-round w3-lime w3-right" onclick="onoff('css_hide', '0')">Hide</a>}
+      puts $fout "<style>"
+      puts $fout "rect:hover {"
+      puts $fout "  cursor: pointer;"
+      puts $fout "}"
+      puts $fout "</style>"
+    } else {
+      puts $fout {<a class="w3-bar-item w3-button w3-round w3-light-gray w3-right" onclick="onoff('css_hide', '1')">Hide</a>}
+      puts $fout "<style>"
+      puts $fout "rect {"
+      puts $fout "  fill: none !important;"
+      puts $fout "}"
+      puts $fout "</style>"
+    }
+  }
+  #puts $fout "<button onclick=\"onoff('css_hide', '0')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">H</button>"
+  #puts $fout {<a class="w3-button w3-round w3-light-gray" onclick="onoff('css_hide', '1')">Hide</a>}
   if {$opt(-new) eq "1"} {
     puts $fout "<button onclick=\"newgpage()\"      class=\"w3-bar-item w3-button w3-darkblue w3-right\">New</button>"
   }
@@ -4853,7 +4902,6 @@ proc ghtm_top_bar {args} {
   puts $fout "<button onclick=\"flow1_click()\"   class=\"w3-bar-item w3-button w3-darkblue\">Oget</button>"
     puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"toolarea()\" style=\"margin: 0px 0px\">Tools</button>"
     puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
-    #puts $fout {<a href=".godel/tools.gtcl"  type=text/gtcl class="w3-bar-item w3-button w3-right">Tools</a>}
     if {$opt(-js) eq "1"} {
       puts $fout {<a href=".local.js"  type=text/txt class="w3-bar-item w3-button w3-right">JS</a>}
     }
