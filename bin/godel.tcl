@@ -2592,18 +2592,18 @@ proc var_table {} {
         set value [lvars . $name]
         if {$value eq "NA"} {
             puts $fout "<td>$name</td>"
-            puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" ></td>"
+            puts $fout "<td width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\" ></td>"
         } else {
           if {[llength $value] > 1} {
               puts $fout "<td>$name</td>"
-              puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
+              puts $fout "<td width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
           } else {
             if [file exist $value] {
               puts $fout "<td><a href=$value type=text/txt>$name</a></td>"
-              puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
+              puts $fout "<td width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
             } else {
               puts $fout "<td>$name</td>"
-              puts $fout "<td bgcolor=lightgrey gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
+              puts $fout "<td bgcolor=lightgrey width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
             }
           }
         }
@@ -2613,9 +2613,9 @@ proc var_table {} {
         set value [lvars . $name]
         if {$value eq "NA"} {
           set value ""
-          puts $fout "<td width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
+          puts $fout "<td id=\"vt_$name\" width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\" style=\"white-space:pre\"></td>"
         } else {
-          puts $fout "<td gname=\".\" colname=\"$name\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
+          puts $fout "<td id=\"vt_$name\" width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\" style=\"white-space:pre\">$value</td>"
         }
       }
     puts $fout "</tr>"
