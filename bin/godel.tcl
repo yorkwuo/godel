@@ -1876,6 +1876,28 @@ proc ltbl_edfile {vname} {
   }
 }
 # }}}
+# ltbl_cfd
+# {{{
+proc ltbl_cfd {} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set value [lvars $row cfd]
+
+  if {$value eq "1"} {
+    set bgcolor red
+  } elseif {$value eq "2"} {
+    set bgcolor yellow
+  } elseif {$value eq "3"} {
+    set bgcolor lightgreen
+  } else {
+    set bgcolor ""
+  }
+
+  set celltxt "<td bgcolor=\"$bgcolor\" gname=\"$row\" colname=\"cfd\" contenteditable=\"true\"></td>"
+
+}
+# }}}
 # at_filter
 # {{{
 proc at_filter {key filter_value} {

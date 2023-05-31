@@ -1,4 +1,5 @@
 ghtm_top_bar -save -new -anew
+pathbar 3
 gnotes "
 # $vars(g:pagename)
 "
@@ -13,7 +14,7 @@ mod_links
 gnotes {## Notes}
 
 set cols ""
-lappend cols "ed:g:pagename;Title"
+lappend cols "ed:g:pagename;g:pagename"
 lappend cols "ed:notes;Notes"
 lappend cols "ed:g:keywords;Keywords"
 
