@@ -248,6 +248,7 @@ proc gui_newpage {name} {
 
   set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M:%S}]
   lsetvar $name cdate $timestamp
+  lsetvar $name ctime [clock microseconds]
 
   godel_draw
 
@@ -6002,10 +6003,20 @@ proc local_table {tableid args} {
           } elseif {[regexp {^\s*$} $line]} {
           } else {
             regsub {^\s*} $line {} line
-            lappend rows $line
+            lappend flistrows $line
           }
         }
         close $kin
+
+        set dlist [lsort -decreasing [glob -nocomplain $pattern/.godel]]
+        foreach d $dlist {
+          lappend drows [file dirname $d]
+        }
+
+        set notinflist [setop_restrict $drows $flistrows]
+        set rows [concat $notinflist $flistrows]
+
+
       } else {
         #puts "Errors: Not exist... $listfile"
         if {$opt(-revert)} {

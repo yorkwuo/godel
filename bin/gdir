@@ -10,6 +10,7 @@ foreach dir $argv {
   } else {
     file mkdir $dir
     godel_draw $dir
+    lsetvar $dir ctime [clock microseconds]
   }
 }
 # vim:ft=tcl
