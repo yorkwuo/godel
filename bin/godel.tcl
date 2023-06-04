@@ -6008,6 +6008,7 @@ proc local_table {tableid args} {
         }
         close $kin
 
+        set drows ""
         set dlist [lsort -decreasing [glob -nocomplain $pattern/.godel]]
         foreach d $dlist {
           lappend drows [file dirname $d]
