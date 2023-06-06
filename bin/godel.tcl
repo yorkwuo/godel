@@ -5865,6 +5865,18 @@ proc local_table {tableid args} {
     set listfile NA
   }
 # }}}
+  # -F (filelist name)
+# {{{
+  set opt(-F) 0
+  set idx [lsearch $args {-F}]
+  if {$idx != "-1"} {
+    set listfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-F) 1
+  } else {
+    set listfile NA
+  }
+# }}}
   # -c (columns)
 # {{{
   set opt(-c) 0
@@ -5994,7 +6006,23 @@ proc local_table {tableid args} {
   # {{{
   set rows ""
   if ![info exist ::ltblrows] {
-    if {$opt(-f)} {
+    if {$opt(-F)} {
+      if [file exist $listfile] {
+        #set rows [read_as_list $listfile]
+        set kin [open $listfile r]
+
+        while {[gets $kin line] >= 0} {
+          if {[regexp {^\s*#} $line]} {
+          } elseif {[regexp {^\s*$} $line]} {
+          } else {
+            regsub {^\s*} $line {} line
+            lappend flistrows $line
+          }
+        }
+        close $kin
+        set rows $flistrows
+      }
+    } elseif {$opt(-f)} {
       if [file exist $listfile] {
         #set rows [read_as_list $listfile]
         set kin [open $listfile r]
