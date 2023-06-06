@@ -29,6 +29,9 @@ proc hiername {} {
   } elseif {$level eq "6"} {
     set indent "<span style=margin-left:150px></span>"
     set celltxt "<td style=\"white-space:pre\">$indent$name</td>"
+  } elseif {$level eq "7"} {
+    set indent "<span style=margin-left:180px></span>"
+    set celltxt "<td style=\"white-space:pre\">$indent$name</td>"
   } else {
     set indent ""
     set celltxt "<td bgcolor=pink style=\"white-space:pre\">$name</td>"

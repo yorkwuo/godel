@@ -95,6 +95,7 @@ proc mod_flist {} {
 # {{{
 proc mod_links {} {
   upvar fout fout
+  upvar env env
 
   puts $fout {<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="new_link()">New Link</button>}
 

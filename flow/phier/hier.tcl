@@ -1,6 +1,26 @@
 #!/usr/bin/tclsh
 source $env(GODEL_ROOT)/bin/godel.tcl
 
+# find_child
+# {{{
+proc find_child {parent people indent level} {
+  upvar arr arr
+  foreach p $people {
+    if {$arr($p,rptto) eq $parent} {
+      puts ${indent}$arr($p,dir)
+      #puts ${indent}$p
+      lsetvar $arr($p,dir) level $level
+      set people [lremove $people $p]
+      find_child $p $people "$indent  " [expr $level + 1]
+    }
+  }
+}
+# }}}
+# find_root
+#proc find_root {name allnodes} {
+#  foreach 
+#}
+
 set dirs [glob -type d *]
 
 set roots ""
@@ -14,7 +34,12 @@ foreach dir $dirs {
     lappend roots $id
     set arr($id,rptto) NA
   } else {
-    set arr($id,rptto) $rptto
+    if {[lsearch $dirs $rptto] < 0} {
+      lappend roots $id
+      set arr($id,rptto) NA
+    } else {
+      set arr($id,rptto) $rptto
+    }
   }
 
   set arr($id,dir) $dir
@@ -22,18 +47,6 @@ foreach dir $dirs {
 }
 
 
-proc find_child {parent people indent level} {
-  upvar arr arr
-  foreach p $people {
-    if {$arr($p,rptto) eq $parent} {
-      puts ${indent}$arr($p,dir)
-      #puts ${indent}$p
-      lsetvar $arr($p,dir) level $level
-      set people [lremove $people $p]
-      find_child $p $people "$indent  " [expr $level + 1]
-    }
-  }
-}
 
 
 foreach root $roots {
@@ -43,3 +56,4 @@ foreach root $roots {
 }
 
 
+# vim:fdm=marker
