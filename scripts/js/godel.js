@@ -1610,6 +1610,41 @@ function flow1_click () {
   }
 }
 // }}}
+// mailout
+// {{{
+function mailout () {
+  var data = '';
+  data += 'Email: (Example: york.wu@intel.com) <input class=w3-input type="text" id=email_address>\n';
+  data += 'Filename: (Default: index.html) <input class=w3-input type="text" id=filename value=index.html>\n';
+  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="send_email()">Send</button>';
+  //data += '<pre>' + ginfo["srcpath"] + '</pre>\n';
+  data += '<br>';
+  data += '<br>';
+  data += '<br>';
+  data += '<br>';
+  data += '<br>';
+  data += '<br>';
+  data += '<br>';
+  data += '<br>';
+  data += '<br>';
+  data += '<br>';
+  document.getElementById("flow1_section").innerHTML = data;
+
+}
+// }}}
+function send_email() {
+  var email    = document.getElementById("email_address").value;
+  var filename = document.getElementById("filename").value;
+  var filepath = ginfo["srcpath"];
+
+  var data = "";
+  data += 'emailout ' + email + ' ' + filename + ' ' + filepath + '\n'
+
+  dload(data,'gtcl.tcl');
+
+  document.getElementById('idexec').click();
+  console.log(filename);
+}
 function gui_newpage() {
 
   var name = document.getElementById("newpage_name").value;

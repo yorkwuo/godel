@@ -1,3 +1,7 @@
+proc emailout {addr fname fpath} {
+  exec cp .index.htm $fname
+  exec mailx -a $fname -s "\[CTH2 IDE\] $fpath" $addr < /dev/null
+}
 # histo_hori
 # {{{
 proc histo_hori {key {color lightblue} {width ""}} {
@@ -2247,9 +2251,9 @@ if {$opt(-noshow) eq "1"} {
   if [file exist "src.tcl"] {
     puts $fout "<a href=\"src.tcl\" type=text/txt>src.tcl</a>"
   }
-  if [file exist $listfile] {
-    puts $fout "<a href=\"$listfile\" type=text/txt>$listfile</a>"
-  }
+  #if [file exist $listfile] {
+  #  puts $fout "<a href=\"$listfile\" type=text/txt>$listfile</a>"
+  #}
 }
 
 # Header
@@ -4881,6 +4885,10 @@ proc ghtm_top_bar {args} {
   puts $fout "<button onclick=\"copy_path()\"     class=\"w3-bar-item w3-button w3-darkblue w3-right\">Path</button>"
   puts $fout "<button onclick=\"open_terminal()\" class=\"w3-bar-item w3-button w3-darkblue w3-right\">Open</button>"
   puts $fout "<button onclick=\"open_folder()\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
+  if [info exist env(GODEL_noMAIL)] {
+  } else {
+    puts $fout "<button onclick=\"mailout()\"       class=\"w3-bar-item w3-button w3-darkblue w3-right\">Mail</button>"
+  }
   if {$opt(-hide) eq "1"} {
     if ![file exist "1.svg"] {
       set kout [open "1.svg" w]
