@@ -1384,7 +1384,8 @@ function open_terminal() {
 // {{{
 function open_folder(target) {
   var data = "";
-  data = data + 'openfolder ' + target +'\n'
+  //data = data + 'openfolder ' + target +'\n'
+  data = data + 'openfolder' +'\n'
 
   dload(data,'gtcl.tcl');
 

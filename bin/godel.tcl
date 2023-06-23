@@ -107,6 +107,7 @@ proc mod_links {} {
   lappend atcols "proc:bton_delete ; D"
   lappend atcols "ed:type           ; type"
   lappend atcols "proc:alinkname ; name"
+  lappend atcols "ed:notes           ; notes"
   lappend atcols "proc:alinkurl    ; url"
 
   atable links.tcl -noid -sortby id -tableid tbl2
@@ -1693,12 +1694,13 @@ proc ltbl_openfolder {} {
 # }}}
 # openfolder
 # {{{
-proc openfolder {target} {
+proc openfolder {} {
   upvar env env
   if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
-    catch "exec /mnt/c/Windows/explorer.exe $target &"
+    catch "exec /mnt/c/Windows/explorer.exe . &"
   } else {
-    catch "exec thunar $target &"
+    #catch "exec thunar $target &"
+    catch "exec thunar . &"
   }
 }
 # }}}
