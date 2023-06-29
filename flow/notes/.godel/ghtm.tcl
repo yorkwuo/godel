@@ -3,11 +3,12 @@ set sortby [lvars . sortby]
 set search [lvars . search]
 
 pathbar [lvars . pathvar_depth]
-
-toolarea_begin
+puts $fout "<br>"
   if [file exist "class.tcl"] {
     source class.tcl
   }
+
+toolarea_begin
 
   batch_onoff col_class    -name class
   batch_onoff coldel       -name D
