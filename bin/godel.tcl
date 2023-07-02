@@ -1622,13 +1622,17 @@ proc openfile {fpath} {
       regsub -all {\/}         $fpath {\\\\}   fpath
       catch {exec /mnt/c/Program\ Files\ \(x86\)/Foxit\ Software/Foxit\ PDF\ Reader/FoxitPDFReader.exe $fpath &}
     } else {
-      catch {exec okular $fpath &}
+      if [file exist /usr/bin/okular] {
+        catch {exec okular $fpath &}
+      } else {
+        catch {exec $env(PDF_READER) $fpath &}
+      }
     }
   } elseif [regexp {http} $fpath] {
     catch {exec /mnt/c/Program\ Files\ \(x86\)/Google/Chrome/Application/chrome.exe $fpath &}
   } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb|\.mkv|.webm|\.wmv|\.flv} $fpath] {
       catch {exec mpv $fpath &}
-  } elseif [regexp {\.rpt} $fpath] {
+  } elseif [regexp {\.rpt|\.xml|\.cfg|\.pm|\.gz|\.lef|\.rpt|\.log} $fpath] {
       catch {exec gvim $fpath &}
   } elseif [regexp {\.epub} $fpath] {
       catch {exec ebook-viewer $fpath &}
@@ -1639,18 +1643,29 @@ proc openfile {fpath} {
   } elseif [regexp {\.html} $fpath] {
       catch {exec /home/york/tools/firefox/firefox $fpath &}
   } elseif [regexp {\.pptx} $fpath] {
-    puts $fpath
-    regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
-    regsub -all {\/}         $fpath {\\\\}   fpath
-    catch {exec /mnt/c/Program\ Files/Microsoft\ Office/root/Office16/POWERPNT.EXE  $fpath &}
+    if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
+      regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
+      regsub -all {\/}         $fpath {\\\\}   fpath
+      catch {exec /mnt/c/Program\ Files/Microsoft\ Office/root/Office16/POWERPNT.EXE  $fpath &}
+    } else {
+      catch {exec soffice $fpath &}
+    }
   } elseif [regexp {\.xlsx} $fpath] {
-    regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
-    regsub -all {\/}         $fpath {\\\\}   fpath
-    catch {exec /mnt/c/Program\ Files/Microsoft\ Office/root/Office16/EXCEL.EXE  $fpath &}
+    if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
+      regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
+      regsub -all {\/}         $fpath {\\\\}   fpath
+      catch {exec /mnt/c/Program\ Files/Microsoft\ Office/root/Office16/EXCEL.EXE  $fpath &}
+    } else {
+      catch {exec gnumeric $fpath &}
+    }
   } elseif [regexp {\.docx} $fpath] {
-    regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
-    regsub -all {\/}         $fpath {\\\\}   fpath
-    catch {exec /mnt/c/Program\ Files/Microsoft\ Office/root/Office16/WINWORD.EXE  $fpath &}
+    if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
+      regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
+      regsub -all {\/}         $fpath {\\\\}   fpath
+      catch {exec /mnt/c/Program\ Files/Microsoft\ Office/root/Office16/WINWORD.EXE  $fpath &}
+    } else {
+      catch {exec soffice $fpath &}
+    }
   } elseif [regexp {\.msg} $fpath] {
     regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
     regsub -all {\/}         $fpath {\\\\}   fpath
@@ -1670,7 +1685,8 @@ proc openfile {fpath} {
     if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
       catch {exec /mnt/c/Windows/explorer.exe . &}
     } else {
-      catch {exec thunar . &}
+      #catch {exec thunar . &}
+      catch {exec gvim $fpath &}
     }
     cd $orig
     puts "Error: Unkonwn filetype... $fpath"
