@@ -1756,6 +1756,18 @@ proc at_open {{atfile at.tcl}} {
   set celltxt "<td style=\"cursor:pointer;\" bgcolor=lightblue onclick=\"at_open('$atfile','$txt')\">O</td>"
 }
 # }}}
+# at_remote_open
+# {{{
+proc at_remote_open {{atfile at.tcl}} {
+  upvar celltxt celltxt
+  upvar row row
+  upvar atvar atvar
+
+  regsub -all {'} $row {\'} txt
+
+  set celltxt "<td style=\"cursor:pointer;\" bgcolor=lightblue onclick=\"at_remote_open('$atfile','$txt')\">O</td>"
+}
+# }}}
 # at_mpv
 # {{{
 proc at_mpv {} {

@@ -1111,6 +1111,43 @@ function at_fdel (atfname,id) {
     document.getElementById('iddraw').click();
 }
 // }}}
+// at_remote_open
+// {{{
+function at_remote_open (atfname,id) {
+
+    var header = "#!/usr/bin/tclsh\n";
+    header = header + "source $env(GODEL_ROOT)/bin/godel.tcl\n";
+    header = header + "source " + atfname + "\n";
+
+    id = id.replace(/&/g,'\\\&');
+    id = id.replace(/'/g,'\\\'');
+    id = id.replace(/\s/g,'\\ ');
+    id = id.replace(/\(/g,'\\\(');
+    id = id.replace(/\)/g,'\\\)');
+    id = id.replace(/\[/g,'\\\[');
+    id = id.replace(/\]/g,'\\\]');
+
+    //console.log(id);
+
+    //var footer = "godel_array_save atvar " + atfname + "\n";
+    var footer = "";
+    footer = footer + "if [info exist atvar(" + id + ",Vs)] {\n";
+    footer = footer + "  incr atvar(" + id + ",Vs)\n";
+    footer = footer + "} else {\n";
+    footer = footer + "  set atvar(" + id + ",Vs) 1\n";
+    footer = footer + "}\n";
+    footer = footer + "set atvar(" + id + ",last) [clock format [clock seconds] -format {%Y-%m-%d}]\n";
+    footer = footer + "set dirroot [lvars . dirroot]\n"
+    footer = footer + "openfile \$dirroot/$atvar(" + id + ",path)\n";
+    footer = footer + "godel_array_save atvar " + atfname + "\n";
+
+// Save gtcl.tcl
+    var data = header + footer;
+    dload(data,'gtcl.tcl');
+
+    document.getElementById('idexec').click();
+}
+// }}}
 // at_open
 // {{{
 function at_open (atfname,id) {
@@ -1142,24 +1179,24 @@ function at_open (atfname,id) {
     footer = footer + "godel_array_save atvar " + atfname + "\n";
 
 // Save gtcl.tcl
-    //var data = header + cmds + footer;
     var data = header + footer;
-    const textToBLOB = new Blob([data], { type: 'text/plain' });
-    const sFileName = 'gtcl.tcl';	   // The file to save the data.
+    //const textToBLOB = new Blob([data], { type: 'text/plain' });
+    //const sFileName = 'gtcl.tcl';	   // The file to save the data.
 
-    var newLink = document.createElement("a");
-    newLink.download = sFileName;
+    //var newLink = document.createElement("a");
+    //newLink.download = sFileName;
 
-    if (window.webkitURL != null) {
-        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
-    }
-    else {
-        newLink.href = window.URL.createObjectURL(textToBLOB);
-        newLink.style.display = "none";
-        document.body.appendChild(newLink);
-    }
+    //if (window.webkitURL != null) {
+    //    newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+    //}
+    //else {
+    //    newLink.href = window.URL.createObjectURL(textToBLOB);
+    //    newLink.style.display = "none";
+    //    document.body.appendChild(newLink);
+    //}
+    dload(data,'gtcl.tcl');
 
-    newLink.click(); 
+    //newLink.click(); 
 
 
     document.getElementById('idexec').click();
@@ -1188,7 +1225,6 @@ function chrome_open (link) {
     footer = footer + "openfile " + link + "\n";
 
 // Save gtcl.tcl
-    //var data = header + cmds + footer;
     var data = header + footer;
     const textToBLOB = new Blob([data], { type: 'text/plain' });
     const sFileName = 'gtcl.tcl';	   // The file to save the data.

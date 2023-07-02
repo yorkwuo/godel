@@ -4,6 +4,9 @@ source $env(GODEL_ROOT)/bin/godel.tcl
 set dirroot  [lvars . dirroot]
 set pattern  [lvars . pattern]
 set maxdepth [lvars . maxdepth]
+if {$pattern eq "NA"} {
+  lsetvar . pattern ""
+}
 
 
 if [info exist atvar] {
@@ -19,6 +22,9 @@ cd $dirroot
   catch "exec tcsh -fc \"ls -1 -d */\"" dirlist
 cd $cwd
 
+#puts $filelist
+#return
+
 set count 1
 regsub -all {\/} $dirlist {} dirlist
 regsub -all {\n} $dirlist { } dirlist
@@ -28,7 +34,7 @@ if [regexp {ls:} $dirlist] {
   lsetvar . dirlist $dirlist
 }
 
-foreach f $filelist {
+foreach f [split $filelist \n] {
     if [file isdirectory $dirroot/$f] {continue}
 
     regsub {^\.\/} $f {} f

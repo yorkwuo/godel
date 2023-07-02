@@ -65,6 +65,7 @@ set atcols ""
 lappend atcols "size;size"
 lappend atcols "mtime;mtime"
 lappend atcols "proc:fname ;fname"
+lappend atcols "proc:at_remote_open     ; O"
 
 atable at.tcl -dataTables
 
