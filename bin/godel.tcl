@@ -7919,7 +7919,7 @@ proc oget {args} {
       } else {
         #puts  "cp -r $where/$objname ."
         puts "  building... $objname"
-        exec  cp -r $where/$objname .
+        exec  cp -rL $where/$objname .
         lsetdyvar $objname srcpath  $where/$objname
         cd $objname
         if [file exist .godel/preset.tcl] {
@@ -7933,7 +7933,7 @@ proc oget {args} {
       } else {
         #puts  "cp -r $where/$objname $asname"
         puts "  building... $asname"
-        exec  cp -r $where/$objname $asname
+        exec  cp -rL $where/$objname $asname
         exec touch $asname/.godel/vars.tcl
         lsetdyvar $asname srcpath  $where/$objname
         lsetvar $asname g:iname    $asname
