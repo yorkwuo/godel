@@ -2624,6 +2624,7 @@ proc var_table {} {
     set fpath [lindex $cols 2]
   
     puts $fout "<tr>"
+
 # mf:multiple files
       if {$type eq "mf"} {
         puts $fout "<td>$name</td>"
@@ -2645,7 +2646,7 @@ proc var_table {} {
         }
         set symbol &#9701;
         puts $fout "<td><span style=float:right><a style=text-decoration:none href=\"$fpath\" type=text/txt>$symbol</a></span>$value</td>"
-# f:file
+# f
       } elseif {$type eq "f"} {
         set value [lvars . $name]
         if {$value eq "NA"} {
@@ -2664,6 +2665,16 @@ proc var_table {} {
               puts $fout "<td bgcolor=lightgrey width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
             }
           }
+        }
+# url
+      } elseif {$type eq "url"} {
+        set value [lvars . $name]
+        if {$value eq "NA"} {
+            puts $fout "<td>$name</td>"
+            puts $fout "<td width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\" ></td>"
+        } else {
+              puts $fout "<td><a href=$value>$name</a></td>"
+              puts $fout "<td width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
         }
 # value
       } else {
