@@ -1636,6 +1636,10 @@ proc openfile {fpath} {
       catch {exec gvim $fpath &}
   } elseif [regexp {\.epub} $fpath] {
       catch {exec ebook-viewer $fpath &}
+  } elseif [regexp {\.png} $fpath] {
+      catch {exec gthumb $fpath &}
+  } elseif [regexp {\.svg} $fpath] {
+      catch {exec inkscape $fpath &}
   } elseif [regexp {\.mobi} $fpath] {
       catch {exec ebook-viewer $fpath &}
   } elseif [regexp {\.djvu} $fpath] {
