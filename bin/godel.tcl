@@ -4889,135 +4889,138 @@ proc ghtm_top_bar {args} {
 
   set cwd [pwd]
  
-  puts $fout {
-  
-  <style>
-  .content {
-    padding: 19px;
-  }
-  
-  .sticky {
-    position: fixed;
-    top: 0;
-    width: 100%;
-  }
-  .sticky + .content {
-    padding-top: 60px;
-  }
-  </style>
-  }
-  
-  puts $fout {
-    <div id="navbar" class="w3-bar w3-indigo" style="margin:0px">
-    <a id="idedit" href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
-    <a id="idvalue" href=".godel/vars.tcl" type=text/txt  class="w3-bar-item w3-button">Value</a>
-    <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Up</a>
-    <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
-    <a style="display:none" id="idexec" href=".godel/exec.gtcl" type=text/gtcl class="w3-bar-item w3-button">Exec</a>
-  }
-  if {$opt(-filter)} {
-    puts $fout "<input style=\"margin: 5px 0px\" type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\">"
-  }
-
-
-  if {$opt(-notime) eq "1"} {
+  if {[info exist env(GODEL_TOPBAR)] && $env(GODEL_TOPBAR) eq "0"} {
   } else {
-    set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M}]
-    puts $fout "
-      <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
-    "
-  }
-  puts $fout "<button onclick=\"copy_path()\"     class=\"w3-bar-item w3-button w3-darkblue w3-right\">Path</button>"
-  puts $fout "<button onclick=\"open_terminal()\" class=\"w3-bar-item w3-button w3-darkblue w3-right\">Open</button>"
-  puts $fout "<button onclick=\"open_folder()\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
-  if [info exist env(GODEL_noMAIL)] {
-  } else {
-    puts $fout "<button onclick=\"mailout()\"       class=\"w3-bar-item w3-button w3-darkblue w3-right\">Mail</button>"
-  }
-  if {$opt(-hide) eq "1"} {
-    if ![file exist "1.svg"] {
-      set kout [open "1.svg" w]
-        puts $kout "<svg>"
-        puts $kout "</svg>"
-      close $kout
+    puts $fout {
+    
+    <style>
+    .content {
+      padding: 19px;
     }
-    puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
-    set css_hide [lvars . css_hide]
-    if {$css_hide eq "1"} {
-      puts $fout {<a class="w3-bar-item w3-button w3-round w3-lime w3-right" onclick="onoff('css_hide', '0')">Hide</a>}
+    
+    .sticky {
+      position: fixed;
+      top: 0;
+      width: 100%;
+    }
+    .sticky + .content {
+      padding-top: 60px;
+    }
+    </style>
+    }
+    
+    puts $fout {
+      <div id="navbar" class="w3-bar w3-indigo" style="margin:0px">
+      <a id="idedit" href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
+      <a id="idvalue" href=".godel/vars.tcl" type=text/txt  class="w3-bar-item w3-button">Value</a>
+      <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Up</a>
+      <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
+      <a style="display:none" id="idexec" href=".godel/exec.gtcl" type=text/gtcl class="w3-bar-item w3-button">Exec</a>
+    }
+    if {$opt(-filter)} {
+      puts $fout "<input style=\"margin: 5px 0px\" type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\">"
+    }
+
+
+    if {$opt(-notime) eq "1"} {
+    } else {
+      set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M}]
+      puts $fout "
+        <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
+      "
+    }
+    puts $fout "<button onclick=\"copy_path()\"     class=\"w3-bar-item w3-button w3-darkblue w3-right\">Path</button>"
+    puts $fout "<button onclick=\"open_terminal()\" class=\"w3-bar-item w3-button w3-darkblue w3-right\">Open</button>"
+    puts $fout "<button onclick=\"open_folder()\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
+    if [info exist env(GODEL_noMAIL)] {
+    } else {
+      puts $fout "<button onclick=\"mailout()\"       class=\"w3-bar-item w3-button w3-darkblue w3-right\">Mail</button>"
+    }
+    if {$opt(-hide) eq "1"} {
+      if ![file exist "1.svg"] {
+        set kout [open "1.svg" w]
+          puts $kout "<svg>"
+          puts $kout "</svg>"
+        close $kout
+      }
+      puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
+      set css_hide [lvars . css_hide]
+      if {$css_hide eq "1"} {
+        puts $fout {<a class="w3-bar-item w3-button w3-round w3-lime w3-right" onclick="onoff('css_hide', '0')">Hide</a>}
+        puts $fout "<style>"
+        puts $fout "rect:hover {"
+        puts $fout "  cursor: pointer;"
+        puts $fout "}"
+        puts $fout "</style>"
+      } else {
+        puts $fout {<a class="w3-bar-item w3-button w3-round w3-light-gray w3-right" onclick="onoff('css_hide', '1')">Hide</a>}
+        puts $fout "<style>"
+        puts $fout "rect {"
+        puts $fout "  fill: none !important;"
+        puts $fout "}"
+        puts $fout "</style>"
+      }
+    }
+    #puts $fout "<button onclick=\"onoff('css_hide', '0')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">H</button>"
+    #puts $fout {<a class="w3-button w3-round w3-light-gray" onclick="onoff('css_hide', '1')">Hide</a>}
+    if {$opt(-new) eq "1"} {
+      puts $fout "<button onclick=\"newgpage()\"      class=\"w3-bar-item w3-button w3-darkblue w3-right\">New</button>"
+    }
+    if {$opt(-anew) eq "1"} {
+      puts $fout "<button onclick=\"newarow()\"      class=\"w3-bar-item w3-button w3-darkblue w3-right\">aNew</button>"
+    }
+
+    if {$opt(-save)} {
+      #puts $fout "<button id=\"save\" class=\"w3-bar-item w3-button w3-blue-gray\" style=\"margin: 0px 0px\">Save</button>"
+      if [info exist env(GODEL_SAVEnDRAW)] {
+        puts $fout "<button id=\"idbutton\" onclick=\"g_save()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
+      } else {
+        puts $fout "<button id=\"idbutton\" onclick=\"g_save_nodraw()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
+      }
+    }
+    puts $fout "<button onclick=\"flow1_click()\"   class=\"w3-bar-item w3-button w3-darkblue\">Oget</button>"
+      puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"toolarea()\" style=\"margin: 0px 0px\">Tools</button>"
+      puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
+      if {$opt(-js) eq "1"} {
+        puts $fout {<a href=".local.js"  type=text/txt class="w3-bar-item w3-button w3-right">JS</a>}
+      }
+    puts $fout "</div>"
+
+    puts $fout {
+    <script>
+    window.onscroll = function() {myFunction()};
+    
+    var navbar = document.getElementById("navbar");
+    var sticky = navbar.offsetTop;
+    
+    function myFunction() {
+      if (window.pageYOffset >= sticky) {
+        navbar.classList.add("sticky")
+        nav2.classList.add("content")
+      } else {
+        navbar.classList.remove("sticky");
+        nav2.classList.remove("content");
+      }
+    }
+    </script>
+    
+    <div id=nav2 class=> </div>
+    
+    }
+
+
+    if {$opt(-p1)} {
       puts $fout "<style>"
-      puts $fout "rect:hover {"
-      puts $fout "  cursor: pointer;"
+      puts $fout "p {"
+      puts $fout "  margin: 30px 0px 5px 0px;"
+      puts $fout "  font-size     : 20px;"
       puts $fout "}"
       puts $fout "</style>"
-    } else {
-      puts $fout {<a class="w3-bar-item w3-button w3-round w3-light-gray w3-right" onclick="onoff('css_hide', '1')">Hide</a>}
-      puts $fout "<style>"
-      puts $fout "rect {"
-      puts $fout "  fill: none !important;"
-      puts $fout "}"
-      puts $fout "</style>"
     }
-  }
-  #puts $fout "<button onclick=\"onoff('css_hide', '0')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">H</button>"
-  #puts $fout {<a class="w3-button w3-round w3-light-gray" onclick="onoff('css_hide', '1')">Hide</a>}
-  if {$opt(-new) eq "1"} {
-    puts $fout "<button onclick=\"newgpage()\"      class=\"w3-bar-item w3-button w3-darkblue w3-right\">New</button>"
-  }
-  if {$opt(-anew) eq "1"} {
-    puts $fout "<button onclick=\"newarow()\"      class=\"w3-bar-item w3-button w3-darkblue w3-right\">aNew</button>"
-  }
 
-  if {$opt(-save)} {
-    #puts $fout "<button id=\"save\" class=\"w3-bar-item w3-button w3-blue-gray\" style=\"margin: 0px 0px\">Save</button>"
-    if [info exist env(GODEL_SAVEnDRAW)] {
-      puts $fout "<button id=\"idbutton\" onclick=\"g_save()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
-    } else {
-      puts $fout "<button id=\"idbutton\" onclick=\"g_save_nodraw()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
-    }
+    puts $fout "<div id=flow1_section></div>"
+    puts $fout "<div id=flow2_section></div>"
   }
-  puts $fout "<button onclick=\"flow1_click()\"   class=\"w3-bar-item w3-button w3-darkblue\">Oget</button>"
-    puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"toolarea()\" style=\"margin: 0px 0px\">Tools</button>"
-    puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
-    if {$opt(-js) eq "1"} {
-      puts $fout {<a href=".local.js"  type=text/txt class="w3-bar-item w3-button w3-right">JS</a>}
-    }
-  puts $fout "</div>"
-
-  puts $fout {
-  <script>
-  window.onscroll = function() {myFunction()};
-  
-  var navbar = document.getElementById("navbar");
-  var sticky = navbar.offsetTop;
-  
-  function myFunction() {
-    if (window.pageYOffset >= sticky) {
-      navbar.classList.add("sticky")
-      nav2.classList.add("content")
-    } else {
-      navbar.classList.remove("sticky");
-      nav2.classList.remove("content");
-    }
-  }
-  </script>
-  
-  <div id=nav2 class=> </div>
-  
-  }
-
-
-  if {$opt(-p1)} {
-    puts $fout "<style>"
-    puts $fout "p {"
-    puts $fout "  margin: 30px 0px 5px 0px;"
-    puts $fout "  font-size     : 20px;"
-    puts $fout "}"
-    puts $fout "</style>"
-  }
-
-  puts $fout "<div id=flow1_section></div>"
-  puts $fout "<div id=flow2_section></div>"
 
 }
 # }}}
