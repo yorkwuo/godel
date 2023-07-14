@@ -1632,7 +1632,7 @@ proc openfile {fpath} {
     catch {exec /mnt/c/Program\ Files\ \(x86\)/Google/Chrome/Application/chrome.exe $fpath &}
   } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb|\.mkv|.webm|\.wmv|\.flv} $fpath] {
       catch {exec mpv $fpath &}
-  } elseif [regexp {\.rpt|\.xml|\.cfg|\.pm|\.gz|\.lef|\.rpt|\.log} $fpath] {
+  } elseif [regexp {\.rpt|\.xml|\.cfg|\.pm|\.gz|\.lef|\.rpt|\.log|\.lib} $fpath] {
       catch {exec gvim $fpath &}
   } elseif [regexp {\.epub} $fpath] {
       catch {exec ebook-viewer $fpath &}
