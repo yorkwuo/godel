@@ -7655,15 +7655,7 @@ proc godel_draw {{target_path NA}} {
   } else {
     set kout [open .godel/ghtm.tcl w]
       puts $kout "ghtm_top_bar -save"
-      puts $kout "gnotes \""
-      puts $kout "# \$vars(g:pagename)"
-      puts $kout ""
-      puts $kout ""
-      puts $kout "\""
-      puts $kout "#lappend cols \"proc:ltbl_iname g:iname;Name\""
-      puts $kout "#lappend cols \"edtable:bday;bday\""
-      puts $kout "#lappend cols \"edtable:g:keywords;Keywords\""
-      puts $kout "#local_table tbl -c \$cols -serial -dataTables"
+      puts $kout "gnotes \" # \$vars(g:pagename)\""
       puts $kout "ghtm_ls *"
     close $kout
     source .godel/ghtm.tcl
