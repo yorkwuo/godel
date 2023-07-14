@@ -52,12 +52,12 @@ proc fname {} {
   set dirroot [lvars . dirroot]
   set path [get_atvar $row,path]
   set type [get_atvar $row,type]
-  set txt  "<a href=$dirroot/$path type=text/txt>$path</a>"
+  #set txt  "<a href=$dirroot/$path type=text/txt>$path</a>"
 
   if {$type eq "d"} {
     set celltxt "<td bgcolor=lightblue>$path</td>"
   } else {
-    set celltxt "<td>$txt</td>"
+    set celltxt "<td>$path</td>"
   }
 }
 

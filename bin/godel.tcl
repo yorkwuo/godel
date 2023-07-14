@@ -1632,7 +1632,7 @@ proc openfile {fpath} {
     catch {exec /mnt/c/Program\ Files\ \(x86\)/Google/Chrome/Application/chrome.exe $fpath &}
   } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb|\.mkv|.webm|\.wmv|\.flv} $fpath] {
       catch {exec mpv $fpath &}
-  } elseif [regexp {\.rpt|\.xml|\.cfg|\.pm|\.gz|\.lef|\.rpt|\.log} $fpath] {
+  } elseif [regexp {\.rpt|\.xml|\.cfg|\.pm|\.gz|\.lef|\.rpt|\.log|\.lib} $fpath] {
       catch {exec gvim $fpath &}
   } elseif [regexp {\.epub} $fpath] {
       catch {exec ebook-viewer $fpath &}
@@ -3885,6 +3885,15 @@ proc list_svg {args} {
     set title NA
   }
 # }}}
+  # -notitle
+# {{{
+  set opt(-notitle) 0
+  set idx [lsearch $args {-notitle}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-notitle) 1
+  }
+# }}}
 
   set fname [lindex $args 0]
 
@@ -3894,13 +3903,16 @@ proc list_svg {args} {
       puts $kout "</svg>"
     close $kout
   }
-  puts $fout "<div class=\"w3-panel w3-light-gray w3-leftbar \">"
-  if {$opt(-title)} {
-    puts $fout "<p>$title <a href=$fname type=text/svg>$fname</a></p>"
+  if {$opt(-notitle) eq "1"} {
   } else {
-    puts $fout "<p><a href=$fname type=text/svg>$fname</a></p>"
+    puts $fout "<div class=\"w3-panel w3-light-gray w3-leftbar \">"
+    if {$opt(-title)} {
+      puts $fout "<p>$title <a href=$fname type=text/svg>$fname</a></p>"
+    } else {
+      puts $fout "<p><a href=$fname type=text/svg>$fname</a></p>"
+    }
+    puts $fout "</div>"
   }
-  puts $fout "</div>"
 
   set kin [open $fname r]
   set content [read $kin]
