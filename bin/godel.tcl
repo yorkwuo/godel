@@ -6233,7 +6233,7 @@ proc local_table {tableid args} {
     puts $fout "<tr>"
 
     if {$opt(-serial)} {
-      puts $fout "<td colname=\"num\"><a href=\"$row/.index.htm\">$serial</a></td>"
+      puts $fout "<td colname=\"num\" gname=\"$row\"><a href=\"$row/.index.htm\">$serial</a></td>"
       #puts $fout "<td>$serial</td>"
     }
     #----------------------

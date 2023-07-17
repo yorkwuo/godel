@@ -151,6 +151,11 @@ if(typeof(tables) != 'undefined' && tables != null){
               this.innerText = 1;
             }
           })
+        } else if (colname === "num") {
+          cells[i].addEventListener('click', function(){
+            var gname   = this.getAttribute("gname");
+            window.location = gname + "/.index.htm"
+          })
         } else {
           cells[i].addEventListener('click', function(){
             this.style.backgroundColor = "lightyellow";
