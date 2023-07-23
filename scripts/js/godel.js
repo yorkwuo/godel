@@ -1359,7 +1359,7 @@ function g_save() {
 
   dload(data,'gtcl.tcl');
 
-  //document.getElementById('iddraw').click();
+  document.getElementById('iddraw').click();
 
 }
 // }}}
