@@ -1299,10 +1299,11 @@ function save_gtable(tableobj) {
 // save_atable
 // {{{
 function save_atable(tableobj) {
-  //console.log("atabe");
 
-  var atfname = tableobj.getAttribute('atfname');
-  //console.log(atfname);
+  var atfname        = tableobj.getAttribute('atfname');
+  var static_atfname = tableobj.getAttribute('static_atfname');
+  var static_cols    = tableobj.getAttribute('static_cols');
+
   var cells = tableobj.getElementsByTagName('td');
 
   var cmds = "";
@@ -1322,7 +1323,11 @@ function save_atable(tableobj) {
             var cmd =  "a" + gname + "|#|" +  colname + "|#|" + onoff + "|#|" + atfname + "|E|\n";
             cmds = cmds + cmd;
           } else {
-            var cmd =   "a" + gname + "|#|" +  colname + "|#|" +  value + "|#|" + atfname + "|E|\n";
+            if (new RegExp(colname).test(static_cols)) {
+              var cmd =   "a" + gname + "|#|" +  colname + "|#|" +  value + "|#|" + static_atfname + "|E|\n";
+            } else {
+              var cmd =   "a" + gname + "|#|" +  colname + "|#|" +  value + "|#|" + atfname + "|E|\n";
+            }
             cmds = cmds + cmd;
           }
           cells[i].style.backgroundColor = "";
@@ -1354,7 +1359,7 @@ function g_save() {
 
   dload(data,'gtcl.tcl');
 
-  document.getElementById('iddraw').click();
+  //document.getElementById('iddraw').click();
 
 }
 // }}}
@@ -1658,6 +1663,8 @@ function mailout () {
 
 }
 // }}}
+// send_email
+// {{{
 function send_email() {
   var email    = document.getElementById("email_address").value;
   var filename = document.getElementById("filename").value;
@@ -1671,6 +1678,9 @@ function send_email() {
   document.getElementById('idexec').click();
   console.log(filename);
 }
+// }}}
+// gui_newpage
+// {{{
 function gui_newpage() {
 
   var name = document.getElementById("newpage_name").value;
@@ -1684,6 +1694,7 @@ function gui_newpage() {
 
   document.getElementById('idexec').click();
 }
+// }}}
 
 
 

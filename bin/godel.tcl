@@ -1,7 +1,36 @@
+# get_array_value
+# {{{
+proc get_array_value {aname key args} {
+  upvar $aname arr
+  # -empty
+# {{{
+  set opt(-empty) 0
+  set idx [lsearch $args {-empty}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-empty) 1
+  }
+# }}}
+
+  if [info exist arr($key)] {
+    return $arr($key)
+  } else {
+    if {$opt(-empty) eq "1"} {
+      return ""
+    } else {
+      return "NA"
+    }
+  }
+
+}
+# }}}
+# emailout
+# {{{
 proc emailout {addr fname fpath} {
   exec cp .index.htm $fname
   exec mailx -a $fname -s "\[CTH2 IDE\] $fpath" $addr < /dev/null
 }
+# }}}
 # histo_hori
 # {{{
 proc histo_hori {key {color lightblue} {width ""}} {
@@ -2195,14 +2224,39 @@ proc atable {args} {
     set tableid tbl
   }
 # }}}
+  # -static_at
+# {{{
+  set opt(-static_at) 0
+  set idx [lsearch $args {-static_at}]
+  if {$idx != "-1"} {
+    set static_atinfo [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-static_at) 1
+  } else {
+    set static_atinfo NA
+  }
+# }}}
 
   upvar fout fout
   upvar atrows atrows
   upvar atcols atcols
 
 
-  set atfname [lindex $args 0]
+# static_at
+  if {$opt(-static_at) eq "1"} {
+    set cols [split $static_atinfo ";"]
+    set static_atfname [lindex $cols 0]
+    set static_cols    [lindex $cols 1]
+    source $static_atfname
+    array set satvar [array get atvar]
+    unset atvar
+  } else {
+    set static_atfname "NA"
+    set static_cols    "N/A"
+  }
 
+# at.tcl
+  set atfname [lindex $args 0]
   if ![file exist $atfname] {
     return
   }
@@ -2291,7 +2345,7 @@ if {$opt(-noshow) eq "1"} {
 }
 
 # Header
-  puts $fout "<table class=$css_class id=$tableid tbltype=atable atfname=$atfname>"
+  puts $fout "<table class=$css_class id=$tableid tbltype=atable atfname=$atfname static_atfname=\"$static_atfname\" static_cols=\"$static_cols\">"
   puts $fout "<thead>"
   puts $fout "<tr>"
   if {$opt(-num) eq "1"} {
@@ -2351,16 +2405,18 @@ if {$opt(-noshow) eq "1"} {
         eval $procname
       } elseif [regexp {^ed:} $col] {
         regsub {^ed:} $col {} col
-        if ![info exist atvar($row,$col)] {
-          set atvar($row,$col) ""
+        if [regexp $col $static_cols] {
+          set value [get_array_value satvar $row,$col -empty]
+        } else {
+          set value [get_array_value atvar $row,$col -empty]
         }
-        set value $atvar($row,$col)
         append celltxt "<td gname=\"$row\" colname=\"$col\" contenteditable=\"true\"><pre style=\"white-space:pre\">$value</pre></td>"
       } else {
-        if ![info exist atvar($row,$col)] {
-          set atvar($row,$col) ""
+        if [regexp $col $static_cols] {
+          set value [get_array_value satvar $row,$col -empty]
+        } else {
+          set value [get_array_value atvar $row,$col -empty]
         }
-        set value $atvar($row,$col)
         append celltxt "<td gname=\"$row\" colname=\"$col\" style=\"white-space:pre\">$value</td>"
       }
       puts $fout $celltxt
