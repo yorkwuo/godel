@@ -8373,7 +8373,10 @@ proc read_as_list {args} {
       while {[gets $fin line] >= 0} {
         regsub {^\s*} $line {} line
         regsub {\s$}  $line {} line
-        lappend lines $line
+        if [regexp {^\s*#} $line] {
+        } else {
+          lappend lines $line
+        }
       }
     } else {
       while {[gets $fin line] >= 0} {
