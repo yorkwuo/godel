@@ -13,6 +13,7 @@ toolarea_begin
   batch_onoff col_class    -name class
   batch_onoff coldel       -name D
   batch_onoff coltick      -name T
+  batch_onoff col_cdate    -name cdate
   batch_onoff col_iname    -name iname
   batch_onoff col_ghtm     -name ghtm
   batch_onoff col_title    -name title
@@ -34,6 +35,7 @@ if [file exist cols.tcl] {
   cols_onoff "col_class;ed:class;Class"
   cols_onoff "coldel;proc:bton_delete;D"
   cols_onoff "coltick;proc:bton_tick;T"
+  cols_onoff "col_cdate;cdate;cdate"
   cols_onoff "col_iname;proc:ltbl_iname g:iname;iname"
   cols_onoff "col_ghtm;proc:ltbl_lnfile .godel/ghtm.tcl ghtm;ghtm"
   cols_onoff "col_title;ed:g:pagename;g:pagename"

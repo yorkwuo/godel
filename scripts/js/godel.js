@@ -1506,7 +1506,7 @@ function copy_path() {
 
 var flows = {
     //"flow": ['fln','hide','notes','anotes', 'checklist', 'dict', 'docs', 'exebutt', 'filebrowser', 'flist', 'issues'],
-    "flow": ['fln','hide','notes','anotes', 'checklist','filebrowser', 'flist', 'issues'],
+    "flow": ['fln','hide','simple','notes','anotes', 'checklist','filebrowser', 'flist', 'issues'],
     //"sch": ['field', 'hide'],
     //"tpl": ['pst','nocode','book','nation','cmic']
 };
