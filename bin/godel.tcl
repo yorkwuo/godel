@@ -4463,6 +4463,16 @@ proc at_keyword_button {args} {
     set val(-key) nan
   }
 # }}}
+  # -exact
+# {{{
+  set idx [lsearch $args {-exact}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set exact 1
+  } else {
+    set exact 0
+  }
+# }}}
 
   set tablename [lindex $args 0]
   set column    [lindex $args 1]
@@ -4486,14 +4496,15 @@ proc at_keyword_button {args} {
     set count [llength $matches]
     set total " $count"
   }
+  
 
   if {$opt(-name)} {
-    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${name}$total</button>"
+    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\",\"$exact\")>${name}$total</button>"
   } else {
     if {$opt(-key)} {
-      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${keyword}$total</button>"
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\",\"$exact\")>${keyword}$total</button>"
     } else {
-      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\")>${keyword}</button>"
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword(\"$tablename\",\"$column\",\"$keyword\",\"$exact\")>${keyword}</button>"
     }
   }
 }

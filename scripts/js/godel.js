@@ -719,12 +719,11 @@ function filter_table_reset(tname) {
 // }}}
 // filter_table_keyword
 // {{{
-function filter_table_keyword(tname, colname, input) {
+function filter_table_keyword(tname, colname, input, exact) {
     var input, filter, table, tr, td, i;
 
     var filter = input;
     var patt  = new RegExp(filter, "i");
-    var patt2 = new RegExp(colname, "i");
 
     table = document.getElementById(tname);
     tr = table.getElementsByTagName("tr");
@@ -732,7 +731,7 @@ function filter_table_keyword(tname, colname, input) {
     th = tr[0].getElementsByTagName("th");
     for (i = 0; i < th.length; i++) {
       txt = th[i].innerHTML;
-      if (patt2.test(txt)) {
+      if (colname === txt) {
         column_no = i;   
       }
     }
@@ -741,11 +740,21 @@ function filter_table_keyword(tname, colname, input) {
       td = tr[i].getElementsByTagName("td")[column_no];
       if (td) {
         var found = 1
+        if (exact === "1") {
+          origtd = td.innerHTML;
+          tdvalue = origtd.replace(/(<([^>]+)>)/gi, "");
+          if (tdvalue === input) {
+            found = found && 1;
+          } else {
+            found = found && 0;
+          }
+        } else {
           if (patt.test(td.innerHTML)) {
             found = found && 1;
           } else {
             found = found && 0;
           }
+        }
         if (found) {
             tr[i].style.display = "";
         } else {

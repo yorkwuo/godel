@@ -32,7 +32,7 @@ catch "exec find -L -maxdepth $dp -name \".godel\"" dirs
 set cwd [pwd]
 foreach i $dirs {
   set dir [file dirname $i]
-
+  if {$dir eq "."} {continue}
   set srcpath [ldyvars $dir srcpath]
   if {$srcpath eq "NA"} {continue}
   if {$srcpath eq ""}   {continue}
