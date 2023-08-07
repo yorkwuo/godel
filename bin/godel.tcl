@@ -1,3 +1,18 @@
+# keyclick
+# {{{
+proc keyclick {rowkey} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set keylist [lvars $row $rowkey]
+  set txt ""
+  foreach key $keylist {
+    append txt "<a href=https://www.google.com/search?q=\"$key\" target=_blank>$key</a> "
+  }
+
+  set celltxt "<td>$txt</td>"
+}
+# }}}
 # get_array_value
 # {{{
 proc get_array_value {aname key args} {

@@ -4,6 +4,10 @@ gnotes "
 
 
 "
+
+ghtm_reset
+ghtm_keyword_button tbl Keywords ff
+
 set colgroup [lvars . colgroup]
 
 gnotes {ghtm_set_value}
