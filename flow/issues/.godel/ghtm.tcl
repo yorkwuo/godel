@@ -18,7 +18,7 @@ batch_onoff coltodate   -name todate
 
 linkbox done -gsize
 
-set dirs [glob -type d *]
+set dirs [glob -nocomplain -type d *]
 set classes ""
 foreach dir $dirs {
   lappend classes [lvars $dir class]
@@ -55,10 +55,9 @@ proc severity {} {
 
 
 set     cols ""
-lappend cols "proc:ltbl_iname g:iname;Name"
+#lappend cols "proc:ltbl_iname g:iname;Name"
 cols_onoff "coldone    ; proc:bton_move done done     ; move"
 cols_onoff "coldelete  ; proc:bton_delete      ; D"
-cols_onoff "colclass   ; ed:class ; Class"
 cols_onoff "collink    ; proc:ltbl_linkurl url ; Link"
 cols_onoff "colseverity ; proc:severity         ; Svrty"
 cols_onoff "colstatus   ; edtable:status        ; status"
@@ -67,10 +66,12 @@ cols_onoff "colfmwho    ; edtable:fmwho         ; fmwho"
 cols_onoff "coltowho    ; edtable:towho         ; towho"
 cols_onoff "colkeywords ; edtable:keywords      ; Keywords"
 cols_onoff "colid       ; edtable:id            ; id"
+cols_onoff "colclass   ; ed:class ; Class"
 cols_onoff "coltitle    ; proc:ltbl_cfd      ; H"
-cols_onoff "coltitle    ; edtable:title         ; Title"
+#cols_onoff "coltitle    ; edtable:title    ; title"
+cols_onoff "coltitle    ; edtable:g:pagename    ; g:pagename"
 cols_onoff "colnotes     ; ed:notes         ; Notes"
 cols_onoff "coltodate   ; edtable:todate        ; todate"
-local_table tbl -c $cols -serial -dataTables -sortby g:iname -sortopt "-decreasing" -exclude {done}
+local_table tbl -c $cols -serial -dataTables -sortby class -sortopt "-increasing" -exclude {done}
 
 # vim:fdm=marker
