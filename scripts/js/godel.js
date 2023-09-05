@@ -731,6 +731,7 @@ function filter_table_keyword(tname, colname, input, exact) {
     th = tr[0].getElementsByTagName("th");
     for (i = 0; i < th.length; i++) {
       txt = th[i].innerHTML;
+      txt = txt.trim();
       if (colname === txt) {
         column_no = i;   
       }

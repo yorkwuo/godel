@@ -1,3 +1,25 @@
+# ghtm_memo
+proc ghtm_memo {name ifile} {
+  upvar fout fout
+
+  if ![file exist $ifile] {
+    exec touch $ifile
+  }
+  set value [read_as_data $ifile]
+
+  puts $fout "
+  <div class=\"w3-bar-item\">
+    <div class=\"w3-card\" style=\"width:auto;\">
+      <header class=\"w3-container w3-blue\">
+        <pre><a href=$ifile type=text/txt>$name</a></pre>
+      </header>
+      <div class=\"w3-container\">
+        <pre>$value</pre>
+      </div>
+    </div>
+  </div>
+  "
+}
 # keyclick
 # {{{
 proc keyclick {rowkey} {
@@ -7,7 +29,7 @@ proc keyclick {rowkey} {
   set keylist [lvars $row $rowkey]
   set txt ""
   foreach key $keylist {
-    append txt "<a href=https://www.google.com/search?q=\"$key\" target=_blank>$key</a> "
+    append txt "<a href=https://www.google.com/search?q=$key target=_blank>$key</a> "
   }
 
   set celltxt "<td>$txt</td>"

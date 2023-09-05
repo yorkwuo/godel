@@ -14,6 +14,7 @@ mod_links
 gnotes {## Notes}
 
 set cols ""
+lappend cols "proc:bton_delete;D"
 lappend cols "ed:g:pagename;g:pagename"
 lappend cols "ed:notes;Notes"
 lappend cols "ed:g:keywords;Keywords"
