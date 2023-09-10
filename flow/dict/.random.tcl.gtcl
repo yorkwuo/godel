@@ -1,0 +1,3 @@
+set pagepath [file dirname [info script]]
+cd $pagepath
+exec xterm -geometry 150x30+5+800 -e "./random.tcl"
