@@ -5114,11 +5114,11 @@ proc ghtm_top_bar {args} {
     }
     
     puts $fout {
-      <div id="navbar" class="w3-bar w3-indigo" style="margin:0px">
+      <div id="navbar" class="w3-bar " style="margin:0px;background-color:#f7afc5;color:white;font-weight:bold">
       <a id="idedit" href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
       <a id="idvalue" href=".godel/vars.tcl" type=text/txt  class="w3-bar-item w3-button">Value</a>
       <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Up</a>
-      <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button">Draw</a>
+      <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button" style="color:white">Draw</a>
       <a style="display:none" id="idexec" href=".godel/exec.gtcl" type=text/gtcl class="w3-bar-item w3-button">Exec</a>
     }
     if {$opt(-filter)} {
@@ -5177,12 +5177,13 @@ proc ghtm_top_bar {args} {
     if {$opt(-save)} {
       #puts $fout "<button id=\"save\" class=\"w3-bar-item w3-button w3-blue-gray\" style=\"margin: 0px 0px\">Save</button>"
       if [info exist env(GODEL_SAVEnDRAW)] {
-        puts $fout "<button id=\"idbutton\" onclick=\"g_save()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
+        #puts $fout "<button id=\"idbutton\" onclick=\"g_save()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
+        puts $fout "<button id=\"idbutton\" onclick=\"g_save()\" class=\"w3-bar-item w3-button\">Save</button>"
       } else {
         puts $fout "<button id=\"idbutton\" onclick=\"g_save_nodraw()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
       }
     }
-    puts $fout "<button onclick=\"flow1_click()\"   class=\"w3-bar-item w3-button w3-darkblue\">Oget</button>"
+    puts $fout "<button onclick=\"flow1_click()\"   class=\"w3-bar-item w3-button w3-darkblue\">Get</button>"
       puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"toolarea()\" style=\"margin: 0px 0px\">Tools</button>"
       puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
       if {$opt(-js) eq "1"} {
