@@ -4546,6 +4546,94 @@ proc at_keyword_button {args} {
   }
 }
 # }}}
+# at_keyword_incr_button
+# {{{
+proc at_keyword_incr_button {args} {
+  upvar fout fout
+  upvar atvar atvar
+
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name NA
+  }
+# }}}
+  # -bgcolor
+# {{{
+  set opt(-bgcolor) 0
+  set idx [lsearch $args {-bgcolor}]
+  if {$idx != "-1"} {
+    set val(-bgcolor) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-bgcolor) 1
+  } else {
+    set val(-bgcolor) pale-blue
+  }
+# }}}
+  # -key
+# {{{
+  set opt(-key) 0
+  set idx [lsearch $args {-key}]
+  if {$idx != "-1"} {
+    set val(-key) [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-key) 1
+  } else {
+    set val(-key) nan
+  }
+# }}}
+  # -exact
+# {{{
+  set idx [lsearch $args {-exact}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set exact 1
+  } else {
+    set exact 0
+  }
+# }}}
+
+  set tablename [lindex $args 0]
+  set column    [lindex $args 1]
+  set keyword   [lindex $args 2]
+
+  set count 0
+  if {$opt(-key)} {
+    set rows [at_allrows]
+
+    foreach row $rows {
+      set value $atvar($row,$val(-key))
+      if [regexp -nocase $keyword $value] {
+        incr count
+      }
+    }
+    #set total "\($count\)"
+    set total " $count"
+  } else {
+    set dirs [glob -nocomplain -type d *]
+    set matches [lsearch -all -inline -regexp $dirs $keyword]
+    set count [llength $matches]
+    set total " $count"
+  }
+  
+
+  if {$opt(-name)} {
+    puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword_incr(\"$tablename\",\"$column\",\"$keyword\",\"$exact\")>${name}$total</button>"
+  } else {
+    if {$opt(-key)} {
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword_incr(\"$tablename\",\"$column\",\"$keyword\",\"$exact\")>${keyword}$total</button>"
+    } else {
+      puts $fout "<button class=\"w3-button w3-round w3-$val(-bgcolor)\" onclick=filter_table_keyword_incr(\"$tablename\",\"$column\",\"$keyword\",\"$exact\")>${keyword}</button>"
+    }
+  }
+}
+# }}}
 # ghtm_a_keybutt
 # {{{
 proc ghtm_a_keybutt {args} {

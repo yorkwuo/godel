@@ -741,6 +741,7 @@ function filter_table_keyword(tname, colname, input, exact) {
       td = tr[i].getElementsByTagName("td")[column_no];
       if (td) {
         var found = 1
+// exact
         if (exact === "1") {
           origtd = td.innerHTML;
           tdvalue = origtd.replace(/(<([^>]+)>)/gi, "");
@@ -749,6 +750,60 @@ function filter_table_keyword(tname, colname, input, exact) {
           } else {
             found = found && 0;
           }
+// no exact
+        } else {
+          if (patt.test(td.innerHTML)) {
+            found = found && 1;
+          } else {
+            found = found && 0;
+          }
+        }
+        if (found) {
+            tr[i].style.display = "";
+        } else {
+            tr[i].style.display = "none";
+        }
+      }       
+    }
+  //}
+}
+// }}}
+// filter_table_keyword_incr
+// {{{
+function filter_table_keyword_incr(tname, colname, input, exact) {
+    var input, filter, table, tr, td, i;
+
+    var filter = input;
+    var patt  = new RegExp(filter, "i");
+
+    table = document.getElementById(tname);
+    tr = table.getElementsByTagName("tr");
+
+    th = tr[0].getElementsByTagName("th");
+    for (i = 0; i < th.length; i++) {
+      txt = th[i].innerHTML;
+      txt = txt.trim();
+      if (colname === txt) {
+        column_no = i;   
+      }
+    }
+
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[column_no];
+      display = tr[i].style.display;
+      if (display === "none") {continue}
+      if (td) {
+        var found = 1
+// exact
+        if (exact === "1") {
+          origtd = td.innerHTML;
+          tdvalue = origtd.replace(/(<([^>]+)>)/gi, "");
+          if (tdvalue === input) {
+            found = found && 1;
+          } else {
+            found = found && 0;
+          }
+// no exact
         } else {
           if (patt.test(td.innerHTML)) {
             found = found && 1;
