@@ -11,7 +11,7 @@ proc ghtm_memo {name ifile} {
   <div class=\"w3-bar-item\">
     <div class=\"w3-card\" style=\"width:auto;\">
       <header class=\"w3-container w3-blue\">
-        <pre><a href=$ifile type=text/txt>$name</a></pre>
+        <pre><a style=\"font-weight:bold;text-decoration:none\" href=$ifile type=text/txt>$name</a></pre>
       </header>
       <div class=\"w3-container\">
         <pre>$value</pre>
