@@ -168,6 +168,7 @@ function topFunction() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
 }
+
 // TableColSelect
 // {{{
 function TableColSelect (thisobj, iarray) {
@@ -1758,6 +1759,47 @@ function gui_newpage() {
   dload(data,'gtcl.tcl');
 
   document.getElementById('idexec').click();
+}
+// }}}
+// table_display_onoff
+// {{{
+function table_display_onoff(butid, colname) {
+    var table, tr, td, i, dispvalue;
+
+    but = document.getElementById(butid);
+
+    onoff = but.getAttribute("onoff");
+    if (onoff === "1") {
+      but.style.backgroundColor = 'white';
+      but.style.color = 'black';
+      but.setAttribute("onoff","0");
+      dispvalue = 'none'
+    } else {
+      but.style.backgroundColor = '#FCAE1E';
+      but.style.color = 'white';
+      but.setAttribute("onoff","1");
+      dispvalue = ''
+    }
+
+    var tname = 'tbl';
+    table = document.getElementById(tname);
+    tr = table.getElementsByTagName("tr");
+
+// column_no
+    th = tr[0].getElementsByTagName("th");
+    for (i = 0; i < th.length; i++) {
+      txt = th[i].innerHTML;
+      txt = txt.trim();
+      if (colname === txt) {
+        column_no = i;   
+        th[i].style.display=dispvalue
+      }
+    }
+
+    for (i = 1; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[column_no];
+      td.style.display=dispvalue
+    }
 }
 // }}}
 

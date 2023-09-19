@@ -1,4 +1,16 @@
+# ghtm_table_display_onoff
+# {{{
+proc ghtm_table_display_onoff {colname} {
+  upvar fout fout
+  puts $fout "<button \
+  id=\"but_$colname\" \
+  onoff=1 \
+  style=\"background-color:#FCAE1E;color:white\" \
+  onclick=\"table_display_onoff('but_$colname','$colname')\">$colname</button>"
+}
+# }}}
 # ghtm_memo
+# {{{
 proc ghtm_memo {name ifile} {
   upvar fout fout
 
@@ -20,6 +32,7 @@ proc ghtm_memo {name ifile} {
   </div>
   "
 }
+# }}}
 # keyclick
 # {{{
 proc keyclick {rowkey} {
