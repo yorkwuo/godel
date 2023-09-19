@@ -3012,45 +3012,43 @@ proc ghtm_ls_table {args} {
   foreach ifile $ifiles {
     puts $fout "<tr>"
 
-    if [file exist $ifile] {
-      set mtime [file mtime $ifile]
-      #if {[file type $ifile] eq "link"} {
-      #  set fname [file tail [file readlink $ifile]]
-      #  set ori [pwd]
-      #  cd [file dirname [file readlink $ifile]]
-      #  set realpath [pwd]
-      #  cd $ori
-      #  set linktarget $realpath/$fname
-      #} else {
-        set linktarget $ifile
-      #}
-      #set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
+    regsub -all {\s} $ifile {} ifile
+    if [regexp ";" $ifile] {
+      set cols [split $ifile ";"]
+      set fullpath [lindex $cols 0]
+      set dispname [lindex $cols 1]
+    } else {
+      set fullpath $ifile
+      set dispname [file tail $fullpath]
+    }
+    if [file exist $fullpath] {
+      set mtime [file mtime $fullpath]
+      set linktarget $fullpath
       set timestamp [clock format $mtime -format {%m-%d_%H:%M}]
-      set fsize [file size $ifile]
+      set fsize [file size $fullpath]
       set fsize [num_symbol $fsize K]
-      set fname [file tail $ifile]
-      set dir   [file dirname $ifile]
+      set dir   [file dirname $fullpath]
       if {$opt(-nonum) eq "0"} {
         puts $fout "<td>$count</td>"
       }
       puts $fout "<td>$timestamp</td>"
       puts $fout "<td>$fsize</td>"
-      if [regexp {\.htm} $ifile] {
-        puts $fout "<td><a href=\"$linktarget\"              >$fname</a></td>"
-      } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $ifile] {
-        puts $fout "<td><a href=\"$linktarget\" type=text/mp4>$fname</a></td>"
-      } elseif [regexp {\.mp3} $ifile] {
-        puts $fout "<td><a href=\"$linktarget\" type=text/mp3>$fname</a></td>"
-      } elseif [regexp {\.pdf} $ifile] {
-        puts $fout "<td><a href=\"$linktarget\" type=text/pdf>$fname</a></td>"
-      } elseif [regexp {\.svg} $ifile] {
-        puts $fout "<td><a href=\"$linktarget\" type=text/svg>$fname</a></td>"
-      } elseif [regexp {\.epub} $ifile] {
-        puts $fout "<td><a href=\"$linktarget\"              >$fname</a></td>"
-      } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $ifile]}  {
-        puts $fout "<td><a href=\"$linktarget\" type=text/jpg>$fname</a></td>"
+      if [regexp {\.htm} $fullpath] {
+        puts $fout "<td><a href=\"$linktarget\"              >$dispname</a></td>"
+      } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $fullpath] {
+        puts $fout "<td><a href=\"$linktarget\" type=text/mp4>$dispname</a></td>"
+      } elseif [regexp {\.mp3} $fullpath] {
+        puts $fout "<td><a href=\"$linktarget\" type=text/mp3>$dispname</a></td>"
+      } elseif [regexp {\.pdf} $fullpath] {
+        puts $fout "<td><a href=\"$linktarget\" type=text/pdf>$dispname</a></td>"
+      } elseif [regexp {\.svg} $fullpath] {
+        puts $fout "<td><a href=\"$linktarget\" type=text/svg>$dispname</a></td>"
+      } elseif [regexp {\.epub} $fullpath] {
+        puts $fout "<td><a href=\"$linktarget\"              >$dispname</a></td>"
+      } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $fullpath]}  {
+        puts $fout "<td><a href=\"$linktarget\" type=text/jpg>$dispname</a></td>"
       } else {
-        puts $fout "<td><a href=\"$linktarget\" type=text/txt>$fname</a></td>"
+        puts $fout "<td><a href=\"$linktarget\" type=text/txt>$dispname</a></td>"
       }
       if {$opt(-dir) eq "1"} {
         puts $fout "<td>$dir</td>"
@@ -3061,7 +3059,7 @@ proc ghtm_ls_table {args} {
       }
       puts $fout "<td></td>"
       puts $fout "<td></td>"
-      puts $fout "<td bgcolor=lightgrey>[file tail $ifile]</td>"
+      puts $fout "<td bgcolor=lightgrey>[file tail $fullpath]</td>"
     }
 
     puts $fout "</tr>"
