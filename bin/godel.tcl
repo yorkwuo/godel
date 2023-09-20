@@ -1,12 +1,50 @@
+# expect0
+# {{{
+proc expect0 {key} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set value [lvars $row $key]
+  if {$value eq "0"} {
+    set celltxt "<td>$value</td>"
+  } elseif {$value eq "NA"} {
+    set celltxt "<td></td>"
+  } else {
+    set celltxt "<td bgcolor=pink>$value</td>"
+  }
+
+}
+# }}}
+# expect_more0
+# {{{
+proc expect_more0 {key} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set value [lvars $row $key]
+  if {$value eq "NA"} {
+    set celltxt "<td></td>"
+  } elseif {$value eq ""} {
+    set celltxt "<td></td>"
+  } elseif {$value >= 0} {
+    set value [format "%.f" $value]
+    set celltxt "<td>$value</td>"
+  } else {
+    set value [format "%.f" $value]
+    set celltxt "<td bgcolor=pink>$value</td>"
+  }
+
+}
+# }}}
 # ghtm_table_display_onoff
 # {{{
-proc ghtm_table_display_onoff {colname} {
+proc ghtm_table_display_onoff {tblid colname} {
   upvar fout fout
   puts $fout "<button \
   id=\"but_$colname\" \
   onoff=1 \
   style=\"background-color:#FCAE1E;color:white\" \
-  onclick=\"table_display_onoff('but_$colname','$colname')\">$colname</button>"
+  onclick=\"table_display_onoff('$tblid','but_$colname','$colname')\">$colname</button>"
 }
 # }}}
 # ghtm_memo
@@ -7926,6 +7964,14 @@ proc godel_draw {{target_path NA}} {
       close $kout
     }
     puts $fout "<script src=.local.js></script>"
+  }
+
+  if [info exist js_func2exec] {
+    puts $fout "<script>"
+    foreach js_func $js_func2exec {
+      puts $fout $js_func
+    }
+    puts $fout "</script>"
   }
 
   puts $fout "</body>"
