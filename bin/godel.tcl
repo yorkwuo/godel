@@ -1902,7 +1902,8 @@ proc at_remote_open {{atfile at.tcl}} {
 
   regsub -all {'} $row {\'} txt
 
-  set celltxt "<td style=\"cursor:pointer;\" bgcolor=lightblue onclick=\"at_remote_open('$atfile','$txt')\">O</td>"
+  #set celltxt "<td style=\"cursor:pointer;\" bgcolor=lightblue onclick=\"at_remote_open('$atfile','$txt')\">O</td>"
+  set celltxt "<td style=\"cursor:pointer;\" bgcolor=\"\" onclick=\"at_remote_open('$atfile','$txt')\">O</td>"
 }
 # }}}
 # at_mpv
@@ -3836,7 +3837,7 @@ proc bton_delete {{name ""}} {
   upvar celltxt celltxt
   upvar row     row
 
-  set celltxt "<td style=\"cursor:pointer;\" gname=\"$row\" bgcolor=lightblue colname=\"DEL\" onoff=\"0\">D</td>"
+  set celltxt "<td style=\"cursor:pointer;\" gname=\"$row\" bgcolor=\"\" colname=\"DEL\" onoff=\"0\">D</td>"
 
 }
 # }}}

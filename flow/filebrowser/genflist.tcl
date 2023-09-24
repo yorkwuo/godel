@@ -42,7 +42,8 @@ foreach f $filelist {
       set atvar($num,path) $f 
       set atvar($num,type) f
       set atvar($num,size) [num_symbol [file size "$fname"] K]
-      set atvar($num,mtime) [clock format [file mtime $dirroot/$f] -format {%m-%d_%H:%M}]
+      #set atvar($num,mtime) [clock format [file mtime $dirroot/$f] -format {%m-%d_%H:%M}]
+      set atvar($num,mtime) [clock format [file mtime $dirroot/$f] -format {%W.%w_%H:%M}]
       incr count
     }
 }
