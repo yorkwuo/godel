@@ -766,7 +766,24 @@ function filter_table_keyword(tname, colname, input, exact) {
         }
       }       
     }
-  //}
+
+}
+// }}}
+// table_row_count
+// {{{
+function table_row_count(id, tid) {
+
+  table = document.getElementById(tid);
+  tr = table.getElementsByTagName("tr");
+  
+  var count = 0
+  for (i = 1; i < tr.length; i++) {
+    if (tr[i].style.display === "") {
+      count++
+    }
+  }
+  document.getElementById(id).innerHTML = count;
+
 }
 // }}}
 // filter_table_keyword_incr

@@ -1,3 +1,10 @@
+#ghtm_table_row_count
+# {{{
+proc ghtm_table_row_count {id tid} {
+  upvar fout fout
+  puts $fout "<button id=$id onclick=table_row_count('$id','$tid')>count</button>"
+}
+# }}}
 # expect0
 # {{{
 proc expect0 {key} {
