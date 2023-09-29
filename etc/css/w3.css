@@ -288,7 +288,8 @@ dd {
 }
 
 th {
-  background-color: #f79646;
+  /*background-color: #f79646;*/
+  background-color: #d8b1d4;
   color: white;
 }
 
@@ -352,7 +353,7 @@ img {
   text-align    : left;
   border-bottom : 1px solid #ddd;
   border        : 1px solid black;
-  border-color  : #f79646 #ccc;  
+  border-color  : #d8b1d4 #ccc;  
 }
 .table2 {
   font-family:monospace,Consolas,sans-serif;
