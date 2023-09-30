@@ -318,7 +318,7 @@ proc ghtm_card {name value args} {
   puts $fout "
   <div class=\"w3-bar-item\">
     <div class=\"w3-card\" style=\"width:auto;\">
-      <header class=\"w3-container w3-blue\">
+      <header class=\"w3-container\" style=\"background-color:#728FCE;color:white\">
         <pre>$name</pre>
       </header>
       <div class=\"w3-container\">
@@ -3373,7 +3373,7 @@ proc linkbox {args} {
   }
 
   if [file exist $target] {
-    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname$txtsize</a>"
+    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">$dispname$txtsize</a>"
   } else {
     #puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname$txtsize</a>"
   }
