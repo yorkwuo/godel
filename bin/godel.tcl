@@ -1,11 +1,23 @@
 # ghtm_dp_begin
 # {{{
-proc ghtm_dp_begin {name} {
+proc ghtm_dp_begin {name args} {
   upvar fout fout
+  # -width
+# {{{
+  set opt(-width) 0
+  set idx [lsearch $args {-width}]
+  if {$idx != "-1"} {
+    set width [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-width) 1
+  } else {
+    set width ""
+  }
+# }}}
   puts $fout "
       <span class=\"dropdown\" data-dropdown>
         <button class=\"link\" data-dropdown-button>&#128295 ${name}</button>
-        <div class=\"dropdown-menu\">
+        <div class=\"dropdown-menu\" style=\"width:$width\">
   "
 }
 # }}}
