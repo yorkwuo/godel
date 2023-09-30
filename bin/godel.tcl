@@ -1,4 +1,80 @@
-#ghtm_table_row_count
+# ghtm_dp_begin
+# {{{
+proc ghtm_dp_begin {name} {
+  upvar fout fout
+  puts $fout "
+      <span class=\"dropdown\" data-dropdown>
+        <button class=\"link\" data-dropdown-button>&#128295 ${name}</button>
+        <div class=\"dropdown-menu\">
+  "
+}
+# }}}
+# ghtm_dp_exeitem
+# {{{
+proc ghtm_dp_exeitem {args} {
+  upvar fout fout
+  # -nowin
+# {{{
+  set opt(-nowin) 0
+  set idx [lsearch $args {-nowin}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-nowin) 1
+  }
+# }}}
+  # -name 
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  }
+# }}}
+  # -hold
+# {{{
+  set opt(-hold) 0
+  set idx [lsearch $args {-hold}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-hold) 1
+  }
+# }}}
+
+  set exefile [lindex $args 0]
+  if {$opt(-name)} { } else { set name $exefile }
+  if {$opt(-hold)} { set hold "-hold" } else { set hold "" }
+
+  if [file exist $exefile] {
+
+    set exename [file tail $exefile]
+
+    puts $fout "<a style='font-size:20px;text-decoration: none' href=$exefile type=text/txt>&#127811;</a> <a href=\".$exename.gtcl\" type=text/gtcl class=\"link\"><span style=color:#598BAF>&#9654; </span>$name</a><br>"
+# creating gtcl
+    set kout [open ".$exename.gtcl" w]
+      puts $kout "set pagepath \[file dirname \[info script]]"
+      puts $kout "cd \$pagepath"
+      if {$opt(-nowin)} {
+        puts $kout "exec ./$exefile"
+      } else {
+        puts $kout "exec xterm $hold -geometry 150x30+5+800 -e \"./$exefile\""
+      }
+    close $kout
+  }
+}
+# }}}
+# ghtm_dp_end
+# {{{
+proc ghtm_dp_end {} {
+  upvar fout fout
+  puts $fout {
+      </div>
+    </span>
+  }
+}
+# }}}
+# ghtm_table_row_count
 # {{{
 proc ghtm_table_row_count {id tid} {
   upvar fout fout
@@ -4001,9 +4077,9 @@ proc gexe_button {args} {
   if [file exist $exefile] {
     set exename [file tail $exefile]
     if {$opt(-cmd)} {
-      puts $fout "<a id=\"$id\" href=.$exename.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b><span style=float:right><a class=\"w3-button w3-blue\" href=$exefile type=text/txt>&#9701</a></span></a>"
+      puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn\" type=text/gtcl><b>$name</b><span style=float:right><a class=\"w3-button w3-blue\" href=$exefile type=text/txt>&#9701</a></span></a>"
     } else {
-      puts $fout "<a id=\"$id\" href=.$exename.gtcl class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a>"
+      puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn\" type=text/gtcl><b>$name</b></a>"
     }
     set kout [open ".$exename.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
