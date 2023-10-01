@@ -155,7 +155,7 @@ proc ghtm_memo {name ifile} {
   puts $fout "
   <div class=\"w3-bar-item\">
     <div class=\"w3-card\" style=\"width:auto;\">
-      <header class=\"w3-container w3-blue\">
+      <header class=\"w3-container\" style=\"background-color:#728FCE;color:white\">
         <pre><a style=\"font-weight:bold;text-decoration:none\" href=$ifile type=text/txt>$name</a></pre>
       </header>
       <div class=\"w3-container\">
@@ -2910,6 +2910,16 @@ proc var_table {} {
             }
           }
         }
+# spath
+      } elseif {$type eq "lpath"} {
+        set value [lvars . $name]
+        puts $fout "<td>$name</td>"
+        puts $fout "<td>
+        <span class=tooltip>
+          <span class=tooltiptext style=width:600px>$value</span>
+          path
+        </span>
+        </td>"
 # url
       } elseif {$type eq "url"} {
         set value [lvars . $name]

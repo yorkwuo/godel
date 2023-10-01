@@ -250,17 +250,17 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 120px;
-  background-color: black;
+  background-color: #777;
   color: #fff;
-  text-align: center;
+  text-align: left;
   border-radius: 6px;
   padding: 5px 0;
+  
+  /* Position the tooltip */
   position: absolute;
   z-index: 1;
-  bottom: 150%;
-  left: 50%;
-  margin-left: -60px;
+  top: -5px;
+  left: 105%;  
 }
 
 .tooltip .tooltiptext::after {
@@ -268,10 +268,6 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
   position: absolute;
   top: 100%;
   left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: black transparent transparent transparent;
 }
 
 .tooltip:hover .tooltiptext {
