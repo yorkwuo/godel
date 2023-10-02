@@ -2910,16 +2910,20 @@ proc var_table {} {
             }
           }
         }
-# spath
+# lpath
       } elseif {$type eq "lpath"} {
         set value [lvars . $name]
-        puts $fout "<td>$name</td>"
-        puts $fout "<td>
-        <span class=tooltip>
-          <span class=tooltiptext style=width:600px>$value</span>
-          path
-        </span>
-        </td>"
+        if [file exist $value] {
+          puts $fout "<td><a href=$value type=text/txt>$name</a></td>"
+        } else {
+          puts $fout "<td bgcolor=lightgrey>$name</td>"
+        }
+          puts $fout "<td>
+          <span class=tooltip>
+            <span class=tooltiptext style=width:600px>$value</span>
+            path
+          </span>
+          </td>"
 # url
       } elseif {$type eq "url"} {
         set value [lvars . $name]
