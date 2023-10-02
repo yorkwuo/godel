@@ -1,3 +1,87 @@
+# ghtm_kvp
+# {{{
+proc ghtm_kvp {args} {
+# kvp: Key-Value Pair
+  upvar fout fout
+  # -width
+# {{{
+  set opt(-width) 0
+  set idx [lsearch $args {-width}]
+  if {$idx != "-1"} {
+    set width [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-width) 1
+  } else {
+    set width "100px"
+  }
+# }}}
+  # -type
+# {{{
+  set opt(-type) 0
+  set idx [lsearch $args {-type}]
+  if {$idx != "-1"} {
+    set type [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-type) 1
+  } else {
+    set type "100px"
+  }
+# }}}
+  # -lpath
+# {{{
+  set lpath 0
+  set idx [lsearch $args {-lpath}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set lpath 1
+  }
+# }}}
+  set key [lindex $args 0]
+
+
+  set value [lvars . $key]
+  if {$value eq "NA" || $value eq ""} {
+    set value "___"
+  }
+  puts $fout  {<div style=\"\">}
+# Key  
+  if {$type eq "filepath"} {
+    if [file exist $value] {
+      puts $fout "<div class=\"kvp\" style=\"width:$width;background-color:lightyellow\">
+      <a href=$value type=text/txt>$key</a>
+      </div>"
+    } else {
+      puts $fout "<div class=\"kvp\" style=\"width:$width;background-color:lightgrey\">
+      <a href=$value type=text/txt>$key</a>
+      </div>"
+    }
+  } elseif {$type eq "url"} {
+    puts $fout "<div class=\"kvp\" style=\"width:$width;background-color:lightyellow\">
+    <a href=$value target=_blank>$key</a>
+    </div>"
+  } else {
+    puts $fout "<div class=\"kvp\" style=\"width:$width;background-color:lightyellow\">$key</div>"
+  }
+# Value
+  if {$lpath eq "1"} {
+    if {$value eq "___" || $value eq "NA"} {
+      puts $fout " <div data-kvpvalue data-kvpkey=\"$key\" class=\"kvp\" style=\"min-width:30px\" contenteditable=\"true\">$value</div> "
+    } else {
+      puts $fout "
+        <div class=\"kvp\" style=\"min-width:30px\">
+           <span class=tooltip>
+             <span class=tooltiptext style=width:600px>$value</span>
+             path
+           </span>
+        </div>
+      "
+    }
+  } else {
+    puts $fout " <div data-kvpvalue data-kvpkey=\"$key\" class=\"kvp\" style=\"min-width:30px\" contenteditable=\"true\">$value</div> "
+  }
+  puts $fout {</div>}
+}
+# }}}
 # ghtm_dp_begin
 # {{{
 proc ghtm_dp_begin {name args} {

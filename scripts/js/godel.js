@@ -60,6 +60,18 @@ if (typeof(gbtns) != 'undefined' && gbtns != null) {
   }
 }
 
+// Add event to highlight midification in kvpvalue
+const kvpvs = document.querySelectorAll("[data-kvpValue]")
+if(typeof(kvpvs) != 'undefined' && kvpvs != null){
+  kvpvs.forEach(kvpv => {
+    kvpv.addEventListener('input', () => {
+      kvpv.style.backgroundColor = "lightblue"
+      kvpv.dataset.kvpvalue = '1'
+    })
+  })
+}
+
+
 // Add event to highlight modified cells in tables
 var tables = document.getElementsByTagName('table');
 if(typeof(tables) != 'undefined' && tables != null){
@@ -1439,9 +1451,11 @@ function save_atable(tableobj) {
 // g_save
 // {{{
 function g_save() {
+  // Tables
   var tables = document.getElementsByTagName('table');
 
   var cmds = "";
+
   for (var k = 0; k < tables.length; k++) {
     var tbltype = tables[k].getAttribute('tbltype');
 
@@ -1450,6 +1464,19 @@ function g_save() {
     } else {
       cmds = cmds + save_gtable(tables[k]);
     }
+  }
+  // KVP(Key-Value Pair)
+  var kvpvs = document.querySelectorAll("[data-kvpValue]")
+  if(typeof(kvpvs) != 'undefined' && kvpvs != null){
+    kvpvs.forEach(kvpv => {
+      var modi  = kvpv.dataset.kvpvalue
+      var key   = kvpv.dataset.kvpkey
+      var value = kvpv.innerText
+      if (modi === '1') {
+        var cmd =  "g" + '.' + "|#|" +  key + "|#|" + value + "|E|\n";
+        cmds = cmds + cmd;
+      }
+    })
   }
 
   var data = cmds;
