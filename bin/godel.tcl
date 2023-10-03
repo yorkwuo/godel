@@ -490,11 +490,11 @@ proc ghtm_card {name value args} {
   puts $fout "
   <div class=\"w3-bar-item\">
     <div class=\"w3-card\" style=\"width:auto;\">
-      <header class=\"w3-container\" style=\"background-color:#728FCE;color:white\">
-        <pre>$name</pre>
+      <header class=\"w3-container\" style=\"font-size:10px;\">
+        $name
       </header>
       <div class=\"w3-container\">
-        <pre>$value</pre>
+        <pre style=\"font-size:20px;\">$value</pre>
       </div>
     </div>
   </div>
