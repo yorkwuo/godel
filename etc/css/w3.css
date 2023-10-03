@@ -339,7 +339,7 @@ img {
 .table1 {
   font-family:monospace,Consolas,sans-serif;
   border-collapse: collapse;
-  margin-top:0px;
+  margin-top:5px;
 }
 .table1 tr {
   font-size     : 14px;
