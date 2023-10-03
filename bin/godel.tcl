@@ -3559,7 +3559,7 @@ proc linkbox {args} {
   }
 
   if [file exist $target] {
-    puts $fout "<a class=\"w3-$val(-bgcolor) w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">$dispname$txtsize</a>"
+    puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">$dispname$txtsize</a>"
   } else {
     #puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname$txtsize</a>"
   }
