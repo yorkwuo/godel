@@ -4669,7 +4669,7 @@ proc ghtm_onoff {key args} {
 # }}}
   set cur_value [lvars . $key]
   if {$cur_value eq "1"} {
-    puts $fout "<a class=\"w3-button w3-round w3-lime\" onclick=\"onoff('$key', '0')\">${name}</a>"
+    puts $fout "<a class=\"w3-button w3-round\" style=\"background-color:#728FCE;color:white\" onclick=\"onoff('$key', '0')\">${name}</a>"
   } else {
     puts $fout "<a class=\"w3-button w3-round w3-light-gray\" onclick=\"onoff('$key', '1')\">${name}</a>"
   }
