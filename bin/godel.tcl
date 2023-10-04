@@ -487,14 +487,38 @@ proc build_flist {} {
 # {{{
 proc ghtm_card {name value args} {
   upvar fout fout
+  # -header
+# {{{
+  set opt(-header) 0
+  set idx [lsearch $args {-header}]
+  if {$idx != "-1"} {
+    set header [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-header) 1
+  } else {
+    set header "9px"
+  }
+# }}}
+  # -body
+# {{{
+  set opt(-body) 0
+  set idx [lsearch $args {-body}]
+  if {$idx != "-1"} {
+    set body [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-body) 1
+  } else {
+    set body "14px"
+  }
+# }}}
   puts $fout "
   <div class=\"w3-bar-item\">
     <div class=\"w3-card\" style=\"width:auto;\">
-      <header class=\"w3-container\" style=\"font-size:10px;\">
+      <header class=\"w3-container\" style=\"font-size:$header;\">
         $name
       </header>
       <div class=\"w3-container\">
-        <pre style=\"font-size:20px;\">$value</pre>
+        <pre style=\"font-size:$body;\">$value</pre>
       </div>
     </div>
   </div>
