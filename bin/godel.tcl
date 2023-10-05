@@ -330,9 +330,25 @@ proc histo_verti {key {color lightblue} {height ""}} {
 # }}}
 # ghtm_padding
 # {{{
-proc ghtm_padding {width} {
+proc ghtm_padding {args} {
   upvar fout fout
-  puts $fout "<span style=\"margin-left:$width\"></span>"
+  # -line
+# {{{
+  set opt(-line) 0
+  set idx [lsearch $args {-line}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-line) 1
+  }
+# }}}
+
+  set size [lindex $args 0]
+
+  if {$opt(-line) eq "1"} {
+    puts $fout "<div style=\"margin:$size\"></div>"
+  } else {
+    puts $fout "<span style=\"margin-left:$size\"></span>"
+  }
 }
 # }}}
 # openbook
@@ -496,7 +512,7 @@ proc ghtm_card {name value args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-header) 1
   } else {
-    set header "9px"
+    set header "10px"
   }
 # }}}
   # -body
@@ -3303,21 +3319,21 @@ proc ghtm_ls_table {args} {
       puts $fout "<td>$timestamp</td>"
       puts $fout "<td>$fsize</td>"
       if [regexp {\.htm} $fullpath] {
-        puts $fout "<td><a href=\"$linktarget\"              >$dispname</a></td>"
+        puts $fout "<td><a style=\"text-decoration:none;\" href=\"$linktarget\"              >$dispname</a></td>"
       } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $fullpath] {
-        puts $fout "<td><a href=\"$linktarget\" type=text/mp4>$dispname</a></td>"
+        puts $fout "<td><a style=\"text-decoration:none;\" href=\"$linktarget\" type=text/mp4>$dispname</a></td>"
       } elseif [regexp {\.mp3} $fullpath] {
-        puts $fout "<td><a href=\"$linktarget\" type=text/mp3>$dispname</a></td>"
+        puts $fout "<td><a style=\"text-decoration:none;\" href=\"$linktarget\" type=text/mp3>$dispname</a></td>"
       } elseif [regexp {\.pdf} $fullpath] {
-        puts $fout "<td><a href=\"$linktarget\" type=text/pdf>$dispname</a></td>"
+        puts $fout "<td><a style=\"text-decoration:none;\" href=\"$linktarget\" type=text/pdf>$dispname</a></td>"
       } elseif [regexp {\.svg} $fullpath] {
-        puts $fout "<td><a href=\"$linktarget\" type=text/svg>$dispname</a></td>"
+        puts $fout "<td><a style=\"text-decoration:none;\" href=\"$linktarget\" type=text/svg>$dispname</a></td>"
       } elseif [regexp {\.epub} $fullpath] {
-        puts $fout "<td><a href=\"$linktarget\"              >$dispname</a></td>"
+        puts $fout "<td><a style=\"text-decoration:none;\" href=\"$linktarget\"              >$dispname</a></td>"
       } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $fullpath]}  {
-        puts $fout "<td><a href=\"$linktarget\" type=text/jpg>$dispname</a></td>"
+        puts $fout "<td><a style=\"text-decoration:none;\" href=\"$linktarget\" type=text/jpg>$dispname</a></td>"
       } else {
-        puts $fout "<td><a href=\"$linktarget\" type=text/txt>$dispname</a></td>"
+        puts $fout "<td><a style=\"text-decoration:none;\" href=\"$linktarget\" type=text/txt>$dispname</a></td>"
       }
       if {$opt(-dir) eq "1"} {
         puts $fout "<td>$dir</td>"
@@ -4211,7 +4227,7 @@ proc gexe_button {args} {
   if [file exist $exefile] {
     set exename [file tail $exefile]
     if {$opt(-cmd)} {
-      puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn\" type=text/gtcl><b>$name</b><span style=float:right><a class=\"w3-button w3-blue\" href=$exefile type=text/txt>&#9701</a></span></a>"
+      puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn\" type=text/gtcl><b>$name</b><span style=float:right><a class=\"w3-button\" href=$exefile style=\"background-color:#728FCE;color:white\"; type=text/txt>&#9701</a></span></a>"
     } else {
       puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn\" type=text/gtcl><b>$name</b></a>"
     }
