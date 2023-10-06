@@ -71,7 +71,7 @@ proc ghtm_kvp {args} {
         <div class=\"kvp\" style=\"min-width:30px\">
            <span class=tooltip>
              <span class=tooltiptext style=width:600px>$value</span>
-             path
+             $key
            </span>
         </div>
       "
@@ -524,7 +524,7 @@ proc ghtm_card {name value args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-body) 1
   } else {
-    set body "14px"
+    set body "16px"
   }
 # }}}
   puts $fout "
