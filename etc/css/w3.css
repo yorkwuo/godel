@@ -250,7 +250,7 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  background-color: #777;
+  background-color: #728FCE;
   color: #fff;
   text-align: left;
   border-radius: 6px;
@@ -260,7 +260,7 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
   position: absolute;
   z-index: 1;
   top: -5px;
-  left: 0%;  
+  left: 99%;  
 }
 
 .tooltip .tooltiptext::after {
@@ -351,6 +351,12 @@ img {
   border        : 1px solid black;
   border-color  : #d8b1d4 #ccc;  
 }
+/*
+.table1 th {
+  position : sticky;
+  top : 35px;
+}
+*/
 .table2 {
   font-family:monospace,Consolas,sans-serif;
   border-collapse: collapse;

@@ -1,3 +1,20 @@
+# notetip
+# {{{
+proc notetip {} {
+  upvar row row
+  upvar celltxt celltxt
+
+  set lnote [lvars $row lnote]
+  set fnote [lvars $row fnote]
+
+  set celltxt "<td>
+           <span class=tooltip>
+             <span class=tooltiptext style=width:600px><pre>$fnote</pre></span>
+             $lnote
+           </span>
+  </td>"
+}
+# }}}
 # ghtm_kvp
 # {{{
 proc ghtm_kvp {args} {
@@ -146,7 +163,7 @@ proc ghtm_dp_exeitem {args} {
 
     set exename [file tail $exefile]
 
-    puts $fout "<a style='font-size:20px;text-decoration: none' href=$exefile type=text/txt>&#127811;</a> <a href=\".$exename.gtcl\" type=text/gtcl class=\"link\"><span style=color:#598BAF>&#9654; </span>$name</a><br>"
+    puts $fout "<a style='font-size:16px;text-decoration: none' href=$exefile type=text/txt>&#127811;</a> <a href=\".$exename.gtcl\" type=text/gtcl class=\"link\">$name</a>"
 # creating gtcl
     set kout [open ".$exename.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
@@ -2565,10 +2582,14 @@ proc atable {args} {
 
 # at.tcl
   set atfname [lindex $args 0]
-  if ![file exist $atfname] {
-    return
-  }
+  if ![file exist $atfname] { return }
+
   source $atfname
+
+  if ![info exists atvar] { 
+    puts "$atfname... Empty"
+    return 
+  }
 
   if [file exist $localfile] {
     godel_array_read $localfile latvar atvar
@@ -2583,6 +2604,7 @@ proc atable {args} {
     }
     set atcols [lsort -unique $ns]
   }
+
 # atrows
   if {$opt(-f) eq "1"} {
     set kin [open $listfile r]
@@ -2597,13 +2619,13 @@ proc atable {args} {
     close $kin
   } else {
     set ns ""
-    if ![info exist atrows] {
+    #if ![info exist atrows] {
       foreach n [array names atvar] {
         set cols [split $n ,]
         lappend ns [join [lrange $cols 0 end-1] ","]
       }
       set atrows [lsort -unique $ns]
-    }
+    #}
   }
 
   # Sort by...
@@ -3297,8 +3319,9 @@ proc ghtm_ls_table {args} {
   foreach ifile $ifiles {
     puts $fout "<tr>"
 
-    regsub -all {\s} $ifile {} ifile
+
     if [regexp ";" $ifile] {
+      regsub -all {\s} $ifile {} ifile
       set cols [split $ifile ";"]
       set fullpath [lindex $cols 0]
       set dispname [lindex $cols 1]
@@ -3306,6 +3329,7 @@ proc ghtm_ls_table {args} {
       set fullpath $ifile
       set dispname [file tail $fullpath]
     }
+
     if [file exist $fullpath] {
       set mtime [file mtime $fullpath]
       set linktarget $fullpath
@@ -3339,6 +3363,8 @@ proc ghtm_ls_table {args} {
         puts $fout "<td>$dir</td>"
       }
     } else {
+      puts $fullpath
+      puts [file exist $fullpath]
       if {$opt(-nonum) eq "0"} {
         puts $fout "<td>$count</td>"
       }
@@ -8130,6 +8156,7 @@ proc godel_draw {{target_path NA}} {
   puts $fout "<script>"
   puts $fout "  var ginfo = {"
   puts $fout "      \"last_updated\": '$dyvars(last_updated)',"
+  puts $fout "      \"cwd\": '[pwd]',"
   if [info exist dyvars(srcpath)] {
     puts $fout "      \"srcpath\"    : '$dyvars(srcpath)',"
   } else {
