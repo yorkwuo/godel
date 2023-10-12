@@ -243,6 +243,22 @@ proc ghtm_table_display_onoff {tblid colname} {
   onclick=\"table_display_onoff('$tblid','but_$colname','$colname')\">$colname</button>"
 }
 # }}}
+# ghtm_table_multi_onoff
+# {{{
+proc ghtm_table_multi_onoff {tblid butname colnames} {
+  upvar fout fout
+  set tt "";
+  foreach c $colnames {
+    lappend tt "'$c'"
+  }
+  set cc [join $tt ,]
+  puts $fout "<button \
+  id=\"but_$butname\" \
+  onoff=1 \
+  style=\"background-color:#FCAE1E;color:white\" \
+  onclick=\"table_multi_onoff('$tblid','but_$butname',\[$cc\])\">$colnames</button>"
+}
+# }}}
 # ghtm_memo
 # {{{
 proc ghtm_memo {name ifile} {

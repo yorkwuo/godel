@@ -1821,6 +1821,59 @@ function gui_newpage() {
   document.getElementById('idexec').click();
 }
 // }}}
+// table_multi_onoff
+// {{{
+function table_multi_onoff(tblid, butid, colnames) {
+    var table, tr, td, i, dispvalue;
+
+
+    but = document.getElementById(butid);
+
+    onoff = localStorage.getItem(butid);
+
+    if (onoff === "1") {
+      but.style.backgroundColor = 'white';
+      but.style.color = 'black';
+      localStorage.setItem(butid, "0")
+      dispvalue = 'none'
+    } else if (onoff == null) {
+      but.style.backgroundColor = 'white';
+      but.style.color = 'black';
+      localStorage.setItem(butid, "0")
+      dispvalue = 'none'
+    } else {
+      but.style.backgroundColor = '#FCAE1E';
+      but.style.color = 'white';
+      localStorage.setItem(butid, "1")
+      dispvalue = ''
+    }
+
+    var tname = tblid;
+    table = document.getElementById(tname);
+    tr = table.getElementsByTagName("tr");
+
+    let colname = "";
+    th = tr[0].getElementsByTagName("th");
+    for (i = 0; i < colnames.length; i++) {
+      
+      colname = colnames[i]
+      //Get column_num
+      for (j = 0; j < th.length; j++) {
+        txt = th[j].innerHTML;
+        txt = txt.trim();
+        if (colname === txt) {
+          column_num = j;   
+          th[j].style.display=dispvalue
+        }
+      }
+     
+      for (k = 1; k < tr.length; k++) {
+        td = tr[k].getElementsByTagName("td")[column_num];
+        td.style.display=dispvalue
+      }
+    }
+}
+// }}}
 // table_display_onoff
 // {{{
 function table_display_onoff(tblid, butid, colname) {
@@ -1851,25 +1904,26 @@ function table_display_onoff(tblid, butid, colname) {
     table = document.getElementById(tname);
     tr = table.getElementsByTagName("tr");
 
-// column_no
+// Get column_num
+    console.log(colname)
     th = tr[0].getElementsByTagName("th");
     for (i = 0; i < th.length; i++) {
       txt = th[i].innerHTML;
       txt = txt.trim();
-//      console.log(txt)
       if (colname === txt) {
-        column_no = i;   
+        column_num = i;   
         th[i].style.display=dispvalue
       }
     }
 
     for (i = 1; i < tr.length; i++) {
-      td = tr[i].getElementsByTagName("td")[column_no];
+      td = tr[i].getElementsByTagName("td")[column_num];
       td.style.display=dispvalue
     }
 }
 // }}}
-
+// refresh_table_display_onoff
+// {{{
 function refresh_table_display_onoff (tblid) {
     var tname = tblid;
 
@@ -1904,7 +1958,9 @@ function refresh_table_display_onoff (tblid) {
       }
     }
 }
-
+// }}}
+// refresh_display_button
+// {{{
 function refresh_display_button (tblid) {
     buts = document.querySelectorAll('[id^="but_"]');
     for (i = 0; i < buts.length; i++) {
@@ -1920,7 +1976,7 @@ function refresh_display_button (tblid) {
     }
 
 }
-
+// }}}
 
 
 // vim:fdm=marker
