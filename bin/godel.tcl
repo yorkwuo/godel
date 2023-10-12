@@ -3366,8 +3366,6 @@ proc ghtm_ls_table {args} {
         puts $fout "<td>$dir</td>"
       }
     } else {
-      puts $fullpath
-      puts [file exist $fullpath]
       if {$opt(-nonum) eq "0"} {
         puts $fout "<td>$count</td>"
       }
