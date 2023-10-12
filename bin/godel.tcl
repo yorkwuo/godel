@@ -6,13 +6,16 @@ proc notetip {} {
 
   set lnote [lvars $row lnote]
   set fnote [lvars $row fnote]
-
-  set celltxt "<td>
-           <span class=tooltip>
-             <span class=tooltiptext style=width:600px><pre>$fnote</pre></span>
-             $lnote
-           </span>
-  </td>"
+  if {$lnote eq "NA"} {
+    set celltxt "<td></td>"
+  } else {
+    set celltxt "<td>
+             <span class=tooltip>
+               <span class=tooltiptext style=width:600px><pre>$fnote</pre></span>
+               $lnote
+             </span>
+    </td>"
+  }
 }
 # }}}
 # ghtm_kvp
@@ -4016,9 +4019,9 @@ proc ltbl_iname {dispcol} {
   set disp [lvars $row $dispcol]
 
   if {$tick eq "1"} {
-    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=lightyellow><a href=\"$row/.index.htm\" style=\"white-space:pre\">$disp</a></td>"
+    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=lightyellow><a href=\"$row/.index.htm\" style=\"text-decoration:none white-space:pre\">$disp</a></td>"
   } else {
-    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign style=\"white-space:pre\"><a href=\"$row/.index.htm\">$disp</a></td>"
+    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign style=\"white-space:pre\"><a style=text-decoration:none href=\"$row/.index.htm\">$disp</a></td>"
   }
 }
 # }}}
