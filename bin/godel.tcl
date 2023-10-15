@@ -67,20 +67,20 @@ proc ghtm_kvp {args} {
 # Key  
   if {$type eq "filepath"} {
     if [file exist $value] {
-      puts $fout "<div class=\"kvp\" style=\"width:$width;background-color:lightyellow\">
+      puts $fout "<div class=\"kvp\" style=\"width:$width;font-weight: bold;background-color:#999;color:white\">
       <a href=$value type=text/txt>$key</a>
       </div>"
     } else {
-      puts $fout "<div class=\"kvp\" style=\"width:$width;background-color:lightgrey\">
+      puts $fout "<div class=\"kvp\" style=\"width:$width;font-weight: bold;background-color:#666;color:white\">
       <a href=$value type=text/txt>$key</a>
       </div>"
     }
   } elseif {$type eq "url"} {
-    puts $fout "<div class=\"kvp\" style=\"width:$width;background-color:lightyellow\">
+    puts $fout "<div class=\"kvp\" style=\"width:$width;font-weight: bold;background-color:#999;color:white\">
     <a href=$value target=_blank>$key</a>
     </div>"
   } else {
-    puts $fout "<div class=\"kvp\" style=\"width:$width;background-color:lightyellow\">$key</div>"
+    puts $fout "<div class=\"kvp\" style=\"width:$width;font-weight: bold;background-color:#999;color:white\">$key</div>"
   }
 # Value
   if {$lpath eq "1"} {
@@ -548,7 +548,7 @@ proc ghtm_card {name value args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-header) 1
   } else {
-    set header "10px"
+    set header "12px"
   }
 # }}}
   # -body
@@ -563,11 +563,45 @@ proc ghtm_card {name value args} {
     set body "16px"
   }
 # }}}
+  # -link
+# {{{
+  set opt(-link) 0
+  set idx [lsearch $args {-link}]
+  if {$idx != "-1"} {
+    set linkfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-link) 1
+  } else {
+    set linkfile "16px"
+  }
+# }}}
+  # -ed
+# {{{
+  set opt(-ed) 0
+  set idx [lsearch $args {-ed}]
+  if {$idx != "-1"} {
+    set edfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-ed) 1
+  } else {
+    set edfile "16px"
+  }
+# }}}
+
   puts $fout "
   <div class=\"w3-bar-item\">
     <div class=\"w3-card\" style=\"width:auto;\">
       <header class=\"w3-container\" style=\"font-size:$header;\">
-        $name
+  "
+  if {$opt(-ed) eq "1"} {
+    puts $fout "<a style=\"font-size:$header;\" href=$edfile type=text/txt>$name</a>"
+  } elseif {$opt(-link) eq "1"} {
+    puts $fout "<a style=\"font-size:$header;\"href=$linkfile>$name</a>"
+  } else {
+    puts $fout "$name"
+  }
+
+  puts $fout "
       </header>
       <div class=\"w3-container\">
         <pre style=\"font-size:$body;\">$value</pre>
@@ -2582,7 +2616,7 @@ proc atable {args} {
 # }}}
 
   upvar fout fout
-  upvar atrows atrows
+  upvar pre_atrows pre_atrows
   upvar atcols atcols
 
 
@@ -2638,13 +2672,15 @@ proc atable {args} {
     close $kin
   } else {
     set ns ""
-    #if ![info exist atrows] {
+    if [info exist pre_atrows] {
+      set atrows $pre_atrows
+    } else {
       foreach n [array names atvar] {
         set cols [split $n ,]
         lappend ns [join [lrange $cols 0 end-1] ","]
       }
       set atrows [lsort -unique $ns]
-    #}
+    }
   }
 
   # Sort by...
@@ -3295,6 +3331,16 @@ proc ghtm_ls_table {args} {
     set opt(-nonum) 0
   }
 # }}}
+  # -nodate
+# {{{
+  set idx [lsearch $args {-nodate}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-nodate) 1
+  } else {
+    set opt(-nodate) 0
+  }
+# }}}
 
   set ifiles ""
   if {$opt(-pattern)} {
@@ -3325,7 +3371,9 @@ proc ghtm_ls_table {args} {
     if {$opt(-nonum) eq "0"} {
       puts $fout "<th>Num </th>"
     }
-    puts $fout "<th>Date</th>"
+    if {$opt(-nodate) eq "0"} {
+      puts $fout "<th>Date</th>"
+    }
     puts $fout "<th>Size</th>"
     puts $fout "<th>Name</th>"
     if {$opt(-dir) eq "1"} {
@@ -3359,7 +3407,9 @@ proc ghtm_ls_table {args} {
       if {$opt(-nonum) eq "0"} {
         puts $fout "<td>$count</td>"
       }
-      puts $fout "<td>$timestamp</td>"
+      if {$opt(-nodate) eq "0"} {
+        puts $fout "<td>$timestamp</td>"
+      }
       puts $fout "<td>$fsize</td>"
       if [regexp {\.htm} $fullpath] {
         puts $fout "<td><a style=\"text-decoration:none;\" href=\"$linktarget\"              >$dispname</a></td>"
@@ -3385,7 +3435,9 @@ proc ghtm_ls_table {args} {
       if {$opt(-nonum) eq "0"} {
         puts $fout "<td>$count</td>"
       }
-      puts $fout "<td></td>"
+      if {$opt(-nodate) eq "0"} {
+        puts $fout "<td></td>"
+      }
       puts $fout "<td></td>"
       puts $fout "<td bgcolor=lightgrey>[file tail $fullpath]</td>"
     }
