@@ -2179,7 +2179,7 @@ proc at_open {{atfile at.tcl}} {
 
   regsub -all {'} $row {\'} txt
 
-  set celltxt "<td style=\"cursor:pointer;\" bgcolor=lightblue onclick=\"at_open('$atfile','$txt')\">O</td>"
+  set celltxt "<td style=\"cursor:pointer;\" bgcolor=\"\" onclick=\"at_open('$atfile','$txt')\">O</td>"
 }
 # }}}
 # at_remote_open
@@ -3659,6 +3659,15 @@ proc linkbox {args} {
     set opt(-gsize) 1
   }
 # }}}
+  # -ed
+# {{{
+  set opt(-ed) 0
+  set idx [lsearch $args {-ed}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-ed) 1
+  }
+# }}}
 
 
   set name [lindex $args 0]
@@ -3694,7 +3703,11 @@ proc linkbox {args} {
   }
 
   if [file exist $target] {
-    puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">$dispname$txtsize</a>"
+    if {$opt(-ed) eq "1"} {
+      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\" type=text/txt>$dispname$txtsize</a>"
+    } else {
+      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">$dispname$txtsize</a>"
+    }
   } else {
     #puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname$txtsize</a>"
   }
@@ -4069,7 +4082,7 @@ proc ltbl_iname {dispcol} {
   set disp [lvars $row $dispcol]
 
   if {$tick eq "1"} {
-    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=lightyellow><a href=\"$row/.index.htm\" style=\"text-decoration:none white-space:pre\">$disp</a></td>"
+    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=lightyellow><a href=\"$row/.index.htm\" style=\"text-decoration:none; white-space:pre\">$disp</a></td>"
   } else {
     set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign style=\"white-space:pre\"><a style=text-decoration:none href=\"$row/.index.htm\">$disp</a></td>"
   }
@@ -4175,7 +4188,7 @@ proc bton_fdelete {{name ""}} {
   upvar celltxt celltxt
   upvar row     row
 
-  set celltxt "<td style=\"cursor:pointer;\" gname=\"$row\" bgcolor=lightblue colname=\"fdel\">FD</td>"
+  set celltxt "<td style=\"cursor:pointer;\" gname=\"$row\" bgcolor=\"\" colname=\"fdel\">FD</td>"
 
 }
 # }}}
