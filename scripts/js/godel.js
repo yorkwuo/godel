@@ -1,7 +1,7 @@
 // Key binded to edit and draw
 document.onkeyup = function(e) {
 // Ctrl 1
-  if        (e.ctrlKey && e.which == 49) {
+  if        (e.altKey && e.code == 'KeyW') {
     document.getElementById('iddraw').click();
 // Ctrl 2
   } else if (e.ctrlKey && e.which == 50) {
