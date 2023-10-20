@@ -67,28 +67,28 @@ proc ghtm_kvp {args} {
 # Key  
   if {$type eq "filepath"} {
     if [file exist $value] {
-      puts $fout "<div class=\"kvp\" style=\"width:$width;font-weight: bold;background-color:#999;color:white\">
+      puts $fout "<div class=\"kvp\" style=\"padding-left:5px;width:$width;font-weight: bold;background-color:#999;color:white\">
       <a href=$value type=text/txt>$key</a>
       </div>"
     } else {
-      puts $fout "<div class=\"kvp\" style=\"width:$width;font-weight: bold;background-color:#666;color:white\">
+      puts $fout "<div class=\"kvp\" style=\"padding-left:5px;width:$width;font-weight: bold;background-color:#666;color:white\">
       <a href=$value type=text/txt>$key</a>
       </div>"
     }
   } elseif {$type eq "url"} {
-    puts $fout "<div class=\"kvp\" style=\"width:$width;font-weight: bold;background-color:#999;color:white\">
+    puts $fout "<div class=\"kvp\" style=\"padding-left:5px;width:$width;font-weight: bold;background-color:#999;color:white\">
     <a href=$value target=_blank>$key</a>
     </div>"
   } else {
-    puts $fout "<div class=\"kvp\" style=\"width:$width;font-weight: bold;background-color:#999;color:white\">$key</div>"
+    puts $fout "<div class=\"kvp\" style=\"padding-left:5px;width:$width;font-weight: bold;background-color:#999;color:white\">$key</div>"
   }
 # Value
   if {$lpath eq "1"} {
     if {$value eq "___" || $value eq "NA"} {
-      puts $fout " <div data-kvpvalue data-kvpkey=\"$key\" class=\"kvp\" style=\"min-width:30px\" contenteditable=\"true\">$value</div> "
+      puts $fout " <div data-kvpvalue data-kvpkey=\"$key\" class=\"kvp\" style=\"padding-left:5px;min-width:30px\" contenteditable=\"true\">$value</div> "
     } else {
       puts $fout "
-        <div class=\"kvp\" style=\"min-width:30px\">
+        <div class=\"kvp\" style=\"padding-left:5px;min-width:30px\">
            <span class=tooltip>
              <span class=tooltiptext style=width:600px>$value</span>
              $key
@@ -660,7 +660,7 @@ proc gui_newpage {name} {
 
   set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M:%S}]
   lsetvar $name cdate $timestamp
-  lsetvar $name ctime [clock microseconds]
+  #lsetvar $name ctime [clock microseconds]
 
   godel_draw
 
@@ -735,11 +735,11 @@ proc pathbar {depth} {
 
   set cwd [pwd]
 
-  set pathhier "<a style=\"font-size:16px\">[file tail $cwd]</a>"
+  set pathhier "<a style=\"text-decoration:none;font-size:16px\">[file tail $cwd]</a>"
   set relative_path "../"
   for {set i 1} {$i <= $depth} {incr i} {
     set name [pindex $cwd end-$i]
-    set pathhier "<a style=\"font-size:16px\" href=\"$relative_path.index.htm\">$name</a> / $pathhier"
+    set pathhier "<a style=\"text-decoration:none;font-size:16px\" href=\"$relative_path.index.htm\">$name</a> / $pathhier"
     append relative_path "../"
 
   }
@@ -2274,6 +2274,16 @@ proc ltbl_exe {name exefile} {
   } else {
     set celltxt "<td>NA</td>"
   }
+
+}
+# }}}
+# ltbl_link
+# {{{
+proc ltbl_link {name path} {
+  upvar row row
+  upvar celltxt celltxt
+  
+  set celltxt "<td><a href=$row/$path>$name</a></td>"
 
 }
 # }}}
