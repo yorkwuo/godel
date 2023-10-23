@@ -864,6 +864,10 @@ proc omsg {args} {
 # pindex : path index
 # {{{
 proc pindex {path index} {
+  if [regexp {^\/} $path] {
+  } else {
+    set path "/$path"
+  }
   set cols [lreplace [split $path /] 0 0]
   return [lindex $cols $index]
 }
@@ -4561,6 +4565,11 @@ proc fdiff {args} {
     if ![file exist $f] {
       if {$opt(co)} {
         puts "co not exist file... $f"
+        if [regexp {\.godel\/ghtm.tcl} $f] {
+          set dir [pindex $f 0 ]
+          file mkdir $dir
+          exec godel_draw.tcl $dir
+        }
         exec cp $srcpath/$f $f
       } else {
         puts "not exist... $f"
@@ -6827,7 +6836,7 @@ proc local_table {tableid args} {
     puts $fout "<tr>"
 
     if {$opt(-serial)} {
-      puts $fout "<td colname=\"num\" gname=\"$row\"><a href=\"$row/.index.htm\">$serial</a></td>"
+      puts $fout "<td colname=\"num\" gname=\"$row\"><a style=text-decoration:none href=\"$row/.index.htm\">$serial</a></td>"
       #puts $fout "<td>$serial</td>"
     }
     #----------------------
@@ -8974,8 +8983,9 @@ proc read_as_list {args} {
   set fin [open $afile r]
     if {$opt(-filter) eq "1"} {
       while {[gets $fin line] >= 0} {
+        if [regexp {^\s*$} $line] {continue}
         regsub {^\s*} $line {} line
-        regsub {\s$}  $line {} line
+        regsub {\s*$}  $line {} line
         if [regexp {^\s*#} $line] {
         } else {
           lappend lines $line
