@@ -4,7 +4,7 @@ document.onkeyup = function(e) {
   if        (e.altKey && e.code == 'KeyW') {
     document.getElementById('iddraw').click();
 // Ctrl 2
-  } else if (e.ctrlKey && e.which == 50) {
+  } else if (e.altKey && e.code == 'KeyS') {
     document.getElementById('idbutton').click();
 // Ctrl 3
   } else if (e.ctrlKey && e.which == 51) {
