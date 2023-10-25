@@ -2857,7 +2857,7 @@ proc alinkurl {} {
     set celltxt "<td style=\"font-size:8px\" gname=\"$row\" colname=\"url\" contenteditable=\"true\"></td>"
   } else {
     if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
-      set celltxt "<td><button onclick=\"chrome_open('$value')\">Link</button></td>"
+      set celltxt "<td><div class=\"w3-button w3-round \" style=\"margin:0px;padding:0px\" onclick=\"chrome_open('$value')\">Link</div></td>"
     } else {
       set celltxt "<td><a href=$value target=blank>Link</a></td>"
     }
