@@ -466,6 +466,20 @@ a,button,input,li {
   font-size     : 15px;
 }
 
+.ttip {
+  position         : relative;
+  text-alignment   : center;
+  display : inline-block;
+}
+
+.ttip:hover::after {
+  position : absolute;
+  padding: 2px;
+  width: max-content;
+  content : attr(data-tt);
+  transform: translateX(-50%) translateY(-100%);
+}
+
 tr:hover {background-color:#91d4c2;}
 
 body {margin-top:0px }

@@ -3,11 +3,18 @@ set sortby [lvars . sortby]
 set search [lvars . search]
 
 pathbar [lvars . pathvar_depth]
+
+#------------------------------------
+# Class
+#------------------------------------
 puts $fout "<br>"
   if [file exist "class.tcl"] {
     source class.tcl
   }
 
+#------------------------------------
+# Columns OnOff
+#------------------------------------
 toolarea_begin
 
   batch_onoff col_class    -name class
@@ -28,7 +35,9 @@ toolarea_begin
   if [file exist "class.tcl"] { puts $fout "<a href=class.tcl type=text/txt>class.tcl</a>" }
 toolarea_end
 
-
+#------------------------------------
+# Columns
+#------------------------------------
 if [file exist cols.tcl] {
   source cols.tcl
 } else {
@@ -43,6 +52,9 @@ if [file exist cols.tcl] {
   cols_onoff "col_keywords;ed:g:keywords;Keywords"
 }
 
+#------------------------------------
+# Table Options
+#------------------------------------
 set options "-serial "
 append options "-sortby $sortby "
 if {$search eq "1"} {
@@ -52,7 +64,6 @@ if {$search eq "1"} {
 if ![info exist cols] {
   lappend cols "g:iname;iname"
 }
-
 local_table tbl -c $cols {*}$options
 
 

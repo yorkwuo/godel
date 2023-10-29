@@ -129,6 +129,24 @@ proc ghtm_dp_begin {name args} {
 # {{{
 proc ghtm_dp_exeitem {args} {
   upvar fout fout
+  # -ttip
+# {{{
+  set opt(-ttip) 0
+  set idx [lsearch $args {-ttip}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-ttip) 1
+  }
+# }}}
+  # -cmd
+# {{{
+  set opt(-cmd) 0
+  set idx [lsearch $args {-cmd}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-cmd) 1
+  }
+# }}}
   # -nowin
 # {{{
   set opt(-nowin) 0
@@ -166,7 +184,18 @@ proc ghtm_dp_exeitem {args} {
 
     set exename [file tail $exefile]
 
-    puts $fout "<a style='font-size:16px;text-decoration: none' href=$exefile type=text/txt>&#127811;</a> <a href=\".$exename.gtcl\" type=text/gtcl class=\"link\">$name</a>"
+  if {$opt(-cmd) eq "1"} {
+    set cmdfield "<a style='font-size:16px;text-decoration: none' href=$exefile type=text/txt>&#127811;</a>"
+  } else {
+    set cmdfield ""
+  }
+
+  if {$opt(-ttip) eq "1"} {
+    puts $fout " $cmdfield<div class=\"ttip\" data-tt=\"$exename\"><a href=\".$exename.gtcl\" type=text/gtcl class=\"link\">$name</a></div>"
+  } else {
+    puts $fout " $cmdfield<a href=\".$exename.gtcl\" type=text/gtcl class=\"link\">$name</a>"
+  }
+
 # creating gtcl
     set kout [open ".$exename.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
@@ -260,6 +289,39 @@ proc ghtm_table_multi_onoff {tblid butname colnames} {
   onoff=1 \
   style=\"background-color:#FCAE1E;color:white\" \
   onclick=\"table_multi_onoff('$tblid','but_$butname',\[$cc\])\">$colnames</button>"
+}
+# }}}
+# ghtm_linklist
+# {{{
+proc ghtm_linklist {name ifile} {
+  upvar fout fout
+
+  if ![file exist $ifile] {
+    exec touch $ifile
+  }
+  set lines [read_as_list $ifile]
+
+  puts $fout "
+  <div class=\"w3-bar-item\">
+    <div class=\"w3-card\" style=\"width:auto;\">
+      <header class=\"w3-container\" style=\"background-color:#728FCE;color:white\">
+        <pre><a style=\"font-weight:bold;text-decoration:none\" href=$ifile type=text/txt>$name</a></pre>
+      </header>
+      <div class=\"w3-container\">
+      "
+  foreach i $lines {
+    set target [lindex $i 0]
+    set name   [lindex $i 2]
+    if {$name eq ""} {
+      set name $target
+    }
+    puts $fout "<a style=text-decoration:none href=$target/.index.htm>$name</a><br>"
+  }
+  puts $fout "
+      </div>
+    </div>
+  </div>
+  "
 }
 # }}}
 # ghtm_memo
@@ -660,7 +722,7 @@ proc gui_newpage {name} {
 
   set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M:%S}]
   lsetvar $name cdate $timestamp
-  #lsetvar $name ctime [clock microseconds]
+  lsetvar $name ctime [clock microseconds]
 
   godel_draw
 
