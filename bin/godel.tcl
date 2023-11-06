@@ -5318,7 +5318,7 @@ proc ghtm_ls {args} {
       set fsize [file size $full]
       set fsize [num_symbol $fsize K]
       #puts $fout [format "<div class=ghtmls><pre style=background-color:lightblue>%-3s %s %-5s %s</pre>" $count $timestamp $fsize "<a class=keywords href=\"$full\">$fname</a><br></div>"]
-      puts $fout [format "<div class=ghtmls><pre style=background-color:lightcyan>%s %-8s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$full/.index.htm\">$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:lightcyan>%s %-8s %s</pre>" $timestamp $fsize "<a style=text-decoration:none class=keywords href=\"$full/.index.htm\">$fname</a><br></div>"]
       incr count
     }
     #puts $fout </p>
@@ -5363,19 +5363,19 @@ proc ghtm_ls {args} {
       set linktarget $full
     }
     if [regexp {\.htm} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\">$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a style=text-decoration:none class=keywords href=\"$linktarget\">$fname</a><br></div>"]
     } elseif [regexp {\.mp4|\.mkv|\.webm|\.rmvb} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\" type=text/mp4>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a style=text-decoration:none class=keywords href=\"$linktarget\" type=text/mp4>$fname</a><br></div>"]
     } elseif [regexp {\.mp3} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\" type=text/mp3>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a style=text-decoration:none class=keywords href=\"$linktarget\" type=text/mp3>$fname</a><br></div>"]
     } elseif [regexp {\.pdf} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\" type=text/pdf>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a style=text-decoration:none class=keywords href=\"$linktarget\" type=text/pdf>$fname</a><br></div>"]
     } elseif [regexp {\.azw3|\.mobi|\.epub} $full] {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\">$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a style=text-decoration:none class=keywords href=\"$linktarget\">$fname</a><br></div>"]
     } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $full]}  {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\" type=text/jpg>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a style=text-decoration:none class=keywords href=\"$linktarget\" type=text/jpg>$fname</a><br></div>"]
     } else {
-      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a class=keywords href=\"$linktarget\" type=text/txt>$fname</a><br></div>"]
+      puts $fout [format "<div class=ghtmls><pre style=background-color:white>%-20s %-10s %s</pre>" $timestamp $fsize "<a style=text-decoration:none class=keywords href=\"$linktarget\" type=text/txt>$fname</a><br></div>"]
     }
     incr count
   }
