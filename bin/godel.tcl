@@ -2548,11 +2548,16 @@ proc get_atvar {key} {
 # {{{
 proc at_get_rows {} {
   upvar atvar atvar
+  set ns ""
   foreach n [array names atvar] {
     set cols [split $n ,]
     lappend ns [join [lrange $cols 0 end-1] ","]
   }
-  set atrows [lsort -unique $ns]
+  if {$ns eq ""} {
+    set atrows ""
+  } else {
+    set atrows [lsort -unique $ns]
+  }
   return $atrows
 }
 # }}}
