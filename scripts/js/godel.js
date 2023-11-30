@@ -1977,6 +1977,34 @@ function refresh_display_button (tblid) {
 
 }
 // }}}
+// mpvplay
+function mpvplay(fpath, code) {
 
+  console.log(fpath)
+
+  const url = 'http://127.0.0.1:5000/mpvplay?filepath='+fpath;
+
+  fetch(url)
+  .catch(err => console.log(err))
+}
+// play1
+function jsplay(fpath, code) {
+
+  console.log(fpath)
+  const url = 'http://127.0.0.1:5000/play1?filepath='+fpath+'&code='+code;
+  //const url = 'http://127.0.0.1:5000/mpvplay?filepath='+fpath;
+
+  fetch(url)
+  .catch(err => console.log(err))
+}
+
+function delfile(fpath) {
+  console.log('jjj')
+  const url = 'http://127.0.0.1:5000/delfile?filepath='+fpath;
+
+  fetch(url)
+  .catch(err => console.log(err))
+
+}
 
 // vim:fdm=marker

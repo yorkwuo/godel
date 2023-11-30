@@ -2721,7 +2721,7 @@ proc atable {args} {
   source $atfname
 
   if ![info exists atvar] { 
-    puts "$atfname... Empty"
+    #puts "$atfname... Empty"
     return 
   }
 
