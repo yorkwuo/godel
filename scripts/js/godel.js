@@ -73,7 +73,8 @@ if(typeof(kvpvs) != 'undefined' && kvpvs != null){
 
 
 // Add event to highlight modified cells in tables
-var tables = document.getElementsByTagName('table');
+//var tables = document.getElementsByTagName('table');
+var tables = document.getElementsByClassName('table1');
 if(typeof(tables) != 'undefined' && tables != null){
   for (var k = 0; k < tables.length; k++) {
   
@@ -1991,6 +1992,7 @@ function mpvplay(fpath, code) {
 function jsplay(fpath, code) {
 
   console.log(fpath)
+  console.log(code)
   const url = 'http://127.0.0.1:5000/play1?filepath='+fpath+'&code='+code;
   //const url = 'http://127.0.0.1:5000/mpvplay?filepath='+fpath;
 
@@ -1999,7 +2001,7 @@ function jsplay(fpath, code) {
 }
 
 function delfile(fpath) {
-  console.log('jjj')
+  console.log(fpath)
   const url = 'http://127.0.0.1:5000/delfile?filepath='+fpath;
 
   fetch(url)
