@@ -60,9 +60,6 @@ proc ghtm_kvp {args} {
 
 
   set value [lvars . $key]
-  if {$value eq "NA" || $value eq ""} {
-    set value "___"
-  }
   puts $fout  {<div style=\"\">}
 # Key  
   if {$type eq "filepath"} {
@@ -84,11 +81,11 @@ proc ghtm_kvp {args} {
   }
 # Value
   if {$lpath eq "1"} {
-    if {$value eq "___" || $value eq "NA"} {
-      puts $fout " <div data-kvpvalue data-kvpkey=\"$key\" class=\"kvp\" style=\"padding-left:5px;min-width:30px\" contenteditable=\"true\">$value</div> "
+    if {$value eq "" || $value eq "NA"} {
+      puts $fout " <div data-kvpvalue data-kvpkey=\"$key\" class=\"kvp\" style=\"padding-left:5px;min-width:30px;border-bottom: 1px solid green\" contenteditable=\"true\"></div> "
     } else {
       puts $fout "
-        <div class=\"kvp\" style=\"padding-left:5px;min-width:30px\">
+        <div class=\"kvp\" style=\"padding-left:5px;min-width:30px;\">
            <span class=tooltip>
              <span class=tooltiptext style=width:600px>$value</span>
              $key
@@ -97,7 +94,11 @@ proc ghtm_kvp {args} {
       "
     }
   } else {
-    puts $fout " <div data-kvpvalue data-kvpkey=\"$key\" class=\"kvp\" style=\"min-width:30px\" contenteditable=\"true\">$value</div> "
+    if {$value eq "" || $value eq "NA"} {
+      puts $fout " <div data-kvpvalue data-kvpkey=\"$key\" class=\"kvp\" style=\"padding-left:5px;min-width:30px;border-bottom: 1px solid green\" contenteditable=\"true\"></div> "
+    } else {
+      puts $fout " <div data-kvpvalue data-kvpkey=\"$key\" class=\"kvp\" style=\"min-width:30px\" contenteditable=\"true\">$value</div> "
+    }
   }
   puts $fout {</div>}
 }
@@ -2721,7 +2722,7 @@ proc atable {args} {
   source $atfname
 
   if ![info exists atvar] { 
-    puts "$atfname... Empty"
+    #puts "$atfname... Empty"
     return 
   }
 
