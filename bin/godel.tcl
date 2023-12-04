@@ -805,7 +805,7 @@ proc pathbar {depth} {
     append relative_path "../"
 
   }
-  puts $fout $pathhier
+  puts $fout <div>$pathhier</div>
 }
 # }}}
 # lgrep

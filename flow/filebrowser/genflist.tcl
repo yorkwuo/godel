@@ -4,6 +4,9 @@ source $env(GODEL_ROOT)/bin/godel.tcl
 set dirroot  [lvars . dirroot]
 set pattern  [lvars . pattern]
 set maxdepth [lvars . maxdepth]
+if {$maxdepth eq "NA"} {
+  set maxdepth 1
+}
 
 
 if [info exist atvar] {
