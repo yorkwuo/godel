@@ -1,6 +1,29 @@
-ghtm_top_bar -save -new
+ghtm_top_bar -save -new -js
 pathbar 1
-puts $fout <br>
+puts $fout {
+  <style>
+     .myBox {
+      width: 18px;
+      height: 18px;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      cursor: pointer;
+    }
+    tr:hover {background-color:white;}
+
+  </style>
+}
+
+proc ltbl_colorbox {type} {
+  upvar row     row
+  upvar celltxt celltxt
+
+  set celltxt "<td><div class=myBox name=$type.$row></div></td>"
+}
+
 batch_onoff coldone     -name done
 batch_onoff coldelete   -name D
 batch_onoff colclass     -name class
@@ -67,7 +90,8 @@ cols_onoff "coltowho    ; edtable:towho         ; towho"
 cols_onoff "colkeywords ; edtable:keywords      ; Keywords"
 cols_onoff "colid       ; edtable:id            ; id"
 cols_onoff "colclass   ; ed:class ; Class"
-cols_onoff "coltitle    ; proc:ltbl_cfd      ; H"
+#cols_onoff "coltitle    ; proc:ltbl_cfd      ; H"
+cols_onoff "coltitle    ; proc:ltbl_colorbox status ; C"
 #cols_onoff "coltitle    ; edtable:title    ; title"
 cols_onoff "coltitle    ; edtable:g:pagename    ; g:pagename"
 cols_onoff "colnotes     ; ed:notes         ; Notes"
