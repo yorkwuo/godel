@@ -259,7 +259,7 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
   /* Position the tooltip */
   position: absolute;
   z-index: 1;
-  top: -50px;
+  top: -30px;
   left: 50%;  
 }
 

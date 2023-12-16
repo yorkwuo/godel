@@ -4156,7 +4156,7 @@ proc ltbl_iname {dispcol} {
   upvar row     row
   upvar textalign textalign
 
-  #set iname [lvars $row g:iname]
+  set iname [lvars $row g:iname]
   set tick [lvars $row tick]
   if {$tick eq "NA"} {
     set tick [lvars $row tick]
@@ -4166,7 +4166,7 @@ proc ltbl_iname {dispcol} {
   if {$tick eq "1"} {
     set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=lightyellow><a href=\"$row/.index.htm\" style=\"text-decoration:none; white-space:pre\">$disp</a></td>"
   } else {
-    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign style=\"white-space:pre\"><a style=text-decoration:none href=\"$row/.index.htm\">$disp</a></td>"
+    set celltxt "<td style=\"cursor:pointer;\" gname=\"$iname\" colname=\"$dispcol\" iname=\"$iname\" class=mylink style=\"white-space:pre\">$disp</td>"
   }
 }
 # }}}

@@ -24,6 +24,38 @@ document.onkeyup = function(e) {
   }
 };
 
+var boxes = document.getElementsByClassName("mylink");
+if (typeof(boxes) != 'undefined' && boxes != null) {
+
+  function singleClickHandler() {
+    var delay = 250; // Adjust the delay as needed
+    var page = this.getAttribute('iname')
+
+    clickCount++;
+    setTimeout(function () {
+      if (clickCount === 1) {
+        window.location.href = page + '/.index.htm'
+      }
+      clickCount = 0;
+    }, delay);
+  }
+
+  for (var k = 0; k < boxes.length; k++) {
+    var clickCount = 0;
+
+// single click
+    boxes[k].addEventListener('click', singleClickHandler)
+
+// double click
+    boxes[k].addEventListener('dblclick', function(){
+      this.removeEventListener('click', singleClickHandler);
+      this.setAttribute('contenteditable','true')
+      this.focus()
+    })
+
+  }
+}
+
 document.addEventListener("click", e => {
   const isDropdownButton = e.target.matches("[data-dropdown-button]")
   if (!isDropdownButton && e.target.closest("[data-dropdown]") != null) return
