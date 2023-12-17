@@ -850,24 +850,14 @@ proc alinkname {} {
   upvar atvar atvar
 
   set name [get_atvar $row,name]
-  #set url  [get_atvar $row,url]
+  set url  [get_atvar $row,url]
 
   if {$name eq ""} {
     set celltxt "<td gname=\"$row\" colname=\"name\" contenteditable=\"true\" ></td>"
   } else {
-    set celltxt "<td gname=\"$row\" colname=\"name\" contenteditable=\"true\" >$name</td>"
+    set celltxt "<td style=\"cursor:pointer;\" class=alink gname=\"$row\" colname=\"name\" alink=\"$url\" >$name</td>"
   }
 
-  #if {$name eq ""} {
-  #  set celltxt "<td gname=\"$row\" colname=\"name\" contenteditable=\"true\" ><a href=\"$url\"></td>"
-  #} else {
-  #  #set celltxt "<td><a href=\"$url\">$name</td>"
-  #  if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
-  #    set celltxt "<td><button onclick=\"chrome_open('$url')\">L</button></td>"
-  #  } else {
-  #    set celltxt "<td><a href=\"$url\">L</td>"
-  #  }
-  #}
 }
 # }}}
 # gen_random_num
@@ -4157,17 +4147,9 @@ proc ltbl_iname {dispcol} {
   upvar textalign textalign
 
   set iname [lvars $row g:iname]
-  set tick [lvars $row tick]
-  if {$tick eq "NA"} {
-    set tick [lvars $row tick]
-  }
   set disp [lvars $row $dispcol]
 
-  if {$tick eq "1"} {
-    set celltxt "<td colname=\"proc:ltbl_iname $dispcol\" $textalign bgcolor=lightyellow><a href=\"$row/.index.htm\" style=\"text-decoration:none; white-space:pre\">$disp</a></td>"
-  } else {
-    set celltxt "<td style=\"cursor:pointer;\" gname=\"$iname\" colname=\"$dispcol\" iname=\"$iname\" class=mylink style=\"white-space:pre\">$disp</td>"
-  }
+  set celltxt "<td style=\"cursor:pointer;white-space:pre\" gname=\"$iname\" colname=\"$dispcol\" iname=\"$iname\" class=mylink>$disp</td>"
 }
 # }}}
 # ltbl_lnfile

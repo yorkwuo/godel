@@ -45,9 +45,9 @@ if [file exist cols.tcl] {
   cols_onoff "coldel;proc:bton_delete;D"
   cols_onoff "coltick;proc:bton_tick;T"
   cols_onoff "col_cdate;cdate;cdate"
-  cols_onoff "col_iname;proc:ltbl_iname g:iname;iname"
+  cols_onoff "col_iname;g:iname;iname"
   cols_onoff "col_ghtm;proc:ltbl_lnfile .godel/ghtm.tcl ghtm;ghtm"
-  cols_onoff "col_title;ed:g:pagename;g:pagename"
+  cols_onoff "col_title;proc:ltbl_iname g:pagename;g:pagename"
   cols_onoff "col_notes;ed:notes;Notes"
   cols_onoff "col_keywords;ed:g:keywords;Keywords"
 }

@@ -1,6 +1,13 @@
-ghtm_top_bar -save -anew
+ghtm_top_bar -save -anew -js
 pathbar 1
-puts $fout "<br>"
+
+ghtm_table_display_onoff tbl D
+ghtm_table_display_onoff tbl Link
+
+set js_func2exec ""
+lappend js_func2exec "refresh_table_display_onoff('tbl')"
+lappend js_func2exec "refresh_display_button('tbl')"
+
 # keywords
 if [file exist keywords.tcl] {
   source keywords.tcl
