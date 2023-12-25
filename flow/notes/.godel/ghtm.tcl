@@ -7,7 +7,6 @@ pathbar [lvars . pathvar_depth]
 #------------------------------------
 # Class
 #------------------------------------
-puts $fout "<br>"
   if [file exist "class.tcl"] {
     source class.tcl
   }

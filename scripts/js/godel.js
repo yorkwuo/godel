@@ -1749,6 +1749,16 @@ function flow2_click () {
   }
 }
 // }}}
+function goglobal () {
+
+  let url = ""
+  url += 'http://127.0.0.1:5000/goglobal?cwd='+ginfo['cwd']
+
+  console.log(url)
+
+  fetch(url)
+
+}
 // flow1_click
 // {{{
 function flow1_click () {
@@ -1759,7 +1769,8 @@ function flow1_click () {
   data += '<pre>' + ginfo["last_updated"] + '</pre>\n';
   data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="obless()">Bless</button>';
   data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="fdco()">Pull</button>';
-  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="fdstatus()">Status</button><br>';
+  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="fdstatus()">Status</button>';
+  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="goglobal()">Global</button><br>';
   Object.keys(flows).forEach(function(k){
     data += '<button class=\"gbtn_flow1 w3-button w3-round w3-light-gray w3-normal\" onoff=0>' + k + '</button>';
   })
@@ -2025,7 +2036,10 @@ function jsplay(fpath, code) {
 
   console.log(fpath)
   console.log(code)
-  const url = 'http://127.0.0.1:5000/play1?filepath='+fpath+'&code='+code;
+
+  var ff = encodeURIComponent(fpath)
+
+  const url = 'http://127.0.0.1:5000/play1?filepath='+ff+'&code='+code;
   //const url = 'http://127.0.0.1:5000/mpvplay?filepath='+fpath;
 
   fetch(url)

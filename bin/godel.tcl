@@ -2182,8 +2182,8 @@ proc openfolder {} {
   if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
     catch "exec /mnt/c/Windows/explorer.exe . &"
   } else {
-    #catch "exec thunar $target &"
-    catch "exec thunar . &"
+    #catch "exec thunar . &"
+    catch "exec nautilus . &"
   }
 }
 # }}}
@@ -2976,7 +2976,7 @@ proc ltbl_linkurl {key} {
     if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
       set celltxt "<td><button onclick=\"chrome_open('$urlvalue')\">url</button></td>"
     } else {
-      set celltxt "<td><a href=\"$urlvalue\">$key</td>"
+      set celltxt "<td><a href=\"$urlvalue\" target=blank>$key</td>"
     }
   }
 }
@@ -4147,7 +4147,10 @@ proc ltbl_iname {dispcol} {
   upvar textalign textalign
 
   set iname [lvars $row g:iname]
-  set disp [lvars $row $dispcol]
+  set disp  [lvars $row $dispcol]
+  if {$disp eq "NA"} {
+    set disp ""
+  }
 
   set celltxt "<td style=\"cursor:pointer;white-space:pre\" gname=\"$iname\" colname=\"$dispcol\" iname=\"$iname\" class=mylink>$disp</td>"
 }
