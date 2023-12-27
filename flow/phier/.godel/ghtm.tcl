@@ -2,8 +2,6 @@ ghtm_top_bar -save -new
 
 pathbar 1
 
-puts $fout <br>
-
 # hiername
 # {{{
 proc hiername {} {
