@@ -1988,6 +1988,7 @@ function refresh_table_display_onoff (tblid) {
   // column_no
       th = tr[0].getElementsByTagName("th");
   
+      let column_no = ""
       for (j = 0; j < th.length; j++) {
         txt = th[j].innerHTML;
         txt = txt.trim();
@@ -1996,9 +1997,13 @@ function refresh_table_display_onoff (tblid) {
           th[j].style.display=dispvalue
         }
       }
-      for (k = 1; k < tr.length; k++) {
-        td = tr[k].getElementsByTagName("td")[column_no];
-        td.style.display=dispvalue
+      if (column_no == '') {
+        //console.log('jj')
+      } else {
+        for (k = 1; k < tr.length; k++) {
+          td = tr[k].getElementsByTagName("td")[column_no];
+          td.style.display=dispvalue
+        }
       }
     }
 }
