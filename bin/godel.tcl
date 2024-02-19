@@ -1,3 +1,11 @@
+# colsep
+# {{{
+proc colsep {} {
+  upvar celltxt celltxt
+  upvar row     row
+  set celltxt "<td style=padding:0px bgcolor=lightblue></td>"
+}
+# }}}
 # notetip
 # {{{
 proc notetip {} {
@@ -650,6 +658,15 @@ proc ghtm_card {name value args} {
     set edfile "16px"
   }
 # }}}
+  # -3digit
+# {{{
+  set opt(-3digit) 0
+  set idx [lsearch $args {-3digit}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-3digit) 1
+  }
+# }}}
 
   puts $fout "
   <div class=\"w3-bar-item\">
@@ -662,6 +679,13 @@ proc ghtm_card {name value args} {
     puts $fout "<a style=\"font-size:$header;\"href=$linkfile>$name</a>"
   } else {
     puts $fout "$name"
+  }
+
+  if {$opt(-3digit) eq "1"} {
+    if {$value eq "NA" || $value eq ""} {
+    } else {
+      set value [format_3digit $value]
+    }
   }
 
   puts $fout "
@@ -8829,6 +8853,15 @@ proc plist {args} {
     set opt(-s) 1
   }
 # }}}
+  # -tail
+# {{{
+  set opt(-tail) 0
+  set idx [lsearch $args {-tail}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-tail) 1
+  }
+# }}}
   set ll [lindex $args 0]
 
   if {$opt(-s)} {
@@ -8847,7 +8880,12 @@ proc plist {args} {
     close $kout
   } else {
     foreach i $ll {
-      puts $indent$i
+      if {$opt(-tail)} {
+        set fname [file tail $i]
+        puts $indent$fname
+      } else {
+        puts $indent$i
+      }
     }
   }
 }
@@ -9060,8 +9098,21 @@ proc read_as_list {args} {
 # }}}
 # read_as_data
 # {{{
-proc read_as_data {ifile} {
-  set kin [open $ifile r]
+proc read_as_data {ifile args} {
+# -gz
+# {{{
+  set opt(-gz) 0
+  set idx [lsearch $args {-gz}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-gz) 1
+  }
+# }}}
+  if {$opt(-gz) eq "1"} {
+    set kin [open "|gzcat $ifile"]
+  } else {
+    set kin [open $ifile r]
+  }
     set data [read $kin]
   close $kin
   return $data

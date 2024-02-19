@@ -1,3 +1,17 @@
+
+startpoint_clock
+endpoint_setup_time_value
+endpoint_hold_time_value
+startpoint_input_delay_value
+-color
+endpoint_clock
+-radius
+arrival
+-in
+-ofile
+-inout
+is_rise_edge_triggered_clock_pin
+-scenarios
 -tails
 -directory
 -1801
@@ -8,7 +22,7 @@
 -add_patterns
 -pg_regions
 -blockage
-
+-include_hierarchical_pins
 -mask
 
 -allow_buffering

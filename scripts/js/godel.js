@@ -1815,8 +1815,8 @@ function flow1_click () {
 // {{{
 function mailout () {
   var data = '';
-  data += 'Email: (Example: york.wu@intel.com) <input class=w3-input type="text" id=email_address>\n';
-  data += 'Filename: (Default: index.html) <input class=w3-input type="text" id=filename value=index.html>\n';
+  data += 'Email: <input class=w3-input type="text" id=email_address value=york.wu@intel.com>\n';
+  data += 'Filename: <input class=w3-input type="text" id=filename value=index.html>\n';
   data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="send_email()">Send</button>';
   //data += '<pre>' + ginfo["srcpath"] + '</pre>\n';
   data += '<br>';
