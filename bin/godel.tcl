@@ -8572,6 +8572,10 @@ proc obless {args} {
         source $where/$objname/.godel/proc.tcl
       }
       foreach f $files {
+        set dir [file dirname $f]
+        if ![file exist $dir] {
+          file mkdir $dir
+        }
         #file copy -force $where/$objname/$f $f
         exec cp $where/$objname/$f $f
       }
@@ -9070,10 +9074,25 @@ proc read_as_list {args} {
     set opt(-filter) 1
   }
 # }}}
-  set afile [lindex $args 0]
-  set fin [open $afile r]
+# -gz
+# {{{
+  set opt(-gz) 0
+  set idx [lsearch $args {-gz}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-gz) 1
+  }
+# }}}
+
+  set ifile [lindex $args 0]
+
+  if {$opt(-gz) eq "1"} {
+    set kin [open "|gzcat $ifile"]
+  } else {
+    set kin [open $ifile r]
+  }
     if {$opt(-filter) eq "1"} {
-      while {[gets $fin line] >= 0} {
+      while {[gets $kin line] >= 0} {
         if [regexp {^\s*$} $line] {continue}
         regsub {^\s*} $line {} line
         regsub {\s*$}  $line {} line
@@ -9083,11 +9102,11 @@ proc read_as_list {args} {
         }
       }
     } else {
-      while {[gets $fin line] >= 0} {
+      while {[gets $kin line] >= 0} {
         lappend lines $line
       }
     }
-  close $fin
+  close $kin
 
   if [info exist lines] {
     return $lines
