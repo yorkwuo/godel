@@ -273,15 +273,28 @@ proc expect_more0 {key} {
 
 }
 # }}}
-# ghtm_table_display_onoff
+# ghtm_table_col_onoff
 # {{{
-proc ghtm_table_display_onoff {tblid colname} {
+proc ghtm_table_col_onoff {tblid colname} {
   upvar fout fout
   puts $fout "<button \
   id=\"but_$colname\" \
   onoff=1 \
   style=\"background-color:#FCAE1E;color:white\" \
-  onclick=\"table_display_onoff('$tblid','but_$colname','$colname')\">$colname</button>"
+  onclick=\"table_col_onoff('$tblid','but_$colname','$colname')\">$colname</button>"
+}
+# }}}
+# ghtm_table_row_onoff
+# {{{
+proc ghtm_table_row_onoff {tblid colname keyword} {
+  upvar fout fout
+  puts $fout "<button \
+  id=\"row_$keyword\" \
+  tblid=$tblid \
+  colname=$colname \
+  onoff=1 \
+  style=\"background-color:#FCAE1E;color:white\" \
+  onclick=\"table_row_onoff('$tblid','row_$keyword','$colname','$keyword')\">$keyword</button>"
 }
 # }}}
 # ghtm_table_multi_onoff
@@ -2103,6 +2116,7 @@ proc asave {aname ofile newname} {
 # {{{
 proc openfile {fpath} {
   global env
+  puts $fpath
   if [regexp {\.pdf} $fpath] {
     if {$env(GODEL_WSL) eq "1"} {
       regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
@@ -8405,10 +8419,10 @@ proc godel_draw {{target_path NA}} {
     puts $fout "<script src=.local.js></script>"
   }
 
-  if [info exist js_func2exec] {
+  if [info exist jfuncs] {
     puts $fout "<script>"
-    foreach js_func $js_func2exec {
-      puts $fout $js_func
+    foreach jsfunc $jfuncs {
+      puts $fout $jsfunc
     }
     puts $fout "</script>"
   }
