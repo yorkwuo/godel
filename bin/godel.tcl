@@ -1,3 +1,11 @@
+# colsep
+# {{{
+proc colsep {} {
+  upvar celltxt celltxt
+  upvar row     row
+  set celltxt "<td style=padding:0px bgcolor=lightblue></td>"
+}
+# }}}
 # notetip
 # {{{
 proc notetip {} {
@@ -265,15 +273,28 @@ proc expect_more0 {key} {
 
 }
 # }}}
-# ghtm_table_display_onoff
+# ghtm_table_col_onoff
 # {{{
-proc ghtm_table_display_onoff {tblid colname} {
+proc ghtm_table_col_onoff {tblid colname} {
   upvar fout fout
   puts $fout "<button \
   id=\"but_$colname\" \
   onoff=1 \
   style=\"background-color:#FCAE1E;color:white\" \
-  onclick=\"table_display_onoff('$tblid','but_$colname','$colname')\">$colname</button>"
+  onclick=\"table_col_onoff('$tblid','but_$colname','$colname')\">$colname</button>"
+}
+# }}}
+# ghtm_table_row_onoff
+# {{{
+proc ghtm_table_row_onoff {tblid colname keyword} {
+  upvar fout fout
+  puts $fout "<button \
+  id=\"row_$keyword\" \
+  tblid=$tblid \
+  colname=$colname \
+  onoff=1 \
+  style=\"background-color:#FCAE1E;color:white\" \
+  onclick=\"table_row_onoff('$tblid','row_$keyword','$colname','$keyword')\">$keyword</button>"
 }
 # }}}
 # ghtm_table_multi_onoff
@@ -650,6 +671,15 @@ proc ghtm_card {name value args} {
     set edfile "16px"
   }
 # }}}
+  # -3digit
+# {{{
+  set opt(-3digit) 0
+  set idx [lsearch $args {-3digit}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-3digit) 1
+  }
+# }}}
 
   puts $fout "
   <div class=\"w3-bar-item\">
@@ -662,6 +692,13 @@ proc ghtm_card {name value args} {
     puts $fout "<a style=\"font-size:$header;\"href=$linkfile>$name</a>"
   } else {
     puts $fout "$name"
+  }
+
+  if {$opt(-3digit) eq "1"} {
+    if {$value eq "NA" || $value eq ""} {
+    } else {
+      set value [format_3digit $value]
+    }
   }
 
   puts $fout "
@@ -2079,6 +2116,7 @@ proc asave {aname ofile newname} {
 # {{{
 proc openfile {fpath} {
   global env
+  puts $fpath
   if [regexp {\.pdf} $fpath] {
     if {$env(GODEL_WSL) eq "1"} {
       regsub      {\/mnt\/c\/} $fpath {c:\\\\} fpath
@@ -8382,10 +8420,10 @@ proc godel_draw {{target_path NA}} {
     puts $fout "<script src=.local.js></script>"
   }
 
-  if [info exist js_func2exec] {
+  if [info exist jfuncs] {
     puts $fout "<script>"
-    foreach js_func $js_func2exec {
-      puts $fout $js_func
+    foreach jsfunc $jfuncs {
+      puts $fout $jsfunc
     }
     puts $fout "</script>"
   }
@@ -8549,6 +8587,10 @@ proc obless {args} {
         source $where/$objname/.godel/proc.tcl
       }
       foreach f $files {
+        set dir [file dirname $f]
+        if ![file exist $dir] {
+          file mkdir $dir
+        }
         #file copy -force $where/$objname/$f $f
         exec cp $where/$objname/$f $f
       }
@@ -8830,6 +8872,15 @@ proc plist {args} {
     set opt(-s) 1
   }
 # }}}
+  # -tail
+# {{{
+  set opt(-tail) 0
+  set idx [lsearch $args {-tail}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-tail) 1
+  }
+# }}}
   set ll [lindex $args 0]
 
   if {$opt(-s)} {
@@ -8848,7 +8899,12 @@ proc plist {args} {
     close $kout
   } else {
     foreach i $ll {
-      puts $indent$i
+      if {$opt(-tail)} {
+        set fname [file tail $i]
+        puts $indent$fname
+      } else {
+        puts $indent$i
+      }
     }
   }
 }
@@ -9033,10 +9089,25 @@ proc read_as_list {args} {
     set opt(-filter) 1
   }
 # }}}
-  set afile [lindex $args 0]
-  set fin [open $afile r]
+# -gz
+# {{{
+  set opt(-gz) 0
+  set idx [lsearch $args {-gz}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-gz) 1
+  }
+# }}}
+
+  set ifile [lindex $args 0]
+
+  if {$opt(-gz) eq "1"} {
+    set kin [open "|gzcat $ifile"]
+  } else {
+    set kin [open $ifile r]
+  }
     if {$opt(-filter) eq "1"} {
-      while {[gets $fin line] >= 0} {
+      while {[gets $kin line] >= 0} {
         if [regexp {^\s*$} $line] {continue}
         regsub {^\s*} $line {} line
         regsub {\s*$}  $line {} line
@@ -9046,11 +9117,11 @@ proc read_as_list {args} {
         }
       }
     } else {
-      while {[gets $fin line] >= 0} {
+      while {[gets $kin line] >= 0} {
         lappend lines $line
       }
     }
-  close $fin
+  close $kin
 
   if [info exist lines] {
     return $lines
@@ -9061,8 +9132,21 @@ proc read_as_list {args} {
 # }}}
 # read_as_data
 # {{{
-proc read_as_data {ifile} {
-  set kin [open $ifile r]
+proc read_as_data {ifile args} {
+# -gz
+# {{{
+  set opt(-gz) 0
+  set idx [lsearch $args {-gz}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-gz) 1
+  }
+# }}}
+  if {$opt(-gz) eq "1"} {
+    set kin [open "|gzcat $ifile"]
+  } else {
+    set kin [open $ifile r]
+  }
     set data [read $kin]
   close $kin
   return $data

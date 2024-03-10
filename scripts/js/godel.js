@@ -830,6 +830,108 @@ function filter_table_keyword(tname, colname, input, exact) {
 
 }
 // }}}
+// hide_table_rows
+// {{{
+function hide_table_rows(tname, colname, input, exact) {
+    var input, filter, table, tr, td, i;
+
+    var filter = input;
+    var patt  = new RegExp(filter, "i");
+
+    table = document.getElementById(tname);
+    tr = table.getElementsByTagName("tr");
+
+    th = tr[0].getElementsByTagName("th");
+    for (i = 0; i < th.length; i++) {
+      txt = th[i].innerHTML;
+      txt = txt.trim();
+      if (colname === txt) {
+        column_no = i;   
+      }
+    }
+
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[column_no];
+      if (td) {
+        var found = 1
+// exact
+        if (exact === "1") {
+          origtd = td.innerHTML;
+          tdvalue = origtd.replace(/(<([^>]+)>)/gi, "");
+          if (tdvalue === input) {
+            found = found && 1;
+          } else {
+            found = found && 0;
+          }
+// no exact
+        } else {
+          if (patt.test(td.innerHTML)) {
+            found = found && 1;
+          } else {
+            found = found && 0;
+          }
+        }
+        if (found) {
+            tr[i].style.display = "none";
+        } else {
+            //tr[i].style.display = "";
+        }
+      }       
+    }
+
+}
+// }}}
+// select_table_rows
+// {{{
+function select_table_rows(tname, colname, input, exact) {
+    var input, filter, table, tr, td, i;
+
+    var filter = input;
+    var patt  = new RegExp(filter, "i");
+
+    table = document.getElementById(tname);
+    tr = table.getElementsByTagName("tr");
+
+    th = tr[0].getElementsByTagName("th");
+    for (i = 0; i < th.length; i++) {
+      txt = th[i].innerHTML;
+      txt = txt.trim();
+      if (colname === txt) {
+        column_no = i;   
+      }
+    }
+
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[column_no];
+      if (td) {
+        var found = 1
+// exact
+        if (exact === "1") {
+          origtd = td.innerHTML;
+          tdvalue = origtd.replace(/(<([^>]+)>)/gi, "");
+          if (tdvalue === input) {
+            found = found && 1;
+          } else {
+            found = found && 0;
+          }
+// no exact
+        } else {
+          if (patt.test(td.innerHTML)) {
+            found = found && 1;
+          } else {
+            found = found && 0;
+          }
+        }
+        if (found) {
+            //tr[i].style.display = "none";
+            tr[i].style.display = "";
+        } else {
+        }
+      }       
+    }
+
+}
+// }}}
 // table_row_count
 // {{{
 function table_row_count(id, tid) {
@@ -933,39 +1035,6 @@ function chklist_examine() {
   alert("Copied the text: \n" + copyText.value);
 }
 // }}}
-// hide_table_row
-// {{{
-//function hide_table_row(row,col) {
-//  table = document.getElementById("tbl");
-//  tr = table.getElementsByTagName("tr");
-//
-//  //console.log(row);
-//  td = tr[row].getElementsByTagName("td");
-//  var pvalue = td[1].innerText;
-//  console.log(pvalue);
-//
-//  var start = row + 1;
-//  for (i = start; i < tr.length; i++) {
-//    td = tr[i].getElementsByTagName("td");
-//    var level = td[1].innerText;
-//    if (level > pvalue) {
-//      tr[i].classList.toggle("hidden");
-//    } else if (level == pvalue) {
-//      break;
-//    }
-//  }
-//}
-// }}}
-// add event listener for hide_table_row
-//# {{{
-//table = document.getElementById("tbl");
-//
-//table.addEventListener('click',function(e){
-//  var row = e.target.parentElement.rowIndex;
-//  var col = e.target.cellIndex;
-//  hide_table_row(row,col);
-//},false);
-//# }}}
 // at_save
 // {{{
 function at_save(atfname) {
@@ -1815,8 +1884,8 @@ function flow1_click () {
 // {{{
 function mailout () {
   var data = '';
-  data += 'Email: (Example: york.wu@intel.com) <input class=w3-input type="text" id=email_address>\n';
-  data += 'Filename: (Default: index.html) <input class=w3-input type="text" id=filename value=index.html>\n';
+  data += 'Email: <input class=w3-input type="text" id=email_address value=york.wu@intel.com>\n';
+  data += 'Filename: <input class=w3-input type="text" id=filename value=index.html>\n';
   data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="send_email()">Send</button>';
   //data += '<pre>' + ginfo["srcpath"] + '</pre>\n';
   data += '<br>';
@@ -1918,9 +1987,36 @@ function table_multi_onoff(tblid, butid, colnames) {
     }
 }
 // }}}
-// table_display_onoff
+// table_row_onoff
 // {{{
-function table_display_onoff(tblid, butid, colname) {
+function table_row_onoff(tblid, butid, colname, keyword) {
+    var table, tr, td, i;
+
+    but = document.getElementById(butid);
+
+    onoff = localStorage.getItem(butid);
+
+    if (onoff === "1") {
+      but.style.backgroundColor = 'white';
+      but.style.color = 'black';
+      localStorage.setItem(butid, "0")
+      hide_table_rows(tblid,colname,keyword)
+    } else if (onoff == null) {
+      but.style.backgroundColor = 'white';
+      but.style.color = 'black';
+      localStorage.setItem(butid, "0")
+      hide_table_rows(tblid,colname,keyword)
+    } else {
+      but.style.backgroundColor = '#FCAE1E';
+      but.style.color = 'white';
+      localStorage.setItem(butid, "1")
+      select_table_rows(tblid,colname,keyword)
+    }
+}
+// }}}
+// table_col_onoff
+// {{{
+function table_col_onoff(tblid, butid, colname) {
     var table, tr, td, i, dispvalue;
 
     but = document.getElementById(butid);
@@ -1966,9 +2062,9 @@ function table_display_onoff(tblid, butid, colname) {
     }
 }
 // }}}
-// refresh_table_display_onoff
+// init_table_col_onoff
 // {{{
-function refresh_table_display_onoff (tblid) {
+function init_table_col_onoff (tblid) {
     var tname = tblid;
 
     table = document.getElementById(tname);
@@ -2008,10 +2104,34 @@ function refresh_table_display_onoff (tblid) {
     }
 }
 // }}}
-// refresh_display_button
+// init_table_row_onoff
 // {{{
-function refresh_display_button (tblid) {
-    buts = document.querySelectorAll('[id^="but_"]');
+function init_table_row_onoff (tblid) {
+    var tname = tblid;
+
+    table = document.getElementById(tname);
+    tr = table.getElementsByTagName("tr");
+
+    buts = document.querySelectorAll('[id^="row_"]');
+
+    for (i = 0; i < buts.length; i++) {
+      butid = buts[i].getAttribute('id')
+      tblid = buts[i].getAttribute('tblid')
+      colname = buts[i].getAttribute('colname')
+      keyword = buts[i].innerHTML;
+      value = localStorage.getItem(butid)
+      if (value == '0') {
+        hide_table_rows(tblid, colname, keyword)
+      } else {
+        select_table_rows(tblid, colname, keyword)
+      }
+    }
+}
+// }}}
+// init_col_button
+// {{{
+function init_col_button (tblid) {
+    buts = document.querySelectorAll('[id^="but_"], [id^="row_"]');
     for (i = 0; i < buts.length; i++) {
       butid = buts[i].getAttribute('id')
       dispvalue = localStorage.getItem(butid)
