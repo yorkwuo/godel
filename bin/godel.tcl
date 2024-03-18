@@ -286,15 +286,20 @@ proc ghtm_table_col_onoff {tblid colname} {
 # }}}
 # ghtm_table_row_onoff
 # {{{
-proc ghtm_table_row_onoff {tblid colname keyword} {
+proc ghtm_table_row_onoff {tblid colname keyword args} {
   upvar fout fout
+  if {$args eq "-exact"} {
+    set exact 1
+  } else {
+    set exact 0
+  }
   puts $fout "<button \
   id=\"row_$keyword\" \
   tblid=$tblid \
   colname=$colname \
   onoff=1 \
   style=\"background-color:#FCAE1E;color:white\" \
-  onclick=\"table_row_onoff('$tblid','row_$keyword','$colname','$keyword')\">$keyword</button>"
+  onclick=\"table_row_onoff('$tblid','row_$keyword','$colname','$keyword','$exact')\">$keyword</button>"
 }
 # }}}
 # ghtm_table_multi_onoff
@@ -777,7 +782,7 @@ proc newgpage {} {
   set idwidth     [lvars . idwidth]
 
   if {$idwidth eq "NA"} {
-    set idwidth 4
+    set idwidth 3
   }
   set rowid [format "%0${idwidth}d" $idcounter]
 
@@ -4454,7 +4459,7 @@ proc gexe_button {args} {
       }
     close $kout
   } else {
-    #puts "Error: gexe_button: file not exist... $exefile"
+    puts "Error: gexe_button: file not exist... $exefile"
   }
 }
 # }}}

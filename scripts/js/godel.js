@@ -1989,7 +1989,7 @@ function table_multi_onoff(tblid, butid, colnames) {
 // }}}
 // table_row_onoff
 // {{{
-function table_row_onoff(tblid, butid, colname, keyword) {
+function table_row_onoff(tblid, butid, colname, keyword, exact) {
     var table, tr, td, i;
 
     but = document.getElementById(butid);
@@ -2000,17 +2000,17 @@ function table_row_onoff(tblid, butid, colname, keyword) {
       but.style.backgroundColor = 'white';
       but.style.color = 'black';
       localStorage.setItem(butid, "0")
-      hide_table_rows(tblid,colname,keyword)
+      hide_table_rows(tblid,colname,keyword,exact)
     } else if (onoff == null) {
       but.style.backgroundColor = 'white';
       but.style.color = 'black';
       localStorage.setItem(butid, "0")
-      hide_table_rows(tblid,colname,keyword)
+      hide_table_rows(tblid,colname,keyword,exact)
     } else {
       but.style.backgroundColor = '#FCAE1E';
       but.style.color = 'white';
       localStorage.setItem(butid, "1")
-      select_table_rows(tblid,colname,keyword)
+      select_table_rows(tblid,colname,keyword,exact)
     }
 }
 // }}}
@@ -2115,14 +2115,17 @@ function init_table_row_onoff (tblid) {
     buts = document.querySelectorAll('[id^="row_"]');
 
     for (i = 0; i < buts.length; i++) {
+      console.log(i)
       butid = buts[i].getAttribute('id')
       tblid = buts[i].getAttribute('tblid')
       colname = buts[i].getAttribute('colname')
       keyword = buts[i].innerHTML;
       value = localStorage.getItem(butid)
       if (value == '0') {
+        console.log('remove')
         hide_table_rows(tblid, colname, keyword)
       } else {
+        console.log('display')
         select_table_rows(tblid, colname, keyword)
       }
     }
