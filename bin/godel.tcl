@@ -2135,7 +2135,7 @@ proc openfile {fpath} {
       }
     }
   } elseif [regexp {http} $fpath] {
-    catch {exec /mnt/c/Program\ Files\ \(x86\)/Google/Chrome/Application/chrome.exe $fpath &}
+    catch {exec /mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe $fpath &}
   } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb|\.mkv|.webm|\.wmv|\.flv} $fpath] {
       catch {exec mpv $fpath &}
   } elseif [regexp {\.rpt|\.xml|\.cfg|\.pm|\.gz|\.lef|\.rpt|\.log|\.lib} $fpath] {
@@ -2953,6 +2953,7 @@ proc alinkurl {} {
   upvar celltxt celltxt
 
   set value [get_atvar $row,url]
+
 
   if {$value eq "NA"} {
     set celltxt "<td style=\"font-size:8px\" gname=\"$row\" colname=\"url\" contenteditable=\"true\"></td>"
