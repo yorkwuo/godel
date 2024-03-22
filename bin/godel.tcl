@@ -4425,6 +4425,18 @@ proc gexe_button {args} {
     set opt(-name) 1
   }
 # }}}
+  # -addon 
+# {{{
+  set opt(-addon) 0
+  set idx [lsearch $args {-addon}]
+  if {$idx != "-1"} {
+    set addon [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-addon) 1
+  } else {
+    set addon ""
+  }
+# }}}
   # -id 
 # {{{
   set opt(-id) 0
@@ -4446,9 +4458,18 @@ proc gexe_button {args} {
   if [file exist $exefile] {
     set exename [file tail $exefile]
     if {$opt(-cmd)} {
-      puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn\" type=text/gtcl><b>$name</b><span style=float:right><a class=\"w3-button\" href=$exefile style=\"background-color:#728FCE;color:white\"; type=text/txt>&#9701</a></span></a>"
+      puts $fout "
+      <span class=\"tt_exe\">
+        <a style=\"background-color:#728FCE;color:white\" 
+        href=.run.csh.gtcl class=\"w3-btn w3-round-large\" 
+        type=text/gtcl><b>$name</b></a>
+        <span class=\"tooltiptext_exe\">
+          $addon<a href=.$exename.gtcl type=text/txt>$exename</a>
+        </span>
+      </span>
+      "
     } else {
-      puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn\" type=text/gtcl><b>$name</b></a>"
+      puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></a>"
     }
     set kout [open ".$exename.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"

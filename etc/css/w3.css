@@ -480,6 +480,30 @@ a,button,input,li {
   transform: translateX(-50%) translateY(-100%);
 }
 
+.tt_exe {
+    position: relative;
+    display: inline-block;
+}
+
+.tt_exe .tooltiptext_exe {
+    visibility: hidden;
+    background-color: lightblue;
+    width: max-content;
+    color: #fff;
+    border-radius: 6px;
+    padding: 4px;
+    padding-left: 5px;
+    padding-right: 10px;
+
+    position: absolute;
+    transform: translateX(-70%) translateY(-95%);
+
+}
+
+.tt_exe:hover .tooltiptext_exe {
+    visibility: visible;
+}
+
 tr:hover {background-color:#91d4c2;}
 
 body {margin-top:0px }
