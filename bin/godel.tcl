@@ -4461,7 +4461,7 @@ proc gexe_button {args} {
       puts $fout "
       <span class=\"tt_exe\">
         <a style=\"background-color:#728FCE;color:white\" 
-        href=.run.csh.gtcl class=\"w3-btn w3-round-large\" 
+        href=.$exename.gtcl class=\"w3-btn w3-round-large\" 
         type=text/gtcl><b>$name</b></a>
         <span class=\"tooltiptext_exe\">
           $addon<a href=.$exename.gtcl type=text/txt>$exename</a>
