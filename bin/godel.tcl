@@ -3820,9 +3820,9 @@ proc linkbox {args} {
 
   if [file exist $target] {
     if {$opt(-ed) eq "1"} {
-      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\" type=text/txt>$dispname$txtsize</a>"
+      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\" type=text/txt><b>$dispname</b>$txtsize</a>"
     } else {
-      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">$dispname$txtsize</a>"
+      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\"><b>$dispname</b>$txtsize</a>"
     }
   } else {
     #puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname$txtsize</a>"
@@ -4185,7 +4185,7 @@ proc ltbl_hit {dispcol} {
 # }}}
 # ltbl_iname
 # {{{
-proc ltbl_iname {dispcol} {
+proc ltbl_iname {dispcol args} {
   upvar celltxt celltxt
   upvar row     row
   upvar textalign textalign
@@ -4481,7 +4481,7 @@ proc gexe_button {args} {
       }
     close $kout
   } else {
-    puts "Error: gexe_button: file not exist... $exefile"
+    #puts "Error: gexe_button: file not exist... $exefile"
   }
 }
 # }}}
