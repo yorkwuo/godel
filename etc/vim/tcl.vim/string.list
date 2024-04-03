@@ -1,4 +1,5 @@
 
+-isolation_supply_set
 startpoint_clock
 endpoint_setup_time_value
 endpoint_hold_time_value
@@ -24,7 +25,7 @@ is_rise_edge_triggered_clock_pin
 -blockage
 -include_hierarchical_pins
 -mask
-
+-sink
 -allow_buffering
 
 -via_rule

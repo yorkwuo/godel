@@ -1,3 +1,9 @@
+# get_ww
+# {{{
+proc get_ww {path} {
+  return [clock format [file mtime $path] -format {%W.%u}]
+}
+# }}}
 # colsep
 # {{{
 proc colsep {} {
@@ -4437,6 +4443,18 @@ proc gexe_button {args} {
     set addon ""
   }
 # }}}
+  # -addfile
+# {{{
+  set opt(-addfile) 0
+  set idx [lsearch $args {-addfile}]
+  if {$idx != "-1"} {
+    set addfname [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-addfile) 1
+  } else {
+    set addfname ""
+  }
+# }}}
   # -id 
 # {{{
   set opt(-id) 0
@@ -4455,6 +4473,12 @@ proc gexe_button {args} {
     set name $exefile
   }
 
+  if {$opt(-addfile) eq "1"} {
+    set addfile "<a href=$addfname type=text/txt>$addfname</a><br>"
+  } else {
+    set addfile ""
+  }
+
   if [file exist $exefile] {
     set exename [file tail $exefile]
     if {$opt(-cmd)} {
@@ -4464,7 +4488,7 @@ proc gexe_button {args} {
         href=.$exename.gtcl class=\"w3-btn w3-round-large\" 
         type=text/gtcl><b>$name</b></a>
         <span class=\"tooltiptext_exe\">
-          $addon<a href=.$exename.gtcl type=text/txt>$exename</a>
+          $addon$addfile<a href=.$exename.gtcl type=text/txt>$exename</a>
         </span>
       </span>
       "
