@@ -9,7 +9,7 @@ proc get_ww {path} {
 proc colsep {} {
   upvar celltxt celltxt
   upvar row     row
-  set celltxt "<td style=padding:0px bgcolor=lightblue></td>"
+  set celltxt "<td style=\"padding:0px;\" bgcolor=#d8b1d4></td>"
 }
 # }}}
 # notetip
@@ -6917,7 +6917,7 @@ proc local_table {tableid args} {
       regsub {edtable:} $page_key {} page_key
 
       if {$colname == ""} {
-        puts $fout "<th></th>"
+        puts $fout "<th style=padding:1px></th>"
       } else {
         puts $fout "<th colname=\"$page_key\">$colname</th>"
       }
