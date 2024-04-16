@@ -1,4 +1,5 @@
 
+-no_isolation
 -isolation_supply_set
 startpoint_clock
 endpoint_setup_time_value
