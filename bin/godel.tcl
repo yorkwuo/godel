@@ -6814,6 +6814,18 @@ proc local_table {tableid args} {
     set opt(-dataTables) 1
   }
 # }}}
+  # -rotate
+# {{{
+  set opt(-rotate) 0
+  set idx [lsearch $args {-rotate}]
+  if {$idx != "-1"} {
+    set degree [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-rotate) 1
+  } else {
+    set degree 45
+  }
+# }}}
 
   # create rows
   # {{{
@@ -6923,7 +6935,17 @@ proc local_table {tableid args} {
       }
     } else {
       set colname $col
-      puts $fout "<th colname=\"$colname\">$colname</th>"
+      if {$opt(-rotate) eq "1"} {
+        puts $fout "<th colname=\"$colname\">
+        <div class='rotated-th'>
+          <span class='rotated-th__label'>
+            $colname
+          </span>
+        </div>
+        </th>"
+      } else {
+        puts $fout "<th colname=\"$colname\">$colname</th>"
+      }
     }
   }
   puts $fout "</tr>"
