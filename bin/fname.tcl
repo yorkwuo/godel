@@ -5,6 +5,7 @@ exec tclsh "$0" ${1+"$@"}
 if {$argv eq ""} {
   puts "Usage:"
   puts "fname.tcl -remove \" foo - bar\" *.html -commit"
+  puts "fname.tcl -from test -to too *.rpt"
   return
 }
 
@@ -83,9 +84,13 @@ if {$argv eq ""} {
 set flist $argv
 
 foreach f $flist {
-  set rootname  [file rootname $f]
+  #set rootname  [file rootname $f]
   set extension [file extension $f]
+  regsub $extension $f {} rootname
 
+  puts $rootname$extension
+
+  set newname ""
   if {$opt(-remove)} {
     if [regsub $remove $f {} newname] {
       #puts "$newname"
@@ -104,7 +109,11 @@ foreach f $flist {
     }
   }
 
-  puts "$newname"
+#  if {$f eq $newname} {
+#  } else {
+#    puts "$f"
+#    puts "    $newname"
+#  }
 
   if {$opt(-commit)} {
     if {$f eq $newname} {

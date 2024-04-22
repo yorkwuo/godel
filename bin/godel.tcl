@@ -6823,7 +6823,7 @@ proc local_table {tableid args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-rotate) 1
   } else {
-    set degree 45
+    set degree 55
   }
 # }}}
 
@@ -6931,14 +6931,25 @@ proc local_table {tableid args} {
       if {$colname == ""} {
         puts $fout "<th style=padding:1px></th>"
       } else {
-        puts $fout "<th colname=\"$page_key\">$colname</th>"
+        #puts $fout "<th colname=\"$page_key\">$colname</th>"
+        if {$opt(-rotate) eq "1"} {
+          puts $fout "<th colname=\"$colname\" style='padding: 4px 25px 4px 10px'>
+          <div class='rotated-th'>
+            <span class='rotated-th__label' style='color:black'>
+              $colname
+            </span>
+          </div>
+          </th>"
+        } else {
+          puts $fout "<th colname=\"$colname\">$colname</th>"
+        }
       }
     } else {
       set colname $col
       if {$opt(-rotate) eq "1"} {
-        puts $fout "<th colname=\"$colname\">
+        puts $fout "<th colname=\"$colname\" style='padding: 4px 25px 4px 10px'>
         <div class='rotated-th'>
-          <span class='rotated-th__label'>
+          <span class='rotated-th__label' style='color:black'>
             $colname
           </span>
         </div>

@@ -503,6 +503,18 @@ a,button,input,li {
 .tt_exe:hover .tooltiptext_exe {
     visibility: visible;
 }
+		.rotated-th {
+			height: 150px ;
+			position: relative ;
+		}
+		.rotated-th__label {
+			bottom: 5px ;
+			left: 50% ;
+			position: absolute ;
+			transform: rotate( -40deg ) ;
+			transform-origin: center left ;
+			white-space: nowrap ;
+		}
 
 tr:hover {background-color:#91d4c2;}
 
