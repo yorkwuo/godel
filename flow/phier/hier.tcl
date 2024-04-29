@@ -5,9 +5,10 @@ source $env(GODEL_ROOT)/bin/godel.tcl
 # {{{
 proc find_child {parent people indent level} {
   upvar arr arr
+  upvar kout kout
   foreach p $people {
     if {$arr($p,rptto) eq $parent} {
-      puts ${indent}$arr($p,dir)
+      puts $kout ${indent}$arr($p,dir)
       #puts ${indent}$p
       lsetvar $arr($p,dir) level $level
       set people [lremove $people $p]
@@ -48,12 +49,14 @@ foreach dir $dirs {
 
 
 
+set kout [open "list.f" w]
 
 foreach root $roots {
-  puts $arr($root,dir)
+  puts $kout $arr($root,dir)
   lsetvar $arr($root,dir) level 1
   find_child $root $people "  " 2
 }
 
+close $kout
 
 # vim:fdm=marker
