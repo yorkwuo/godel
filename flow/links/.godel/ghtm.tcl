@@ -1,12 +1,12 @@
 ghtm_top_bar -save -anew -js
 pathbar 1
 
-ghtm_table_display_onoff tbl D
-ghtm_table_display_onoff tbl Link
+ghtm_table_col_onoff tbl D
+ghtm_table_col_onoff tbl Link
 
 set js_func2exec ""
-lappend js_func2exec "refresh_table_display_onoff('tbl')"
-lappend js_func2exec "refresh_display_button('tbl')"
+lappend js_func2exec "init_table_col_onoff('tbl')"
+lappend js_func2exec "init_col_button('tbl')"
 
 # keywords
 if [file exist keywords.tcl] {
