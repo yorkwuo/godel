@@ -1,3 +1,17 @@
+# pipe_exec
+# {{{
+proc pipe_exec {cmd} {
+  set pipe [open "|$cmd" r]
+
+  catch {
+    while {[gets $pipe line] != -1} {
+      puts $line
+    }
+  }
+
+  close $pipe
+}
+# }}}
 # get_ww
 # {{{
 proc get_ww {path} {
@@ -4708,7 +4722,8 @@ proc fdiff {args} {
       if {$opt(co)} {
         puts "co not exist file... $f"
         if [regexp {\.godel\/ghtm.tcl} $f] {
-          set dir [pindex $f 0 ]
+          #set dir [pindex $f 0 ]
+          set dir [file dirname $f]
           file mkdir $dir
           exec godel_draw.tcl $dir
         }
