@@ -1734,7 +1734,7 @@ function copy_path() {
 
 var flows = {
     //"flow": ['fln','hide','notes','anotes', 'checklist', 'dict', 'docs', 'exebutt', 'filebrowser', 'flist', 'issues'],
-    "flow": ['fln','hide','simple','notes','anotes', 'checklist','filebrowser', 'flist', 'issues'],
+    "flow": ['fln','zoomsvg','hide','simple','notes','anotes', 'checklist','filebrowser', 'flist', 'issues'],
     //"sch": ['field', 'hide'],
     //"tpl": ['pst','nocode','book','nation','cmic']
 };
@@ -2180,6 +2180,97 @@ function delfile(fpath) {
 
   fetch(url)
   .catch(err => console.log(err))
+
+}
+
+//--------------------------
+// Zoom in/out
+//--------------------------
+let moving
+function mouseDown(e){
+	moving = true
+}
+function drag(e){
+	if(moving === true){
+    
+    let startViewBox = svg.getAttribute('viewBox').split(' ').map( n => parseFloat(n))
+
+    let startClient = {
+      x: e.clientX,
+      y: e.clientY
+    }
+
+    let newSVGPoint = svg.createSVGPoint()
+    let CTM = svg.getScreenCTM()
+    newSVGPoint.x = startClient.x
+    newSVGPoint.y = startClient.y
+    let startSVGPoint = newSVGPoint.matrixTransform(CTM.inverse())
+    
+    let moveToClient = {
+    	x: e.clientX + e.movementX,
+      y: e.clientY + e.movementY
+    }
+    
+    newSVGPoint = svg.createSVGPoint()
+    CTM = svg.getScreenCTM()
+    newSVGPoint.x = moveToClient.x
+    newSVGPoint.y = moveToClient.y
+    let moveToSVGPoint = newSVGPoint.matrixTransform(CTM.inverse())
+    
+    let delta = {
+    	dx: startSVGPoint.x - moveToSVGPoint.x,
+      dy: startSVGPoint.y - moveToSVGPoint.y
+    }
+    
+    let moveToViewBox = `${startViewBox[0] + delta.dx} ${startViewBox[1] + delta.dy} ${startViewBox[2]} ${startViewBox[3]}` 
+    svg.setAttribute('viewBox', moveToViewBox)
+    //console.log(moveToViewBox)
+  }
+}
+function mouseUp(){
+	moving = false
+}
+
+
+function zoom(e){
+  if (event.shiftKey) {
+  	let startViewBox = svg.getAttribute('viewBox').split(' ').map( n => parseFloat(n))
+		
+    let startClient = {
+      x: e.clientX,
+      y: e.clientY
+    }
+
+    let newSVGPoint = svg.createSVGPoint()
+    let CTM = svg.getScreenCTM()
+    newSVGPoint.x = startClient.x
+    newSVGPoint.y = startClient.y
+    let startSVGPoint = newSVGPoint.matrixTransform(CTM.inverse())
+    
+    
+    let r 
+    if (e.deltaY < 0) {
+      r = 0.8
+    } else if (e.deltaY > 0) {
+      r = 1.2
+    } else {
+      r = 1
+    }
+    svg.setAttribute('viewBox', `${startViewBox[0]} ${startViewBox[1]} ${startViewBox[2] * r} ${startViewBox[3] * r}`)
+    
+    CTM = svg.getScreenCTM()
+    let moveToSVGPoint = newSVGPoint.matrixTransform(CTM.inverse())
+    
+    let delta = {
+    	dx: startSVGPoint.x - moveToSVGPoint.x,
+      dy: startSVGPoint.y - moveToSVGPoint.y
+    }
+    
+  	let middleViewBox = svg.getAttribute('viewBox').split(' ').map( n => parseFloat(n))
+    let moveBackViewBox = `${middleViewBox[0] + delta.dx} ${middleViewBox[1] + delta.dy} ${middleViewBox[2]} ${middleViewBox[3]}` 
+    svg.setAttribute('viewBox', moveBackViewBox)
+    
+  }
 
 }
 
