@@ -2191,40 +2191,42 @@ function mouseDown(e){
 	moving = true
 }
 function drag(e){
-	if(moving === true){
-    
-    let startViewBox = svg.getAttribute('viewBox').split(' ').map( n => parseFloat(n))
+  if (event.shiftKey) {
+    if(moving === true){
+      
+      let startViewBox = svg.getAttribute('viewBox').split(' ').map( n => parseFloat(n))
 
-    let startClient = {
-      x: e.clientX,
-      y: e.clientY
-    }
+      let startClient = {
+        x: e.clientX,
+        y: e.clientY
+      }
 
-    let newSVGPoint = svg.createSVGPoint()
-    let CTM = svg.getScreenCTM()
-    newSVGPoint.x = startClient.x
-    newSVGPoint.y = startClient.y
-    let startSVGPoint = newSVGPoint.matrixTransform(CTM.inverse())
-    
-    let moveToClient = {
-    	x: e.clientX + e.movementX,
-      y: e.clientY + e.movementY
+      let newSVGPoint = svg.createSVGPoint()
+      let CTM = svg.getScreenCTM()
+      newSVGPoint.x = startClient.x
+      newSVGPoint.y = startClient.y
+      let startSVGPoint = newSVGPoint.matrixTransform(CTM.inverse())
+      
+      let moveToClient = {
+        x: e.clientX + e.movementX,
+        y: e.clientY + e.movementY
+      }
+      
+      newSVGPoint = svg.createSVGPoint()
+      CTM = svg.getScreenCTM()
+      newSVGPoint.x = moveToClient.x
+      newSVGPoint.y = moveToClient.y
+      let moveToSVGPoint = newSVGPoint.matrixTransform(CTM.inverse())
+      
+      let delta = {
+        dx: startSVGPoint.x - moveToSVGPoint.x,
+        dy: startSVGPoint.y - moveToSVGPoint.y
+      }
+      
+      let moveToViewBox = `${startViewBox[0] + delta.dx} ${startViewBox[1] + delta.dy} ${startViewBox[2]} ${startViewBox[3]}` 
+      svg.setAttribute('viewBox', moveToViewBox)
+      //console.log(moveToViewBox)
     }
-    
-    newSVGPoint = svg.createSVGPoint()
-    CTM = svg.getScreenCTM()
-    newSVGPoint.x = moveToClient.x
-    newSVGPoint.y = moveToClient.y
-    let moveToSVGPoint = newSVGPoint.matrixTransform(CTM.inverse())
-    
-    let delta = {
-    	dx: startSVGPoint.x - moveToSVGPoint.x,
-      dy: startSVGPoint.y - moveToSVGPoint.y
-    }
-    
-    let moveToViewBox = `${startViewBox[0] + delta.dx} ${startViewBox[1] + delta.dy} ${startViewBox[2]} ${startViewBox[3]}` 
-    svg.setAttribute('viewBox', moveToViewBox)
-    //console.log(moveToViewBox)
   }
 }
 function mouseUp(){
