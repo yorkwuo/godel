@@ -4527,12 +4527,12 @@ proc list_svg {args} {
 # }}}
   # -notitle
 # {{{
-  set opt(-notitle) 0
-  set idx [lsearch $args {-notitle}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-notitle) 1
-  }
+  #set opt(-notitle) 0
+  #set idx [lsearch $args {-notitle}]
+  #if {$idx != "-1"} {
+  #  set args [lreplace $args $idx $idx]
+  #  set opt(-notitle) 1
+  #}
 # }}}
 
   set fname [lindex $args 0]
@@ -4543,16 +4543,17 @@ proc list_svg {args} {
       puts $kout "</svg>"
     close $kout
   }
-  if {$opt(-notitle) eq "1"} {
-  } else {
-    puts $fout "<div class=\"w3-panel w3-light-gray w3-leftbar \">"
-    if {$opt(-title)} {
-      puts $fout "<p>$title <a href=$fname type=text/svg>$fname</a></p>"
-    } else {
-      puts $fout "<p><a href=$fname type=text/svg>$fname</a></p>"
-    }
-    puts $fout "</div>"
-  }
+
+  #if {$opt(-notitle) eq "1"} {
+  #} else {
+  #  puts $fout "<div class=\"w3-panel w3-light-gray w3-leftbar \">"
+  #  if {$opt(-title)} {
+  #    puts $fout "<p>$title <a href=$fname type=text/svg>$fname</a></p>"
+  #  } else {
+  #    puts $fout "<p><a href=$fname type=text/svg>$fname</a></p>"
+  #  }
+  #  puts $fout "</div>"
+  #}
 
   set kin [open $fname r]
   set content [read $kin]
