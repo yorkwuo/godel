@@ -1,3 +1,17 @@
+# pipe_exec
+# {{{
+proc pipe_exec {cmd} {
+  set pipe [open "|$cmd" r]
+
+  catch {
+    while {[gets $pipe line] != -1} {
+      puts $line
+    }
+  }
+
+  close $pipe
+}
+# }}}
 # get_ww
 # {{{
 proc get_ww {path} {
@@ -4709,7 +4723,8 @@ proc fdiff {args} {
       if {$opt(co)} {
         puts "co not exist file... $f"
         if [regexp {\.godel\/ghtm.tcl} $f] {
-          set dir [pindex $f 0 ]
+          #set dir [pindex $f 0 ]
+          set dir [file dirname $f]
           file mkdir $dir
           exec godel_draw.tcl $dir
         }
@@ -5703,14 +5718,14 @@ proc ghtm_top_bar {args} {
       puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
       set css_hide [lvars . css_hide]
       if {$css_hide eq "1"} {
-        puts $fout {<a class="w3-bar-item w3-button w3-round w3-lime w3-right" onclick="onoff('css_hide', '0')">Hide</a>}
+        puts $fout {<a class="w3-bar-item w3-button w3-round w3-right" onclick="onoff('css_hide', '0')">Hide</a>}
         puts $fout "<style>"
         puts $fout "rect:hover {"
         puts $fout "  cursor: pointer;"
         puts $fout "}"
         puts $fout "</style>"
       } else {
-        puts $fout {<a class="w3-bar-item w3-button w3-round w3-light-gray w3-right" onclick="onoff('css_hide', '1')">Hide</a>}
+        puts $fout {<a class="w3-bar-item w3-button w3-round w3-right" onclick="onoff('css_hide', '1')">Hide</a>}
         puts $fout "<style>"
         puts $fout "rect {"
         puts $fout "  fill: none !important;"
