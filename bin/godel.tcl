@@ -8750,6 +8750,7 @@ proc oget {args} {
         #puts  "cp -r $where/$objname ."
         puts "  building... $objname"
         exec  cp -rL $where/$objname .
+        file mkdir $objname/.godel
         lsetdyvar $objname srcpath  $where/$objname
         cd $objname
         if [file exist .godel/preset.tcl] {
@@ -8764,6 +8765,7 @@ proc oget {args} {
         #puts  "cp -r $where/$objname $asname"
         puts "  building... $asname"
         exec  cp -rL $where/$objname $asname
+        file mkdir $asname/.godel
         exec touch $asname/.godel/vars.tcl
         lsetdyvar $asname srcpath  $where/$objname
         lsetvar $asname g:iname    $asname
