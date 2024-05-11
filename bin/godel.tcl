@@ -1,3 +1,10 @@
+# at_get_col_value
+# {{{
+proc at_get_col_value {colname} {
+  upvar atvar atvar
+  return [lsort -unique [lmap i [array names atvar *,$colname] {list $atvar($i)}]]
+}
+# }}}
 # pipe_exec
 # {{{
 proc pipe_exec {cmd} {
