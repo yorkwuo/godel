@@ -3869,9 +3869,9 @@ proc qsetvar {gpage key value} {
 # ss2hhmmss
 # {{{
 proc ss2hhmmss {sec} {
-  set hh [expr int([expr $sec/3600])]
-  set mm [expr int([expr $sec/60]) % 60]
-  set ss [expr int([expr $sec % 60])]
+  set hh [format "%02d" [expr int([expr $sec/3600])]]
+  set mm [format "%02d" [expr int([expr $sec/60]) % 60]]
+  set ss [format "%02d" [expr int([expr $sec % 60])]]
 
   return "${hh}h:${mm}m:${ss}s"
 }
