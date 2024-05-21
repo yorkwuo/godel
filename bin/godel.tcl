@@ -1,3 +1,23 @@
+# hiername
+# {{{
+proc hiername {} {
+  upvar row row
+  upvar celltxt celltxt
+  set level [lvars $row level]
+  if {$level eq ""} {
+    set level NA
+  }
+  set indent(1) 0px
+  set indent(2) 30px
+  set indent(3) 60px
+  set indent(4) 90px
+  set indent(5) 120px
+  set indent(6) 150px
+  set indent(NA) 150px
+
+  set celltxt "<td><span style=\"margin-left:$indent($level)\"><a style=text-decoration:none href=$row/.index.htm><b>$row</b></a></span></td>"
+}
+# }}}
 # at_get_col_value
 # {{{
 proc at_get_col_value {colname} {
