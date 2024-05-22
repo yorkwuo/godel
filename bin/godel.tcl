@@ -4999,11 +4999,62 @@ proc ghtm_onoff {key args} {
     set name NA
   }
 # }}}
+  # -cmd
+# {{{
+  set opt(-cmd) 0
+  set idx [lsearch $args {-cmd}]
+  if {$idx != "-1"} {
+    set exefile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-cmd) 1
+  } else {
+    set exefile NA
+  }
+# }}}
+  # -nowin
+# {{{
+  set opt(-nowin) 0
+  set idx [lsearch $args {-nowin}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-nowin) 1
+  }
+# }}}
   set cur_value [lvars . $key]
+  puts "$key $cur_value"
   if {$cur_value eq "1"} {
     puts $fout "<a class=\"w3-button w3-round\" style=\"background-color:#728FCE;color:white\" onclick=\"onoff('$key', '0')\">${name}</a>"
   } else {
     puts $fout "<a class=\"w3-button w3-round w3-light-gray\" onclick=\"onoff('$key', '1')\">${name}</a>"
+  }
+
+  if [file exist $exefile] {
+    set exename [file tail $exefile]
+    if {$opt(-cmd)} {
+      puts $fout "
+      <span class=\"tt_exe\">
+        <a style=\"background-color:#728FCE;color:white\" 
+        href=.$exename.gtcl class=\"w3-btn w3-round-large\" 
+        type=text/gtcl><b>$name</b></a>
+        <span class=\"tooltiptext_exe\">
+          <a href=.$exename.gtcl type=text/txt>$exename</a>
+        </span>
+      </span>
+      "
+    } else {
+      puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></a>"
+    }
+    set kout [open ".$exename.gtcl" w]
+      puts $kout "set pagepath \[file dirname \[info script]]"
+      puts $kout "cd \$pagepath"
+      if {$opt(-nowin)} {
+        puts $kout "exec ./$exefile"
+      } else {
+        puts $kout "exec xterm -geometry 150x30+5+800 -e \"./$exefile\""
+      }
+    close $kout
+  } else {
+    #puts "Error: gexe_button: file not exist... $exefile"
   }
 }
 # }}}
@@ -7572,22 +7623,22 @@ proc gmd {args} {
   regsub -all {\.md} $fname {} fname1
   regsub -all { } $fname1 {_} fname2
 
-  if [file exist $fname2.md] {
+  if [file exist $fname2] {
 # If not exist, create it...
   } else {
-    set kout [open $fname2.md w]
+    set kout [open $fname2 w]
       #puts $kout "<div>"
 # This blank line is important. Without it the markdown processing will fail.
       #puts $kout "</div>"
       puts $kout "# $fname2"
       puts $kout ""
-      puts $kout "<a href=\"$fname2.md\" type=text/txt>edit</a>"
+      puts $kout "<a href=\"$fname2\" type=text/txt>edit</a>"
       puts $kout ""
-      puts $kout "@? $fname1"
+      #puts $kout "@? $fname1"
     close $kout
   }
 
-  set fp [open "$fname2.md" r]
+  set fp [open "$fname2" r]
     set content [read $fp]
   close $fp
 
