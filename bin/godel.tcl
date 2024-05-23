@@ -8432,11 +8432,11 @@ proc godel_draw {{target_path NA}} {
       puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
       puts $kout "cd \$pagepath"
       puts $kout ""
-      puts $kout "catch {exec xdotool getwindowfocus getwindowname} pattern"
+      puts $kout "catch {exec xdotool getwindowfocus} wid"
       puts $kout ""
       puts $kout "gtcl_commit"
       puts $kout "godel_draw"
-      puts $kout "catch {exec xdotool search --name \"\$pattern\" key ctrl+r}"
+      puts $kout "catch {exec xdotool key ctrl+r \$wid}"
 
     close $kout
   }
