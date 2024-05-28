@@ -4444,6 +4444,15 @@ proc glize {args} {
 # {{{
 proc gexe_button {args} {
   upvar fout fout
+  # -refresh
+# {{{
+  set opt(-refresh) 0
+  set idx [lsearch $args {-refresh}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-refresh) 1
+  }
+# }}}
   # -nowin
 # {{{
   set opt(-nowin) 0
@@ -4539,10 +4548,17 @@ proc gexe_button {args} {
     set kout [open ".$exename.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
       puts $kout "cd \$pagepath"
+      if {$opt(-refresh) eq "1"} {
+        puts $kout "catch {exec xdotool getwindowfocus} wid"
+      }
       if {$opt(-nowin)} {
         puts $kout "exec ./$exefile"
       } else {
-        puts $kout "exec xterm -geometry 150x30+5+800 -e \"./$exefile\""
+        if {$opt(-refresh) eq "1"} {
+          puts $kout "exec xterm -geometry 150x30+5+800 -e \"./$exefile;xdotool key --window \$wid ctrl+r\""
+        } else {
+          puts $kout "exec xterm -geometry 150x30+5+800 -e \"./$exefile\""
+        }
       }
     close $kout
   } else {
