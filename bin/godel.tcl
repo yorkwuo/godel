@@ -8557,6 +8557,7 @@ proc godel_draw {{target_path NA}} {
   } else {
     set kout [open .godel/ghtm.tcl w]
       puts $kout "ghtm_top_bar -save"
+      puts $kout "pathbar 3"
       puts $kout "gnotes \" # \$vars(g:pagename)\""
       puts $kout "ghtm_ls *"
     close $kout
