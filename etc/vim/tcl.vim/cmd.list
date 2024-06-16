@@ -1,4 +1,20 @@
 
+gui_show_map
+gui_zoom
+gui_set_setting
+gui_load_pin_density_mm
+gui_show_error_data
+gui_error_browser
+gui_open_error_data
+gui_set_current_errors
+gui_change_error_highlight
+gui_load_power_density_mm
+gui_set_pref_value
+gui_load_cell_density_mm
+gui_change_error_highlight
+gui_error_browser
+gui_close_error_data
+
 get_net
 obless
 create_pin

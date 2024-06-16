@@ -887,6 +887,7 @@ proc pathbar {depth} {
 
   set cwd [pwd]
 
+<<<<<<< HEAD
   set name [lvars . g:pagename]
   set pathhier "<a style=\"text-decoration:none;font-size:16px\">$name</a>"
   set relative_path "../"
@@ -894,6 +895,13 @@ proc pathbar {depth} {
     #set name [pindex $cwd end-$i]
     set name [lvars $relative_path g:pagename]
     set pathhier "<a style=\"text-decoration:none;font-size:16px\" href=\"$relative_path.index.htm\">$name</a> / $pathhier"
+=======
+  set pathhier "<a style=\"text-decoration:none;font-size:18px\">[file tail $cwd]</a>"
+  set relative_path "../"
+  for {set i 1} {$i <= $depth} {incr i} {
+    set name [pindex $cwd end-$i]
+    set pathhier "<a style=\"text-decoration:none;font-size:18px\" href=\"$relative_path.index.htm\">$name</a> / $pathhier"
+>>>>>>> 795b852af6535fbe2b4db124401d2e2fa0fa56b9
     append relative_path "../"
 
   }
@@ -3565,7 +3573,8 @@ proc ghtm_ls_table {args} {
     if [file exist $fullpath] {
       set mtime [file mtime $fullpath]
       set linktarget $fullpath
-      set timestamp [clock format $mtime -format {%m-%d_%H:%M}]
+      #set timestamp [clock format $mtime -format {%m-%d_%H:%M}]
+      set timestamp [clock format $mtime -format {%W.%u_%H:%M}]
       set fsize [file size $fullpath]
       set fsize [num_symbol $fsize K]
       set dir   [file dirname $fullpath]
@@ -5793,7 +5802,7 @@ proc ghtm_top_bar {args} {
 
     if {$opt(-notime) eq "1"} {
     } else {
-      set timestamp [clock format [clock seconds] -format {%Y-%m-%d_%H:%M}]
+      set timestamp [clock format [clock seconds] -format {%Y.%W.%u_%H:%M}]
       puts $fout "
         <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
       "
@@ -9352,10 +9361,10 @@ proc read_as_data {ifile args} {
 }
 # }}}
 
-if [info exist env(GODEL_PLUGIN)] {
-  if [file exist $env(GODEL_PLUGIN)] {
-    source $env(GODEL_PLUGIN)
-  }
-}
+#if [info exist env(GODEL_PLUGIN)] {
+#  if [file exist $env(GODEL_PLUGIN)] {
+#    source $env(GODEL_PLUGIN)
+#  }
+#}
 
 # vim:fdm=marker
