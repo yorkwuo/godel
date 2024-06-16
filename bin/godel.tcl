@@ -887,10 +887,12 @@ proc pathbar {depth} {
 
   set cwd [pwd]
 
-  set pathhier "<a style=\"text-decoration:none;font-size:16px\">[file tail $cwd]</a>"
+  set name [lvars . g:pagename]
+  set pathhier "<a style=\"text-decoration:none;font-size:16px\">$name</a>"
   set relative_path "../"
   for {set i 1} {$i <= $depth} {incr i} {
-    set name [pindex $cwd end-$i]
+    #set name [pindex $cwd end-$i]
+    set name [lvars $relative_path g:pagename]
     set pathhier "<a style=\"text-decoration:none;font-size:16px\" href=\"$relative_path.index.htm\">$name</a> / $pathhier"
     append relative_path "../"
 
@@ -5810,23 +5812,23 @@ proc ghtm_top_bar {args} {
           puts $kout "</svg>"
         close $kout
       }
-      puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
-      set css_hide [lvars . css_hide]
-      if {$css_hide eq "1"} {
-        puts $fout {<a class="w3-bar-item w3-button w3-round w3-right" onclick="onoff('css_hide', '0')">Hide</a>}
-        puts $fout "<style>"
-        puts $fout "rect:hover {"
-        puts $fout "  cursor: pointer;"
-        puts $fout "}"
-        puts $fout "</style>"
-      } else {
-        puts $fout {<a class="w3-bar-item w3-button w3-round w3-right" onclick="onoff('css_hide', '1')">Hide</a>}
-        puts $fout "<style>"
-        puts $fout "rect {"
-        puts $fout "  fill: none !important;"
-        puts $fout "}"
-        puts $fout "</style>"
-      }
+      #puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
+      #set css_hide [lvars . css_hide]
+      #if {$css_hide eq "1"} {
+      #  puts $fout {<a class="w3-bar-item w3-button w3-round w3-right" onclick="onoff('css_hide', '0')">Hide</a>}
+      #  puts $fout "<style>"
+      #  puts $fout "rect:hover {"
+      #  puts $fout "  cursor: pointer;"
+      #  puts $fout "}"
+      #  puts $fout "</style>"
+      #} else {
+      #  puts $fout {<a class="w3-bar-item w3-button w3-round w3-right" onclick="onoff('css_hide', '1')">Hide</a>}
+      #  puts $fout "<style>"
+      #  puts $fout "rect {"
+      #  puts $fout "  fill: none !important;"
+      #  puts $fout "}"
+      #  puts $fout "</style>"
+      #}
     }
     #puts $fout "<button onclick=\"onoff('css_hide', '0')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">H</button>"
     #puts $fout {<a class="w3-button w3-round w3-light-gray" onclick="onoff('css_hide', '1')">Hide</a>}

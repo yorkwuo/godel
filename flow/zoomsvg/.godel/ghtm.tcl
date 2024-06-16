@@ -1,5 +1,7 @@
 ghtm_top_bar -save -js -hide
-gnotes " # $vars(g:pagename)"
+pathbar 4
+mod_links
+
 
 set lines [read_as_list 1.svg]
 
@@ -11,7 +13,7 @@ foreach line $lines {
   lappend newlines $line
 }
 
-puts $fout {<svg id="svg" width="1000" height="1000" viewBox="0 0 1000 1000"}
+puts $fout {<svg id="svg" width="2000" height="2000" viewBox="0 0 2000 2000"}
 foreach newline $newlines {
   puts $fout $newline
 }
