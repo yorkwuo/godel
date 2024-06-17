@@ -1,4 +1,4 @@
-ghtm_top_bar -save -new -anew
+ghtm_top_bar -save -new
 pathbar 3
 gnotes "
 # $vars(g:pagename)
