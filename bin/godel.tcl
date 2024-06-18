@@ -5722,6 +5722,17 @@ proc ghtm_top_bar {args} {
     set LOCAL_JS 1
   }
 # }}}
+  # -svg
+# {{{
+  set opt(-svg) 0
+  set idx [lsearch $args {-svg}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-svg) 1
+    upvar LOCAL_JS LOCAL_JS
+    set LOCAL_JS 1
+  }
+# }}}
   # -new
 # {{{
   set opt(-new) 0
@@ -5806,6 +5817,9 @@ proc ghtm_top_bar {args} {
     } else {
       puts $fout "<button onclick=\"mailout()\"       class=\"w3-bar-item w3-button w3-darkblue w3-right\">Mail</button>"
     }
+    if {$opt(-svg) eq "1"} {
+      puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
+    }
     if {$opt(-hide) eq "1"} {
       if ![file exist "1.svg"] {
         set kout [open "1.svg" w]
@@ -5813,7 +5827,7 @@ proc ghtm_top_bar {args} {
           puts $kout "</svg>"
         close $kout
       }
-      #puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
+      puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
       #set css_hide [lvars . css_hide]
       #if {$css_hide eq "1"} {
       #  puts $fout {<a class="w3-bar-item w3-button w3-round w3-right" onclick="onoff('css_hide', '0')">Hide</a>}
