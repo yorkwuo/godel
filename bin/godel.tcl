@@ -573,6 +573,7 @@ proc mod_flist {} {
   lappend atcols "Vs;Vs"
   lappend atcols "last;last"
   lappend atcols "mtime;mtime"
+  lappend atcols "ed:notes;notes"
   lappend atcols "proc:at_open flist.tcl ; O"
   lappend atcols "name;name"
 
