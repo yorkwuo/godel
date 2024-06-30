@@ -1403,6 +1403,17 @@ function at_open (atfname,id) {
     document.getElementById('idexec').click();
 }
 // }}}
+// openfile
+// {{{
+function openfile (pp) {
+  console.log(pp)
+  const url = 'http://127.0.0.1:5000/openfile?filepath='+pp;
+
+  fetch(url)
+  .catch(err => console.log(err))
+
+}
+// }}}
 // openfile_row
 // {{{
 function openfile_row (row,key) {

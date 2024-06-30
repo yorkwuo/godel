@@ -6639,7 +6639,7 @@ proc lsetvar {name key value} {
     set vars($key) $value
     godel_array_save vars $varfile
   } else {
-    puts "Error: not exist... $varfile"
+    puts "    Error: not exist... $name"
   }
 
 }
@@ -7677,25 +7677,15 @@ proc gmd {args} {
   regsub -all {\.md} $fname {} fname1
   regsub -all { } $fname1 {_} fname2
 
-  if [file exist $fname2] {
-# If not exist, create it...
+  if [file exist $fname] {
+    set fp [open "$fname2" r]
+      set content [read $fp]
+    close $fp
   } else {
-    set kout [open $fname2 w]
-      #puts $kout "<div>"
-# This blank line is important. Without it the markdown processing will fail.
-      #puts $kout "</div>"
-      puts $kout "# $fname2"
-      puts $kout ""
-      puts $kout "<a href=\"$fname2\" type=text/txt>edit</a>"
-      puts $kout ""
-      #puts $kout "@? $fname1"
-    close $kout
+    set content ""
   }
 
-  set fp [open "$fname2" r]
-    set content [read $fp]
-  close $fp
-
+  puts $fout "<a href=$fname2 type=text/txt>$fname2</a>"
   gnotes {*}$args $content
 }
 # }}}
