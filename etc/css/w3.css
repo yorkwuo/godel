@@ -370,6 +370,12 @@ img {
   border        : 1px solid;
   border-color  : #f79646 #ccc;  
 }
+.table2nob td, .table2 th{
+  padding       : 1px;
+  font-size     : 14px;
+  text-align    : left;
+  border        : 0px solid;
+}
 .table3 {
   font-family:monospace,Consolas,sans-serif;
   border-collapse: collapse;

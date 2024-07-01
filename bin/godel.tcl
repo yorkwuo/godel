@@ -5060,7 +5060,7 @@ proc ghtm_onoff {key args} {
   }
 # }}}
   set cur_value [lvars . $key]
-  puts "$key $cur_value"
+  #puts "$key $cur_value"
   if {$cur_value eq "1"} {
     puts $fout "<a class=\"w3-button w3-round\" style=\"background-color:#728FCE;color:white\" onclick=\"onoff('$key', '0')\">${name}</a>"
   } else {
@@ -6742,6 +6742,15 @@ proc avar {key {ifile at.tcl}} {
 # lvars
 # {{{
 proc lvars {args} {
+  # -c clean
+# {{{
+  set opt(-c) 0
+  set idx [lsearch $args {-c}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-c) 1
+  }
+# }}}
   set gpage [lindex $args 0]
   set vname [lindex $args 1]
 
@@ -6760,7 +6769,11 @@ proc lvars {args} {
       if [info exist vars($vname)] {
         return $vars($vname)
       } else {
-        return NA
+        if {$opt(-c)} {
+          return ""
+        } else {
+          return NA
+        }
       }
     }
 }
