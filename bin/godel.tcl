@@ -8303,6 +8303,9 @@ proc num_symbol {num {symbol B}} {
 # format_3digit
 # {{{
 proc format_3digit {num {sep ,}} {
+    if {![string is integer $num]} {
+      return NA
+    }
     # Find the whole number and decimal (if any)
     set whole [expr int($num)]
     set decimal [expr $num - int($num)]
