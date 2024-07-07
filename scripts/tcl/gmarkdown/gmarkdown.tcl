@@ -60,13 +60,13 @@ namespace eval gmarkdown {
 # }}}
         # -link (code block link)
 # {{{
-        set opt(-link) 0
-        set idx [lsearch $args {-link}]
-        if {$idx != "-1"} {
-          set opt(-link,suffix) [lindex $args [expr $idx + 1]]
-          set args [lreplace $args $idx [expr $idx + 1]]
-          set opt(-link) 1
-        }
+        #set opt(-link) 0
+        #set idx [lsearch $args {-link}]
+        #if {$idx != "-1"} {
+        #  set opt(-link,suffix) [lindex $args [expr $idx + 1]]
+        #  set args [lreplace $args $idx [expr $idx + 1]]
+        #  set opt(-link) 1
+        #}
 # }}}
         set markdown [lindex $args 0]
 
@@ -221,13 +221,14 @@ namespace eval gmarkdown {
                         ]\
                     ]
 
-                    set css_ctrl {}
-                    regexp {@\((\S*)\)} $h_result whole css_ctrl
-                    regsub { @\(\S*\)} $h_result {} h_result
+                    #set css_ctrl {}
+                    #regexp {@\((\S*)\)} $h_result whole css_ctrl
+                    #regsub { @\(\S*\)} $h_result {} h_result
 
-                    append result "<h$h_level id=\"tocid$::toc_id_count\" style=$css_ctrl>$h_result</h$h_level>"
-                    incr ::toc_id_count
-                    lappend ::toc_list [list $h_level $h_result $css_ctrl]
+                    #append result "<h$h_level id=\"tocid$::toc_id_count\" style=$css_ctrl>$h_result</h$h_level>"
+                    append result "<h$h_level>$h_result</h$h_level>"
+                    #incr ::toc_id_count
+                    #lappend ::toc_list [list $h_level $h_result $css_ctrl]
                 }
                 {^[ ]{0,3}\>} {
                     dputs "BLOCK QUOTES"

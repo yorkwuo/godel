@@ -565,6 +565,7 @@ proc ghtm_openbook {key} {
 # {{{
 proc mod_flist {} {
   upvar fout fout
+  upvar env env
 
   puts $fout {<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="build_flist()">Update</button>}
 
@@ -577,7 +578,7 @@ proc mod_flist {} {
   lappend atcols "proc:at_open flist.tcl ; O"
   lappend atcols "name;name"
 
-  atable flist.tcl -tableid tbl1 -noid -num
+  atable flist.tcl -tableid tbl1 -noid -num -dataTables
 }
 # }}}
 # mod_links
@@ -7674,32 +7675,25 @@ proc gmd {args} {
   upvar fout fout
   upvar vars vars
 
-  # -f (file name)
-# {{{
-  set opt(-f) 0
-  set idx [lsearch $args {-f}]
-  if {$idx != "-1"} {
-    set fname [lindex $args [expr $idx + 1]]
-    set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-f) 1
-  } else {
-    set listfile NA
-  }
-# }}}
+  set fname [lindex $args 0]
 
-  regsub -all {\.md} $fname {} fname1
-  regsub -all { } $fname1 {_} fname2
+  #regsub -all {\.md} $fname {} fname1
+  #regsub -all { } $fname1 {_} fname2
 
   if [file exist $fname] {
-    set fp [open "$fname2" r]
+    set fp [open "$fname" r]
       set content [read $fp]
     close $fp
   } else {
     set content ""
   }
 
-  puts $fout "<a href=$fname2 type=text/txt>$fname2</a>"
-  gnotes {*}$args $content
+  set aftermd [::gmarkdown::convert $content]
+  regsub {^<h.>(.*?)<\/h.>} $aftermd "<a href='$fname' style='color:#6458ae; font-size:24px;text-decoration:none' type=text/txt>\\1</a>" aftermd
+  puts $aftermd 
+  puts $fout $aftermd
+  #puts $fout "<a href=$fname2 type=text/txt>$fname2</a>"
+  #gnotes {*}$args $content
 }
 # }}}
 # wsplit: word split
@@ -7854,22 +7848,22 @@ proc gnotes {args} {
 
   # -link (code block link)
 # {{{
-  set opt(-link) 0
-  set idx [lsearch $args {-link}]
-  if {$idx != "-1"} {
-    set opt(-link,suffix) [lindex $args [expr $idx + 1]]
-    set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-link) 1
-  }
+#  set opt(-link) 0
+#  set idx [lsearch $args {-link}]
+#  if {$idx != "-1"} {
+#    set opt(-link,suffix) [lindex $args [expr $idx + 1]]
+#    set args [lreplace $args $idx [expr $idx + 1]]
+#    set opt(-link) 1
+#  }
 # }}}
 
   # -qnote (quick note)
-  set opt(-qnote) 0
-  set idx [lsearch $args {-qnote}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-qnote) 1
-  }
+#  set opt(-qnote) 0
+#  set idx [lsearch $args {-qnote}]
+#  if {$idx != "-1"} {
+#    set args [lreplace $args $idx $idx]
+#    set opt(-qnote) 1
+#  }
 
   set content [lindex $args 0]
 
@@ -7877,42 +7871,43 @@ proc gnotes {args} {
     return
   }
 
-  if {$opt(-qnote)} {
-    puts $content
-  }
+#  if {$opt(-qnote)} {
+#    puts $content
+#  }
   
 
 # To allow `\' to display in code block
   regsub -all {\\ \n} $content "\\\n" content
 
 # @) Get vars values
-  set matches [regexp -all -inline {@\)(\S+)} $content]
-  foreach {g0 g1} $matches {
-    # @)dir/key
-    if [regexp {\/} $g0] {
-        set dir [file dirname $g0]
-        regsub {@\)} $dir {} dir
-        set key [file tail    $g0]
-        set value [lvars $dir $key]
-        regsub -all "@\\)$g1" $content $value content
-    # @)key
-    } else {
-      if [info exist vars($g1)] {
-        if {[llength $vars($g1)] > 1} {
-          #set txt "\n"
-          #foreach i $vars($g1) {
-          #  append txt "                  $i\n"
-          #}
-          #regsub -all "@\\)$g1" $content $txt content
-          regsub -all "@\\)$g1" $content $vars($g1) content
-        } else {
-          regsub -all "@\\)$g1" $content $vars($g1) content
-        }
-      } else {
-        regsub -all "@\\)$g1" $content "<b>NA</b>($g1)" content
-      }
-    }
-  }
+# York: Deprecatd 2024/7/6
+#  set matches [regexp -all -inline {@\)(\S+)} $content]
+#  foreach {g0 g1} $matches {
+#    # @)dir/key
+#    if [regexp {\/} $g0] {
+#        set dir [file dirname $g0]
+#        regsub {@\)} $dir {} dir
+#        set key [file tail    $g0]
+#        set value [lvars $dir $key]
+#        regsub -all "@\\)$g1" $content $value content
+#    # @)key
+#    } else {
+#      if [info exist vars($g1)] {
+#        if {[llength $vars($g1)] > 1} {
+#          #set txt "\n"
+#          #foreach i $vars($g1) {
+#          #  append txt "                  $i\n"
+#          #}
+#          #regsub -all "@\\)$g1" $content $txt content
+#          regsub -all "@\\)$g1" $content $vars($g1) content
+#        } else {
+#          regsub -all "@\\)$g1" $content $vars($g1) content
+#        }
+#      } else {
+#        regsub -all "@\\)$g1" $content "<b>NA</b>($g1)" content
+#      }
+#    }
+#  }
 
 # Markdown convertion
   set aftermd [::gmarkdown::convert $content]
@@ -7923,30 +7918,32 @@ proc gnotes {args} {
 
 # @! Link to gpage as badge
 # {{{
-  set matches [regexp -all -inline {@!(\S+)} $aftermd]
-  foreach {whole iname} $matches {
-# Tidy iname likes `richard_dawkins</p>'
-    regsub {<\/p>} $iname {} iname
-
-    set pagename [lvars $iname g:pagename]
-    puts "lvars $iname g:pagename"
-    set atxt "<a class=hbox2 href=\"$iname/.index.htm\">$pagename</a>"
-    regsub -all "@!$iname" $aftermd $atxt aftermd
-  }
+# York: Deprecatd 2024/7/6
+#  set matches [regexp -all -inline {@!(\S+)} $aftermd]
+#  foreach {whole iname} $matches {
+## Tidy iname likes `richard_dawkins</p>'
+#    regsub {<\/p>} $iname {} iname
+#
+#    set pagename [lvars $iname g:pagename]
+#    puts "lvars $iname g:pagename"
+#    set atxt "<a class=hbox2 href=\"$iname/.index.htm\">$pagename</a>"
+#    regsub -all "@!$iname" $aftermd $atxt aftermd
+#  }
 # }}}
 
 # @img() img
 # {{{
-  set matches [regexp -all -inline {@img\((\S+)\)} $aftermd]
-  foreach {whole iname} $matches {
-# Tidy iname likes `richard_dawkins</p>'
-    regsub {<\/p>} $iname {} iname
-
-#    set pagename [gvars $iname g:pagename]
-    set atxt "<a href=\"$iname\"><img src=$iname style=\"float:right;width:30%\"></a>"
-    #regsub -all {@img\(pmos} $aftermd $atxt aftermd
-    regsub -all "@img\\($iname\\)" $aftermd $atxt aftermd
-  }
+# York: Deprecatd 2024/7/6
+#  set matches [regexp -all -inline {@img\((\S+)\)} $aftermd]
+#  foreach {whole iname} $matches {
+## Tidy iname likes `richard_dawkins</p>'
+#    regsub {<\/p>} $iname {} iname
+#
+##    set pagename [gvars $iname g:pagename]
+#    set atxt "<a href=\"$iname\"><img src=$iname style=\"float:right;width:30%\"></a>"
+#    #regsub -all {@img\(pmos} $aftermd $atxt aftermd
+#    regsub -all "@img\\($iname\\)" $aftermd $atxt aftermd
+#  }
 # }}}
 
   #puts $fout "<div class=\"w3-panel\">"
@@ -8417,7 +8414,7 @@ proc math_sum {alist} {
 # {{{
 proc godel_draw {{target_path NA}} {
   upvar env env
-  set ::toc_id_count 1
+  #set ::toc_id_count 1
   set toc_enable     0
 
   if {$target_path == "NA" || $target_path == ""} {
@@ -8653,45 +8650,45 @@ proc godel_draw {{target_path NA}} {
   close $fout
 
 # TOC
-  if {$toc_enable eq "1"} {
-    set lines [read_as_list .index.htm]
+  #if {$toc_enable eq "1"} {
+  #  set lines [read_as_list .index.htm]
 
-    set kout [open ".index.htm" w]
-    
-    foreach line $lines {
-      if [regexp {=toc_anchor=} $line] {
-        set idcounter 1
-        set counter 0
-        foreach i $::toc_list {
-          set level    [lindex $i 0]
-          set id       [lindex $i 1]
-          #set css_ctrl [lindex $i 2]
-            if {$level eq "1"} {
-              incr counter
-              set arr($counter,2) 0
-              set arr($counter,3) 0
-            } elseif {$level eq "2"} {
-              if {$prev eq "3"} {
-                set arr($counter,3) 0
-              }
-              incr arr($counter,2)
-            } elseif {$level eq "3"} {
-              incr arr($counter,3)
-            }
-            set index $counter.$arr($counter,2).$arr($counter,3)
-            regsub -all {\.0} $index {} index
-            puts $kout "<div class=L$level><a href=#tocid$idcounter><nobr>$index $id</nobr></a></div>"
-            set prev $level
+  #  set kout [open ".index.htm" w]
+  #  
+  #  foreach line $lines {
+  #    if [regexp {=toc_anchor=} $line] {
+  #      set idcounter 1
+  #      set counter 0
+  #      foreach i $::toc_list {
+  #        set level    [lindex $i 0]
+  #        set id       [lindex $i 1]
+  #        #set css_ctrl [lindex $i 2]
+  #          if {$level eq "1"} {
+  #            incr counter
+  #            set arr($counter,2) 0
+  #            set arr($counter,3) 0
+  #          } elseif {$level eq "2"} {
+  #            if {$prev eq "3"} {
+  #              set arr($counter,3) 0
+  #            }
+  #            incr arr($counter,2)
+  #          } elseif {$level eq "3"} {
+  #            incr arr($counter,3)
+  #          }
+  #          set index $counter.$arr($counter,2).$arr($counter,3)
+  #          regsub -all {\.0} $index {} index
+  #          puts $kout "<div class=L$level><a href=#tocid$idcounter><nobr>$index $id</nobr></a></div>"
+  #          set prev $level
 
-            incr idcounter
-        }
-      } else {
-        puts $kout $line
-      }
-    }
+  #          incr idcounter
+  #      }
+  #    } else {
+  #      puts $kout $line
+  #    }
+  #  }
 
-    close $kout
-  }
+  #  close $kout
+  #}
 
   if {$target_path == "NA" || $target_path == ""} {
   } else {

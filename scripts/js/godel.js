@@ -1,11 +1,14 @@
 // Key binded to edit and draw
 document.onkeyup = function(e) {
-// Ctrl 1
+// Alt w
   if        (e.altKey && e.code == 'KeyW') {
     document.getElementById('iddraw').click();
-// Ctrl 2
+// Alt s
   } else if (e.altKey && e.code == 'KeyS') {
     document.getElementById('idbutton').click();
+// Alt l
+  } else if (e.altKey && e.code == 'KeyL') {
+    flow1_click()
 // Ctrl 3
   } else if (e.ctrlKey && e.which == 51) {
     document.getElementById('idedit').click();
