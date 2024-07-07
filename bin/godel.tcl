@@ -567,7 +567,7 @@ proc mod_flist {} {
   upvar fout fout
   upvar env env
 
-  puts $fout {<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="build_flist()">Update</button>}
+  puts $fout {<div style="cursor:pointer;" onclick="build_flist()">Filelist</div>}
 
   set atcols  ""
   lappend atcols "proc:bton_fdelete flist.tcl ; FD"
@@ -578,7 +578,8 @@ proc mod_flist {} {
   lappend atcols "proc:at_open flist.tcl ; O"
   lappend atcols "name;name"
 
-  atable flist.tcl -tableid tbl1 -noid -num -dataTables
+  #atable flist.tcl -tableid tbl1 -noid -num -dataTables
+  atable flist.tcl -tableid tbl1 -noid -num
 }
 # }}}
 # mod_links
@@ -587,7 +588,7 @@ proc mod_links {} {
   upvar fout fout
   upvar env env
 
-  puts $fout {<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="new_link()">New Link</button>}
+  puts $fout {<div style="cursor:pointer;" onclick="new_link()">Links</div>}
 
   set atcols ""
   lappend atcols "proc:bton_delete ; D"

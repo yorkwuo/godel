@@ -3,6 +3,9 @@ pathbar 3
 gnotes "
 # $vars(g:pagename)
 "
+
+gmd 1.md
+
 if [file exist "pretxt.tcl"] {
   puts $fout "<a href=pretxt.tcl type=text/txt>pretxt.tcl</a>"
   source pretxt.tcl
@@ -11,7 +14,7 @@ mod_flist
 mod_links
 
 # Notes
-gnotes {## Notes}
+puts $fout "<div>Notes</div>"
 
 set cols ""
 lappend cols "proc:bton_delete;D"
