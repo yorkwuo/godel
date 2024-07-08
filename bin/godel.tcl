@@ -7691,7 +7691,6 @@ proc gmd {args} {
 
   set aftermd [::gmarkdown::convert $content]
   regsub {^<h.>(.*?)<\/h.>} $aftermd "<a href='$fname' style='color:#6458ae; font-size:24px;text-decoration:none' type=text/txt>\\1</a>" aftermd
-  puts $aftermd 
   puts $fout $aftermd
   #puts $fout "<a href=$fname2 type=text/txt>$fname2</a>"
   #gnotes {*}$args $content
