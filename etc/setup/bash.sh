@@ -36,7 +36,9 @@ alias f3="gvim .godel/proc.tcl"
 alias f4="gvim .godel/dyvars.tcl"
 alias lv=lvars
 alias lsv=lsetvar
-
+alias fd='gget . fdiff'
+alias gitcm="git commit -m n -a"
+alias st='git status'
 
 function lcd { 
   `lcd.tcl "$@"`
