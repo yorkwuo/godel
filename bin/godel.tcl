@@ -4535,21 +4535,23 @@ proc gexe_button {args} {
     set addfile ""
   }
 
+  set cwd [pwd]
   if [file exist $exefile] {
     set exename [file tail $exefile]
     if {$opt(-cmd)} {
       puts $fout "
       <span class=\"tt_exe\">
-        <a style=\"background-color:#728FCE;color:white\" 
-        href=.$exename.gtcl class=\"w3-btn w3-round-large\" 
-        type=text/gtcl><b>$name</b></a>
+        <div style=\"background-color:#728FCE;color:white\" 
+        onclick=\"cmdline('$cwd','tclsh','.$exename.gtcl')\" class=\"w3-btn w3-round-large\" 
+        ><b>$name</b></div>
         <span class=\"tooltiptext_exe\">
           $addon$addfile<a href=.$exename.gtcl type=text/txt>$exename</a>
         </span>
       </span>
       "
     } else {
-      puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></a>"
+      #puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></a>"
+      puts $fout "<div style=\"background-color:#728FCE;color:white\" id=\"$id\" onclick=\"cmdline('$cwd','tclsh','.$exename.gtcl')\" class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></div>"
     }
     set kout [open ".$exename.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
@@ -5869,7 +5871,7 @@ proc ghtm_top_bar {args} {
       puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"toolarea()\" style=\"margin: 0px 0px\">Tools</button>"
       puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
       if {$opt(-js) eq "1"} {
-        puts $fout {<a href=".local.js"  type=text/txt class="w3-bar-item w3-button w3-right">JS</a>}
+        puts $fout "<div onclick=\"cmdline('$cwd','gvim','.local.js')\"  class=\"w3-bar-item w3-button w3-right\">JS</div>"
       }
     puts $fout "</div>"
 
