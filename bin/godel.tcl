@@ -5084,7 +5084,8 @@ proc ghtm_onoff {key args} {
       </span>
       "
     } else {
-      puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></a>"
+      #puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></a>"
+      puts $fout "<a style=\"background-color:#728FCE;color:white\" href=.$exename.gtcl class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></a>"
     }
     set kout [open ".$exename.gtcl" w]
       puts $kout "set pagepath \[file dirname \[info script]]"
@@ -5827,7 +5828,7 @@ proc ghtm_top_bar {args} {
       puts $fout "<button onclick=\"mailout()\"       class=\"w3-bar-item w3-button w3-darkblue w3-right\">Mail</button>"
     }
     if {$opt(-svg) eq "1"} {
-      puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
+      puts $fout "<div onclick=\"cmdline('$cwd','inkscape','1.svg')\"  class=\"w3-bar-item w3-button w3-right\">SVG</div>"
     }
     if {$opt(-hide) eq "1"} {
       if ![file exist "1.svg"] {
@@ -5836,7 +5837,8 @@ proc ghtm_top_bar {args} {
           puts $kout "</svg>"
         close $kout
       }
-      puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
+      puts $fout "<div onclick=\"cmdline('$cwd','inkscape','1.svg')\"  class=\"w3-bar-item w3-button\">SVG</div>"
+      #puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
       #set css_hide [lvars . css_hide]
       #if {$css_hide eq "1"} {
       #  puts $fout {<a class="w3-bar-item w3-button w3-round w3-right" onclick="onoff('css_hide', '0')">Hide</a>}
