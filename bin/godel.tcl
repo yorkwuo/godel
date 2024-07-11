@@ -5793,26 +5793,32 @@ proc ghtm_top_bar {args} {
     </style>
     }
     
+    #puts $fout {
+    #  <div id="navbar" class="w3-bar " style="margin:0px;background-color:#f7afc5;color:white;font-weight:bold">
+    #  <a id="idedit" href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
+    #  <a id="idvalue" href=".godel/vars.tcl" type=text/txt  class="w3-bar-item w3-button">Value</a>
+    #  <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Up</a>
+    #  <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button" style="color:white">Draw</a>
+    #  <a style="display:none" id="idexec" href=".godel/exec.gtcl" type=text/gtcl class="w3-bar-item w3-button">Exec</a>
+    #}
     puts $fout {
-      <div id="navbar" class="w3-bar " style="margin:0px;background-color:#f7afc5;color:white;font-weight:bold">
-      <a id="idedit" href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
-      <a id="idvalue" href=".godel/vars.tcl" type=text/txt  class="w3-bar-item w3-button">Value</a>
-      <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Up</a>
-      <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button" style="color:white">Draw</a>
-      <a style="display:none" id="idexec" href=".godel/exec.gtcl" type=text/gtcl class="w3-bar-item w3-button">Exec</a>
+      <div id="navbar" class="w3-bar w3-medium" style="margin:0px;background-color:#f7afc5;color:white;font-weight:bold">
     }
+    puts $fout "<div onclick=\"cmdline('$cwd','gvim','.godel/ghtm.tcl')\"  class=\"w3-bar-item w3-button\">Edit</div>"
+    puts $fout "<div onclick=\"cmdline('$cwd','gvim','.godel/vars.tcl')\"  class=\"w3-bar-item w3-button\">Value</div>"
+    puts $fout {
+      <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Up</a>
+    }
+    puts $fout "<div id=\"iddraw\" onclick=\"cmdline('$cwd','tclsh','.godel/draw.gtcl')\"  class=\"w3-bar-item w3-button\">Draw</div>"
+    puts $fout "<a id=\"idexec\" onclick=\"cmdline('$cwd','tclsh','.godel/exec.gtcl')\"  class=\"w3-bar-item w3-button\"></a>"
+
     if {$opt(-filter)} {
       puts $fout "<input style=\"margin: 5px 0px\" type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\">"
     }
 
+   set timestamp [clock format [clock seconds] -format {%Y.%W.%u_%H:%M}]
+   puts $fout "<div onclick=\"cmdline('$cwd','gvim','.index.htm')\"  class=\"w3-bar-item w3-button w3-right\">$timestamp</div>"
 
-    if {$opt(-notime) eq "1"} {
-    } else {
-      set timestamp [clock format [clock seconds] -format {%Y.%W.%u_%H:%M}]
-      puts $fout "
-        <a href=.index.htm type=text/txt class=\"w3-bar-item w3-button w3-right\">$timestamp</a>
-      "
-    }
     puts $fout "<button onclick=\"copy_path()\"     class=\"w3-bar-item w3-button w3-darkblue w3-right\">Path</button>"
     puts $fout "<button onclick=\"open_terminal()\" class=\"w3-bar-item w3-button w3-darkblue w3-right\">Open</button>"
     puts $fout "<button onclick=\"open_folder()\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
@@ -5856,16 +5862,7 @@ proc ghtm_top_bar {args} {
     if {$opt(-anew) eq "1"} {
       puts $fout "<button onclick=\"newarow()\"      class=\"w3-bar-item w3-button w3-darkblue w3-right\">aNew</button>"
     }
-
-    if {$opt(-save)} {
-      #puts $fout "<button id=\"save\" class=\"w3-bar-item w3-button w3-blue-gray\" style=\"margin: 0px 0px\">Save</button>"
-      if [info exist env(GODEL_SAVEnDRAW)] {
-        #puts $fout "<button id=\"idbutton\" onclick=\"g_save()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
-        puts $fout "<button id=\"idbutton\" onclick=\"g_save()\" class=\"w3-bar-item w3-button\">Save</button>"
-      } else {
-        puts $fout "<button id=\"idbutton\" onclick=\"g_save_nodraw()\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
-      }
-    }
+    puts $fout "<div id=\"idbutton\" onclick=\"g_save()\" class=\"w3-bar-item w3-button\">Save</div>"
     puts $fout "<button onclick=\"flow1_click()\"   class=\"w3-bar-item w3-button w3-darkblue\">Get</button>"
       puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"toolarea()\" style=\"margin: 0px 0px\">Tools</button>"
       puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"

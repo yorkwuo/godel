@@ -2164,6 +2164,7 @@ function init_col_button (tblid) {
 }
 // }}}
 // mpvplay
+// {{{
 function mpvplay(fpath, code) {
 
   console.log(fpath)
@@ -2173,7 +2174,9 @@ function mpvplay(fpath, code) {
   fetch(url)
   .catch(err => console.log(err))
 }
-// play1
+// }}}
+// jsplay
+// {{{
 function jsplay(fpath, code) {
 
   console.log(fpath)
@@ -2187,7 +2190,9 @@ function jsplay(fpath, code) {
   fetch(url)
   .catch(err => console.log(err))
 }
-
+// }}}
+// delfile
+// {{{
 function delfile(fpath) {
   console.log(fpath)
   const url = 'http://127.0.0.1:5000/delfile?filepath='+fpath;
@@ -2196,14 +2201,19 @@ function delfile(fpath) {
   .catch(err => console.log(err))
 
 }
-
+// }}}
 //--------------------------
 // Zoom in/out
 //--------------------------
+// mouseDown
+// {{{
 let moving
 function mouseDown(e){
 	moving = true
 }
+// }}}
+// drag
+// {{{
 function drag(e){
   if (event.shiftKey) {
     if(moving === true){
@@ -2243,11 +2253,15 @@ function drag(e){
     }
   }
 }
+// }}}
+// mouseUp
+// {{{
 function mouseUp(){
 	moving = false
 }
-
-
+// }}}
+// zoom
+// {{{
 function zoom(e){
   if (event.shiftKey) {
   	let startViewBox = svg.getAttribute('viewBox').split(' ').map( n => parseFloat(n))
@@ -2289,5 +2303,18 @@ function zoom(e){
   }
 
 }
+// }}}
+// cmdline
+function cmdline(fullpath, cmd, param) {
+  console.log('kk')
+  //const url = 'http://127.0.0.1:5000/cmdline?fullpath=/home/york/tmp&cmd=gvim&param=run.tcl';
+  //const url = 'http://127.0.0.1:5000/cmdline?fullpath=/home/york/tmp&cmd=run.tcl&param=';
+  //const url = 'http://127.0.0.1:5000/cmdline?fullpath=/home/york/tmp&cmd=tclsh&param=.godel/draw.gtcl';
+  const url = 'http://127.0.0.1:5000/cmdline?fullpath='+fullpath+'&cmd='+cmd+'&param='+param;
+
+  fetch(url);
+}
+
+
 
 // vim:fdm=marker
