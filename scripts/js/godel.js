@@ -1403,7 +1403,12 @@ function at_open (atfname,id) {
     var data = header + footer;
     dload(data,'gtcl.tcl');
 
+setTimeout(function() {
+    // Code to execute after 1 second
+    //console.log("1 second has passed");
     document.getElementById('idexec').click();
+}, 600);
+
 }
 // }}}
 // openfile
