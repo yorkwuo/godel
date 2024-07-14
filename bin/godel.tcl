@@ -571,8 +571,9 @@ proc ghtm_openbook {key} {
 proc mod_flist {} {
   upvar fout fout
   upvar env env
-
-  puts $fout {<div style="cursor:pointer;" onclick="build_flist()">Filelist</div>}
+  set cwd [pwd]
+  #puts $fout {<div style="cursor:pointer;" onclick="build_flist()">Filelist</div>}
+  puts $fout "<div style=\"cursor:pointer;\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/build_flist.tcl')\">Filelist</div>"
 
   set atcols  ""
   lappend atcols "proc:bton_fdelete flist.tcl ; FD"
@@ -593,7 +594,9 @@ proc mod_links {} {
   upvar fout fout
   upvar env env
 
-  puts $fout {<div style="cursor:pointer;" onclick="new_link()">Links</div>}
+  set cwd [pwd]
+  #puts $fout {<div style="cursor:pointer;" onclick="new_link()">Links</div>}
+  puts $fout "<div style=\"cursor:pointer;\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/new_link.tcl')\">Links</div>"
 
   set atcols ""
   lappend atcols "proc:bton_delete ; D"
@@ -5828,8 +5831,8 @@ proc ghtm_top_bar {args} {
    puts $fout "<div onclick=\"cmdline('$cwd','gvim','.index.htm')\"  class=\"w3-bar-item w3-button w3-right\">$timestamp</div>"
 
     puts $fout "<button onclick=\"copy_path()\"     class=\"w3-bar-item w3-button w3-darkblue w3-right\">Path</button>"
-    puts $fout "<button onclick=\"open_terminal()\" class=\"w3-bar-item w3-button w3-darkblue w3-right\">Open</button>"
-    puts $fout "<button onclick=\"open_folder()\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
+    puts $fout "<button onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Open</button>"
+    puts $fout "<button onclick=\"cmdline('$cwd','thunar','.')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
     if [info exist env(GODEL_noMAIL)] {
     } else {
       puts $fout "<button onclick=\"mailout()\"       class=\"w3-bar-item w3-button w3-darkblue w3-right\">Mail</button>"
