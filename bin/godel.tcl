@@ -5817,8 +5817,8 @@ proc ghtm_top_bar {args} {
     puts $fout {
       <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Up</a>
     }
-    puts $fout "<div id=\"iddraw\" onclick=\"cmdline('$cwd','tclsh','.godel/draw.gtcl')\"  class=\"w3-bar-item w3-button\">Draw</div>"
-    puts $fout "<a id=\"idexec\" onclick=\"cmdline('$cwd','tclsh','.godel/exec.gtcl')\"  class=\"w3-bar-item w3-button\"></a>"
+    puts $fout "<div id=\"iddraw\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/draw.tcl')\"  class=\"w3-bar-item w3-button\">Draw</div>"
+    puts $fout "<a id=\"idexec\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/exec.tcl')\"  class=\"w3-bar-item w3-button\"></a>"
 
     if {$opt(-filter)} {
       puts $fout "<input style=\"margin: 5px 0px\" type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\">"
@@ -8472,38 +8472,39 @@ proc godel_draw {{target_path NA}} {
 
 # create draw.gtcl
 # {{{
-  if ![file exist .godel/draw.gtcl] {
-    set kout [open .godel/draw.gtcl w]
-      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
-      puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
-      puts $kout "cd \$pagepath"
-      puts $kout ""
-      puts $kout "catch {exec xdotool getwindowfocus} wid"
-      puts $kout ""
-      puts $kout "gtcl_commit"
-      puts $kout "godel_draw"
-      puts $kout "catch {exec xdotool key ctrl+r \$wid}"
-
-    close $kout
-  }
+#  if ![file exist .godel/draw.gtcl] {
+#    set kout [open .godel/draw.gtcl w]
+#      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
+#      puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
+#      puts $kout "cd \$pagepath"
+#      puts $kout ""
+#      puts $kout "catch {exec xdotool getwindowfocus} wid"
+#      puts $kout ""
+#      puts $kout "gtcl_commit"
+#      puts $kout "godel_draw"
+#      puts $kout "catch {exec xdotool key ctrl+r \$wid}"
+#
+#    close $kout
+#  }
 # }}}
 # create exec.gtcl
 # {{{
-  if ![file exist .godel/exec.gtcl] {
-    set kout [open .godel/exec.gtcl w]
-      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
-      puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
-      puts $kout "cd \$pagepath"
-      puts $kout ""
-      puts $kout "if \[file exist \"\$env(GODEL_DOWNLOAD)/gtcl.tcl\"] {"
-      puts $kout "  source  \$env(GODEL_DOWNLOAD)/gtcl.tcl"
-      puts $kout "  exec rm \$env(GODEL_DOWNLOAD)/gtcl.tcl"
-      puts $kout "} else {"
-      puts $kout "  source local.tcl"
-      puts $kout "}"
-      puts $kout ""
-    close $kout
-  }
+# York: 2024/7/14: outdated after changing to server based drawing
+  #if ![file exist .godel/exec.gtcl] {
+  #  set kout [open .godel/exec.gtcl w]
+  #    puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
+  #    puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
+  #    puts $kout "cd \$pagepath"
+  #    puts $kout ""
+  #    puts $kout "if \[file exist \"\$env(GODEL_DOWNLOAD)/gtcl.tcl\"] {"
+  #    puts $kout "  source  \$env(GODEL_DOWNLOAD)/gtcl.tcl"
+  #    puts $kout "  exec rm \$env(GODEL_DOWNLOAD)/gtcl.tcl"
+  #    puts $kout "} else {"
+  #    puts $kout "  source local.tcl"
+  #    puts $kout "}"
+  #    puts $kout ""
+  #  close $kout
+  #}
 # }}}
 
 #----------------------------
