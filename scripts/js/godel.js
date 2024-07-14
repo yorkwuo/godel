@@ -1403,11 +1403,12 @@ function at_open (atfname,id) {
     var data = header + footer;
     dload(data,'gtcl.tcl');
 
-setTimeout(function() {
-    // Code to execute after 1 second
-    //console.log("1 second has passed");
     document.getElementById('idexec').click();
-}, 600);
+//setTimeout(function() {
+//    // Code to execute after 1 second
+//    //console.log("1 second has passed");
+//    document.getElementById('idexec').click();
+//}, 600);
 
 }
 // }}}
@@ -2312,9 +2313,6 @@ function zoom(e){
 // cmdline
 function cmdline(fullpath, cmd, param) {
   console.log('kk')
-  //const url = 'http://127.0.0.1:5000/cmdline?fullpath=/home/york/tmp&cmd=gvim&param=run.tcl';
-  //const url = 'http://127.0.0.1:5000/cmdline?fullpath=/home/york/tmp&cmd=run.tcl&param=';
-  //const url = 'http://127.0.0.1:5000/cmdline?fullpath=/home/york/tmp&cmd=tclsh&param=.godel/draw.gtcl';
   const url = 'http://127.0.0.1:5000/cmdline?fullpath='+fullpath+'&cmd='+cmd+'&param='+param;
 
   fetch(url);

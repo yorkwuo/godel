@@ -232,6 +232,8 @@ proc ghtm_dp_exeitem {args} {
   }
 # }}}
 
+  set cwd [pwd]
+
   set exefile [lindex $args 0]
   if {$opt(-name)} { } else { set name $exefile }
   if {$opt(-hold)} { set hold "-hold" } else { set hold "" }
@@ -249,7 +251,8 @@ proc ghtm_dp_exeitem {args} {
   if {$opt(-ttip) eq "1"} {
     puts $fout " $cmdfield<div class=\"ttip\" data-tt=\"$exename\"><a href=\".$exename.gtcl\" type=text/gtcl class=\"link\">$name</a></div>"
   } else {
-    puts $fout " $cmdfield<a href=\".$exename.gtcl\" type=text/gtcl class=\"link\">$name</a>"
+    #puts $fout " $cmdfield<a href=\".$exename.gtcl\" type=text/gtcl class=\"link\">$name</a>"
+    puts $fout " $cmdfield<div onclick=\"cmdline('$cwd','tclsh','.$exename.gtcl')\" class=\"link\">$name</div>"
   }
 
 # creating gtcl
@@ -375,11 +378,13 @@ proc ghtm_linklist {name ifile} {
   }
   set lines [read_as_list $ifile]
 
+  set cwd [pwd]
+
   puts $fout "
   <div class=\"w3-bar-item\">
     <div class=\"w3-card\" style=\"width:auto;\">
       <header class=\"w3-container\" style=\"background-color:#728FCE;color:white\">
-        <pre><a style=\"font-weight:bold;text-decoration:none\" href=$ifile type=text/txt>$name</a></pre>
+        <pre><div onclick=\"cmdline('$cwd','gvim','$ifile')\" class='w3-large' style=\"cursor:pointer;\">$name</a></pre>
       </header>
       <div class=\"w3-container\">
       "
@@ -4779,7 +4784,7 @@ proc fdiff {args} {
           file mkdir $dir
           exec godel_draw.tcl $dir
         }
-        exec cp $srcpath/$f $f
+        catch {exec cp $srcpath/$f $f}
       } else {
         puts "not exist... $f"
       }
@@ -7690,8 +7695,11 @@ proc gmd {args} {
     set content ""
   }
 
+  set cwd [pwd]
+
   set aftermd [::gmarkdown::convert $content]
-  regsub {^<h.>(.*?)<\/h.>} $aftermd "<a href='$fname' style='color:#6458ae; font-size:24px;text-decoration:none' type=text/txt>\\1</a>" aftermd
+  #regsub {^<h.>(.*?)<\/h.>} $aftermd "<a href='$fname' style='color:#6458ae; font-size:24px;text-decoration:none' type=text/txt>\\1</a>" aftermd
+  regsub {^<h.>(.*?)<\/h.>} $aftermd "<div onclick=\"cmdline('$cwd','gvim','$fname')\" style='color:#6458ae; font-size:24px;'>\\1</div>" aftermd
   puts $fout $aftermd
   #puts $fout "<a href=$fname2 type=text/txt>$fname2</a>"
   #gnotes {*}$args $content
