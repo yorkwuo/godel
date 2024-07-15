@@ -637,6 +637,7 @@ proc build_flist {} {
     regsub {^\./} $line {} line
     if       [regexp {^\.} $line] {
     } elseif [regexp {Makefile} $line] {
+    } elseif [regexp {\$} $line] {
     } elseif [regexp {\.tcl|\.tmp} $line] {
     } else {
       lappend lines $line
