@@ -5870,7 +5870,7 @@ proc ghtm_top_bar {args} {
     #puts $fout "<button onclick=\"onoff('css_hide', '0')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">H</button>"
     #puts $fout {<a class="w3-button w3-round w3-light-gray" onclick="onoff('css_hide', '1')">Hide</a>}
     if {$opt(-new) eq "1"} {
-      puts $fout "<button onclick=\"newgpage()\"      class=\"w3-bar-item w3-button w3-darkblue w3-right\">New</button>"
+      puts $fout "<button onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">New</button>"
     }
     if {$opt(-anew) eq "1"} {
       puts $fout "<button onclick=\"newarow()\"      class=\"w3-bar-item w3-button w3-darkblue w3-right\">aNew</button>"
