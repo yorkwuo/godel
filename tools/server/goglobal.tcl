@@ -10,8 +10,8 @@ sqlite3 db1 $env(GLOBALDB)
 set pagename [lvars $pp g:pagename]
 set kw       [lvars $pp g:keywords]
 
-db1 eval "INSERT OR IGNORE INTO global (path,pagename,keywords) VALUES('$pp','$pagename','$kw');"
-db1 eval "UPDATE global SET keywords = '$kw $pagename $pp' WHERE path = '$pp'"
-db1 eval "UPDATE global SET pagename = '$pagename' WHERE path = '$pp'"
+db1 eval "INSERT OR IGNORE INTO dbtable (path,pagename,keywords) VALUES('$pp','$pagename','$kw');"
+db1 eval "UPDATE dbtable SET keywords = '$kw $pagename $pp' WHERE path = '$pp'"
+db1 eval "UPDATE dbtable SET pagename = '$pagename' WHERE path = '$pp'"
 
 db1 close

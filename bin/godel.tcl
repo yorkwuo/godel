@@ -1,3 +1,11 @@
+# search_bar
+# {{{
+proc search_bar {} {
+  upvar fout fout
+  puts $fout "<input id=sinput></input>"
+  puts $fout { <p id=result></p> }
+}
+# }}}
 # hiername
 # {{{
 proc hiername {} {
@@ -5666,14 +5674,14 @@ proc ghtm_top_bar {args} {
   upvar env env
   upvar vars vars
   upvar flow_name flow_name
-  # -filter (filter tbl column x)
+  # -sbar
 # {{{
-  set opt(-filter) 0
-  set idx [lsearch $args {-filter}]
+  set opt(-sbar) 0
+  set idx [lsearch $args {-sbar}]
   if {$idx != "-1"} {
     set tblcol [lindex $args [expr $idx + 1]]
     set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-filter) 1
+    set opt(-sbar) 1
   }
 # }}}
   # -p1
@@ -5824,8 +5832,8 @@ proc ghtm_top_bar {args} {
     puts $fout "<div id=\"iddraw\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/draw.tcl')\"  class=\"w3-bar-item w3-button\">Draw</div>"
     puts $fout "<a id=\"idexec\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/exec.tcl')\"  class=\"w3-bar-item w3-button\"></a>"
 
-    if {$opt(-filter)} {
-      puts $fout "<input style=\"margin: 5px 0px\" type=text id=filter_table_input onkeyup=filter_table(\"tbl\",$tblcol,event) placeholder=\"Search...\">"
+    if {$opt(-sbar)} {
+      puts $fout "<input style=\"margin: 3px 0px\" type=text id=sinput >"
     }
 
    set timestamp [clock format [clock seconds] -format {%Y.%W.%u_%H:%M}]

@@ -26,6 +26,20 @@ document.onkeyup = function(e) {
 //    document.getElementById('idplay').click();
   }
 };
+// Get the input field
+var sinput = document.getElementById("sinput");
+if (typeof(sinput) != 'undefined' && sinput != null) {
+  sinput.addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+      lsearch()
+    }
+  // Ctrl U
+    if (event.ctrlKey && e.code == 'KeyU') {
+      search_clear()
+    }
+  }); 
+  sinput.focus()
+}
 
 var boxes = document.getElementsByClassName("mylink");
 if (typeof(boxes) != 'undefined' && boxes != null) {
@@ -228,11 +242,13 @@ if(typeof(tables) != 'undefined' && tables != null){
       }
   }
 }
+// topFunction
+// {{{
 function topFunction() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
 }
-
+// }}}
 // TableColSelect
 // {{{
 function TableColSelect (thisobj, iarray) {
@@ -2291,6 +2307,46 @@ function cmdline(fullpath, cmd, param) {
 
   fetch(url);
 }
+
+function lsearch() {
+
+  const input = document.getElementById('sinput');
+  //var ff = encodeURIComponent(fpath)
+  let txt = ""
+  txt += 'http://127.0.0.1:5000/lsearch?keywords='+input.value
+  txt += '&dbpath='+ginfo['cwd']+'/.dbfile.db'
+  const url = txt
+
+  console.log(url)
+
+
+  fetch(url)
+  .then(res => {
+    return res.json()
+  }).then(result => {
+    const p = document.getElementById('result');
+    let txt = "<div>"
+    for (let key in result) {
+      const path = result[key].path;
+      const pagename = result[key].pagename;
+      const kw       = result[key].keywords;
+      txt += '<div><a href='+path+'/.index.htm>'+pagename+'</a></div>'
+    }
+    txt += '</div>'
+    p.innerHTML = txt
+  })
+  .catch(err => console.log(err))
+}
+
+
+function basename(path) {
+   return path.split('/').reverse()[0];
+}
+
+function dirname(path) {
+  return path.match(/(.*)[\/\\]/)[1]||'';
+}
+
 
 
 
