@@ -143,6 +143,25 @@ app.get('/cmdline', (req, res) => {
 
 });
 // }}}
+// lsearch
+// {{{
+app.get('/lsearch', (req, res) => {
+  const kw      = req.query.keywords;
+  const dbpath  = req.query.dbpath;
+
+  const sqlite3 = require("sqlite3").verbose();
+  var db =  new sqlite3.Database(dbpath);
+
+  console.log(kw);
+
+  let sql = "SELECT * FROM dbtable WHERE keywords like '%" + kw + "%'";
+  //console.log(sql);
+
+  db.all(sql, (error, row) => {
+    res.json(row)
+  });
+});
+// }}}
   
 // Port Number
 const port = 5000;
