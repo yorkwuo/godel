@@ -1,4 +1,8 @@
 
+var_table
+ghtm_padding
+linkbox
+
 gui_show_map
 gui_zoom
 gui_set_setting

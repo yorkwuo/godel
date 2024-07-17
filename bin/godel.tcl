@@ -753,13 +753,14 @@ proc ghtm_card {name value args} {
   }
 # }}}
 
+  set cwd [pwd]
   puts $fout "
   <div class=\"w3-bar-item\">
     <div class=\"w3-card\" style=\"width:auto;\">
       <header class=\"w3-container\" style=\"font-size:$header;\">
   "
   if {$opt(-ed) eq "1"} {
-    puts $fout "<a style=\"font-size:$header;\" href=$edfile type=text/txt>$name</a>"
+    puts $fout "<a style=\"font-size:$header;\" onclick=\"cmdline('$cwd','gvim','$edfile')\">$name</a>"
   } elseif {$opt(-link) eq "1"} {
     puts $fout "<a style=\"font-size:$header;\"href=$linkfile>$name</a>"
   } else {
@@ -3246,6 +3247,7 @@ proc var_table {} {
   upvar fout fout
   upvar rows rows
 
+  set cwd [pwd]
   puts $fout "<table class=table1 id=tbl1>"
   foreach row $rows {
     set cols [split $row ";"]
@@ -3288,7 +3290,7 @@ proc var_table {} {
               puts $fout "<td width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
           } else {
             if [file exist $value] {
-              puts $fout "<td><a href=$value type=text/txt>$name</a></td>"
+              puts $fout "<td><a href=# onclick=cmdline('$cwd','gvim','$value')>$name</a></td>"
               puts $fout "<td width=30px gname=\".\" colname=\"$name\" contenteditable=\"true\"  style=\"white-space:pre\">$value</td>"
             } else {
               puts $fout "<td>$name</td>"
@@ -3527,6 +3529,7 @@ proc ghtm_ls_table {args} {
   }
 # }}}
 
+  set cwd [pwd]
   set ifiles ""
   if {$opt(-pattern)} {
     if {$opt(-srcdirs)} {
@@ -3612,7 +3615,7 @@ proc ghtm_ls_table {args} {
       } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $fullpath]}  {
         puts $fout "<td><a style=\"text-decoration:none;\" href=\"$linktarget\" type=text/jpg>$dispname</a></td>"
       } else {
-        puts $fout "<td><a style=\"text-decoration:none;\" href=\"$linktarget\" type=text/txt>$dispname</a></td>"
+        puts $fout "<td><a style=\"text-decoration:none;\" onclick=\"cmdline('$cwd','gvim','$linktarget')\">$dispname</a></td>"
       }
       if {$opt(-dir) eq "1"} {
         puts $fout "<td>$dir</td>"
@@ -3827,24 +3830,6 @@ proc linkbox {args} {
     set val(-target) pale-green
   }
 # }}}
-  # -asize
-# {{{
-  set opt(-asize) 0
-  set idx [lsearch $args {-asize}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-asize) 1
-  }
-# }}}
-  # -gsize
-# {{{
-  set opt(-gsize) 0
-  set idx [lsearch $args {-gsize}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-gsize) 1
-  }
-# }}}
   # -ed
 # {{{
   set opt(-ed) 0
@@ -3855,7 +3840,7 @@ proc linkbox {args} {
   }
 # }}}
 
-
+  set cwd [pwd]
   set name [lindex $args 0]
 
   if {$opt(-name) eq "1"} {
@@ -3870,32 +3855,13 @@ proc linkbox {args} {
     set target $name/.index.htm
   }
 
-  set txtsize ""
-  if {$opt(-asize) eq "1"} {
-    if [file exist $name] {
-      cd $name
-      source at.tcl
-      set size [llength [at_allrows]]
-      cd ..
-      set txtsize "($size)"
-    }
-  } elseif {$opt(-gsize) eq "1"} {
-    if [file exist $name] {
-      cd $name
-      set size [llength [glob -nocomplain -type d *]]
-      cd ..
-      set txtsize "($size)"
-    }
-  }
 
   if [file exist $target] {
     if {$opt(-ed) eq "1"} {
-      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\" type=text/txt><b>$dispname</b>$txtsize</a>"
+      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" onclick=\"cmdline('$cwd','gvim','$target')\"><b>$dispname</b></a>"
     } else {
-      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\"><b>$dispname</b>$txtsize</a>"
+      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\"><b>$dispname</b></a>"
     }
-  } else {
-    #puts $fout "<a class=\"w3-blue-gray w3-padding w3-large w3-round-large w3-hover-red\" style=\"text-decoration:none\" href=\"$target\">$dispname$txtsize</a>"
   }
 }
 # }}}
