@@ -1,0 +1,27 @@
+#!/usr/bin/tclsh
+source $env(GODEL_ROOT)/bin/godel.tcl
+
+if [info exist env(GLOBALDB)] {
+  if [file exist $env(GLOBALDB)] {
+    puts "File already exist... $env(GLOBALDB)"
+  } else {
+    package require sqlite3
+    
+    sqlite3 db1 $env(GLOBALDB)
+    
+    set sql {
+      CREATE TABLE dbtable (
+        path      TEXT PRIMARY KEY,
+        pagename  TEXT,
+        keywords  TEXT
+      );
+    }
+    
+    db1 eval $sql
+    db1 close
+
+  }
+} else {
+  puts "No GLOBALDB env variable."
+}
+
