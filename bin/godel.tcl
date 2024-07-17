@@ -3694,10 +3694,6 @@ proc opt_bton {args} {
 
   set exefile ".set_$name.gtcl"
 
-  #if [file exist $exefile] {
-  #    puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
-  #} else {
-      #puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
       set cur_value [lvars . $key]
       if {$cur_value eq $value} {
         puts $fout "<a href=$exefile class=\"w3-btn w3-pink\" type=text/gtcl><b>$name</b></a>"
@@ -3713,7 +3709,6 @@ proc opt_bton {args} {
       puts $kout "godel_draw"
       puts $kout "catch {exec xdotool search --name \"Mozilla\" key ctrl+r}"
     close $kout
-  #}
   
 }
 # }}}
@@ -3962,10 +3957,6 @@ proc bton_set {args} {
   
   set exefile ".set_$fname.gtcl"
 
-  #if [file exist $exefile] {
-  #    puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
-  #} else {
-      #puts $fout "<a href=$exefile class=\"w3-btn w3-blue\" type=text/gtcl><b>$name</b></a><a class=\"w3-button w3-lime\" href=$exefile type=text/txt>cmd</a>"
       if {$cur_value eq $value} {
         puts $fout "<a href=$exefile class=\"w3-btn w3-pink\" type=text/gtcl><b>$name</b></a>"
       } else {
@@ -3979,7 +3970,6 @@ proc bton_set {args} {
       puts $kout "godel_draw"
       puts $kout "catch {exec xdotool search --name \"Mozilla\" key ctrl+r}"
     close $kout
-  #}
   
 }
 # }}}
@@ -4533,7 +4523,6 @@ proc gexe_button {args} {
       </span>
       "
     } else {
-      #puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></a>"
       puts $fout "<div style=\"background-color:#728FCE;color:white\" id=\"$id\" onclick=\"cmdline('$cwd','tclsh','.$exename.gtcl')\" class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></div>"
     }
     set kout [open ".$exename.gtcl" w]
@@ -7184,18 +7173,6 @@ proc local_table {tableid args} {
             append celltxt "<td> </td>"
           }
         }
-      # edtable:
-      } elseif [regexp {edtable[2-9]*:} $col] {
-        regsub {edtable[2-9]*:} $col {} page_key
-        set col_data [lvars $row $page_key]
-        if {$col_data eq "NA"} {
-          set col_data ""
-        }
-        if [regexp {edtable2} $col] {
-          append celltxt "<td gtype=\"innerHTML\" gname=\"$row\" colname=\"$page_key\" contenteditable=\"true\" style=\"white-space:pre\">$col_data</td>"
-        } else {
-          append celltxt "<td gname=\"$row\" colname=\"$page_key\" contenteditable=\"true\" style=\"white-space:pre\">$col_data</td>"
-        }
       # ed:
       } elseif [regexp {ed:} $col] {
         regsub {ed:} $col {} col
@@ -8410,7 +8387,6 @@ proc godel_draw {{target_path NA}} {
     cd $target_path
   }
 
-  set gtype [lvars . gtype]
   # If .freeze exist, do nothing. Page keeps the same.
 # {{{
   if [file exist .freeze] {
@@ -8446,45 +8422,6 @@ proc godel_draw {{target_path NA}} {
   set dyvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
   godel_array_save dyvars .godel/dyvars.tcl
 
-
-
-# create draw.gtcl
-# {{{
-#  if ![file exist .godel/draw.gtcl] {
-#    set kout [open .godel/draw.gtcl w]
-#      puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
-#      puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
-#      puts $kout "cd \$pagepath"
-#      puts $kout ""
-#      puts $kout "catch {exec xdotool getwindowfocus} wid"
-#      puts $kout ""
-#      puts $kout "gtcl_commit"
-#      puts $kout "godel_draw"
-#      puts $kout "catch {exec xdotool key ctrl+r \$wid}"
-#
-#    close $kout
-#  }
-# }}}
-# create exec.gtcl
-# {{{
-# York: 2024/7/14: outdated after changing to server based drawing
-  #if ![file exist .godel/exec.gtcl] {
-  #  set kout [open .godel/exec.gtcl w]
-  #    puts $kout "source \$env(GODEL_ROOT)/bin/godel.tcl"
-  #    puts $kout "set pagepath \[file dirname \[file dirname \[info script\]\]\]"
-  #    puts $kout "cd \$pagepath"
-  #    puts $kout ""
-  #    puts $kout "if \[file exist \"\$env(GODEL_DOWNLOAD)/gtcl.tcl\"] {"
-  #    puts $kout "  source  \$env(GODEL_DOWNLOAD)/gtcl.tcl"
-  #    puts $kout "  exec rm \$env(GODEL_DOWNLOAD)/gtcl.tcl"
-  #    puts $kout "} else {"
-  #    puts $kout "  source local.tcl"
-  #    puts $kout "}"
-  #    puts $kout ""
-  #  close $kout
-  #}
-# }}}
-
 #----------------------------
 # Start creating .index.htm
 #----------------------------
@@ -8507,18 +8444,13 @@ proc godel_draw {{target_path NA}} {
       file copy -force $env(GODEL_ROOT)/etc/css/w3.css                      .godel/
       file copy -force $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
       if ![file exist .godel/js/jquery-3.3.1.min.js] {
-        #file copy -force $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
         exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
       }
       if ![file exist .godel/js/jquery.dataTables.min.js] {
-        #file copy -force $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
         exec cp $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
       }
       puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
-      if {$gtype eq "raw"} {
-      } else {
-        puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
-      }
+      puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
   } else {
 # Link to Godel's central w3.css
 # {{{
@@ -8537,10 +8469,7 @@ proc godel_draw {{target_path NA}} {
       puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
     } else {
       puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
-      if {$gtype eq "raw"} {
-      } else {
-        puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
-      }
+      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
     }
 # }}}
   }
@@ -8574,11 +8503,8 @@ proc godel_draw {{target_path NA}} {
   }
 
   if {$env(GODEL_ALONE)} {
-    if {$gtype eq "raw"} {
-    } else {
-      puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
-      puts $fout "<script src=.godel/js/godel.js></script>"
-    }
+    puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
+    puts $fout "<script src=.godel/js/godel.js></script>"
   } else {
     if {$env(GODEL_EMB_CSS)} {
       puts $fout "<script src=.godel/js/godel.js></script>"
@@ -8596,22 +8522,18 @@ proc godel_draw {{target_path NA}} {
 
       }
     } else {
-      if {$gtype eq "raw"} {
-      } else {
-        puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
-        if {[info exist dataTables]} {
-          puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
-          puts $fout "<script>"
-          puts $fout "    \$(document).ready(function() {"
-          puts $fout "    \$('#tbl').DataTable({"
-          puts $fout "       \"paging\": false,"
-          puts $fout "       \"info\": false,"
+      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
+      if {[info exist dataTables]} {
+        puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+        puts $fout "<script>"
+        puts $fout "    \$(document).ready(function() {"
+        puts $fout "    \$('#tbl').DataTable({"
+        puts $fout "       \"paging\": false,"
+        puts $fout "       \"info\": false,"
         puts $fout "       \"order\": \[\],"
-          puts $fout "    });"
-          puts $fout "} );"
-          puts $fout "</script>"
-
-        }
+        puts $fout "    });"
+        puts $fout "} );"
+        puts $fout "</script>"
       }
     }
   }
@@ -8636,47 +8558,6 @@ proc godel_draw {{target_path NA}} {
   puts $fout "</html>"
 
   close $fout
-
-# TOC
-  #if {$toc_enable eq "1"} {
-  #  set lines [read_as_list .index.htm]
-
-  #  set kout [open ".index.htm" w]
-  #  
-  #  foreach line $lines {
-  #    if [regexp {=toc_anchor=} $line] {
-  #      set idcounter 1
-  #      set counter 0
-  #      foreach i $::toc_list {
-  #        set level    [lindex $i 0]
-  #        set id       [lindex $i 1]
-  #        #set css_ctrl [lindex $i 2]
-  #          if {$level eq "1"} {
-  #            incr counter
-  #            set arr($counter,2) 0
-  #            set arr($counter,3) 0
-  #          } elseif {$level eq "2"} {
-  #            if {$prev eq "3"} {
-  #              set arr($counter,3) 0
-  #            }
-  #            incr arr($counter,2)
-  #          } elseif {$level eq "3"} {
-  #            incr arr($counter,3)
-  #          }
-  #          set index $counter.$arr($counter,2).$arr($counter,3)
-  #          regsub -all {\.0} $index {} index
-  #          puts $kout "<div class=L$level><a href=#tocid$idcounter><nobr>$index $id</nobr></a></div>"
-  #          set prev $level
-
-  #          incr idcounter
-  #      }
-  #    } else {
-  #      puts $kout $line
-  #    }
-  #  }
-
-  #  close $kout
-  #}
 
   if {$target_path == "NA" || $target_path == ""} {
   } else {
