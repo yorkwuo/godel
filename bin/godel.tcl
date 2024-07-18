@@ -250,29 +250,18 @@ proc ghtm_dp_exeitem {args} {
 
     set exename [file tail $exefile]
 
-  if {$opt(-cmd) eq "1"} {
-    set cmdfield "<a style='font-size:16px;text-decoration: none' href=$exefile type=text/txt>&#127811;</a>"
-  } else {
-    set cmdfield ""
-  }
+    if {$opt(-cmd) eq "1"} {
+      set cmdfield "<a style='font-size:16px;text-decoration: none' href=$exefile type=text/txt>&#127811;</a>"
+    } else {
+      set cmdfield ""
+    }
 
-  if {$opt(-ttip) eq "1"} {
-    puts $fout " $cmdfield<div class=\"ttip\" data-tt=\"$exename\"><a href=\".$exename.gtcl\" type=text/gtcl class=\"link\">$name</a></div>"
-  } else {
-    #puts $fout " $cmdfield<a href=\".$exename.gtcl\" type=text/gtcl class=\"link\">$name</a>"
-    puts $fout " $cmdfield<div onclick=\"cmdline('$cwd','tclsh','.$exename.gtcl')\" class=\"link\">$name</div>"
-  }
+    if {$opt(-ttip) eq "1"} {
+      puts $fout " $cmdfield<div class=\"ttip\" data-tt=\"$exename\"><a onclick=\"cmdline('$cwd','tclsh','$exefile')\" class=\"link\">$name</a></div>"
+    } else {
+      puts $fout " $cmdfield<div onclick=\"cmdline('$cwd','tclsh','$exefile')\" class=\"link\">$name</div>"
+    }
 
-# creating gtcl
-    set kout [open ".$exename.gtcl" w]
-      puts $kout "set pagepath \[file dirname \[info script]]"
-      puts $kout "cd \$pagepath"
-      if {$opt(-nowin)} {
-        puts $kout "exec ./$exefile"
-      } else {
-        puts $kout "exec xterm $hold -geometry 150x30+5+800 -e \"./$exefile\""
-      }
-    close $kout
   }
 }
 # }}}
@@ -2902,16 +2891,9 @@ proc atable {args} {
 # Buttons
 if {$opt(-noshow) eq "1"} {
 } else {
-  #puts $fout "Total: [llength $atrows]"
-  #puts $fout "<a href=\".godel/draw.gtcl\" type=text/gtcl class=\"w3-bar-item w3-button w3-blue-gray\">Draw</a>"
-  #puts $fout "<button onclick=\"at_save('$atfname')\" class=\"w3-bar-item w3-button w3-blue-gray\">Save</button>"
-  #puts $fout "<a href=\"$atfname\" type=text/txt>$atfname</a>"
   if [file exist "src.tcl"] {
     puts $fout "<a href=\"src.tcl\" type=text/txt>src.tcl</a>"
   }
-  #if [file exist $listfile] {
-  #  puts $fout "<a href=\"$listfile\" type=text/txt>$listfile</a>"
-  #}
 }
 
 # Header
@@ -4515,32 +4497,16 @@ proc gexe_button {args} {
       puts $fout "
       <span class=\"tt_exe\">
         <div style=\"background-color:#728FCE;color:white\" 
-        onclick=\"cmdline('$cwd','tclsh','.$exename.gtcl')\" class=\"w3-btn w3-round-large\" 
+        onclick=\"cmdline('$cwd','tclsh','$exefile')\" class=\"w3-btn w3-round-large\" 
         ><b>$name</b></div>
         <span class=\"tooltiptext_exe\">
-          $addon$addfile<a href=.$exename.gtcl type=text/txt>$exename</a>
+          $addon$addfile<a onclick=\"cmdline('$cwd','tclsh','$exefile')\">$exename</a>
         </span>
       </span>
       "
     } else {
-      puts $fout "<div style=\"background-color:#728FCE;color:white\" id=\"$id\" onclick=\"cmdline('$cwd','tclsh','.$exename.gtcl')\" class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></div>"
+      puts $fout "<div style=\"background-color:#728FCE;color:white\" id=\"$id\" onclick=\"cmdline('$cwd','tclsh','$exefile')\" class=\"w3-btn w3-round-large\"><b>$name</b></div>"
     }
-    set kout [open ".$exename.gtcl" w]
-      puts $kout "set pagepath \[file dirname \[info script]]"
-      puts $kout "cd \$pagepath"
-      if {$opt(-refresh) eq "1"} {
-        puts $kout "catch {exec xdotool getwindowfocus} wid"
-      }
-      if {$opt(-nowin)} {
-        puts $kout "exec ./$exefile"
-      } else {
-        if {$opt(-refresh) eq "1"} {
-          puts $kout "exec xterm -geometry 150x30+5+800 -e \"./$exefile;xdotool key --window \$wid ctrl+r\""
-        } else {
-          puts $kout "exec xterm -geometry 150x30+5+800 -e \"./$exefile\""
-        }
-      }
-    close $kout
   } else {
     #puts "Error: gexe_button: file not exist... $exefile"
   }
@@ -4580,17 +4546,6 @@ proc list_svg {args} {
       puts $kout "</svg>"
     close $kout
   }
-
-  #if {$opt(-notitle) eq "1"} {
-  #} else {
-  #  puts $fout "<div class=\"w3-panel w3-light-gray w3-leftbar \">"
-  #  if {$opt(-title)} {
-  #    puts $fout "<p>$title <a href=$fname type=text/svg>$fname</a></p>"
-  #  } else {
-  #    puts $fout "<p><a href=$fname type=text/svg>$fname</a></p>"
-  #  }
-  #  puts $fout "</div>"
-  #}
 
   set kin [open $fname r]
   set content [read $kin]
@@ -5768,14 +5723,6 @@ proc ghtm_top_bar {args} {
     </style>
     }
     
-    #puts $fout {
-    #  <div id="navbar" class="w3-bar " style="margin:0px;background-color:#f7afc5;color:white;font-weight:bold">
-    #  <a id="idedit" href=".godel/ghtm.tcl"  type=text/txt  class="w3-bar-item w3-button">Edit</a>
-    #  <a id="idvalue" href=".godel/vars.tcl" type=text/txt  class="w3-bar-item w3-button">Value</a>
-    #  <a id="idparent" href="../.index.htm"                 class="w3-bar-item w3-button">Up</a>
-    #  <a id="iddraw" href=".godel/draw.gtcl" type=text/gtcl class="w3-bar-item w3-button" style="color:white">Draw</a>
-    #  <a style="display:none" id="idexec" href=".godel/exec.gtcl" type=text/gtcl class="w3-bar-item w3-button">Exec</a>
-    #}
     puts $fout {
       <div id="navbar" class="w3-bar w3-medium" style="margin:0px;background-color:#f7afc5;color:white;font-weight:bold">
     }
