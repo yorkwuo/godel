@@ -5796,7 +5796,7 @@ proc ghtm_top_bar {args} {
 
     puts $fout "<button onclick=\"copy_path()\"     class=\"w3-bar-item w3-button w3-darkblue w3-right\">Path</button>"
     puts $fout "<button onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Open</button>"
-    puts $fout "<button onclick=\"cmdline('$cwd','thunar','.')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
+    puts $fout "<button onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/win.tcl')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
     if [info exist env(GODEL_noMAIL)] {
     } else {
       puts $fout "<button onclick=\"mailout()\"       class=\"w3-bar-item w3-button w3-darkblue w3-right\">Mail</button>"
@@ -5811,7 +5811,7 @@ proc ghtm_top_bar {args} {
           puts $kout "</svg>"
         close $kout
       }
-      puts $fout "<div onclick=\"cmdline('$cwd','inkscape','1.svg')\"  class=\"w3-bar-item w3-button\">SVG</div>"
+      puts $fout "<div onclick=\"cmdline('$cwd','inkscape','1.svg')\"  class=\"w3-bar-item w3-button w3-right\">SVG</div>"
       #puts $fout {<a href="1.svg"  type=text/svg class="w3-bar-item w3-button w3-right">SVG</a>}
       #set css_hide [lvars . css_hide]
       #if {$css_hide eq "1"} {
