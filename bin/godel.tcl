@@ -5802,7 +5802,7 @@ proc ghtm_top_bar {args} {
       puts $fout "<button onclick=\"mailout()\"       class=\"w3-bar-item w3-button w3-darkblue w3-right\">Mail</button>"
     }
     if {$opt(-svg) eq "1"} {
-      puts $fout "<div onclick=\"cmdline('$cwd','inkscape','1.svg')\"  class=\"w3-bar-item w3-button w3-right\">SVG</div>"
+      puts $fout "<div onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/opensvg.tcl')\"  class=\"w3-bar-item w3-button w3-right\">SVG</div>"
     }
     if {$opt(-hide) eq "1"} {
       if ![file exist "1.svg"] {
