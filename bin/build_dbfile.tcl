@@ -38,7 +38,7 @@ foreach line $result {
   #puts $pagename
 
   db1 eval "INSERT OR IGNORE INTO dbtable (path,pagename,keywords) VALUES('$dir','$pagename','$kw');"
-  db1 eval "UPDATE dbtable SET keywords = '$kw $pagename $dir' WHERE path = '$dir'"
+  db1 eval "UPDATE dbtable SET keywords = '$kw $pagename' WHERE path = '$dir'"
   db1 eval "UPDATE dbtable SET pagename = '$pagename' WHERE path = '$dir'"
 }
 
