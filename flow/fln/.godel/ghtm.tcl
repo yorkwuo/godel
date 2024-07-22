@@ -1,5 +1,9 @@
 ghtm_top_bar -save -new
 pathbar 3
+if [file exist "cover.png"] {
+  puts $fout {<img src=cover.png height=120px style=float:right>}
+}
+
 #gnotes " # $vars(g:pagename) "
 
 gmd 1.md

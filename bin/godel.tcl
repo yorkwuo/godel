@@ -3832,12 +3832,13 @@ proc linkbox {args} {
     set target $name/.index.htm
   }
 
+  set dir [file dirname $target]
 
   if [file exist $target] {
     if {$opt(-ed) eq "1"} {
-      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" onclick=\"cmdline('$cwd','gvim','$target')\"><b>$dispname</b></a>"
+      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" onclick=\"cmdline('$cwd','gvim','$target')\"><b>$dispname</b><br><img src=$dir/cover.png height=50px></a>"
     } else {
-      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\"><b>$dispname</b></a>"
+      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\"><b>$dispname</b><br><img src=$dir/cover.png height=50px></a>"
     }
   }
 }
