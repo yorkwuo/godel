@@ -2307,6 +2307,13 @@ function cmdline(fullpath, cmd, param) {
 
   fetch(url);
 }
+// xcmdline
+function xcmdline(fullpath, cmd, param) {
+  console.log('kk')
+  const url = 'http://127.0.0.1:5000/xcmdline?fullpath='+fullpath+'&cmd='+cmd+'&param='+param;
+
+  fetch(url);
+}
 
 function lsearch() {
 

@@ -3836,9 +3836,16 @@ proc linkbox {args} {
 
   if [file exist $target] {
     if {$opt(-ed) eq "1"} {
-      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" onclick=\"cmdline('$cwd','gvim','$target')\"><b>$dispname</b><br><img src=$dir/cover.png height=50px></a>"
+      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" onclick=\"cmdline('$cwd','gvim','$target')\">
+      <b>$dispname</b><br><img src=$dir/cover.png height=50px></a>"
     } else {
-      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\"><b>$dispname</b><br><img src=$dir/cover.png height=50px></a>"
+      if [file exist $dir/cover.png] {
+        puts $fout "<a class=\"w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">
+        <b>$dispname</b><br><img src=$dir/cover.png height=50px></a>"
+      } else {
+        puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">
+        <b>$dispname</b></a>"
+      }
     }
   }
 }
