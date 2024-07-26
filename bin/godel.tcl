@@ -7609,7 +7609,8 @@ proc gmd {args} {
 
   set aftermd [::gmarkdown::convert $content]
   #regsub {^<h.>(.*?)<\/h.>} $aftermd "<a href='$fname' style='color:#6458ae; font-size:24px;text-decoration:none' type=text/txt>\\1</a>" aftermd
-  regsub {^<h.>(.*?)<\/h.>} $aftermd "<div onclick=\"cmdline('$cwd','gvim','$fname')\" style='color:#6458ae; font-size:24px;'>\\1</div>" aftermd
+  regsub {^<h.>(.*?)<\/h.>} $aftermd \
+  "<div onclick=\"cmdline('$cwd','gvim','$fname')\" style='color:#6458ae;font-family:Arial ;font-size:30px;cursor:pointer;'>\\1</div>" aftermd
   puts $fout $aftermd
   #puts $fout "<a href=$fname2 type=text/txt>$fname2</a>"
   #gnotes {*}$args $content
