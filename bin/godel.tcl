@@ -2421,6 +2421,16 @@ proc ltable_exe {name exefile} {
   set celltxt "<td><a href=\"$runfile\" type=text/gtcl>$name</a></td>"
 }
 # }}}
+# ltbl_cover
+proc ltbl_cover {height} {
+  upvar row row
+  upvar celltxt celltxt
+  if [file exist "$row/cover.png"] {
+    set celltxt "<td><a href=$row/.index.htm><img src=\"$row/cover.png\" height=$height></a></td>"
+  } else {
+    set celltxt "<td></td>"
+  }
+}
 # ltbl_exe
 # {{{
 proc ltbl_exe {name exefile} {
