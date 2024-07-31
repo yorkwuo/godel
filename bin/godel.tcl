@@ -8342,10 +8342,23 @@ proc math_sum {alist} {
 # }}}
 # godel_draw
 # {{{
-proc godel_draw {{target_path NA}} {
+proc godel_draw {args} {
+  # -f
+# {{{
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
+  if {$idx != "-1"} {
+    set ghtmfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-f) 1
+  } else {
+    set ghtmfile NA
+  }
+# }}}
+
+  set target_path [lindex $args 0]
+
   upvar env env
-  #set ::toc_id_count 1
-  set toc_enable     0
 
   if {$target_path == "NA" || $target_path == ""} {
   } else {
@@ -8353,18 +8366,9 @@ proc godel_draw {{target_path NA}} {
     cd $target_path
   }
 
-  # If .freeze exist, do nothing. Page keeps the same.
-# {{{
-  if [file exist .freeze] {
-    puts "INFO: No change to .index.htm. This page is frozen."
-    return
-  }
-# }}}
-
   package require gmarkdown
   upvar vars vars
   global env
-  upvar argv argv
 
   file mkdir .godel
   # vars.tcl
@@ -8380,6 +8384,7 @@ proc godel_draw {{target_path NA}} {
   source .godel/vars.tcl
 # }}}
 
+  # dyvars
   if ![file exist .godel/dyvars.tcl] {
     set kout [open .godel/dyvars.tcl w]
     close $kout
@@ -8456,15 +8461,21 @@ proc godel_draw {{target_path NA}} {
   puts $fout "  };"
   puts $fout "</script>"
 # Source ghtm.tcl
-  if [file exist .godel/ghtm.tcl] {
-    source .godel/ghtm.tcl
+  if {$opt(-f) eq "1"} {
+    if [file exist $ghtmfile] {
+      source $ghtmfile
+    }
   } else {
-    set kout [open .godel/ghtm.tcl w]
-      puts $kout "ghtm_top_bar -save"
-      puts $kout "pathbar 2"
-      puts $kout "gmd 1.md"
-    close $kout
-    source .godel/ghtm.tcl
+    if [file exist .godel/ghtm.tcl] {
+      source .godel/ghtm.tcl
+    } else {
+      set kout [open .godel/ghtm.tcl w]
+        puts $kout "ghtm_top_bar -save"
+        puts $kout "pathbar 2"
+        puts $kout "gmd 1.md"
+      close $kout
+      source .godel/ghtm.tcl
+    }
   }
 
   if {$env(GODEL_ALONE)} {
