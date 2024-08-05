@@ -3817,6 +3817,31 @@ proc linkbox {args} {
     set val(-target) pale-green
   }
 # }}}
+  # -icon
+# {{{
+  set opt(-icon) 0
+  set idx [lsearch $args {-icon}]
+  if {$idx != "-1"} {
+    set iconpath [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-icon) 1
+  } else {
+    set val(-icon) NA
+  }
+# }}}
+  # -height
+# {{{
+  set opt(-height) 0
+  set idx [lsearch $args {-height}]
+  if {$idx != "-1"} {
+    set height [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-height) 1
+  } else {
+    set val(-height) NA
+    set height 50px
+  }
+# }}}
   # -ed
 # {{{
   set opt(-ed) 0
@@ -3831,9 +3856,13 @@ proc linkbox {args} {
   set name [lindex $args 0]
 
   if {$opt(-name) eq "1"} {
-    set dispname  $val(-name)
+    set dispname  <b>$val(-name)</b><br>
   } else {
-    set dispname  $name
+    if {$opt(-icon) eq "1"} {
+      set dispname  ""
+    } else {
+      set dispname  "<b>$name</b><br>"
+    }
   }
 
   if {$opt(-target)} {
@@ -3843,18 +3872,23 @@ proc linkbox {args} {
   }
 
   set dir [file dirname $target]
+  if {$opt(-icon) eq "1"} {
+    set icon $iconpath
+  } else {
+    set icon $dir/cover.png
+  }
 
   if [file exist $target] {
     if {$opt(-ed) eq "1"} {
       puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" onclick=\"cmdline('$cwd','gvim','$target')\">
-      <b>$dispname</b><br><img src=$dir/cover.png height=50px></a>"
+      $dispname<img src=$icon height=$height></a>"
     } else {
-      if [file exist $dir/cover.png] {
+      if [file exist $icon] {
         puts $fout "<a class=\"w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">
-        <b>$dispname</b><br><img src=$dir/cover.png height=50px></a>"
+        $dispname<img src=$icon height=$height></a>"
       } else {
         puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">
-        <b>$dispname</b></a>"
+        $dispname</a>"
       }
     }
   }
