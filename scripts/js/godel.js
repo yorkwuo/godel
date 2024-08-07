@@ -8,7 +8,8 @@ document.onkeyup = function(e) {
     document.getElementById('idbutton').click();
 // Alt l
   } else if (e.altKey && e.code == 'KeyL') {
-    flow1_click()
+    document.getElementById('idbutton').click();
+    //flow1_click()
 // Ctrl 3
   } else if (e.ctrlKey && e.which == 51) {
     document.getElementById('idedit').click();
@@ -26,6 +27,29 @@ document.onkeyup = function(e) {
 //    document.getElementById('idplay').click();
   }
 };
+
+
+const modal       = document.querySelector("[data-modal]")
+
+// Alt + O to open Modal
+document.onkeyup = function(e) {
+  if        (e.altKey && e.code == 'KeyO') {
+    modal.showModal()
+  }
+}
+
+modal.addEventListener("click", e => {
+  const dialogDimensions = modal.getBoundingClientRect()
+  if (
+    e.clientX < dialogDimensions.left ||
+    e.clientX > dialogDimensions.right ||
+    e.clientY < dialogDimensions.top ||
+    e.clientY > dialogDimensions.bottom
+  ) {
+    modal.close()
+  }
+})
+
 // Get the input field
 var sinput = document.getElementById("sinput");
 if (typeof(sinput) != 'undefined' && sinput != null) {
@@ -1788,14 +1812,15 @@ function obless () {
   //console.log(cur_flow1);
   //console.log(cur_flow2);
 
-  var data = "";
-  data += 'exec obless ' + cur_flow1 + ' ' + cur_flow2 + '\n'
-  data += 'exec godel_draw.tcl\n'
-  data += 'exec xdotool search --name "Mozilla" key ctrl+r\n'
+  console.log('new kkk get')
+  //var data = "";
+  //data += 'exec obless ' + cur_flow1 + ' ' + cur_flow2 + '\n'
+  //data += 'exec godel_draw.tcl\n'
+  //data += 'exec xdotool search --name "Mozilla" key ctrl+r\n'
 
-  dload(data,'gtcl.tcl');
+  //dload(data,'gtcl.tcl');
 
-  document.getElementById('idexec').click();
+  //document.getElementById('idexec').click();
 
 }
 // }}}

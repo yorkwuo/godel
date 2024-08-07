@@ -1,6 +1,9 @@
 #!/usr/bin/tclsh
 source $env(GODEL_ROOT)/bin/godel.tcl
 
+lsetvar . kws "Makefile .png .tmp .tcl .index.htm scripts.js style.css"
+
+
 #------------------------------------
 # index.html
 #------------------------------------

@@ -1,10 +1,8 @@
-ghtm_top_bar -save -new
+ghtm_top_bar
 pathbar 3
 if [file exist "cover.png"] {
   puts $fout {<img src=cover.png height=120px style=float:right>}
 }
-
-#gnotes " # $vars(g:pagename) "
 
 gmd 1.md
 
@@ -16,7 +14,8 @@ mod_flist
 mod_links
 
 # Notes
-puts $fout "<div>Notes</div>"
+set cwd [pwd]
+puts $fout "<div style='cursor:pointer' onclick=\"cmdline('$cwd','tclsh','/home/github/godel/tools/server/tcl/newpage.tcl')\">Notes</div>"
 
 set cols ""
 lappend cols "proc:bton_delete     ; D"

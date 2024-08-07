@@ -1,0 +1,7 @@
+#!/usr/bin/tclsh
+
+catch {exec rm -rf .godel .index.htm}
+
+puts "rm -rf .godel"
+puts "rm -rf .index.htm"
+

@@ -629,13 +629,20 @@ proc build_flist {} {
 
   set lines_tmp [read_as_list flist.tmp]
 
+  set kws [lvars . kws]
+  if {$kws eq "" || $kws eq "NA"} {
+    set kws ""
+  }
+  lappend kws ".index.htm"
+  lappend kws ".tmp"
+  lappend kws links.tcl
+  lappend kws flist.tcl
+
+  set pattern [join $kws {|}]
+
   set lines ""
   foreach line $lines_tmp {
-    regsub {^\./} $line {} line
-    if       [regexp {^\.} $line] {
-    } elseif [regexp {Makefile} $line] {
-    } elseif [regexp {\$} $line] {
-    } elseif [regexp {\.tcl|\.tmp} $line] {
+    if [regexp $pattern $line] {
     } else {
       lappend lines $line
     }
@@ -659,7 +666,7 @@ proc build_flist {} {
   foreach fname $lines {
     regsub {^\.\/} $fname {} fname
     set mtime [file mtime $fname]
-    set timestamp [clock format $mtime -format {%Y-%m-%d_%H:%M}]
+    set timestamp [clock format $mtime -format {%y-%m-%d_%H:%M}]
     set atvar($fname,mtime) $timestamp
   
     set atvar($fname,name) [file tail $fname]
@@ -5630,8 +5637,62 @@ proc ghtm_list_files {pattern {description ""}} {
 }
 # }}}
 # ghtm_top_bar
-# {{{
 proc ghtm_top_bar {args} {
+  upvar fout fout
+  upvar env env
+  # -js
+# {{{
+  set opt(-js) 0
+  set idx [lsearch $args {-js}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-js) 1
+    upvar LOCAL_JS LOCAL_JS
+    set LOCAL_JS 1
+  }
+# }}}
+
+  set cwd [pwd]
+  set timestamp [clock format [clock seconds] -format {%y.%W.%u_%H:%M}]
+  puts $fout "<a style='display:none' id=\"idexec\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/exec.tcl')\"  class=\"w3-bar-item w3-button\"></a>"
+  puts $fout "
+ <nav class=\"header\">
+    <div class=\"dropdown\" data-dropdown>
+      <div class=\"link\" style='padding: .0rem .8rem .0rem .8rem; border: 1px none;' data-dropdown-button><svg height=\"18px\" viewBox=\"0 0 18 18\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"> <path fill=\"#ffffff\" fill-rule=\"evenodd\" d=\"M19 4a1 1 0 01-1 1H2a1 1 0 010-2h16a1 1 0 011 1zm0 6a1 1 0 01-1 1H2a1 1 0 110-2h16a1 1 0 011 1zm-1 7a1 1 0 100-2H2a1 1 0 100 2h16z\"/> </svg></div>
+      <div class=\"dropdown-menu information-grid\">
+
+          <div class=\"dropdown-links\">
+            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/ghtm.tcl')\">Edit</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/vars.tcl')\">Value</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','$env(GODEL_ROOT)/etc/css/w3.css')\">CSS</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','/home/github/godel/tools/server/tcl/xterm.tcl')\">Open</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','thunar','.')\">Win</div>
+          </div>
+
+      </div>
+    </div>
+
+   <div id=\"iddraw\" class=\"header-item\" onclick=\"cmdline('$cwd','tclsh','/home/github/godel/tools/server/tcl/draw.tcl')\">Draw</div>
+   <div class=\"header-item\" id=\"idbutton\" onclick=\"g_save()\" >Save</div>
+   <div class=\"header-item\" onclick=\"topFunction()\">Top</div>
+   <div style='flex-grow:1;'></div>
+   <div class=\"header-item\" onclick=\"cmdline('$cwd','gvim','.index.htm')\" >$timestamp</div>
+
+</nav>
+"
+
+  puts $fout "
+  <dialog data-modal>
+    <button onclick=\"cmdline('$cwd','obless','flow fln')\">fln</button>
+    <button onclick=\"cmdline('$cwd','obless','flow hcj')\">hcj</button>
+    <button onclick=\"cmdline('$cwd','obless','flow flist')\">flist</button>
+  </dialog>
+  "
+}
+
+# ghtm_top_bar2
+# {{{
+proc ghtm_top_bar2 {args} {
   upvar fout fout
   upvar env env
   upvar vars vars
@@ -5839,11 +5900,12 @@ proc ghtm_top_bar {args} {
     }
     puts $fout "<div id=\"idbutton\" onclick=\"g_save()\" class=\"w3-bar-item w3-button\">Save</div>"
     puts $fout "<button onclick=\"flow1_click()\"   class=\"w3-bar-item w3-button w3-darkblue\">Get</button>"
-      puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"toolarea()\" style=\"margin: 0px 0px\">Tools</button>"
-      puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
-      if {$opt(-js) eq "1"} {
-        puts $fout "<div onclick=\"cmdline('$cwd','gvim','.local.js')\"  class=\"w3-bar-item w3-button w3-right\">JS</div>"
-      }
+    #puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"toolarea()\" style=\"margin: 0px 0px\">Tools</button>"
+    puts $fout "<button class=\"w3-bar-item w3-button\" onclick=\"topFunction()\" style=\"margin: 0px 0px\">Top</button>"
+
+    if {$opt(-js) eq "1"} {
+      puts $fout "<div onclick=\"cmdline('$cwd','gvim','.local.js')\"  class=\"w3-bar-item w3-button w3-right\">JS</div>"
+    }
     puts $fout "</div>"
 
     puts $fout {
@@ -8424,65 +8486,24 @@ proc godel_draw {args} {
     close $kout
   }
   source .godel/dyvars.tcl
-  set dyvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
+  set dyvars(last_updated) [clock format [clock seconds] -format {%y-%m-%d_%H%M}]
   godel_array_save dyvars .godel/dyvars.tcl
 
+  set cwd [pwd]
 #----------------------------
 # Start creating .index.htm
 #----------------------------
   global fout
   set fout [open ".index.htm" w]
-
   puts $fout "<!DOCTYPE html>"
   puts $fout "<html>"
   puts $fout "<head>"
-  if [info exist vars(g:title)] {
-    puts $fout "<title>$vars(g:title)</title>"
-  } else {
-    puts $fout "<title>$vars(g:pagename)</title>"
-  }
-
-
-  if {$env(GODEL_ALONE)} {
-# Standalone w3.css
-      file mkdir .godel/js
-      file copy -force $env(GODEL_ROOT)/etc/css/w3.css                      .godel/
-      file copy -force $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
-      if ![file exist .godel/js/jquery-3.3.1.min.js] {
-        exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
-      }
-      if ![file exist .godel/js/jquery.dataTables.min.js] {
-        exec cp $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
-      }
-      puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
-      puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
-  } else {
-# Link to Godel's central w3.css
-# {{{
-    if {$env(GODEL_EMB_CSS)} {
-      puts $fout "<style>"
-      set fin [open $env(GODEL_ROOT)/etc/css/w3.css r]
-        while {[gets $fin line] >= 0} {
-          puts $fout $line
-        }
-      close $fin
-      puts $fout "</style>"
-      file mkdir .godel/js
-      exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
-      exec cp $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
-      exec cp $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
-      puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
-    } else {
-      puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
-      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
-    }
-# }}}
-  }
-
+  puts $fout "<title>$vars(g:pagename)</title>"
+  puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
+  puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
   puts $fout "<body>"
-
   puts $fout "<script>"
   puts $fout "  var ginfo = {"
   puts $fout "      \"last_updated\": '$dyvars(last_updated)',"
@@ -8494,6 +8515,7 @@ proc godel_draw {args} {
   }
   puts $fout "  };"
   puts $fout "</script>"
+
 # Source ghtm.tcl
   if {$opt(-f) eq "1"} {
     if [file exist $ghtmfile] {
@@ -8512,26 +8534,6 @@ proc godel_draw {args} {
     }
   }
 
-  if {$env(GODEL_ALONE)} {
-    puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
-    puts $fout "<script src=.godel/js/godel.js></script>"
-  } else {
-    if {$env(GODEL_EMB_CSS)} {
-      puts $fout "<script src=.godel/js/godel.js></script>"
-      if {[info exist dataTables]} {
-        puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
-        puts $fout "<script>"
-        puts $fout "    \$(document).ready(function() {"
-        puts $fout "    \$('#tbl').DataTable({"
-        puts $fout "       \"paging\": false,"
-        puts $fout "       \"info\": false,"
-        puts $fout "       \"order\": \[\],"
-        puts $fout "    });"
-        puts $fout "} );"
-        puts $fout "</script>"
-
-      }
-    } else {
       puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
       if {[info exist dataTables]} {
         puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
@@ -8545,8 +8547,6 @@ proc godel_draw {args} {
         puts $fout "} );"
         puts $fout "</script>"
       }
-    }
-  }
 
   if [info exist LOCAL_JS] {
     if ![file exist ".local.js"] {
@@ -8574,6 +8574,207 @@ proc godel_draw {args} {
     cd $orgpath
   }
 }
+# }}}
+# godel_draw
+# {{{
+#proc godel_draw {args} {
+#  # -f
+## {{{
+#  set opt(-f) 0
+#  set idx [lsearch $args {-f}]
+#  if {$idx != "-1"} {
+#    set ghtmfile [lindex $args [expr $idx + 1]]
+#    set args [lreplace $args $idx [expr $idx + 1]]
+#    set opt(-f) 1
+#  } else {
+#    set ghtmfile NA
+#  }
+## }}}
+#
+#  set target_path [lindex $args 0]
+#
+#  upvar env env
+#
+#  if {$target_path == "NA" || $target_path == ""} {
+#  } else {
+#    set orgpath [pwd]
+#    cd $target_path
+#  }
+#
+#  package require gmarkdown
+#  upvar vars vars
+#  global env
+#
+#  file mkdir .godel
+#  # vars.tcl
+## {{{
+#  if ![file exist .godel/vars.tcl] {
+#    set kout [open .godel/vars.tcl w]
+#    close $kout
+#    set vars(g:keywords) ""
+#    set vars(g:pagename) [file tail [pwd]]
+#    set vars(g:iname)    [file tail [pwd]]
+#    godel_array_save vars   .godel/vars.tcl
+#  }
+#  source .godel/vars.tcl
+## }}}
+#
+#  # dyvars
+#  if ![file exist .godel/dyvars.tcl] {
+#    set kout [open .godel/dyvars.tcl w]
+#    close $kout
+#  }
+#  source .godel/dyvars.tcl
+#  set dyvars(last_updated) [clock format [clock seconds] -format {%Y-%m-%d_%H%M}]
+#  godel_array_save dyvars .godel/dyvars.tcl
+#
+##----------------------------
+## Start creating .index.htm
+##----------------------------
+#  global fout
+#  set fout [open ".index.htm" w]
+#
+#  puts $fout "<!DOCTYPE html>"
+#  puts $fout "<html>"
+#  puts $fout "<head>"
+#  if [info exist vars(g:title)] {
+#    puts $fout "<title>$vars(g:title)</title>"
+#  } else {
+#    puts $fout "<title>$vars(g:pagename)</title>"
+#  }
+#
+#
+#  if {$env(GODEL_ALONE)} {
+## Standalone w3.css
+#      file mkdir .godel/js
+#      file copy -force $env(GODEL_ROOT)/etc/css/w3.css                      .godel/
+#      file copy -force $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
+#      if ![file exist .godel/js/jquery-3.3.1.min.js] {
+#        exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
+#      }
+#      if ![file exist .godel/js/jquery.dataTables.min.js] {
+#        exec cp $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
+#      }
+#      puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\".godel/w3.css\">"
+#      puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
+#  } else {
+## Link to Godel's central w3.css
+## {{{
+#    if {$env(GODEL_EMB_CSS)} {
+#      puts $fout "<style>"
+#      set fin [open $env(GODEL_ROOT)/etc/css/w3.css r]
+#        while {[gets $fin line] >= 0} {
+#          puts $fout $line
+#        }
+#      close $fin
+#      puts $fout "</style>"
+#      file mkdir .godel/js
+#      exec cp $env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js      .godel/js
+#      exec cp $env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js .godel/js
+#      exec cp $env(GODEL_ROOT)/scripts/js/godel.js                 .godel/js
+#      puts $fout "<script src=.godel/js/jquery-3.3.1.min.js></script>"
+#    } else {
+#      puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
+#      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
+#    }
+## }}}
+#  }
+#
+#  puts $fout "<meta charset=utf-8>"
+#  puts $fout "</head>"
+#  puts $fout "<body>"
+#
+#  puts $fout "<script>"
+#  puts $fout "  var ginfo = {"
+#  puts $fout "      \"last_updated\": '$dyvars(last_updated)',"
+#  puts $fout "      \"cwd\": '[pwd]',"
+#  if [info exist dyvars(srcpath)] {
+#    puts $fout "      \"srcpath\"    : '$dyvars(srcpath)',"
+#  } else {
+#    puts $fout "      \"srcpath\"    : 'NA',"
+#  }
+#  puts $fout "  };"
+#  puts $fout "</script>"
+## Source ghtm.tcl
+#  if {$opt(-f) eq "1"} {
+#    if [file exist $ghtmfile] {
+#      source $ghtmfile
+#    }
+#  } else {
+#    if [file exist .godel/ghtm.tcl] {
+#      source .godel/ghtm.tcl
+#    } else {
+#      set kout [open .godel/ghtm.tcl w]
+#        puts $kout "ghtm_top_bar -save"
+#        puts $kout "pathbar 2"
+#        puts $kout "gmd 1.md"
+#      close $kout
+#      source .godel/ghtm.tcl
+#    }
+#  }
+#
+#  if {$env(GODEL_ALONE)} {
+#    puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
+#    puts $fout "<script src=.godel/js/godel.js></script>"
+#  } else {
+#    if {$env(GODEL_EMB_CSS)} {
+#      puts $fout "<script src=.godel/js/godel.js></script>"
+#      if {[info exist dataTables]} {
+#        puts $fout "<script src=.godel/js/jquery.dataTables.min.js></script>"
+#        puts $fout "<script>"
+#        puts $fout "    \$(document).ready(function() {"
+#        puts $fout "    \$('#tbl').DataTable({"
+#        puts $fout "       \"paging\": false,"
+#        puts $fout "       \"info\": false,"
+#        puts $fout "       \"order\": \[\],"
+#        puts $fout "    });"
+#        puts $fout "} );"
+#        puts $fout "</script>"
+#
+#      }
+#    } else {
+#      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
+#      if {[info exist dataTables]} {
+#        puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+#        puts $fout "<script>"
+#        puts $fout "    \$(document).ready(function() {"
+#        puts $fout "    \$('#tbl').DataTable({"
+#        puts $fout "       \"paging\": false,"
+#        puts $fout "       \"info\": false,"
+#        puts $fout "       \"order\": \[\],"
+#        puts $fout "    });"
+#        puts $fout "} );"
+#        puts $fout "</script>"
+#      }
+#    }
+#  }
+#
+#  if [info exist LOCAL_JS] {
+#    if ![file exist ".local.js"] {
+#      set kout [open ".local.js" w]
+#      close $kout
+#    }
+#    puts $fout "<script src=.local.js></script>"
+#  }
+#
+#  if [info exist jfuncs] {
+#    puts $fout "<script>"
+#    foreach jsfunc $jfuncs {
+#      puts $fout $jsfunc
+#    }
+#    puts $fout "</script>"
+#  }
+#
+#  puts $fout "</body>"
+#  puts $fout "</html>"
+#
+#  close $fout
+#
+#  if {$target_path == "NA" || $target_path == ""} {
+#  } else {
+#    cd $orgpath
+#  }
+#}
 # }}}
 # godel_array_add_prefix
 # {{{
@@ -8642,6 +8843,16 @@ proc obless {args} {
   global env
   source $env(GODEL_CENTER)/meta.tcl
 
+  # -nl (no reload)
+# {{{
+  set opt(-nl) 0
+  set idx [lsearch $args {-nl}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-nl) 1
+  }
+# }}}
+
   set pagename [lindex $args 0]
 
   regsub -all {,where} [array names meta] {} objs
@@ -8657,14 +8868,6 @@ proc obless {args} {
     }
   }
 
-  set varfile $meta($pagename,where)/.godel/vars.tcl
-  if [file exist $varfile] {
-    source $varfile
-  } else {
-    puts "obless: not exist... $varfile"
-    return
-  }
-
   set where $meta($pagename,where)
 
   if [file exist $where/.godel/proc.tcl] {
@@ -8675,9 +8878,10 @@ proc obless {args} {
   set objname  [lindex $args 1]
 
   if {$objname == ""} {
-    help
+    puts [exec ls -1 $where]
   } else {
-      godel_draw
+      #godel_draw
+      file mkdir .godel
       if [file exist $where/$objname/.godel/proc.tcl] {
         source $where/$objname/.godel/proc.tcl
       }
@@ -8690,8 +8894,14 @@ proc obless {args} {
         exec cp $where/$objname/$f $f
       }
       lsetdyvar . srcpath  $where/$objname
-      if [file exist .godel/preset.tcl] {
-        source .godel/preset.tcl
+
+      #if [file exist .godel/preset.tcl] {
+      #  source .godel/preset.tcl
+      #}
+
+      catch {exec godel_draw.tcl}
+      if {$opt(-nl) eq "0"} {
+        catch {exec xdotool search --name "Mozilla" key ctrl+r}
       }
   }
 }

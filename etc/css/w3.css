@@ -422,6 +422,35 @@ a,button,input,li {
   font-size     : 15px;
 }
 
+.header {
+  background-color : #f7afc5;
+  color            : white;
+  font-family      : monospace,Consolas,sans-serif;
+  font-weight      : bold;
+  font-size        : 15px;
+
+  display          : flex;
+  align-items      : baseline;
+  /*
+  padding          : .3rem .5rem;
+  */
+  gap              : 1rem;
+
+  position         : sticky;
+  top              : 0;
+  z-index : 999;
+}
+.header-item {
+  border: none;
+  background-color : none;
+  cursor: pointer;
+  padding: .4rem .5rem;
+  margin : .0rem;
+}
+.header-item:hover {
+  background-color : grey;
+}
+
 .link {
   background: none;
   border: none;
@@ -429,7 +458,7 @@ a,button,input,li {
   font-family: inherit;
   font-size: inherit;
   cursor: pointer;
-  padding: 0;
+  padding: .5rem;
 }
 
 .dropdown.active > .link,
@@ -443,8 +472,9 @@ a,button,input,li {
 
 .dropdown-menu {
   position: absolute;
-  left: 0;
-  top: calc(100% + .25rem);
+  color           : black;
+  font-family:monospace,Consolas,sans-serif;
+  left: -.50rem;
   background-color: white;
   padding: .75rem;
   border-radius: .25rem;
@@ -454,13 +484,31 @@ a,button,input,li {
   transform: translateY(-10px);
   transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
 }
+.information-grid {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 2rem;
+}
 
-.dropdown.active > .link + .dropdown-menu {
+.dropdown-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0rem;
+}
+
+
+.dropdown-menu:hover {
+  opacity: 1;
+}
+.link:hover {
+  opacity: 1;
+}
+
+.dropdown:hover > .link + .dropdown-menu {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
-
 
 .login-form > input {
   margin-bottom: .5rem;
@@ -529,3 +577,13 @@ body {margin-top:0px }
 h1{font-size:30px}h2{font-size:24px}h3{font-size:20px}h4{font-size:18px}h5{font-size:16px}h6{font-size:14px}
 h1,h2,h3{font-family:Arial,sans-serif;font-weight:500;margin:0 0}
 h4,h5,h6{font-family:Consolas,sans-serif;font-weight:500;margin:0 0}
+
+dialog {
+  z-index: 10;
+  margin-top: 40px;
+  /*
+  margin-left: 40px;
+  */
+  border: none;
+  border-radius: 1rem;
+}
