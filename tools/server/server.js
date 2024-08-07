@@ -106,26 +106,16 @@ app.get('/cmdline', (req, res) => {
   const cmd      = req.query.cmd;
   const param    = req.query.param;
 
-// for change path
-  //var path = require('path');
-  //var dname = path.dirname(fullpath);
-  //var bname = path.basename(fullpath);
-  //console.log(dname)
-  console.log(param)
+  const parameters = param ? param.split(' ') : [];
+
+  console.log(parameters)
   console.log(fullpath)
-// change directory
-  //const { execFileSync } = require("child_process");
+
   process.chdir(fullpath);
 
   const { spawn } = require("child_process");
 
-  //const kk = spawn(cmd, [param], {
-  //  stdio: 'ignore', // piping all stdio to /dev/null
-  //  detached: true,
-  //  env: process.env,
-  //  }).unref();
-
-  const child = spawn(cmd, [param]);
+  const child = spawn(cmd, parameters);
 
   child.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
