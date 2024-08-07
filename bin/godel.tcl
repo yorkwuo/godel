@@ -5654,6 +5654,8 @@ proc ghtm_top_bar {args} {
 
   set srcpath [ldyvars . srcpath]
 
+
+
   set cwd [pwd]
   set timestamp [clock format [clock seconds] -format {%y.%W.%u_%H:%M}]
   puts $fout "<a style='display:none' id=\"idexec\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/exec.tcl')\"  class=\"w3-bar-item w3-button\"></a>"
@@ -5667,8 +5669,8 @@ proc ghtm_top_bar {args} {
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/ghtm.tcl')\">Edit</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/vars.tcl')\">Value</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','$env(GODEL_ROOT)/etc/css/w3.css')\">CSS</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','/home/github/godel/tools/server/tcl/xterm.tcl')\">Open</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','thunar','.')\">Win</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\">Open</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
           </div>
 
       </div>
