@@ -5652,6 +5652,8 @@ proc ghtm_top_bar {args} {
   }
 # }}}
 
+  set srcpath [ldyvars . srcpath]
+
   set cwd [pwd]
   set timestamp [clock format [clock seconds] -format {%y.%W.%u_%H:%M}]
   puts $fout "<a style='display:none' id=\"idexec\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/exec.tcl')\"  class=\"w3-bar-item w3-button\"></a>"
@@ -5683,6 +5685,9 @@ proc ghtm_top_bar {args} {
 
   puts $fout "
   <dialog data-modal>
+    <pre>$srcpath</pre>
+    <button onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/fd-co.tcl')\">co</button>
+    <h2>flow</h2>
     <button onclick=\"cmdline('$cwd','obless','flow fln')\">fln</button>
     <button onclick=\"cmdline('$cwd','obless','flow hcj')\">hcj</button>
     <button onclick=\"cmdline('$cwd','obless','flow flist')\">flist</button>
