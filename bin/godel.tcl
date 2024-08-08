@@ -5676,7 +5676,7 @@ proc ghtm_top_bar {args} {
       </div>
     </div>
 
-   <div id=\"iddraw\" class=\"header-item\" onclick=\"cmdline('$cwd','tclsh','/home/github/godel/tools/server/tcl/draw.tcl')\">Draw</div>
+   <div id=\"iddraw\" class=\"header-item\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/draw.tcl')\">Draw</div>
    <div class=\"header-item\" id=\"idbutton\" onclick=\"g_save()\" >Save</div>
    <div class=\"header-item\" onclick=\"topFunction()\">Top</div>
    <div style='flex-grow:1;'></div>
