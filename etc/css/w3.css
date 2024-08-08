@@ -434,7 +434,7 @@ a,button,input,li {
   /*
   padding          : .3rem .5rem;
   */
-  gap              : 1rem;
+  gap              : .2rem;
 
   position         : sticky;
   top              : 0;
@@ -587,3 +587,19 @@ dialog {
   border: none;
   border-radius: 1rem;
 }
+
+.flexh2 {
+  display:flex;
+  gap : 0px 0px;
+  width: 300px;
+  flex-wrap: wrap;
+  border: none;
+  margin: 10px 0px;
+  padding: 10px;
+}
+.flexh1 {
+  display:flex;
+  gap: 0px;
+  flex-wrap: wrap;
+}
+
