@@ -5689,6 +5689,7 @@ proc ghtm_top_bar {args} {
   <dialog data-modal>
     <pre>$srcpath</pre>
     <button onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/fd-co.tcl')\">co</button>
+    <button onclick=\"goglobal()\">GoGlobal</button>
     <h2>flow</h2>
     <button onclick=\"cmdline('$cwd','obless','flow fln')\">fln</button>
     <button onclick=\"cmdline('$cwd','obless','flow hcj')\">hcj</button>
