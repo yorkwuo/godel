@@ -13,10 +13,10 @@ if ![file exist style.css] {
 
 puts $fout "<br>"
 
-linkbox -height 60px -target index.html     -icon html.png
-linkbox -height 60px -target index.html -ed -icon html.png -bgcolor white
-linkbox -height 60px -target style.css  -ed -icon css.png  -bgcolor white
-linkbox -height 60px -target scripts.js -ed -icon js.png   -bgcolor white
+linkbox -height 60px -target index.html     -icon $env(GODEL_ROOT)/icons/webpage.png
+linkbox -height 60px -target index.html -ed -icon $env(GODEL_ROOT)/icons/html.png -bgcolor white
+linkbox -height 60px -target style.css  -ed -icon $env(GODEL_ROOT)/icons/css.png  -bgcolor white
+linkbox -height 60px -target scripts.js -ed -icon $env(GODEL_ROOT)/icons/js.png   -bgcolor white
 
 puts $fout "<br><br>"
 

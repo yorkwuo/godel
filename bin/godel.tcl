@@ -668,6 +668,7 @@ proc build_flist {} {
   lappend kws ".tmp"
   lappend kws links.tcl
   lappend kws flist.tcl
+  lappend kws cover.png
 
   set pattern [join $kws {|}]
 

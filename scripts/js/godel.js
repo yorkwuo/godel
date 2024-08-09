@@ -1,3 +1,5 @@
+const modal       = document.querySelector("[data-modal]")
+
 // Key binded to edit and draw
 document.onkeyup = function(e) {
 // Alt w
@@ -17,8 +19,8 @@ document.onkeyup = function(e) {
   } else if (e.ctrlKey && e.which == 112) {
     document.getElementById('idplay').click();
 // Alt 2
-//  } else if (e.altKey && e.which == 50) {
-//    document.getElementById('iddraw').click();
+  } else if (e.altKey && e.key === '[') {
+    modal.showModal()
 // Alt 3
 //  } else if (e.altKey && e.which == 51) {
 //    document.getElementById('idbutton').click();
@@ -28,15 +30,6 @@ document.onkeyup = function(e) {
   }
 };
 
-
-const modal       = document.querySelector("[data-modal]")
-
-// Alt + O to open Modal
-document.onkeyup = function(e) {
-  if        (e.altKey && e.code == 'KeyO') {
-    modal.showModal()
-  }
-}
 
 modal.addEventListener("click", e => {
   const dialogDimensions = modal.getBoundingClientRect()
