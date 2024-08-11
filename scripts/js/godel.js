@@ -27,6 +27,9 @@ document.onkeyup = function(e) {
 // SCRLK
   } else if (e.which === 145) { 
     document.getElementById('iddraw').click();
+// PRTSC
+  } else if (e.which === 42) { 
+    document.getElementById('idbutton').click();
 // Alt 3
 //  } else if (e.altKey && e.which == 51) {
 //    document.getElementById('idbutton').click();
