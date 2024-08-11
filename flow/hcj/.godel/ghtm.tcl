@@ -18,8 +18,22 @@ linkbox -height 60px -target index.html -ed -icon $env(GODEL_ROOT)/icons/html.pn
 linkbox -height 60px -target style.css  -ed -icon $env(GODEL_ROOT)/icons/css.png  -bgcolor white
 linkbox -height 60px -target scripts.js -ed -icon $env(GODEL_ROOT)/icons/js.png   -bgcolor white
 
+ghtm_padding 50px
+
+if [file exist app.js] {
+  linkbox -height 60px -target app.js -ed -icon $env(GODEL_ROOT)/icons/ex.png -bgcolor white
+  linkbox -height 60px -target http://localhost:3001     -icon $env(GODEL_ROOT)/icons/webpage.png
+}
+
+
 puts $fout "<br><br>"
 
 puts $fout {
-<iframe style="border:1px solid pink;" src=index.html width=100% height=1000px></iframe>
+<iframe style="border:1px solid pink;" src=index.html width=100% height=300px></iframe>
+}
+
+if [file exist app.js] {
+puts $fout {
+<iframe style="border:1px solid pink;" src=http://localhost:3001 width=100% height=300px></iframe>
+}
 }

@@ -603,3 +603,6 @@ dialog {
   flex-wrap: wrap;
 }
 
+.hover-hilight:hover {
+  background-color: lightgreen;
+}

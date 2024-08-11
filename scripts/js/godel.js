@@ -18,9 +18,15 @@ document.onkeyup = function(e) {
 // Ctrl F1
   } else if (e.ctrlKey && e.which == 112) {
     document.getElementById('idplay').click();
-// Alt 2
+// Alt [
   } else if (e.altKey && e.key === '[') {
     modal.showModal()
+// PAUSE
+  } else if (e.key === 'Pause') { 
+    modal.showModal()
+// SCRLK
+  } else if (e.which === 145) { 
+    document.getElementById('iddraw').click();
 // Alt 3
 //  } else if (e.altKey && e.which == 51) {
 //    document.getElementById('idbutton').click();

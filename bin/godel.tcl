@@ -1,34 +1,56 @@
+# flexh2
+# {{{
 proc flexh2 {ilist} {
   append disp "<div class=flexh2>"
   foreach i $ilist {
     regsub -all {\s} $i {} i
-    set cols [split $i ":"]
+    set cols [split $i "="]
     set name   [lindex $cols 0]
     set target [lindex $cols 1]
-    if {$target eq ""} {
-      set target "$name"
+    if [regexp {http} $target] {
+      set cc [split $target ","]
+      set url  [lindex $cc 0]
+      set icon [lindex $cc 1]
+      append disp "
+      <a class=\"w3-button w3-round-large w3-hover-red\" style=\"text-decoration:none;\" 
+      href=\"$url\"\">
+      <b>$name</b><br>
+      <img src=$icon height=50px>
+      </a>"
+    } else {
+      if {$target eq ""} {
+        set target "$name"
+      }
+      append disp "
+      <a class=\"w3-button w3-round-large w3-hover-red\" style=\"text-decoration:none;\" 
+      href=\"$target/.index.htm\"\">
+      <b>$name</b><br>
+      <img src=$target/cover.png height=50px>
+      </a>"
     }
-    append disp "
-    <a class=\"w3-button w3-round-large w3-hover-red style=\"text-decoration:none;\" 
-    href=\"$target/.index.htm\"\">
-    <b>$name</b><br>
-    <img src=$target/cover.png height=50px>
-    </a>"
   }
   append disp "</div>"
 
   return $disp
 }
-
-proc flexh1 {v} {
+# }}}
+# flexh1
+# {{{
+proc flexh1 {} {
   upvar fout fout
-  puts $v
+  upvar g    g
+
+  foreach key [lsort [array names g]] {
+    append v [flexh2 $g($key)]
+  }
+  #puts $v
   puts $fout "
     <div class=\"flexh1\">
     $v
     </div>
   "
 }
+# }}}
 # search_bar
 # {{{
 proc search_bar {} {
@@ -3930,6 +3952,9 @@ proc linkbox {args} {
         $dispname</a>"
       }
     }
+  } elseif [regexp {http} $target] {
+        puts $fout "<a class=\"w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">
+        $dispname<img src=$icon height=$height></a>"
   }
 }
 # }}}
@@ -5699,7 +5724,8 @@ proc ghtm_top_bar {args} {
    <div class=\"header-item\" onclick=\"topFunction()\">Top</div>
    <div style='flex-grow:1;'></div>
    <div class=\"dropdown\" data-dropdown>
-      <div class=\"link\" style='padding: .0rem .8rem .0rem .8rem; border: 1px none;' data-dropdown-button><svg height=\"18px\" viewBox=\"0 0 18 18\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"> <path fill=\"#ffffff\" fill-rule=\"evenodd\" d=\"M19 4a1 1 0 01-1 1H2a1 1 0 010-2h16a1 1 0 011 1zm0 6a1 1 0 01-1 1H2a1 1 0 110-2h16a1 1 0 011 1zm-1 7a1 1 0 100-2H2a1 1 0 100 2h16z\"/> </svg></div>
+      <div class=\"link\" style='padding: .0rem .8rem .0rem .8rem; border: 1px none;' data-dropdown-button>
+      <svg height=\"18px\" width=\"18px\" viewBox=\"0 0 18 18\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"> <path fill=\"#ffffff\" fill-rule=\"evenodd\" d=\"M19 4a1 1 0 01-1 1H2a1 1 0 010-2h16a1 1 0 011 1zm0 6a1 1 0 01-1 1H2a1 1 0 110-2h16a1 1 0 011 1zm-1 7a1 1 0 100-2H2a1 1 0 100 2h16z\"/> </svg></div>
       <div class=\"dropdown-menu information-grid\">
 
           <div class=\"dropdown-links\">
@@ -5726,6 +5752,12 @@ proc ghtm_top_bar {args} {
     <button onclick=\"cmdline('$cwd','obless','flow fln')\">fln</button>
     <button onclick=\"cmdline('$cwd','obless','flow hcj')\">hcj</button>
     <button onclick=\"cmdline('$cwd','obless','flow flist')\">flist</button>
+    <h2>Open</h2>
+            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/ghtm.tcl')\">Edit</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/vars.tcl')\">Value</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','$env(GODEL_ROOT)/etc/css/w3.css')\">CSS</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\">Open</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
   </dialog>
   "
 }
