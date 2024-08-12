@@ -2359,12 +2359,12 @@ function lsearch() {
     return res.json()
   }).then(result => {
     const p = document.getElementById('result');
-    let txt = "<div>"
-    for (let key in result) {
-      const path = result[key].path;
-      const pagename = result[key].pagename;
-      const kw       = result[key].keywords;
-      txt += '<div><a href='+path+'/.index.htm>'+pagename+'</a></div>'
+    let txt = "<div style='display:flex; width=1000px;flex-wrap:wrap;padding:10px;margin:10px;gap:30px'>"
+    for (let i in result) {
+      const path = result[i].path;
+      const pagename = result[i].pagename;
+      const kw       = result[i].keywords;
+      txt += `<div><a href=${path}/.index.htm>${pagename}<br><img height=50px src=${path}/cover.png></img><a></div>`
     }
     txt += '</div>'
     p.innerHTML = txt

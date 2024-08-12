@@ -29,13 +29,12 @@ catch {exec find $cwd -name ".godel"} result
 sqlite3 db1 .dbfile.db
 
 foreach line $result {
+  if {$line eq "[pwd]/.godel"} {continue}
   set dir [file dirname $line]
 
   set pagename [lvars $dir g:pagename]
   set kw       [lvars $dir g:keywords]
   regsub -all {'} $pagename {''} pagename
-  #puts $dir
-  #puts $pagename
 
   db1 eval "INSERT OR IGNORE INTO dbtable (path,pagename,keywords) VALUES('$dir','$pagename','$kw');"
   db1 eval "UPDATE dbtable SET keywords = '$kw $pagename' WHERE path = '$dir'"
