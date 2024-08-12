@@ -21,11 +21,12 @@ proc flexh2 {ilist} {
       if {$target eq ""} {
         set target "$name"
       }
+      set cover [glob -nocomplain $target/cover.*]
       append disp "
       <a class=\"w3-button w3-round-large w3-hover-red\" style=\"text-decoration:none;\" 
       href=\"$target/.index.htm\"\">
       <b>$name</b><br>
-      <img src=$target/cover.png height=50px>
+      <img src=$cover height=50px>
       </a>"
     }
   }
@@ -691,6 +692,7 @@ proc build_flist {} {
   lappend kws links.tcl
   lappend kws flist.tcl
   lappend kws cover.png
+  lappend kws at.tcl
 
   set pattern [join $kws {|}]
 
@@ -5722,6 +5724,7 @@ proc ghtm_top_bar {args} {
    <div id=\"iddraw\" class=\"header-item\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/draw.tcl')\">Draw</div>
    <div class=\"header-item\" id=\"idbutton\" onclick=\"g_save()\" >Save</div>
    <div class=\"header-item\" onclick=\"topFunction()\">Top</div>
+   <a   class=\"header-item\" href=\"../.index.htm\" style='text-decoration:none'>Up</a>
    <div style='flex-grow:1;'></div>
    <div class=\"dropdown\" data-dropdown>
       <div class=\"link\" style='padding: .0rem .8rem .0rem .8rem; border: 1px none;' data-dropdown-button>
