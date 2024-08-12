@@ -22,7 +22,7 @@ document.onkeyup = function(e) {
   } else if (e.altKey && e.key === '[') {
     modal.showModal()
 // PAUSE
-  } else if (e.which === '19') { 
+  } else if (e.code == 'Pause') { 
     modal.showModal()
 // SCRLK
   } else if (e.which === 145) { 
