@@ -2488,8 +2488,9 @@ proc ltable_exe {name exefile} {
 proc ltbl_cover {height} {
   upvar row row
   upvar celltxt celltxt
-  if [file exist "$row/cover.png"] {
-    set celltxt "<td><a href=$row/.index.htm><img src=\"$row/cover.png\" height=$height></a></td>"
+  set cover [glob -nocomplain $row/cover.*]
+  if [file exist "$cover"] {
+    set celltxt "<td><a href=$row/.index.htm><img src=\"$cover\" height=$height></a></td>"
   } else {
     set celltxt "<td></td>"
   }
