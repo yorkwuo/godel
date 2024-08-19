@@ -689,6 +689,7 @@ proc build_flist {} {
   }
   lappend kws ".index.htm"
   lappend kws ".tmp"
+  lappend kws ".local.js"
   lappend kws links.tcl
   lappend kws flist.tcl
   lappend kws cover.png
@@ -5739,6 +5740,7 @@ proc ghtm_top_bar {args} {
             <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\">Xterm</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\">New</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/opensvg.tcl')\">SVG</div>
           </div>
 
       </div>
@@ -5753,11 +5755,13 @@ proc ghtm_top_bar {args} {
     <pre>$srcpath</pre>
     <button onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/fd-co.tcl')\">co</button>
     <button onclick=\"goglobal()\">GoGlobal</button>
-
+    <br>
     <button onclick=\"cmdline('$cwd','obless','flow fln')\">fln</button>
     <button onclick=\"cmdline('$cwd','obless','flow hcj')\">hcj</button>
     <button onclick=\"cmdline('$cwd','obless','flow flist')\">flist</button>
     <button onclick=\"cmdline('$cwd','obless','flow toc')\">toc</button>
+    <br>
+    <button onclick=\"cmdline('$cwd','obless','flow svg')\">svg</button>
 
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/ghtm.tcl')\">Edit</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/vars.tcl')\">Value</div>
