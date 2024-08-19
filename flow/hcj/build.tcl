@@ -58,13 +58,14 @@ close $kout
 if {$opt(-app) eq "1"} {
 set kout [open "app.js" w]
 puts $kout {
-const path = require('path');
-const modulePath = path.join('/usr/local/lib/node_modules', 'express');
-const express = require(modulePath);
+const express = require('/usr/local/lib/node_modules/express');
 const app = express();
 
+const cors    = require('/usr/local/lib/node_modules/cors');
+app.use(cors());
+
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Server Hello World!');
 });
 
 

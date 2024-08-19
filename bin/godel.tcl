@@ -5724,8 +5724,8 @@ proc ghtm_top_bar {args} {
 
    <div id=\"iddraw\" class=\"header-item\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/draw.tcl')\">Draw</div>
    <div class=\"header-item\" id=\"idbutton\" onclick=\"g_save()\" >Save</div>
-   <div class=\"header-item\" onclick=\"topFunction()\">Top</div>
    <a   class=\"header-item\" href=\"../.index.htm\" style='text-decoration:none'>Up</a>
+   <div class=\"header-item\" onclick=\"topFunction()\">Top</div>
    <div style='flex-grow:1;'></div>
    <div class=\"dropdown\" data-dropdown>
       <div class=\"link\" style='padding: .0rem .8rem .0rem .8rem; border: 1px none;' data-dropdown-button>
@@ -5753,11 +5753,12 @@ proc ghtm_top_bar {args} {
     <pre>$srcpath</pre>
     <button onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/fd-co.tcl')\">co</button>
     <button onclick=\"goglobal()\">GoGlobal</button>
-    <h2>flow</h2>
+
     <button onclick=\"cmdline('$cwd','obless','flow fln')\">fln</button>
     <button onclick=\"cmdline('$cwd','obless','flow hcj')\">hcj</button>
     <button onclick=\"cmdline('$cwd','obless','flow flist')\">flist</button>
-    <h2>Open</h2>
+    <button onclick=\"cmdline('$cwd','obless','flow toc')\">toc</button>
+
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/ghtm.tcl')\">Edit</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/vars.tcl')\">Value</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','$env(GODEL_ROOT)/etc/css/w3.css')\">CSS</div>
@@ -7794,7 +7795,7 @@ proc gmd {args} {
   set aftermd [::gmarkdown::convert $content]
   #regsub {^<h.>(.*?)<\/h.>} $aftermd "<a href='$fname' style='color:#6458ae; font-size:24px;text-decoration:none' type=text/txt>\\1</a>" aftermd
   regsub {^<h.>(.*?)<\/h.>} $aftermd \
-  "<div onclick=\"cmdline('$cwd','gvim','$fname')\" style='color:#6458ae;font-family:Arial ;font-size:30px;cursor:pointer;'>\\1</div>" aftermd
+  "<h1 onclick=\"cmdline('$cwd','gvim','$fname')\" style='font-family:Arial ;;cursor:pointer;'>\\1</h1>" aftermd
   puts $fout $aftermd
   #puts $fout "<a href=$fname2 type=text/txt>$fname2</a>"
   #gnotes {*}$args $content
