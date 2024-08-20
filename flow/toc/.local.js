@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Create an ID for each header if it doesn't have one
         if (!header.id) {
             header.id = 'header-' + index;
+            header.classList.add("scrolltop")
         }
 
         // Create a list item for the TOC
@@ -29,9 +30,9 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Toggle TOC visibility when the button is clicked
-    tocToggle.addEventListener('click', function() {
-        toc.classList.toggle('hidden');
-    });
+    //tocToggle.addEventListener('click', function() {
+    //    toc.classList.toggle('hidden');
+    //});
 });
 
 

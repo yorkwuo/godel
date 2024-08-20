@@ -5736,6 +5736,7 @@ proc ghtm_top_bar {args} {
           <div class=\"dropdown-links\">
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/ghtm.tcl')\">Edit</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/vars.tcl')\">Value</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','1.md')\">Markdown</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','$env(GODEL_ROOT)/etc/css/w3.css')\">CSS</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\">Xterm</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>

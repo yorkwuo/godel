@@ -606,3 +606,7 @@ dialog {
 .hover-hilight:hover {
   background-color: lightgreen;
 }
+
+.scrolltop {
+  scroll-margin-top: 250px;
+}

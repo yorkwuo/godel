@@ -3,7 +3,11 @@ pathbar 3
 if [file exist "cover.png"] {
   puts $fout {<img src=cover.png height=120px style=float:right>}
 }
-
+if ![file exist "1.md"] {
+  set kout [open "1.md" w]
+    puts $kout "# Notes"
+  close $kout
+}
 gmd 1.md
 
 if [file exist "pretxt.tcl"] {
@@ -15,7 +19,7 @@ mod_links
 
 # Notes
 set cwd [pwd]
-puts $fout "<div style='cursor:pointer' onclick=\"cmdline('$cwd','tclsh','/home/github/godel/tools/server/tcl/newpage.tcl')\">Notes</div>"
+puts $fout "<div style='cursor:pointer' onclick=\"cmdline('$cwd','tclsh','/home/github/godel/tools/server/tcl/newpage.tcl')\">Pages</div>"
 
 set cols ""
 lappend cols "proc:bton_delete     ; D"
