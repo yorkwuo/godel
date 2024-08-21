@@ -15,3 +15,22 @@ if(typeof(rects) != 'undefined' && rects != null){
   }
 }
 
+function scores() {
+
+  var results = document.getElementById("results");
+  var rects = document.getElementsByTagName('rect');
+  var size = rects.length
+
+  var redcount = 0
+  if(typeof(rects) != 'undefined' && rects != null){
+    for (var k = 0; k < rects.length; k++) {
+      let c = rects[k].style.fill
+      if (c === "red") {
+        redcount ++;
+      }
+  
+    }
+  }
+  console.log(redcount)
+  results.innerHTML = `${redcount}/${size}`
+}

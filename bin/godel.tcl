@@ -4669,7 +4669,9 @@ proc list_svg {args} {
 
   set kin [open $fname r]
   set content [read $kin]
+  puts $fout "<div>"
   puts $fout $content
+  puts $fout "</div>"
   close $kin
 }
 # }}}
@@ -5737,6 +5739,7 @@ proc ghtm_top_bar {args} {
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/ghtm.tcl')\">Edit</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/vars.tcl')\">Value</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','1.md')\">Markdown</div>
+            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.local.js')\">JS</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','$env(GODEL_ROOT)/etc/css/w3.css')\">CSS</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\">Xterm</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
@@ -5763,6 +5766,7 @@ proc ghtm_top_bar {args} {
     <button onclick=\"cmdline('$cwd','obless','flow toc')\">toc</button>
     <br>
     <button onclick=\"cmdline('$cwd','obless','flow svg')\">svg</button>
+    <button onclick=\"cmdline('$cwd','obless','flow hide')\">hide</button>
 
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/ghtm.tcl')\">Edit</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/vars.tcl')\">Value</div>
@@ -8600,6 +8604,7 @@ proc godel_draw {args} {
   puts $fout "  };"
   puts $fout "</script>"
 
+  puts $fout "<div id=\"maindiv\">"
 # Source ghtm.tcl
   if {$opt(-f) eq "1"} {
     if [file exist $ghtmfile] {
@@ -8617,6 +8622,7 @@ proc godel_draw {args} {
       source .godel/ghtm.tcl
     }
   }
+  puts $fout "</div>"
 
       puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
       if {[info exist dataTables]} {
