@@ -19,7 +19,7 @@ mod_links
 
 # Notes
 set cwd [pwd]
-puts $fout "<div style='cursor:pointer' onclick=\"cmdline('$cwd','tclsh','/home/github/godel/tools/server/tcl/newpage.tcl')\">Pages</div>"
+puts $fout "<div style='cursor:pointer' onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\">Pages</div>"
 
 set cols ""
 lappend cols "proc:bton_delete     ; D"
