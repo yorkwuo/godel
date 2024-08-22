@@ -1,3 +1,13 @@
+
+
+-late_temperature
+-early_temperature
+-hdl_library
+-flip_alternate_row
+-site
+-transparent
+-output_supply
+-input_supply
 -icon
 -ed
 -bgcolor
