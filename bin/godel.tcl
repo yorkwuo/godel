@@ -175,6 +175,7 @@ proc ghtm_kvp {args} {
 # }}}
   set key [lindex $args 0]
 
+  set cwd [pwd]
 
   set value [lvars . $key]
   puts $fout  {<div style=\"\">}
@@ -182,7 +183,7 @@ proc ghtm_kvp {args} {
   if {$type eq "filepath"} {
     if [file exist $value] {
       puts $fout "<div class=\"kvp\" style=\"padding-left:5px;width:$width;font-weight: bold;background-color:#999;color:white\">
-      <a href=$value type=text/txt>$key</a>
+      <div onclick=\"cmdline('$cwd','tclsh','$key')\">$key</div>
       </div>"
     } else {
       puts $fout "<div class=\"kvp\" style=\"padding-left:5px;width:$width;font-weight: bold;background-color:#666;color:white\">
