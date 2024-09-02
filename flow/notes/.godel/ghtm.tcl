@@ -14,7 +14,7 @@ pathbar [lvars . pathvar_depth]
 #------------------------------------
 # Columns OnOff
 #------------------------------------
-toolarea_begin
+#toolarea_begin
 
   batch_onoff col_class    -name class
   batch_onoff coldel       -name D
@@ -32,25 +32,35 @@ toolarea_begin
   batch_onoff toolarea -name toolarea
   if [file exist "cols.tcl"]  { puts $fout "<a href=cols.tcl type=text/txt>cols.tcl</a>" }
   if [file exist "class.tcl"] { puts $fout "<a href=class.tcl type=text/txt>class.tcl</a>" }
-toolarea_end
+#toolarea_end
 
 #------------------------------------
 # Columns
 #------------------------------------
-if [file exist cols.tcl] {
-  source cols.tcl
-} else {
-  cols_onoff "col_class;ed:class;Class"
-  cols_onoff "coldel;proc:bton_delete;D"
-  cols_onoff "coltick;proc:bton_tick;T"
-  cols_onoff "col_cdate;cdate;cdate"
-  cols_onoff "col_iname;g:iname;iname"
-  cols_onoff "col_ghtm;proc:ltbl_lnfile .godel/ghtm.tcl ghtm;ghtm"
-  #cols_onoff "col_title;proc:ltbl_iname g:pagename;g:pagename"
-  set cols "ed:g:pagename;g:pagename"
-  cols_onoff "col_notes;ed:notes;Notes"
-  cols_onoff "col_keywords;ed:g:keywords;Keywords"
-}
+#if [file exist cols.tcl] {
+#  source cols.tcl
+#} else {
+#  cols_onoff "col_class;ed:class;Class"
+#  cols_onoff "coldel;proc:bton_delete;D"
+#  cols_onoff "coltick;proc:bton_tick;T"
+#  cols_onoff "col_cdate;cdate;cdate"
+#  cols_onoff "col_iname;g:iname;iname"
+#  cols_onoff "col_ghtm;proc:ltbl_lnfile .godel/ghtm.tcl ghtm;ghtm"
+#  #cols_onoff "col_title;proc:ltbl_iname g:pagename;g:pagename"
+#  set cols "ed:g:pagename;g:pagename"
+#  cols_onoff "col_notes;ed:notes;Notes"
+#  cols_onoff "col_keywords;ed:g:keywords;Keywords"
+#}
+  set cols ""
+  lappend cols "ed:class                              ; Class"
+  lappend cols "proc:bton_delete                      ; D"
+  lappend cols "proc:bton_tick                        ; T"
+  #lappend cols "cdate                                 ; cdate"
+  #lappend cols "g:iname                               ; iname"
+  #lappend cols "proc:ltbl_lnfile .godel/ghtm.tcl ghtm ; ghtm"
+  lappend cols "ed:notes                              ; Notes"
+  lappend cols "ed:g:keywords                         ; Keywords"
+  lappend cols "ed:g:pagename                         ; g:pagename"
 
 #------------------------------------
 # Table Options
