@@ -1623,7 +1623,12 @@ function g_save() {
 
   dload(data,'gtcl.tcl');
 
-  document.getElementById('iddraw').click();
+  //document.getElementById('iddraw').click();
+  setTimeout(function() {
+      // Code to execute after 1 second
+      //console.log("1 second has passed");
+      document.getElementById('iddraw').click();
+  }, 600);
 
 }
 // }}}
@@ -2364,7 +2369,7 @@ function lsearch() {
       const path = result[i].path;
       const pagename = result[i].pagename;
       const kw       = result[i].keywords;
-      txt += `<div><a href=${path}/.index.htm>${pagename}<br><img height=50px src=${path}/cover.png></img><a></div>`
+      txt += `<div><a href="${path}/.index.htm">${pagename}<br><img height=50px src="${path}/cover.png"></img><a></div>`
     }
     txt += '</div>'
     p.innerHTML = txt

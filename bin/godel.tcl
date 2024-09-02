@@ -625,7 +625,7 @@ proc mod_flist {} {
   upvar env env
   set cwd [pwd]
   #puts $fout {<div style="cursor:pointer;" onclick="build_flist()">Filelist</div>}
-  puts $fout "<div style=\"cursor:pointer;\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/build_flist.tcl')\">Filelist</div>"
+  puts $fout "<div id=filelist class=scrolltop style=\"cursor:pointer;\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/build_flist.tcl')\">Filelist</div>"
 
   set atcols  ""
   lappend atcols "proc:bton_fdelete flist.tcl ; FD"
@@ -648,7 +648,7 @@ proc mod_links {} {
 
   set cwd [pwd]
   #puts $fout {<div style="cursor:pointer;" onclick="new_link()">Links</div>}
-  puts $fout "<div style=\"cursor:pointer;\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/new_link.tcl')\">Links</div>"
+  puts $fout "<div id=links class=scrolltop style=\"cursor:pointer;\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/new_link.tcl')\">Links</div>"
 
   set atcols ""
   lappend atcols "proc:bton_delete ; D"
@@ -695,6 +695,8 @@ proc build_flist {} {
   lappend kws flist.tcl
   lappend kws cover.png
   lappend kws at.tcl
+  lappend kws cover.png
+  lappend kws 1.md
 
   set pattern [join $kws {|}]
 
@@ -7805,7 +7807,7 @@ proc gmd {args} {
   set aftermd [::gmarkdown::convert $content]
   #regsub {^<h.>(.*?)<\/h.>} $aftermd "<a href='$fname' style='color:#6458ae; font-size:24px;text-decoration:none' type=text/txt>\\1</a>" aftermd
   regsub {^<h.>(.*?)<\/h.>} $aftermd \
-  "<h1 onclick=\"cmdline('$cwd','gvim','$fname')\" style='font-family:Arial ;;cursor:pointer;'>\\1</h1>" aftermd
+  "<h1 id=notes class=scrolltop onclick=\"cmdline('$cwd','gvim','$fname')\" style='font-family:Arial ;;cursor:pointer;'>\\1</h1>" aftermd
   puts $fout $aftermd
   #puts $fout "<a href=$fname2 type=text/txt>$fname2</a>"
   #gnotes {*}$args $content
@@ -8588,7 +8590,11 @@ proc godel_draw {args} {
   puts $fout "<html>"
   puts $fout "<head>"
   puts $fout "<title>$vars(g:pagename)</title>"
-  puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
+  if {[info exist env(GODEL_ONLINE)] && $env(GODEL_ONLINE) eq "1"} {
+    puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://114.32.193.76/~yorkwuo/css/w3.css\">"
+  } else {
+    puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
+  }
   puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"

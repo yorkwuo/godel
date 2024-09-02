@@ -610,3 +610,54 @@ dialog {
 .scrolltop {
   scroll-margin-top: 250px;
 }
+.top {
+    display: flex;
+    margin: 0; 
+    height:100vh;
+    overflow:hidden;
+}
+p {
+    font-size: 18px;
+}
+#content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+#toc-container {
+    position: relative;
+    width: 200px;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+}
+#toc {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+}
+#toc ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+#toc ul li {
+    margin-bottom: 10px;
+}
+#toc ul li a {
+    text-decoration: none;
+    color: #333;
+}
+#toc ul li a:hover {
+    text-decoration: underline;
+}
+#toc-toggle {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+#toc.hidden {
+    display: none;
+}
+
