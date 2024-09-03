@@ -3943,7 +3943,9 @@ proc linkbox {args} {
   if {$opt(-icon) eq "1"} {
     set icon $iconpath
   } else {
-    set icon $dir/cover.png
+    set coverfile [glob -nocomplain $dir/cover.*]
+    #set icon $dir/cover.png
+    set icon $coverfile
   }
 
   if [file exist $target] {
