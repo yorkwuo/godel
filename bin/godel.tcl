@@ -183,7 +183,7 @@ proc ghtm_kvp {args} {
   if {$type eq "filepath"} {
     if [file exist $value] {
       puts $fout "<div class=\"kvp\" style=\"padding-left:5px;width:$width;font-weight: bold;background-color:#999;color:white\">
-      <div onclick=\"cmdline('$cwd','tclsh','$key')\">$key</div>
+      <div onclick=\"cmdline('$cwd','gvim','[lvars . $key]')\">$key</div>
       </div>"
     } else {
       puts $fout "<div class=\"kvp\" style=\"padding-left:5px;width:$width;font-weight: bold;background-color:#666;color:white\">
@@ -4620,10 +4620,11 @@ proc gexe_button {args} {
       puts $fout "
       <span class=\"tt_exe\">
         <div style=\"background-color:#728FCE;color:white\" 
-        onclick=\"cmdline('$cwd','tclsh','$exefile')\" class=\"w3-btn w3-round-large\" 
-        ><b>$name</b></div>
+        onclick=\"cmdline('$cwd','tclsh','$exefile')\" class=\"w3-btn w3-round-large\">
+        <b>$name</b>
+        </div>
         <span class=\"tooltiptext_exe\">
-          $addon$addfile<a onclick=\"cmdline('$cwd','tclsh','$exefile')\">$exename</a>
+          $addon$addfile<a onclick=\"cmdline('$cwd','gvim','$exefile')\">$exename</a>
         </span>
       </span>
       "
