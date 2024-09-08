@@ -1,3 +1,53 @@
+# UrlEncode
+# {{{
+proc UrlEncode {str} {
+    # The following line is needed for some unicode characters. If you get double-encoded unicode characters remove it
+    set str [encoding convertto utf-8 $str]
+    set szRet ""
+    # Characters that will be encoded -- everything except those
+    # Note that we use "+" at the end to match a range of characters if there are several that need
+    # encoding next to each other, instead of going one by one. This should make the script faster ;)
+    set arIdxToEncode [regexp -inline -indices -all -- {[^a-zA-Z0-9\-_.: /]+} $str]
+    if {[llength $arIdxToEncode]} {
+        # Next character that needs to be appended to the resutling string
+        set nCurCar 0
+        # $arIdxToEncode contains a list of characters that need encoding
+        foreach arIdxPairs $arIdxToEncode {
+            # First element: start character
+            set n [lindex $arIdxPairs 0]
+            set nLastCar [lindex $arIdxPairs 1]
+            # Append previous text that doesn't need to be encoded
+            if {$nCurCar < $n} {
+                append szRet [string range $str $nCurCar [expr {$n - 1}]]
+            }
+            # Encode text matched
+            while {$n <= $nLastCar} {
+                set nCode [scan [string index $str $n] "%c"]
+                #append szRet [format "%x" $nCode]
+                set szHexStream [string toupper [format "%x" $nCode]]
+                # We need a string of even characters. Prepend 0 if odd
+                if {[expr {[string length $szHexStream] % 2}]} {
+                    set szHexStream "0$szHexStream"
+                }
+                # Insert % every 2 characters
+                for {set nStreamIdx 0} {$nStreamIdx < [string length $szHexStream]} {set nStreamIdx [expr {$nStreamIdx + 2}]} {
+                    append szRet "%" [string range $szHexStream $nStreamIdx [expr {$nStreamIdx + 1}]]
+                }
+                incr n
+                set nCurCar $n
+            }
+        }
+        # Append the text after the last match that doesn't need to be encoded
+        if {$nCurCar < [string length $str]} {
+            append szRet [string range $str $nCurCar [expr {[string length $str] - 1}]]
+        }
+    } else {
+        # No special characters found
+        set szRet $str
+    }
+    return $szRet
+}
+# }}}
 # flexh2
 # {{{
 proc flexh2 {ilist} {
@@ -3675,7 +3725,7 @@ proc ghtm_ls_table {args} {
       } elseif {[regexp -nocase {\.jpg|\.png|\.gif} $fullpath]}  {
         puts $fout "<td><a style=\"text-decoration:none;\" href=\"$linktarget\" type=text/jpg>$dispname</a></td>"
       } else {
-        puts $fout "<td><a style=\"text-decoration:none;\" onclick=\"cmdline('$cwd','gvim','$linktarget')\">$dispname</a></td>"
+        puts $fout "<td><a style=\"text-decoration:none;cursor:pointer\" onclick=\"cmdline('$cwd','gvim','$linktarget')\">$dispname</a></td>"
       }
       if {$opt(-dir) eq "1"} {
         puts $fout "<td>$dir</td>"
@@ -5777,6 +5827,8 @@ proc ghtm_top_bar {args} {
             <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\">Xterm</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\">New</div>
+
+    <button onclick=\"face('ls_table.tcl','maindiv')\">ls_table.tcl</button>
   </dialog>
   "
 }
@@ -8525,6 +8577,83 @@ proc math_average {alist} {
 # {{{
 proc math_sum {alist} {
   expr ([join $alist +])
+}
+# }}}
+# adhoc_draw
+# {{{
+proc adhoc_draw {args} {
+  # -f
+# {{{
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
+  if {$idx != "-1"} {
+    set ghtmfile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-f) 1
+  } else {
+    set ghtmfile NA
+  }
+# }}}
+  # -o
+# {{{
+  set opt(-o) 0
+  set idx [lsearch $args {-o}]
+  if {$idx != "-1"} {
+    set ofile [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-o) 1
+  } else {
+    set ofile o.html
+  }
+# }}}
+
+  set target_path [lindex $args 0]
+
+  upvar env env
+
+  if {$target_path == "NA" || $target_path == ""} {
+  } else {
+    set orgpath [pwd]
+    cd $target_path
+  }
+
+  package require gmarkdown
+  upvar vars vars
+  global env
+
+  #file mkdir .godel
+  # vars.tcl
+  if ![file exist .godel/vars.tcl] {
+    set kout [open .godel/vars.tcl w]
+    close $kout
+    set vars(g:keywords) ""
+    set vars(g:pagename) [file tail [pwd]]
+    set vars(g:iname)    [file tail [pwd]]
+    godel_array_save vars   .godel/vars.tcl
+  }
+  source .godel/vars.tcl
+
+  # dyvars
+  if ![file exist .godel/dyvars.tcl] {
+    set kout [open .godel/dyvars.tcl w]
+    close $kout
+  }
+  source .godel/dyvars.tcl
+  set dyvars(last_updated) [clock format [clock seconds] -format {%y-%m-%d_%H%M}]
+  godel_array_save dyvars .godel/dyvars.tcl
+
+  set cwd [pwd]
+#----------------------------
+# Start creating .index.htm
+#----------------------------
+  global fout
+  set fout [open $ofile w]
+# Source ghtm.tcl
+  if {$opt(-f) eq "1"} {
+    if [file exist $ghtmfile] {
+      source $ghtmfile
+    }
+  }
 }
 # }}}
 # godel_draw

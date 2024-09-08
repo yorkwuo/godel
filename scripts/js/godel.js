@@ -2334,8 +2334,10 @@ function zoom(e){
 // }}}
 // cmdline
 function cmdline(fullpath, cmd, param) {
-  console.log('kk')
+  //const encodedParam = encodeURIComponent(param)
+  //console.log(encodedParam)
   const url = 'http://127.0.0.1:5000/cmdline?fullpath='+fullpath+'&cmd='+cmd+'&param='+param;
+  //const url = 'http://127.0.0.1:5000/cmdline?fullpath='+fullpath+'&cmd='+cmd+'&param='+encodedParam;
 
   fetch(url);
 }
@@ -2386,7 +2388,161 @@ function dirname(path) {
   return path.match(/(.*)[\/\\]/)[1]||'';
 }
 
+// add event listener to tables
+function listen2tables () {
+  // Add event to highlight modified cells in tables
+  //var tables = document.getElementsByTagName('table');
+  var tables = document.getElementsByClassName('table1');
+  console.log(tables)
+  if(typeof(tables) != 'undefined' && tables != null){
+    for (var k = 0; k < tables.length; k++) {
+    
+        var cells = tables[k].getElementsByTagName('td');
+  
+        for (var i = 0; i < cells.length; i++) {
+          cells[i].addEventListener('input', function(){
+            var gname   = this.getAttribute("gname");
+            this.setAttribute("changed","1");
+            this.style.backgroundColor = "lightyellow";
+          })
+        }
+        for (var i = 0; i < cells.length; i++) {
+          var colname = cells[i].getAttribute("colname");
+          var gclass  = cells[i].getAttribute("gclass");
+          if (colname === "DEL") {
+            cells[i].addEventListener('click', function(){
+              this.style.backgroundColor = "gray";
+              this.setAttribute("changed","1");
+              this.setAttribute("onoff","1");
+            })
+          } else if (colname === "MOVE") {
+            cells[i].addEventListener('click', function(){
+              this.setAttribute("changed","1");
+              var onoff   = this.getAttribute("onoff");
+              if (onoff === "1") {
+                this.setAttribute("bgcolor","lightblue")
+                this.setAttribute("onoff","0");
+                //this.innerText = "FD";
+              } else {
+                this.setAttribute("bgcolor","yellow")
+                this.setAttribute("onoff","1");
+                //this.innerText = 1;
+              }
+            })
+          } else if (colname === "fdel") {
+            cells[i].addEventListener('click', function(){
+              this.setAttribute("changed","1");
+              var onoff   = this.getAttribute("onoff");
+              if (onoff === "1") {
+                this.setAttribute("bgcolor","lightblue")
+                this.setAttribute("onoff","0");
+                //this.innerText = "FD";
+              } else {
+                this.setAttribute("bgcolor","gray")
+                this.setAttribute("onoff","1");
+                //this.innerText = 1;
+              }
+            })
+          } else if (gclass === "onoff") {
+            cells[i].addEventListener('click', function(){
+              this.setAttribute("changed","1");
+              var onoff   = this.getAttribute("onoff");
+              if (onoff === "1") {
+                this.setAttribute("bgcolor","")
+                this.setAttribute("onoff","0");
+                this.innerText = "";
+              } else {
+                this.setAttribute("bgcolor","lightblue")
+                this.setAttribute("onoff","1");
+                this.innerText = 1;
+              }
+            })
+          } else if (colname === "tick") {
+            cells[i].addEventListener('click', function(){
+              this.setAttribute("changed","1");
+              var onoff   = this.getAttribute("onoff");
+              if (onoff === "1") {
+                this.setAttribute("bgcolor","")
+                this.setAttribute("onoff","0");
+                this.innerText = "";
+              } else {
+                this.setAttribute("bgcolor","lightgreen")
+                this.setAttribute("onoff","1");
+                this.innerText = 1;
+              }
+            })
+          } else if (colname === "ctitle") {
+            cells[i].addEventListener('click', function(){
+              this.setAttribute("changed","1");
+              var onoff   = this.getAttribute("onoff");
+              if (onoff === "1") {
+                this.setAttribute("bgcolor","")
+                this.setAttribute("onoff","0");
+                this.innerText = "";
+              } else {
+                this.setAttribute("bgcolor","pink")
+                this.setAttribute("onoff","1");
+                this.innerText = 1;
+              }
+            })
+          } else if (colname === "star") {
+            cells[i].addEventListener('click', function(){
+              this.setAttribute("changed","1");
+              var onoff   = this.getAttribute("onoff");
+              if (onoff === "1") {
+                this.setAttribute("bgcolor","")
+                this.setAttribute("onoff","0");
+                this.innerText = "";
+              } else {
+                this.setAttribute("bgcolor","yellow")
+                this.setAttribute("onoff","1");
+                this.innerText = 1;
+              }
+            })
+          } else if (colname === "num") {
+            cells[i].addEventListener('click', function(){
+              var gname   = this.getAttribute("gname");
+              window.location = gname + "/.index.htm"
+            })
+          } else {
+            cells[i].addEventListener('click', function(){
+              this.style.backgroundColor = "lightyellow";
+            })
+          }
+        }
+    }
+  }
+}
+// face
+function face (ghtm, targetid) {
+  let url = ''
+  url += 'http://localhost:5000/face?path='+ginfo['cwd']
+  url += '&ghtm='+ghtm
 
+  fetch(url)
+  .then(res => res.text())
+  .then(result => {
+    const p = document.getElementById(targetid);
+    p.innerHTML = result
+    listen2tables()
+  })
+  .catch(err => console.log(err))
+}
+// genface
+function genface (ghtm, targetid) {
+  let url = ''
+  url += 'http://localhost:5000/genface?path='+ginfo['cwd']
+  url += '&ghtm='+ghtm
+
+  fetch(url)
+  .then(res => res.text())
+  .then(result => {
+    const p = document.getElementById(targetid);
+    p.innerHTML = result
+    listen2tables()
+  })
+  .catch(err => console.log(err))
+}
 
 
 // vim:fdm=marker
