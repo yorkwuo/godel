@@ -2533,6 +2533,7 @@ function genface (ghtm, targetid) {
   let url = ''
   url += 'http://localhost:5000/genface?path='+ginfo['cwd']
   url += '&ghtm='+ghtm
+  console.log(url)
 
   fetch(url)
   .then(res => res.text())

@@ -153,6 +153,8 @@ app.get('/lsearch', (req, res) => {
 });
 // }}}
   
+app.use('/', require('./routes/func.js'));
+
 // Port Number
 const port = 5000;
   

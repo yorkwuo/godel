@@ -1,3 +1,7 @@
+proc genface {cmd resultid name} {
+  upvar fout fout
+  puts $fout "<button onclick=\"genface('$cmd','$resultid')\">$name</button>"
+}
 # UrlEncode
 # {{{
 proc UrlEncode {str} {
