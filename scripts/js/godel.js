@@ -1,56 +1,57 @@
-const modal       = document.querySelector("[data-modal]")
 
-// Key binded to edit and draw
-document.onkeyup = function(e) {
-// Alt w
-  if        (e.altKey && e.code == 'KeyW') {
-    document.getElementById('iddraw').click();
-// Alt s
-  } else if (e.altKey && e.code == 'KeyS') {
-    document.getElementById('idbutton').click();
-// Alt l
-  } else if (e.altKey && e.code == 'KeyL') {
-    document.getElementById('idbutton').click();
-    //flow1_click()
-// Ctrl 3
-  } else if (e.ctrlKey && e.which == 51) {
-    document.getElementById('idedit').click();
-// Ctrl F1
-  } else if (e.ctrlKey && e.which == 112) {
-    document.getElementById('idplay').click();
-// Alt [
-  } else if (e.altKey && e.key === '[') {
-    modal.showModal()
-// PAUSE
-  } else if (e.code == 'Pause') { 
-    modal.showModal()
-// SCRLK
-  } else if (e.which === 145) { 
-    document.getElementById('iddraw').click();
-// PRTSC
-  } else if (e.which === 42) { 
-    document.getElementById('idbutton').click();
-// Alt 3
-//  } else if (e.altKey && e.which == 51) {
-//    document.getElementById('idbutton').click();
-// Alt 1
-//  } else if (e.altKey && e.which == 49) {
-//    document.getElementById('idplay').click();
-  }
-};
-
-
-modal.addEventListener("click", e => {
-  const dialogDimensions = modal.getBoundingClientRect()
-  if (
-    e.clientX < dialogDimensions.left ||
-    e.clientX > dialogDimensions.right ||
-    e.clientY < dialogDimensions.top ||
-    e.clientY > dialogDimensions.bottom
-  ) {
-    modal.close()
-  }
-})
+  const modal       = document.querySelector("[data-modal]")
+  
+  // Key binded to edit and draw
+  document.onkeyup = function(e) {
+  // Alt w
+    if        (e.altKey && e.code == 'KeyW') {
+      document.getElementById('iddraw').click();
+  // Alt s
+    } else if (e.altKey && e.code == 'KeyS') {
+      document.getElementById('idbutton').click();
+  // Alt l
+    } else if (e.altKey && e.code == 'KeyL') {
+      document.getElementById('idbutton').click();
+      //flow1_click()
+  // Ctrl 3
+    } else if (e.ctrlKey && e.which == 51) {
+      document.getElementById('idedit').click();
+  // Ctrl F1
+    } else if (e.ctrlKey && e.which == 112) {
+      document.getElementById('idplay').click();
+  // Alt [
+    } else if (e.altKey && e.key === '[') {
+      modal.showModal()
+  // PAUSE
+    } else if (e.code == 'Pause') { 
+      modal.showModal()
+  // SCRLK
+    } else if (e.which === 145) { 
+      document.getElementById('iddraw').click();
+  // PRTSC
+    } else if (e.which === 42) { 
+      document.getElementById('idbutton').click();
+  // Alt 3
+  //  } else if (e.altKey && e.which == 51) {
+  //    document.getElementById('idbutton').click();
+  // Alt 1
+  //  } else if (e.altKey && e.which == 49) {
+  //    document.getElementById('idplay').click();
+    }
+  };
+  
+  
+  modal.addEventListener("click", e => {
+    const dialogDimensions = modal.getBoundingClientRect()
+    if (
+      e.clientX < dialogDimensions.left ||
+      e.clientX > dialogDimensions.right ||
+      e.clientY < dialogDimensions.top ||
+      e.clientY > dialogDimensions.bottom
+    ) {
+      modal.close()
+    }
+  })
 
 // Get the input field
 var sinput = document.getElementById("sinput");
@@ -268,6 +269,12 @@ if(typeof(tables) != 'undefined' && tables != null){
       }
   }
 }
+
+
+
+
+
+
 // topFunction
 // {{{
 function topFunction() {
@@ -438,91 +445,6 @@ function inst(value) {
 
 
 }
-// }}}
-// JQuery: Save
-// {{{
-//$(document).ready(function(){
-//  //var $TABLE = $('#tbl');
-//
-//  $('#save').click(function () {
-//
-//    //var $rows = $TABLE.find('tr');
-//    var $rows = $('table').find('tr');
-//
-//    var cmds = "";
-//    // foreach row
-//    $rows.each(function () {
-//      //var $td = $(this).find('td');
-//      var $td = $(this).find('td');
-//      // foreach td
-//      $td.each(function () {
-//        var gtype   = $(this).attr('gtype');
-//        if (gtype == 'innerHTML') {
-//          var value   = $(this).prop("innerHTML");
-//        } else {
-//          var value   = $(this).prop("innerText");
-//        }
-//        var gname   = $(this).attr('gname');
-//        var colname = $(this).attr('colname');
-//        var changed = $(this).attr('changed');
-//        //console.log(value);
-//        //console.log(this);
-//        if (typeof gname === 'undefined') {
-//          return; // equal to continue
-//        } else {
-//          if (changed) {
-//            if (colname == "chkbox") {
-//              var n = 'cb_' + gname;
-//              var v = document.getElementById(n).checked;
-//              if (v) {
-//                var cmd = "exec rm -rf " + gname + "\n";
-//                cmds = cmds + cmd;
-//                document.getElementById(n).checked = false;
-//                $(this).attr('changed', false);
-//              }
-//            } else {
-//              //var cmd = "lsetvar " + " \"" + gname + "\"" + " " + colname + " \"" + value + "\"\n";
-//              var cmd =   gname + "|#|" +  colname + "|#|" +  value + "|E|\n";
-//
-//              cmds = cmds + cmd;
-//            }
-//            $(this).css('backgroundColor', "");
-//          }
-//
-//        }
-//      });
-//    });
-//
-//// Save
-//    var data = cmds;
-//    const textToBLOB = new Blob([data], { type: 'text/plain' });
-//    const sFileName = 'gtcl.tcl';	   // The file to save the data.
-//
-//    var newLink = document.createElement("a");
-//    newLink.download = sFileName;
-//
-//    if (window.webkitURL != null) {
-//        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
-//    }
-//    else {
-//        newLink.href = window.URL.createObjectURL(textToBLOB);
-//        newLink.style.display = "none";
-//        document.body.appendChild(newLink);
-//    }
-//
-//    newLink.click(); 
-//
-//    //$('#iddraw').click();
-//
-//
-//    //document.getElementById('iddraw').click();
-//    //document.getElementById('exedraw').click();
-//    document.getElementById('iddraw').click();
-//
-//  });
-//
-//
-//});
 // }}}
 // JQuery: save table as CSV
 // {{{

@@ -2316,7 +2316,7 @@ proc openfile {fpath} {
     }
   } elseif [regexp {http} $fpath] {
     catch {exec /mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe $fpath &}
-  } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb|\.mkv|.webm|\.wmv|\.flv} $fpath] {
+  } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb|\.mkv|.webm|\.wmv|\.mp3|\.flv} $fpath] {
       catch {exec mpv $fpath &}
   } elseif [regexp {\.rpt|\.xml|\.cfg|\.pm|\.gz|\.lef|\.rpt|\.log|\.lib} $fpath] {
       catch {exec gvim $fpath &}
