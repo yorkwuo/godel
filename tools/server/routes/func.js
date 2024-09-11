@@ -7,6 +7,7 @@ const godel_root = process.env.GODEL_ROOT
 //--------------------
 // face (adhoc_draw.tcl)
 //--------------------
+// {{{
 router.get('/face', (req, res) => {
   console.log(godel_root)
 
@@ -55,10 +56,11 @@ router.get('/face', (req, res) => {
       });
   });
 });
-
+// }}}
 //--------------------
 // genface (execute script directly to generate o.html)
 //--------------------
+// {{{
 router.get('/genface', (req, res) => {
 
   const path = req.query.path;
@@ -98,7 +100,39 @@ router.get('/genface', (req, res) => {
       });
   });
 });
+// }}}
+//--------------------
+// execmd (exec command in local directory)
+//--------------------
+// {{{
+router.get('/execmd', (req, res) => {
+
+  const path = req.query.path;
+  const cmd  = req.query.cmd;
+
+  console.log(cmd)
+
+// change directory
+  const { exec } = require("child_process");
+  process.chdir(path);
+
+  // Execute the script with parameters
+  exec(`${cmd}`, (error, stdout, stderr) => {
+      if (error) {
+          console.error(`Error executing script: ${error.message}`);
+          //return res.status(500).send(`Error executing script: ${error.message}`);
+      }
+      if (stderr) {
+          console.error(`Script error output: ${stderr}`);
+          //return res.status(500).send(`Script error output: ${stderr}`);
+      }
+
+      return res.json({ status: 'success' });
+  });
+});
+// }}}
 
 
 module.exports = router;
 
+// vim:fdm=marker

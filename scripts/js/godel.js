@@ -2467,5 +2467,17 @@ function genface (ghtm, targetid) {
   .catch(err => console.log(err))
 }
 
+function execmd(dir, cmd) {
+
+  let url = ''
+  url += 'http://localhost:5000/execmd?path='+dir
+  url += '&cmd='+cmd
+
+  console.log(dir)
+  console.log(cmd)
+
+  fetch(url)
+  .catch(err => console.log(err))
+}
 
 // vim:fdm=marker
