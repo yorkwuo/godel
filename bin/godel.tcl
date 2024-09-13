@@ -3905,7 +3905,7 @@ proc msg {args} {
 # {{{
 proc linkbox {args} {
   upvar fout fout
-  upvar env  env
+  global env
   # -name
 # {{{
   set opt(-name) 0
@@ -3999,10 +3999,6 @@ proc linkbox {args} {
   set dir [file dirname $target]
   if {$opt(-icon) eq "1"} {
     set icon $iconpath
-  } else {
-    set coverfile [glob -nocomplain $dir/cover.*]
-    #set icon $dir/cover.png
-    set icon $coverfile
   }
 
   if [file exist $target] {
@@ -4015,7 +4011,12 @@ proc linkbox {args} {
       $dispname<img src=$icon height=$height></div>"
     } else {
       if {$opt(-icon) ne "1"} {
-        set icon $env(GODEL_ROOT)/icons/folder.png
+        set coverfile [glob -nocomplain $dir/cover.*]
+        if {$coverfile eq ""} {
+          set icon $env(GODEL_ROOT)/icons/folder.png
+        } else {
+          set icon $coverfile
+        }
       }
       puts $fout "<a class=\"w3-btn w3-round-large w3-hover-red\"
       style=\"text-decoration:none;\" href=\"$target\">
@@ -4706,10 +4707,12 @@ proc gexe_button {args} {
       puts $fout "</span>"
     } else {
       puts $fout "<div "
-      puts $fout "style=\"background-color:#728FCE;color:white\""
       puts $fout "id=\"$id\""
       puts $fout "onclick=\"cmdline('$cwd','tclsh','$exefile')\""
-      puts $fout "class=\"w3-btn w3-round-large\"><b>$name</b><img src=$icon></div>"
+      puts $fout "class=\"w3-btn w3-round-large\">"
+      puts $fout "$name<br>"
+      puts $fout "<img src=$icon height=50px>"
+      puts $fout "</div>"
     }
   } else {
     #puts "Error: gexe_button: file not exist... $exefile"
