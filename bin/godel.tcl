@@ -816,7 +816,7 @@ proc ghtm_card {name value args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-header) 1
   } else {
-    set header "12px"
+    set header "14px"
   }
 # }}}
   # -body
@@ -4601,6 +4601,15 @@ proc gexe_button {args} {
     set opt(-refresh) 1
   }
 # }}}
+  # -hold
+# {{{
+  set opt(-hold) 0
+  set idx [lsearch $args {-hold}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-hold) 1
+  }
+# }}}
   # -nowin
 # {{{
   set opt(-nowin) 0
@@ -4627,6 +4636,8 @@ proc gexe_button {args} {
     set name [lindex $args [expr $idx + 1]]
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-name) 1
+  } else {
+    set name NA
   }
 # }}}
   # -addon 
@@ -4677,11 +4688,8 @@ proc gexe_button {args} {
     set icon $env(GODEL_ROOT)/icons/arrow.png
   }
 # }}}
-  set exefile [lindex $args 0]
-  if {$opt(-name)} {
-  } else {
-    set name $exefile
-  }
+
+  set cmd [lindex $args 0]
 
   if {$opt(-addfile) eq "1"} {
     set addfile "<a href=$addfname type=text/txt>$addfname</a><br>"
@@ -4690,32 +4698,35 @@ proc gexe_button {args} {
   }
 
   set cwd [pwd]
-  if [file exist $exefile] {
-    set exename [file tail $exefile]
-    if {$opt(-cmd)} {
-      puts $fout ""
-      puts $fout "<span class=\"tt_exe\">"
-      puts $fout "  <div "
-      #puts $fout "  style=\"background-color:#728FCE;color:white\" "
-      puts $fout "  onclick=\"execmd('$cwd','xterm -e $exefile')\" class=\"w3-btn w3-round-large\">"
-      puts $fout "  $name<br>"
-      puts $fout "  <img src=$icon height=50px>"
-      puts $fout "  </div>"
-      puts $fout "  <span class=\"tooltiptext_exe\">"
-      puts $fout "    $addon$addfile<a onclick=\"cmdline('$cwd','gvim','$exefile')\">$exename</a>"
-      puts $fout "  </span>"
-      puts $fout "</span>"
+
+  if {$opt(-cmd)} {
+    puts $fout ""
+    puts $fout "<span class=\"tt_exe\">"
+    puts $fout "  <div "
+    puts $fout "id=\"$id\""
+    if {$opt(-nowin) eq "1"} {
+      puts $fout "  onclick=\"execmd('$cwd','$cmd')\" class=\"w3-btn w3-round-large\">"
     } else {
-      puts $fout "<div "
-      puts $fout "id=\"$id\""
-      puts $fout "onclick=\"cmdline('$cwd','tclsh','$exefile')\""
-      puts $fout "class=\"w3-btn w3-round-large\">"
-      puts $fout "$name<br>"
-      puts $fout "<img src=$icon height=50px>"
-      puts $fout "</div>"
+      if {$opt(-hold) eq "1"} {
+        puts $fout "  onclick=\"execmd('$cwd','xterm -hold -e \\\'$cmd\\\'')\" class=\"w3-btn w3-round-large\">"
+      } else {
+        puts $fout "  onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\" class=\"w3-btn w3-round-large\">"
+      }
     }
+    puts $fout "  $name<br>"
+    puts $fout "  <img src=$icon height=50px>"
+    puts $fout "  </div>"
+    #puts $fout "  <span class=\"tooltiptext_exe\">"
+    #puts $fout "    $addon$addfile<a onclick=\"cmdline('$cwd','gvim',\\\'$cmd\\\')\">$name</a>"
+    #puts $fout "  </span>"
+    puts $fout "</span>"
   } else {
-    #puts "Error: gexe_button: file not exist... $exefile"
+    puts $fout "<div "
+    puts $fout "id=\"$id\""
+    puts $fout "onclick=\"execmd('$cwd',\\\'$cmd\\\')\""
+    puts $fout "class=\"w3-btn w3-round-large\">"
+    puts $fout "$name<br>"
+    puts $fout "<img src=$icon height=50px></div>"
   }
 }
 # }}}
