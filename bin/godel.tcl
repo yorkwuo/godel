@@ -1,7 +1,24 @@
+# face
+# {{{
+proc face {cmd resultid name {icon NA}} {
+  global env
+  upvar fout fout
+  puts $fout "<div class=\"w3-btn w3-round-large\" onclick=\"face('$cmd','$resultid')\">$name<br>"
+  if {$icon eq "NA"} {
+    puts $fout "<img src=$env(GODEL_ROOT)/icons/change.png height=50px>"
+  } else {
+    puts $fout "<img src=$icon height=50px>"
+  }
+  puts $fout "</div>"
+}
+# }}}
+# genface
+# {{{
 proc genface {cmd resultid name} {
   upvar fout fout
   puts $fout "<button onclick=\"genface('$cmd','$resultid')\">$name</button>"
 }
+# }}}
 # UrlEncode
 # {{{
 proc UrlEncode {str} {
@@ -4001,30 +4018,25 @@ proc linkbox {args} {
     set icon $iconpath
   }
 
-  if [file exist $target] {
-    if {$opt(-ed) eq "1"} {
-      if {$opt(-icon) ne "1"} {
-        set icon $env(GODEL_ROOT)/icons/file.png
-      }
-      puts $fout "<div class=\"w3-btn w3-round-large\"
-      onclick=\"cmdline('$cwd','gvim','$target')\">
-      $dispname<img src=$icon height=$height></div>"
-    } else {
-      if {$opt(-icon) ne "1"} {
-        set coverfile [glob -nocomplain $dir/cover.*]
-        if {$coverfile eq ""} {
-          set icon $env(GODEL_ROOT)/icons/folder.png
-        } else {
-          set icon $coverfile
-        }
-      }
-      puts $fout "<a class=\"w3-btn w3-round-large w3-hover-red\"
-      style=\"text-decoration:none;\" href=\"$target\">
-      $dispname<img src=$icon height=$height></a>"
+  if {$opt(-ed) eq "1"} {
+    if {$opt(-icon) ne "1"} {
+      set icon $env(GODEL_ROOT)/icons/file.png
     }
-  } elseif [regexp {http} $target] {
-        puts $fout "<a class=\"w3-btn w3-round-large\" style=\"text-decoration:none;\" href=\"$target\">
-        $dispname<img src=$icon height=$height></a>"
+    puts $fout "<div class=\"w3-btn w3-round-large\"
+    onclick=\"cmdline('$cwd','gvim','$target')\">
+    $dispname<img src=$icon height=$height></div>"
+  } else {
+    if {$opt(-icon) ne "1"} {
+      set coverfile [glob -nocomplain $dir/cover.*]
+      if {$coverfile eq ""} {
+        set icon $env(GODEL_ROOT)/icons/folder.png
+      } else {
+        set icon $coverfile
+      }
+    }
+    puts $fout "<a class=\"w3-btn w3-round-large w3-hover-red\"
+    style=\"text-decoration:none;\" href=\"$target\">
+    $dispname<img src=$icon height=$height></a>"
   }
 }
 # }}}
