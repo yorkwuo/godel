@@ -519,11 +519,13 @@ proc ghtm_memo {name ifile} {
   }
   set value [read_as_data $ifile]
 
+  set cwd [pwd]
+
   puts $fout "
   <div class=\"w3-bar-item\">
     <div class=\"w3-card\" style=\"width:auto;\">
       <header class=\"w3-container\" style=\"background-color:#728FCE;color:white\">
-        <pre><a style=\"font-weight:bold;text-decoration:none\" href=$ifile type=text/txt>$name</a></pre>
+        <div style=\"font-weight:bold;\" onclick=\"cmdline('$cwd','gvim','$ifile')\">$name</div>
       </header>
       <div class=\"w3-container\">
         <pre>$value</pre>
@@ -3903,6 +3905,7 @@ proc msg {args} {
 # {{{
 proc linkbox {args} {
   upvar fout fout
+  upvar env  env
   # -name
 # {{{
   set opt(-name) 0
@@ -3924,7 +3927,7 @@ proc linkbox {args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-bgcolor) 1
   } else {
-    set val(-bgcolor) pale-green
+    set val(-bgcolor) white
   }
 # }}}
   # -target
@@ -3978,12 +3981,12 @@ proc linkbox {args} {
   set name [lindex $args 0]
 
   if {$opt(-name) eq "1"} {
-    set dispname  <b>$val(-name)</b><br>
+    set dispname  $val(-name)<br>
   } else {
     if {$opt(-icon) eq "1"} {
       set dispname  ""
     } else {
-      set dispname  "<b>$name</b><br>"
+      set dispname  "$name<br>"
     }
   }
 
@@ -4004,19 +4007,22 @@ proc linkbox {args} {
 
   if [file exist $target] {
     if {$opt(-ed) eq "1"} {
-      puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" onclick=\"cmdline('$cwd','gvim','$target')\">
-      $dispname<img src=$icon height=$height></a>"
-    } else {
-      if [file exist $icon] {
-        puts $fout "<a class=\"w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">
-        $dispname<img src=$icon height=$height></a>"
-      } else {
-        puts $fout "<a class=\"w3-$val(-bgcolor) w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">
-        $dispname</a>"
+      if {$opt(-icon) ne "1"} {
+        set icon $env(GODEL_ROOT)/icons/file.png
       }
+      puts $fout "<div class=\"w3-btn w3-round-large\"
+      onclick=\"cmdline('$cwd','gvim','$target')\">
+      $dispname<img src=$icon height=$height></div>"
+    } else {
+      if {$opt(-icon) ne "1"} {
+        set icon $env(GODEL_ROOT)/icons/folder.png
+      }
+      puts $fout "<a class=\"w3-btn w3-round-large w3-hover-red\"
+      style=\"text-decoration:none;\" href=\"$target\">
+      $dispname<img src=$icon height=$height></a>"
     }
   } elseif [regexp {http} $target] {
-        puts $fout "<a class=\"w3-button  w3-round-large w3-hover-red\" style=\"text-decoration:none;\" href=\"$target\">
+        puts $fout "<a class=\"w3-btn w3-round-large\" style=\"text-decoration:none;\" href=\"$target\">
         $dispname<img src=$icon height=$height></a>"
   }
 }
@@ -4583,6 +4589,7 @@ proc glize {args} {
 # gexe_button
 # {{{
 proc gexe_button {args} {
+  upvar env env
   upvar fout fout
   # -refresh
 # {{{
@@ -4657,6 +4664,18 @@ proc gexe_button {args} {
     set id NA
   }
 # }}}
+  # -icon 
+# {{{
+  set opt(-icon) 0
+  set idx [lsearch $args {-icon}]
+  if {$idx != "-1"} {
+    set icon [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-icon) 1
+  } else {
+    set icon $env(GODEL_ROOT)/icons/arrow.png
+  }
+# }}}
   set exefile [lindex $args 0]
   if {$opt(-name)} {
   } else {
@@ -4673,19 +4692,24 @@ proc gexe_button {args} {
   if [file exist $exefile] {
     set exename [file tail $exefile]
     if {$opt(-cmd)} {
-      puts $fout "
-      <span class=\"tt_exe\">
-        <div style=\"background-color:#728FCE;color:white\" 
-        onclick=\"cmdline('$cwd','tclsh','$exefile')\" class=\"w3-btn w3-round-large\">
-        <b>$name</b>
-        </div>
-        <span class=\"tooltiptext_exe\">
-          $addon$addfile<a onclick=\"cmdline('$cwd','gvim','$exefile')\">$exename</a>
-        </span>
-      </span>
-      "
+      puts $fout ""
+      puts $fout "<span class=\"tt_exe\">"
+      puts $fout "  <div "
+      #puts $fout "  style=\"background-color:#728FCE;color:white\" "
+      puts $fout "  onclick=\"execmd('$cwd','xterm -e $exefile')\" class=\"w3-btn w3-round-large\">"
+      puts $fout "  $name<br>"
+      puts $fout "  <img src=$icon height=50px>"
+      puts $fout "  </div>"
+      puts $fout "  <span class=\"tooltiptext_exe\">"
+      puts $fout "    $addon$addfile<a onclick=\"cmdline('$cwd','gvim','$exefile')\">$exename</a>"
+      puts $fout "  </span>"
+      puts $fout "</span>"
     } else {
-      puts $fout "<div style=\"background-color:#728FCE;color:white\" id=\"$id\" onclick=\"cmdline('$cwd','tclsh','$exefile')\" class=\"w3-btn w3-round-large\"><b>$name</b></div>"
+      puts $fout "<div "
+      puts $fout "style=\"background-color:#728FCE;color:white\""
+      puts $fout "id=\"$id\""
+      puts $fout "onclick=\"cmdline('$cwd','tclsh','$exefile')\""
+      puts $fout "class=\"w3-btn w3-round-large\"><b>$name</b><img src=$icon></div>"
     }
   } else {
     #puts "Error: gexe_button: file not exist... $exefile"
