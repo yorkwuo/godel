@@ -4735,7 +4735,7 @@ proc gexe_button {args} {
   } else {
     puts $fout "<div "
     puts $fout "id=\"$id\""
-    puts $fout "onclick=\"execmd('$cwd',\\\'$cmd\\\')\""
+    puts $fout "onclick=\"execmd('$cwd','$cmd')\""
     puts $fout "class=\"w3-btn w3-round-large\">"
     puts $fout "$name<br>"
     puts $fout "<img src=$icon height=50px></div>"
