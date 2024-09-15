@@ -1,3 +1,6 @@
+proc setprompt {} {
+  set tcl_prompt1 {puts -nonewline "\[0;32mkkkk> \[0m"; flush stdout}
+}
 # face
 # {{{
 proc face {cmd resultid name {icon NA}} {
@@ -4411,10 +4414,11 @@ proc ltbl_lnfile {target lnas} {
   upvar celltxt celltxt
   upvar row     row
 
+  set cwd [pwd]
   set fpath $row/$target
   
   if [file exist $fpath] {
-    set celltxt "<td><a href=\"$fpath\" type=text/txt>$lnas</a></td>"
+    set celltxt "<td><div onclick=\"cmdline('$cwd','gvim','$fpath')\" style='cursor:pointer'>$lnas</div></td>"
   } else {
     set celltxt "<td bgcolor=lightgrey>$lnas</td>"
   }
@@ -4735,7 +4739,7 @@ proc gexe_button {args} {
   } else {
     puts $fout "<div "
     puts $fout "id=\"$id\""
-    puts $fout "onclick=\"execmd('$cwd','$cmd')\""
+    puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
     puts $fout "class=\"w3-btn w3-round-large\">"
     puts $fout "$name<br>"
     puts $fout "<img src=$icon height=50px></div>"
