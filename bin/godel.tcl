@@ -3572,6 +3572,85 @@ proc gtcl_commit {} {
   }
 }
 # }}}
+# ghtm_lsa
+# {{{
+proc ghtm_lsa {args} {
+# ghtm ls -a
+  upvar fout fout
+  upvar env env
+
+  set cwd [pwd]
+
+  set val(-id) tbl
+
+  set ifiles [lsort [glob -nocomplain -type f *]]
+  set dirs   [lsort [glob -nocomplain -type d *]]
+
+  puts $fout "<table class=table1 id=$val(-id)>"
+
+#--------------------------------------
+# Table Header
+#--------------------------------------
+  puts $fout "<thead>"
+  puts $fout "<tr>"
+    puts $fout "<th>Num </th>"
+    puts $fout "<th>Date</th>"
+    puts $fout "<th>Size</th>"
+    puts $fout "<th>Name</th>"
+  puts $fout "</tr>"
+  puts $fout "</thead>"
+
+#--------------------------------------
+# Table Rows
+#--------------------------------------
+  set count 1
+  puts $fout "<tdata>"
+  foreach dir $dirs {
+    set mtime [file mtime $dir]
+    set timestamp [clock format $mtime -format {%W.%u_%H:%M}]
+    puts $fout "<tr>"
+    puts $fout "<td>$count</td>"
+    puts $fout "<td>$timestamp</td>"
+    puts $fout "<td style=text-align:right>DIR</td>"
+    puts $fout "<td><div style='color:blue;font-weight:bold' onclick=\"execmd('$cwd','gvim $dir')\">$dir</div></td>"
+    puts $fout "</tr>"
+
+    incr count
+  }
+  foreach ifile $ifiles {
+    set mtime [file mtime $ifile]
+    set timestamp [clock format $mtime -format {%W.%u_%H:%M}]
+    set fsize [file size $ifile]
+    if {$fsize > 999} {
+      set fsize [num_symbol $fsize K]
+    } else {
+      set fsize [num_symbol $fsize]
+    }
+    puts $fout "<tr>"
+    puts $fout "<td>$count</td>"
+    puts $fout "<td>$timestamp</td>"
+    puts $fout "<td style=text-align:right>$fsize</td>"
+    puts $fout "<td><div onclick=\"execmd('$cwd','gvim $ifile')\">$ifile</div></td>"
+    puts $fout "</tr>"
+
+    incr count
+  }
+
+  puts $fout "</tdata>"
+  puts $fout "</table>"
+
+      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+      puts $fout "<script>"
+      puts $fout "    \$(document).ready(function() {"
+      puts $fout "    \$('#$val(-id)').DataTable({"
+      puts $fout "       \"paging\": false,"
+      puts $fout "       \"info\": false,"
+      puts $fout "       \"order\": \[\],"
+      puts $fout "    });"
+      puts $fout "} );"
+      puts $fout "</script>"
+} ;# ghtm_lsa
+# }}}
 # ghtm_ls_table
 # {{{
 proc ghtm_ls_table {args} {
