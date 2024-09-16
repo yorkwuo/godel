@@ -2436,9 +2436,9 @@ function listen2tables () {
   }
 }
 // face
-function face (ghtm, targetid) {
+function face (ghtm, targetid, cdpath) {
   let url = ''
-  url += 'http://localhost:5000/face?path='+ginfo['cwd']
+  url += 'http://localhost:5000/face?path='+cdpath
   url += '&ghtm='+ghtm
 
   fetch(url)
@@ -2466,7 +2466,7 @@ function genface (ghtm, targetid) {
   })
   .catch(err => console.log(err))
 }
-
+// execmd
 function execmd(dir, cmd) {
 
   let url = ''

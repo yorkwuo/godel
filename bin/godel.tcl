@@ -1,25 +1,140 @@
+proc ghtm_dirls {name dir} {
+  global env
+  upvar fout fout
+  genface -name $name -cmd "cd $dir; $env(GODEL_ROOT)/genface/lsa.tcl"
+}
+
 proc setprompt {} {
   set tcl_prompt1 {puts -nonewline "\[0;32mkkkk> \[0m"; flush stdout}
 }
 # face
 # {{{
-proc face {cmd resultid name {icon NA}} {
+proc face {args} {
   global env
   upvar fout fout
-  puts $fout "<div class=\"w3-btn w3-round-large\" onclick=\"face('$cmd','$resultid')\">$name<br>"
-  if {$icon eq "NA"} {
-    puts $fout "<img src=$env(GODEL_ROOT)/icons/change.png height=50px>"
+
+  # -cmd
+# {{{
+  set opt(-cmd) 0
+  set idx [lsearch $args {-cmd}]
+  if {$idx != "-1"} {
+    set cmd [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-cmd) 1
   } else {
-    puts $fout "<img src=$icon height=50px>"
+    set cmd $env(GODEL_ROOT)/ghtm/lsa.tcl
   }
+# }}}
+  # -resultid
+# {{{
+  set opt(-resultid) 0
+  set idx [lsearch $args {-resultid}]
+  if {$idx != "-1"} {
+    set resultid [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-resultid) 1
+  } else {
+    set resultid maindiv
+  }
+# }}}
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name ""
+  }
+# }}}
+  # -icon
+# {{{
+  set opt(-icon) 0
+  set idx [lsearch $args {-icon}]
+  if {$idx != "-1"} {
+    set icon [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-icon) 1
+  } else {
+    set icon $env(GODEL_ROOT)/icons/change.png
+  }
+# }}}
+  # -cdpath
+# {{{
+  set opt(-cdpath) 0
+  set idx [lsearch $args {-cdpath}]
+  if {$idx != "-1"} {
+    set cdpath [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-cdpath) 1
+  } else {
+    set cdpath [pwd]
+  }
+# }}}
+
+  puts $fout "<div class=\"w3-btn w3-round-large\" onclick=\"face('$cmd','$resultid','$cdpath')\">$name<br>"
+  puts $fout "<img src=$icon height=50px>"
   puts $fout "</div>"
 }
 # }}}
 # genface
 # {{{
-proc genface {cmd resultid name} {
+proc genface {args} {
+  global env
   upvar fout fout
-  puts $fout "<button onclick=\"genface('$cmd','$resultid')\">$name</button>"
+  # -cmd
+# {{{
+  set opt(-cmd) 0
+  set idx [lsearch $args {-cmd}]
+  if {$idx != "-1"} {
+    set cmd [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-cmd) 1
+  } else {
+    set cmd $env(GODEL_ROOT)/ghtm/lsa.tcl
+  }
+# }}}
+  # -resultid
+# {{{
+  set opt(-resultid) 0
+  set idx [lsearch $args {-resultid}]
+  if {$idx != "-1"} {
+    set resultid [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-resultid) 1
+  } else {
+    set resultid maindiv
+  }
+# }}}
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name ""
+  }
+# }}}
+  # -icon
+# {{{
+  set opt(-icon) 0
+  set idx [lsearch $args {-icon}]
+  if {$idx != "-1"} {
+    set icon [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-icon) 1
+  } else {
+    set icon $env(GODEL_ROOT)/icons/folder.png
+  }
+# }}}
+  puts $fout "<div class=\"w3-btn w3-round-large\" onclick=\"genface('$cmd','$resultid')\">$name<br>"
+  puts $fout "<img src='$icon' height=50px>"
+  puts $fout "</div>"
 }
 # }}}
 # UrlEncode
@@ -3605,6 +3720,7 @@ proc ghtm_lsa {args} {
 #--------------------------------------
   set count 1
   puts $fout "<tdata>"
+# dirs
   foreach dir $dirs {
     set mtime [file mtime $dir]
     set timestamp [clock format $mtime -format {%W.%u_%H:%M}]
@@ -3612,11 +3728,12 @@ proc ghtm_lsa {args} {
     puts $fout "<td>$count</td>"
     puts $fout "<td>$timestamp</td>"
     puts $fout "<td style=text-align:right>DIR</td>"
-    puts $fout "<td><div style='color:blue;font-weight:bold' onclick=\"execmd('$cwd','gvim $dir')\">$dir</div></td>"
+    puts $fout "<td><div style='color:blue;font-weight:bold;cursor:pointer' onclick=\"genface('cd $cwd/$dir; $env(GODEL_ROOT)/genface/lsa.tcl','maindiv')\">$dir</div></td>"
     puts $fout "</tr>"
 
     incr count
   }
+# ifiles
   foreach ifile $ifiles {
     set mtime [file mtime $ifile]
     set timestamp [clock format $mtime -format {%W.%u_%H:%M}]
@@ -3630,7 +3747,7 @@ proc ghtm_lsa {args} {
     puts $fout "<td>$count</td>"
     puts $fout "<td>$timestamp</td>"
     puts $fout "<td style=text-align:right>$fsize</td>"
-    puts $fout "<td><div onclick=\"execmd('$cwd','gvim $ifile')\">$ifile</div></td>"
+    puts $fout "<td><div style='cursor:pointer' onclick=\"execmd('$cwd','gvim $ifile')\">$ifile</div></td>"
     puts $fout "</tr>"
 
     incr count
@@ -3639,16 +3756,16 @@ proc ghtm_lsa {args} {
   puts $fout "</tdata>"
   puts $fout "</table>"
 
-      puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
-      puts $fout "<script>"
-      puts $fout "    \$(document).ready(function() {"
-      puts $fout "    \$('#$val(-id)').DataTable({"
-      puts $fout "       \"paging\": false,"
-      puts $fout "       \"info\": false,"
-      puts $fout "       \"order\": \[\],"
-      puts $fout "    });"
-      puts $fout "} );"
-      puts $fout "</script>"
+  #puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+  #puts $fout "<script>"
+  #puts $fout "    \$(document).ready(function() {"
+  #puts $fout "    \$('#$val(-id)').DataTable({"
+  #puts $fout "       \"paging\": false,"
+  #puts $fout "       \"info\": false,"
+  #puts $fout "       \"order\": \[\],"
+  #puts $fout "    });"
+  #puts $fout "} );"
+  #puts $fout "</script>"
 } ;# ghtm_lsa
 # }}}
 # ghtm_ls_table
@@ -4077,9 +4194,24 @@ proc linkbox {args} {
     set opt(-ed) 1
   }
 # }}}
+  # -chk(if dir not exist, hide)
+# {{{
+  set opt(-chk) 0
+  set idx [lsearch $args {-chk}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-chk) 1
+  }
+# }}}
 
   set cwd [pwd]
   set name [lindex $args 0]
+
+  if {$opt(-chk) eq "1"} {
+    if ![file exist $name] {
+      return
+    }
+  }
 
   if {$opt(-name) eq "1"} {
     set dispname  $val(-name)<br>
@@ -4716,6 +4848,15 @@ proc gexe_button {args} {
     set opt(-nowin) 1
   }
 # }}}
+  # -flat
+# {{{
+  set opt(-flat) 0
+  set idx [lsearch $args {-flat}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-flat) 1
+  }
+# }}}
   # -cmd
 # {{{
   set opt(-cmd) 0
@@ -4782,7 +4923,7 @@ proc gexe_button {args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-icon) 1
   } else {
-    set icon $env(GODEL_ROOT)/icons/arrow.png
+    set icon $env(GODEL_ROOT)/icons/rectangle.png
   }
 # }}}
 
@@ -4796,39 +4937,48 @@ proc gexe_button {args} {
 
   set cwd [pwd]
 
-  if {$opt(-cmd)} {
-    puts $fout ""
-    puts $fout "<span class=\"tt_exe\">"
-    puts $fout "  <div "
-    puts $fout "id=\"$id\""
-    if {$opt(-nowin) eq "1"} {
-      puts $fout "  onclick=\"execmd('$cwd','$cmd')\" class=\"w3-btn w3-round-large\">"
-    } else {
-      if {$opt(-hold) eq "1"} {
-        puts $fout "  onclick=\"execmd('$cwd','xterm -hold -e \\\'$cmd\\\'')\" class=\"w3-btn w3-round-large\">"
-      } else {
-        puts $fout "  onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\" class=\"w3-btn w3-round-large\">"
-      }
-    }
-    puts $fout "  $name<br>"
-    puts $fout "  <img src=$icon height=50px>"
-    puts $fout "  </div>"
-    #puts $fout "  <span class=\"tooltiptext_exe\">"
-    #puts $fout "    $addon$addfile<a onclick=\"cmdline('$cwd','gvim',\\\'$cmd\\\')\">$name</a>"
-    #puts $fout "  </span>"
-    puts $fout "</span>"
-  } else {
+  #if {$opt(-cmd)} {
+    #puts $fout ""
+    #puts $fout "<span class=\"tt_exe\">"
+    #puts $fout "  <div "
+    #puts $fout "id=\"$id\""
+    #if {$opt(-nowin) eq "1"} {
+    #  puts $fout "  onclick=\"execmd('$cwd','$cmd')\" class=\"w3-btn w3-round-large\">"
+    #} else {
+    #  if {$opt(-hold) eq "1"} {
+    #    puts $fout "  onclick=\"execmd('$cwd','xterm -hold -e \\\'$cmd\\\'')\" class=\"w3-btn w3-round-large\">"
+    #  } else {
+    #    puts $fout "  onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\" class=\"w3-btn w3-round-large\">"
+    #  }
+    #}
+    #puts $fout "  $name<br>"
+    #puts $fout "  <img src=$icon height=50px>"
+    #puts $fout "  </div>"
+    ##puts $fout "  <span class=\"tooltiptext_exe\">"
+    ##puts $fout "    $addon$addfile<a onclick=\"cmdline('$cwd','gvim',\\\'$cmd\\\')\">$name</a>"
+    ##puts $fout "  </span>"
+    #puts $fout "</span>"
+  #} else {
     puts $fout "<div "
-    puts $fout "id=\"$id\""
+    if {$opt(-flat) eq "1"} {
+      puts $fout "style='text-align:left'"
+    }
+    #puts $fout "id=\"$id\""
     if {$opt(-nowin) eq "1"} {
       puts $fout "onclick=\"execmd('$cwd','$cmd')\""
     } else {
       puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\">"
-    puts $fout "$name<br>"
-    puts $fout "<img src=$icon height=50px></div>"
-  }
+    if {$opt(-flat) eq "1"} {
+      puts $fout "<img src=$icon height=50px>"
+      puts $fout "$name"
+    } else {
+      puts $fout "$name<br>"
+      puts $fout "<img src=$icon height=50px>"
+    }
+    puts $fout "</div>"
+  #}
 }
 # }}}
 # list_svg
