@@ -2338,8 +2338,10 @@ proc openfile {fpath} {
     }
   } elseif [regexp {http} $fpath] {
     catch {exec /mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe $fpath &}
-  } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb|\.mkv|.webm|\.wmv|\.mp3|\.flv} $fpath] {
+  } elseif [regexp {\.avi|\.mpg|\.mp4|\.rmvb|\.mkv|.webm|\.wmv|\.flv} $fpath] {
       catch {exec mpv $fpath &}
+  } elseif [regexp {\.mp3} $fpath] {
+      catch {exec mpv --force-window $fpath &}
   } elseif [regexp {\.rpt|\.xml|\.cfg|\.pm|\.gz|\.lef|\.rpt|\.log|\.lib} $fpath] {
       catch {exec gvim $fpath &}
   } elseif [regexp {\.epub} $fpath] {
@@ -5874,13 +5876,13 @@ proc ghtm_top_bar {args} {
     <button onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/fd-co.tcl')\">co</button>
     <button onclick=\"goglobal()\">GoGlobal</button>
     <br>
-    <button onclick=\"cmdline('$cwd','obless','flow fln')\">fln</button>
-    <button onclick=\"cmdline('$cwd','obless','flow hcj')\">hcj</button>
-    <button onclick=\"cmdline('$cwd','obless','flow flist')\">flist</button>
-    <button onclick=\"cmdline('$cwd','obless','flow toc')\">toc</button>
+    <button onclick=\"execmd('$cwd','obless flow fln')\">fln</button>
+    <button onclick=\"execmd('$cwd','obless flow hcj')\">hcj</button>
+    <button onclick=\"execmd('$cwd','obless flow flist')\">flist</button>
+    <button onclick=\"execmd('$cwd','obless flow toc')\">toc</button>
     <br>
-    <button onclick=\"cmdline('$cwd','obless','flow svg')\">svg</button>
-    <button onclick=\"cmdline('$cwd','obless','flow hide')\">hide</button>
+    <button onclick=\"execmd('$cwd','obless flow svg')\">svg</button>
+    <button onclick=\"execmd('$cwd','obless flow hide')\">hide</button>
 
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/ghtm.tcl')\">Edit</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/vars.tcl')\">Value</div>
