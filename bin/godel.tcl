@@ -4898,16 +4898,16 @@ proc gexe_button {args} {
     set addon ""
   }
 # }}}
-  # -addfile
+  # -f
 # {{{
-  set opt(-addfile) 0
-  set idx [lsearch $args {-addfile}]
+  set opt(-f) 0
+  set idx [lsearch $args {-f}]
   if {$idx != "-1"} {
-    set addfname [lindex $args [expr $idx + 1]]
+    set ifile [lindex $args [expr $idx + 1]]
     set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-addfile) 1
+    set opt(-f) 1
   } else {
-    set addfname ""
+    set ifile NA
   }
 # }}}
   # -id 
@@ -4937,56 +4937,39 @@ proc gexe_button {args} {
 
   set cmd [lindex $args 0]
 
-  if {$opt(-addfile) eq "1"} {
-    set addfile "<a href=$addfname type=text/txt>$addfname</a><br>"
-  } else {
-    set addfile ""
-  }
-
   set cwd [pwd]
 
-  #if {$opt(-cmd)} {
-    #puts $fout ""
-    #puts $fout "<span class=\"tt_exe\">"
-    #puts $fout "  <div "
-    #puts $fout "id=\"$id\""
-    #if {$opt(-nowin) eq "1"} {
-    #  puts $fout "  onclick=\"execmd('$cwd','$cmd')\" class=\"w3-btn w3-round-large\">"
-    #} else {
-    #  if {$opt(-hold) eq "1"} {
-    #    puts $fout "  onclick=\"execmd('$cwd','xterm -hold -e \\\'$cmd\\\'')\" class=\"w3-btn w3-round-large\">"
-    #  } else {
-    #    puts $fout "  onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\" class=\"w3-btn w3-round-large\">"
-    #  }
-    #}
-    #puts $fout "  $name<br>"
-    #puts $fout "  <img src=$icon height=50px>"
-    #puts $fout "  </div>"
-    ##puts $fout "  <span class=\"tooltiptext_exe\">"
-    ##puts $fout "    $addon$addfile<a onclick=\"cmdline('$cwd','gvim',\\\'$cmd\\\')\">$name</a>"
-    ##puts $fout "  </span>"
-    #puts $fout "</span>"
-  #} else {
     puts $fout "<div "
     if {$opt(-flat) eq "1"} {
       puts $fout "style='text-align:left'"
     }
-    #puts $fout "id=\"$id\""
-    if {$opt(-nowin) eq "1"} {
-      puts $fout "onclick=\"execmd('$cwd','$cmd')\""
-    } else {
-      puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
-    }
-    puts $fout "class=\"w3-btn w3-round-large\">"
+    puts $fout ">"
     if {$opt(-flat) eq "1"} {
-      puts $fout "<img src=$icon height=50px>"
-      puts $fout "$name"
+      puts $fout "<img"
+      if {$opt(-nowin) eq "1"} {
+        puts $fout "onclick=\"execmd('$cwd','$cmd')\""
+      } else {
+        puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
+      }
+      puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
+      puts $fout "<div"
+      puts $fout "onclick=\"execmd('$cwd','gvim $ifile')\""
+      puts $fout "class=\"w3-btn w3-round-large\">$name</div>"
     } else {
-      puts $fout "$name<br>"
-      puts $fout "<img src=$icon height=50px>"
+      puts $fout "<div"
+      if {$opt(-f) eq "1"} {
+        puts $fout "onclick=\"execmd('$cwd','gvim $ifile')\""
+      }
+      puts $fout "class=\"w3-btn w3-round-large\">$name</div><br>"
+      puts $fout "<img"
+      if {$opt(-nowin) eq "1"} {
+        puts $fout "onclick=\"execmd('$cwd','$cmd')\""
+      } else {
+        puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
+      }
+      puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
     }
     puts $fout "</div>"
-  #}
 }
 # }}}
 # list_svg
