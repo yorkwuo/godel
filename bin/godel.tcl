@@ -1156,12 +1156,20 @@ proc pathbar {depth} {
   set cwd [pwd]
 
   set name [lvars . g:pagename]
-  set pathhier "<a style=\"text-decoration:none;font-size:16px\">$name</a>"
+
+  set pathhier "<div class=w3-btn>$name</div>"
   set relative_path "../"
+
   for {set i 1} {$i <= $depth} {incr i} {
     #set name [pindex $cwd end-$i]
     set name [lvars $relative_path g:pagename]
-    set pathhier "<a style=\"text-decoration:none;font-size:16px\" href=\"$relative_path.index.htm\">$name</a> / $pathhier"
+    puts $name
+    if {$name eq "NA" || $name eq ""} {
+      set name [file tail [file normalize $relative_path]]
+      set pathhier "<div class=w3-btn>$name</div> / $pathhier"
+    } else {
+      set pathhier "<a style=\"text-decoration:none;font-size:16px;cursor:pointer\" class=w3-btn href=\"$relative_path.index.htm\">$name</a> / $pathhier"
+    }
     append relative_path "../"
 
   }
