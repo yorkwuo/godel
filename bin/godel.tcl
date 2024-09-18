@@ -367,7 +367,7 @@ proc ghtm_kvp {args} {
   set cwd [pwd]
 
   set value [lvars . $key]
-  puts $fout  {<div style=\"\">}
+  puts $fout  {<div style=\"margin:0px;padding:0px;gap:0px\">}
 # Key  
   if {$type eq "filepath"} {
     if [file exist $value] {
@@ -384,7 +384,7 @@ proc ghtm_kvp {args} {
     <a href=$value target=_blank>$key</a>
     </div>"
   } else {
-    puts $fout "<div class=\"kvp\" style=\"padding-left:5px;width:$width;font-weight: bold;background-color:#999;color:white\">$key</div>"
+    puts $fout "<div class=\"kvp\" style=\"margin:0px; padding:0px;padding-left:5px;width:$width;font-weight: bold;background-color:#999;color:white\">$key</div>"
   }
 # Value
   if {$lpath eq "1"} {
@@ -4931,7 +4931,7 @@ proc gexe_button {args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-icon) 1
   } else {
-    set icon $env(GODEL_ROOT)/icons/rectangle.png
+    set icon $env(GODEL_ROOT)/icons/box.png
   }
 # }}}
 
@@ -4942,6 +4942,8 @@ proc gexe_button {args} {
     puts $fout "<div "
     if {$opt(-flat) eq "1"} {
       puts $fout "style='text-align:left'"
+    } else {
+      puts $fout "style='text-align:center'"
     }
     puts $fout ">"
     if {$opt(-flat) eq "1"} {
