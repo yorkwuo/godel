@@ -1163,7 +1163,6 @@ proc pathbar {depth} {
   for {set i 1} {$i <= $depth} {incr i} {
     #set name [pindex $cwd end-$i]
     set name [lvars $relative_path g:pagename]
-    puts $name
     if {$name eq "NA" || $name eq ""} {
       set name [file tail [file normalize $relative_path]]
       set pathhier "<div class=w3-btn>$name</div> / $pathhier"
