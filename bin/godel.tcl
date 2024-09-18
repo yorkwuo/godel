@@ -6064,37 +6064,38 @@ proc ghtm_top_bar {args} {
   set cwd [pwd]
   set timestamp [clock format [clock seconds] -format {%y.%W.%u_%H:%M}]
   puts $fout "<a style='display:none' id=\"idexec\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/exec.tcl')\"  class=\"w3-bar-item w3-button\"></a>"
-  puts $fout "
- <nav class=\"header\">
-
-   <div id=\"iddraw\" class=\"header-item\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/draw.tcl')\">Draw</div>
-   <div class=\"header-item\" id=\"idbutton\" onclick=\"g_save()\" >Save</div>
-   <a   class=\"header-item\" href=\"../.index.htm\" style='text-decoration:none'>Up</a>
-   <div class=\"header-item\" onclick=\"topFunction()\">Top</div>
-   <div style='flex-grow:1;'></div>
-   <div class=\"dropdown\" data-dropdown>
-      <div class=\"link\" style='padding: .0rem .8rem .0rem .8rem; border: 1px none;' data-dropdown-button>
-      <svg height=\"18px\" width=\"18px\" viewBox=\"0 0 18 18\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"> <path fill=\"#ffffff\" fill-rule=\"evenodd\" d=\"M19 4a1 1 0 01-1 1H2a1 1 0 010-2h16a1 1 0 011 1zm0 6a1 1 0 01-1 1H2a1 1 0 110-2h16a1 1 0 011 1zm-1 7a1 1 0 100-2H2a1 1 0 100 2h16z\"/> </svg></div>
-      <div class=\"dropdown-menu information-grid\">
-
-          <div class=\"dropdown-links\">
-            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/ghtm.tcl')\">Edit</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/vars.tcl')\">Value</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','1.md')\">Markdown</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.local.js')\">JS</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','$env(GODEL_ROOT)/etc/css/w3.css')\">CSS</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\">Xterm</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\">New</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/opensvg.tcl')\">SVG</div>
-          </div>
-
-      </div>
-   </div>
-   <div class=\"header-item\" onclick=\"cmdline('$cwd','gvim','.index.htm')\" >$timestamp</div>
-
-</nav>
-"
+  puts $fout ""
+  puts $fout "<nav class=\"header\">"
+  puts $fout "  <div id=\"iddraw\" class=\"header-item\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/draw.tcl')\">Draw</div>"
+  puts $fout "  <div class=\"header-item\" id=\"idbutton\" onclick=\"g_save()\" >Save</div>"
+  puts $fout "  <a   class=\"header-item\" href=\"../.index.htm\" style='text-decoration:none'>Up</a>"
+  puts $fout "  <div class=\"header-item\" onclick=\"topFunction()\">Top</div>"
+  puts $fout "  <div style='flex-grow:1;'></div>"
+  puts $fout "  <div class=\"dropdown\" data-dropdown>"
+  puts $fout "     <div class=\"link\" style='padding: .0rem .8rem .0rem .8rem; border: 1px none;' data-dropdown-button>"
+  puts $fout "     <svg height=\"18px\" width=\"18px\" viewBox=\"0 0 18 18\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"> <path fill=\"#ffffff\" fill-rule=\"evenodd\" d=\"M19 4a1 1 0 01-1 1H2a1 1 0 010-2h16a1 1 0 011 1zm0 6a1 1 0 01-1 1H2a1 1 0 110-2h16a1 1 0 011 1zm-1 7a1 1 0 100-2H2a1 1 0 100 2h16z\"/> </svg>"
+  puts $fout "  </div>"
+  puts $fout ""
+  #puts $fout "      <div>"
+  puts $fout "     <div class=\"dropdown-menu information-grid\">"
+  puts $fout "         <div class=\"dropdown-links\">"
+                          linkbox -target .godel/ghtm.tcl -ed -name Edit
+                          linkbox -target .godel/vars.tcl -ed -name Vars
+                          linkbox -target 1.md -ed -name MD
+                          linkbox -target .local.js -ed -name JS
+                          linkbox -target $env(GODEL_ROOT)/etc/css/w3.css -ed -name CSS
+  puts $fout "         </div>"
+  puts $fout "         <div class=\"dropdown-links\">"
+                          gexe_button -flat "tclsh $env(GODEL_ROOT)/tools/server/tcl/xterm.tcl" -name Xterm -nowin -f $env(GODEL_ROOT)/tools/server/tcl/xterm.tcl
+                          gexe_button -flat "tclsh $env(GODEL_ROOT)/tools/server/tcl/win.tcl" -name Win -nowin -f $env(GODEL_ROOT)/tools/server/tcl/win.tcl
+                          gexe_button -flat "tclsh $env(GODEL_ROOT)/tools/server/tcl/newpage.tcl" -name New -nowin -f $env(GODEL_ROOT)/tools/server/tcl/newpage.tcl
+                          gexe_button -flat "tclsh $env(GODEL_ROOT)/tools/server/tcl/opensvg.tcl" -name SVG -nowin -f $env(GODEL_ROOT)/tools/server/tcl/opensvg.tcl
+  puts $fout "         </div>"
+  puts $fout "     </div>"
+  puts $fout "  </div>"
+  puts $fout "  <div class=\"header-item\" onclick=\"cmdline('$cwd','gvim','.index.htm')\" >$timestamp</div>"
+  puts $fout ""
+  puts $fout "</nav>"
 
   puts $fout "
   <dialog data-modal>
@@ -9008,8 +9009,8 @@ proc godel_draw {args} {
   puts $fout "<html>"
   puts $fout "<head>"
   puts $fout "<title>$vars(g:pagename)</title>"
-  if {[info exist env(GODEL_ONLINE)] && $env(GODEL_ONLINE) eq "1"} {
-    puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://114.32.193.76/~yorkwuo/css/w3.css\">"
+  if {[info exist env(GODEL_CSS)]} {
+    puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_CSS)\">"
   } else {
     puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
   }

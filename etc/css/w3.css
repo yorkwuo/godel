@@ -458,7 +458,7 @@ a,button,input,li {
   font-family: inherit;
   font-size: inherit;
   cursor: pointer;
-  padding: .5rem;
+  padding: .0rem;
 }
 
 .dropdown.active > .link,
@@ -474,7 +474,7 @@ a,button,input,li {
   position: absolute;
   color           : black;
   font-family:monospace,Consolas,sans-serif;
-  left: -.50rem;
+  left: -4.50rem;
   background-color: white;
   padding: .75rem;
   border-radius: .25rem;
