@@ -29,6 +29,8 @@ puts $fout {
 
 puts $fout {<div id="content">}
 
+ghtm_kvp g:pagename
+
 if ![file exist "1.md"] {
   set kout [open "1.md" w]
     puts $kout "# Notes"
