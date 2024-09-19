@@ -18,7 +18,7 @@ puts $fout {
 set dirs [lsort [glob -nocomplain -type d *]]
 foreach dir $dirs {
   set pagename [lvars $dir g:pagename]
-  puts $fout "<li><a style=\"text-decoration:none\" href=$dir/.index.htm>$pagename</a></li>"
+  puts $fout "<li><a style=\"text-decoration:none;white-space:pre\" href=$dir/.index.htm>$pagename</a></li>"
 }
 puts $fout {
     </ol>
