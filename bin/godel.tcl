@@ -1,3 +1,18 @@
+proc value_table {reflist} {
+  upvar fout fout
+
+  puts $fout "<table class=table1>"
+
+  foreach ref $reflist {
+    puts $fout "<tr>"
+    puts $fout "<td>$ref</td>"
+    upvar $ref lref
+    puts $fout "<td>$lref</td>"
+    puts $fout "</tr>"
+  }
+
+  puts $fout "</table>"
+}
 proc ghtm_dirls {name dir} {
   global env
   upvar fout fout
@@ -1146,8 +1161,20 @@ proc newarow {} {
 # }}}
 # pathbar
 # {{{
-proc pathbar {depth} {
+proc pathbar {args} {
   upvar fout fout
+
+  # -dname
+# {{{
+  set opt(-dname) 0
+  set idx [lsearch $args {-dname}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-dname) 1
+  }
+# }}}
+
+  set depth [lindex $args 0]
 
   if {$depth eq "NA"} {
     set depth 1
@@ -1155,7 +1182,11 @@ proc pathbar {depth} {
 
   set cwd [pwd]
 
-  set name [lvars . g:pagename]
+  if {$opt(-dname) eq "1"} {
+    set name [file tail $cwd]
+  } else {
+    set name [lvars . g:pagename]
+  }
 
   set pathhier "<div class=w3-btn>$name</div>"
   set relative_path "../"
