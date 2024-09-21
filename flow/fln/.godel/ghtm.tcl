@@ -29,7 +29,10 @@ puts $fout {
 
 puts $fout {<div id="content">}
 
-ghtm_kvp g:pagename
+#ghtm_kvp g:pagename
+set rows ""
+lappend rows g:pagename
+var_table
 
 if ![file exist "1.md"] {
   set kout [open "1.md" w]

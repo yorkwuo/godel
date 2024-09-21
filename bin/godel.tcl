@@ -4969,39 +4969,41 @@ proc gexe_button {args} {
 
   set cwd [pwd]
 
-    puts $fout "<div "
-    if {$opt(-flat) eq "1"} {
-      puts $fout "style='text-align:left'"
+  if {$opt(-flat) eq "1"} {
+    puts $fout "<div style='text-align:left'>"
+  } else {
+    puts $fout "<div style='text-align:center'>"
+  }
+
+
+  if {$opt(-flat) eq "1"} {
+    puts $fout "<img"
+    if {$opt(-nowin) eq "1"} {
+      puts $fout "onclick=\"execmd('$cwd','$cmd')\""
     } else {
-      puts $fout "style='text-align:center'"
+      puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
     }
-    puts $fout ">"
-    if {$opt(-flat) eq "1"} {
-      puts $fout "<img"
-      if {$opt(-nowin) eq "1"} {
-        puts $fout "onclick=\"execmd('$cwd','$cmd')\""
-      } else {
-        puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
-      }
-      puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
-      puts $fout "<div"
+    puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
+    puts $fout "<div"
+    puts $fout "onclick=\"execmd('$cwd','gvim $ifile')\""
+    puts $fout "class=\"w3-btn w3-round-large\">$name</div>"
+  } else {
+    puts $fout "<div style='display:flex;flex-direction:column'>"
+    puts $fout "<div"
+    if {$opt(-f) eq "1"} {
       puts $fout "onclick=\"execmd('$cwd','gvim $ifile')\""
-      puts $fout "class=\"w3-btn w3-round-large\">$name</div>"
-    } else {
-      puts $fout "<div"
-      if {$opt(-f) eq "1"} {
-        puts $fout "onclick=\"execmd('$cwd','gvim $ifile')\""
-      }
-      puts $fout "class=\"w3-btn w3-round-large\">$name</div><br>"
-      puts $fout "<img"
-      if {$opt(-nowin) eq "1"} {
-        puts $fout "onclick=\"execmd('$cwd','$cmd')\""
-      } else {
-        puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
-      }
-      puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
     }
+    puts $fout "class=\"w3-btn w3-round-large\">$name</div>"
+    puts $fout "<img"
+    if {$opt(-nowin) eq "1"} {
+      puts $fout "onclick=\"execmd('$cwd','$cmd')\""
+    } else {
+      puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
+    }
+    puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
     puts $fout "</div>"
+  }
+  puts $fout "</div>"
 }
 # }}}
 # list_svg
@@ -5424,6 +5426,7 @@ proc getcol {args} {
 # ghtm_set_value
 # {{{
 proc ghtm_set_value {key value args} {
+  global env
   upvar fout fout
   # -name
 # {{{
@@ -5442,15 +5445,25 @@ proc ghtm_set_value {key value args} {
   }
   set cur_value [lvars . $key]
   if {$cur_value eq $value} {
-    puts $fout "<a class=\"w3-button w3-round w3-lime\" onclick=\"set_value('$key','$value')\">${name}</a>"
+    #puts $fout "<a class=\"w3-button w3-round w3-lime\" onclick=\"set_value('$key','$value')\">${name}</a>"
+    #puts $fout "<a class=\"w3-button w3-round w3-lime\" onclick=\"set_value('$key','$value')\">${name}</a>"
+    puts $fout "<div style='display:flex; flex-direction:column'>"
+        puts $fout "<div class=\"w3-btn w3-round-large\" style='color:pink;text-align:center'>$name</div>"
+        puts $fout "<img class=\"w3-button w3-round \" onclick=\"set_value('$key','$value')\" src='$env(GODEL_ROOT)/icons/select_on.svg' height=50px></img>"
+    puts $fout "</div>"
   } else {
-    puts $fout "<a class=\"w3-button w3-round w3-light-gray\" onclick=\"set_value('$key','$value')\">${name}</a>"
+    #puts $fout "<a class=\"w3-button w3-round w3-light-gray\" onclick=\"set_value('$key','$value')\">${name}</a>"
+    puts $fout "<div style='display:flex; flex-direction:column'>"
+        puts $fout "<div class=\"w3-btn w3-round-large\" style='color:grey;text-align:center'>$name</div>"
+        puts $fout "<img class=\"w3-button w3-round \" onclick=\"set_value('$key','$value')\" src='$env(GODEL_ROOT)/icons/select_off.svg' height=50px></img>"
+    puts $fout "</div>"
   }
 }
 # }}}
 # ghtm_onoff
 # {{{
 proc ghtm_onoff {key args} {
+  global env
   upvar fout fout
   # -name
 # {{{
@@ -5464,63 +5477,23 @@ proc ghtm_onoff {key args} {
     set name NA
   }
 # }}}
-  # -cmd
-# {{{
-  set opt(-cmd) 0
-  set idx [lsearch $args {-cmd}]
-  if {$idx != "-1"} {
-    set exefile [lindex $args [expr $idx + 1]]
-    set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-cmd) 1
-  } else {
-    set exefile NA
-  }
-# }}}
-  # -nowin
-# {{{
-  set opt(-nowin) 0
-  set idx [lsearch $args {-nowin}]
-  if {$idx != "-1"} {
-    set args [lreplace $args $idx $idx]
-    set opt(-nowin) 1
-  }
-# }}}
   set cur_value [lvars . $key]
   #puts "$key $cur_value"
   if {$cur_value eq "1"} {
-    puts $fout "<a class=\"w3-button w3-round\" style=\"background-color:#728FCE;color:white\" onclick=\"onoff('$key', '0')\">${name}</a>"
-  } else {
-    puts $fout "<a class=\"w3-button w3-round w3-light-gray\" onclick=\"onoff('$key', '1')\">${name}</a>"
-  }
+    #puts $fout "<a class=\"w3-button w3-round\" style=\"background-color:#728FCE;color:white\" onclick=\"onoff('$key', '0')\">${name}</a>"
 
-  if [file exist $exefile] {
-    set exename [file tail $exefile]
-    if {$opt(-cmd)} {
-      puts $fout "
-      <span class=\"tt_exe\">
-        <a style=\"background-color:#728FCE;color:white\" 
-        href=.$exename.gtcl class=\"w3-btn w3-round-large\" 
-        type=text/gtcl><b>$name</b></a>
-        <span class=\"tooltiptext_exe\">
-          <a href=.$exename.gtcl type=text/txt>$exename</a>
-        </span>
-      </span>
-      "
-    } else {
-      #puts $fout "<a style=\"background-color:#728FCE;color:white\" id=\"$id\" href=.$exename.gtcl class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></a>"
-      puts $fout "<a style=\"background-color:#728FCE;color:white\" href=.$exename.gtcl class=\"w3-btn w3-round-large\" type=text/gtcl><b>$name</b></a>"
-    }
-    set kout [open ".$exename.gtcl" w]
-      puts $kout "set pagepath \[file dirname \[info script]]"
-      puts $kout "cd \$pagepath"
-      if {$opt(-nowin)} {
-        puts $kout "exec ./$exefile"
-      } else {
-        puts $kout "exec xterm -geometry 150x30+5+800 -e \"./$exefile\""
-      }
-    close $kout
+    puts $fout "<div style='display:flex; flex-direction:column'>"
+        puts $fout "<div class=\"w3-btn w3-round-large\" style='color:lightblue;text-align:center'>$name</div>"
+        puts $fout "<img class=\"w3-button w3-round \" onclick=\"onoff('$key', '0')\" src='$env(GODEL_ROOT)/icons/switch_on.svg' height=50px></img>"
+    puts $fout "</div>"
+
   } else {
-    #puts "Error: gexe_button: file not exist... $exefile"
+    #puts $fout "<a class=\"w3-button w3-round w3-light-gray\" onclick=\"onoff('$key', '1')\">${name}</a>"
+
+    puts $fout "<div style='display:flex; flex-direction:column'>"
+        puts $fout "<div class=\"w3-btn w3-round-large\" style='color:grey;text-align:center'>$name</div>"
+        puts $fout "<img class=\"w3-button w3-round \" onclick=\"onoff('$key', '1')\" src='$env(GODEL_ROOT)/icons/switch_off.svg' height=50px></img>"
+    puts $fout "</div>"
   }
 }
 # }}}
