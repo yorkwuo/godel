@@ -2469,12 +2469,15 @@ function genface (ghtm, targetid) {
 // execmd
 function execmd(dir, cmd) {
 
+  var cmd2 = encodeURIComponent(cmd)
+
   let url = ''
   url += 'http://localhost:5000/execmd?path='+dir
-  url += '&cmd='+cmd
+  url += '&cmd='+cmd2
 
-  console.log(dir)
-  console.log(cmd)
+  //console.log(dir)
+  //console.log(cmd)
+  console.log(url)
 
   fetch(url)
   .catch(err => console.log(err))

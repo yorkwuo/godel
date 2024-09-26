@@ -4994,6 +4994,7 @@ proc gexe_button {args} {
       puts $fout "onclick=\"execmd('$cwd','gvim $ifile')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\">$name</div>"
+    puts $fout "<div>"
     puts $fout "<img"
     if {$opt(-nowin) eq "1"} {
       puts $fout "onclick=\"execmd('$cwd','$cmd')\""
@@ -5001,6 +5002,7 @@ proc gexe_button {args} {
       puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
+    puts $fout "</div>"
     puts $fout "</div>"
   }
   puts $fout "</div>"
@@ -6121,7 +6123,7 @@ proc ghtm_top_bar {args} {
             <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
             <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\">New</div>
 
-    <button onclick=\"face('ls_table.tcl','maindiv')\">ls_table.tcl</button>
+    <button onclick=\"genface('$env(GODEL_ROOT)/genface/lsa.tcl','maindiv')\">ls-la</button>
   </dialog>
   "
 }
