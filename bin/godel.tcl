@@ -6071,7 +6071,7 @@ proc ghtm_top_bar {args} {
   puts $fout "<a style='display:none' id=\"idexec\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/exec.tcl')\"  class=\"w3-bar-item w3-button\"></a>"
   puts $fout ""
   puts $fout "<nav class=\"header\">"
-  puts $fout "  <div id=\"iddraw\" class=\"header-item\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/draw.tcl')\">Draw</div>"
+  puts $fout "  <div id=\"iddraw\" class=\"header-item\" onclick=\"cwdcmd('tclsh $env(GODEL_ROOT)/tools/server/tcl/draw.tcl')\">Draw</div>"
   puts $fout "  <div class=\"header-item\" id=\"idbutton\" onclick=\"g_save()\" >Save</div>"
   puts $fout "  <a   class=\"header-item\" href=\"../.index.htm\" style='text-decoration:none'>Up</a>"
   puts $fout "  <div class=\"header-item\" onclick=\"topFunction()\">Top</div>"
@@ -6098,30 +6098,30 @@ proc ghtm_top_bar {args} {
   puts $fout "         </div>"
   puts $fout "     </div>"
   puts $fout "  </div>"
-  puts $fout "  <div class=\"header-item\" onclick=\"cmdline('$cwd','gvim','.index.htm')\" >$timestamp</div>"
+  puts $fout "  <div class=\"header-item\" onclick=\"cwdcmd('gvim .index.htm')\" >$timestamp</div>"
   puts $fout ""
   puts $fout "</nav>"
 
   puts $fout "
   <dialog data-modal>
     <pre>$srcpath</pre>
-    <button onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/fd-co.tcl')\">co</button>
+    <button onclick=\"cwdcmd(''tclsh $env(GODEL_ROOT)/tools/server/tcl/fd-co.tcl')\">co</button>
     <button onclick=\"goglobal()\">GoGlobal</button>
     <br>
-    <button onclick=\"execmd('$cwd','obless flow fln')\">fln</button>
-    <button onclick=\"execmd('$cwd','obless flow hcj')\">hcj</button>
-    <button onclick=\"execmd('$cwd','obless flow flist')\">flist</button>
-    <button onclick=\"execmd('$cwd','obless flow toc')\">toc</button>
+    <button onclick=\"cwdcmd('obless flow fln')\">fln</button>
+    <button onclick=\"cwdcmd('obless flow hcj')\">hcj</button>
+    <button onclick=\"cwdcmd('obless flow flist')\">flist</button>
+    <button onclick=\"cwdcmd('obless flow toc')\">toc</button>
     <br>
-    <button onclick=\"execmd('$cwd','obless flow svg')\">svg</button>
-    <button onclick=\"execmd('$cwd','obless flow hide')\">hide</button>
+    <button onclick=\"cwdcmd('obless flow svg')\">svg</button>
+    <button onclick=\"cwdcmd('obless flow hide')\">hide</button>
 
-            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/ghtm.tcl')\">Edit</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','.godel/vars.tcl')\">Value</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','gvim','$env(GODEL_ROOT)/etc/css/w3.css')\">CSS</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\">Xterm</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
-            <div class=\"link\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\">New</div>
+            <div class=\"link\" onclick=\"cwdcmd('gvim .godel/ghtm.tcl')\">Edit</div>
+            <div class=\"link\" onclick=\"cwdcmd('gvim .godel/vars.tcl')\">Value</div>
+            <div class=\"link\" onclick=\"cwdcmd('gvim $env(GODEL_ROOT)/etc/css/w3.css')\">CSS</div>
+            <div class=\"link\" onclick=\"cwdcmd('tclsh $env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\">Xterm</div>
+            <div class=\"link\" onclick=\"cwdcmd('tclsh $env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
+            <div class=\"link\" onclick=\"cwdcmd('tclsh $env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\">New</div>
 
     <button onclick=\"genface('$env(GODEL_ROOT)/genface/lsa.tcl','maindiv')\">ls-la</button>
   </dialog>

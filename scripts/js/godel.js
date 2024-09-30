@@ -2483,4 +2483,18 @@ function execmd(dir, cmd) {
   .catch(err => console.log(err))
 }
 
+function cwdcmd(cmd) {
+
+  const dir = dirname(window.location.pathname);
+
+  var cmd2 = encodeURIComponent(cmd)
+
+  let url = ''
+  url += 'http://localhost:5000/execmd?path='+dir
+  url += '&cmd='+cmd2
+
+  fetch(url)
+  .catch(err => console.log(err))
+}
+
 // vim:fdm=marker
