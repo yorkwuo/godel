@@ -1,3 +1,22 @@
+# timeago
+proc timeago {timestamp} {
+  set current_time [clock seconds]
+  if {$timestamp eq "NA"} {return ""}
+
+  set given_time [clock scan $timestamp -format "%Y-%m-%d_%H:%M"]
+
+  set time_diff [expr {$current_time - $given_time}]
+  
+  set DD [expr {int($time_diff / 86400)}]
+  set HH [expr {int(($time_diff % 86400) / 3600)}]
+  set MM [expr {int((($time_diff % 86400) % 3600) / 60)}]
+  set SS [expr {($time_diff % 60)}]
+  
+  #return "${DD}D : ${HH}H : ${MM}M : ${SS}S"
+  return "${DD}D:${HH}H:${MM}M"
+
+}
+# value_table
 proc value_table {reflist} {
   upvar fout fout
 
