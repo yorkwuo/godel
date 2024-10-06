@@ -3965,7 +3965,7 @@ proc ghtm_lsa {args} {
     puts $fout "<td>$count</td>"
     puts $fout "<td>$timestamp</td>"
     puts $fout "<td style=text-align:right>$fsize</td>"
-    puts $fout "<td><div style='cursor:pointer' onclick=\"execmd('$cwd','gvim $ifile')\">$ifile</div></td>"
+    puts $fout "<td><div style='cursor:pointer' onclick=\"cwdcmd('gvim $ifile')\">$ifile</div></td>"
     puts $fout "</tr>"
 
     incr count
@@ -5161,25 +5161,25 @@ proc gexe_button {args} {
     if {$opt(-nowin) eq "1"} {
       puts $fout "onclick=\"cwdcmd('$cmd')\""
     } else {
-      puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
+      puts $fout "onclick=\"cwdcmd('xterm -e \\\'$cmd\\\'')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
     puts $fout "<div"
-    puts $fout "onclick=\"execmd('$cwd','gvim $ifile')\""
+    puts $fout "onclick=\"cwdcmd('gvim $ifile')\""
     puts $fout "class=\"w3-btn w3-round-large\">$name</div>"
   } else {
     puts $fout "<div style='display:flex;flex-direction:column'>"
     puts $fout "<div"
     if {$opt(-f) eq "1"} {
-      puts $fout "onclick=\"execmd('$cwd','gvim $ifile')\""
+      puts $fout "onclick=\"cwdcmd('gvim $ifile')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\">$name</div>"
     puts $fout "<div>"
     puts $fout "<img"
     if {$opt(-nowin) eq "1"} {
-      puts $fout "onclick=\"execmd('$cwd','$cmd')\""
+      puts $fout "onclick=\"cwdcmd('$cmd')\""
     } else {
-      puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
+      puts $fout "onclick=\"cwdcmd('xterm -e \\\'$cmd\\\'')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
     puts $fout "</div>"
