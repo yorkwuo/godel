@@ -1,3 +1,164 @@
+# stbl_D
+proc stbl_D {} {
+  upvar row row
+  upvar vars vars
+  upvar fout fout
+
+  puts $fout "<td rowid='$row' colname='DEL'>D</td>"
+  
+}
+# stbl_ed
+proc stbl_ed {name} {
+  upvar row row
+  upvar vars vars
+  upvar fout fout
+
+  set value [gvar $row $name]
+
+  puts $fout "<td rowid='$row' colname='$name' contenteditable=\"true\">$value</td>"
+}
+# sql2vars
+proc sql2vars {args} {
+  upvar vars vars
+  upvar rows rows
+  # -uname (unique name)
+# {{{
+  set opt(-uname) 0
+  set idx [lsearch $args {-uname}]
+  if {$idx != "-1"} {
+    set uname [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-uname) 1
+  } else {
+    set uname rowid
+  }
+# }}}
+
+  package require sqlite3
+  sqlite3 db1 ./dbfile.db
+
+  set sql ""
+  append sql "SELECT * FROM dbtable\n"
+  append sql "ORDER BY rowid\n"
+  #append sql "LIMIT 6 OFFSET 0\n"
+  #append sql "ORDER BY RANDOM()\n"
+  append sql "LIMIT 5\n"
+  
+  #--------------------
+  # get columns
+  #--------------------
+  db1 eval $sql columns break
+  set cols $columns(*)
+  puts $cols
+  
+  #-------------------------
+  # create vars from sqlite3
+  #-------------------------
+  set rows ""
+  db1 eval $sql v {
+  
+    foreach col $cols {
+      set vars($v($uname),$col) $v($col)
+    }
+  
+    lappend rows $v($uname)
+  }
+  
+  db1 close
+
+}
+# stbl_toggle
+proc stbl_toggle {key bgcolor} {
+  upvar row row
+  upvar vars vars
+  upvar fout fout
+
+  set value [gvar $row $key]
+
+  if {$value eq "1"} {
+    puts $fout "<td style='cursor:pointer' key='$key' value='1' idname='code'
+    bgcolor='$bgcolor'  idvalue=\"$row\" onclick=\"toggle_switch(this,'$bgcolor')\">1</td>"
+  } else {
+    puts $fout "<td style='cursor:pointer' key='$key' value='0' idname='code'
+    bgcolor='white' idvalue=\"$row\" onclick=\"toggle_switch(this,'$bgcolor')\"></td>"
+  }
+}
+# gvar
+proc gvar {row key} {
+  upvar vars vars
+  return $vars($row,$key)
+}
+# sqltable
+proc sqltable {args} {
+  upvar fout fout
+  upvar vars vars
+  upvar rows rows
+  upvar cols cols
+  # -num
+# {{{
+  set opt(-num) 0
+  set idx [lsearch $args {-num}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-num) 1
+  }
+# }}}
+
+  #----------------------------------
+  # Create table
+  #----------------------------------
+  puts $fout "<table class=table1 tbltype=stable>"
+  puts $fout "<thead>"
+  puts $fout "<tr>"
+  if {$opt(-num) eq "1"} {
+    puts $fout "<th>num</th>"
+  }
+  foreach col $cols {
+    set colname ""
+    if [regexp {;} $col] {
+      set cs [split $col ";"]
+      set colname [lindex $cs 1]
+      set key [lindex $cs 0]
+
+      if {$colname == ""} {
+        puts $fout "<th></th>"
+      } else {
+        puts $fout "<th>$colname</th>"
+      }
+    } else {
+      set colname $col
+      puts $fout "<th>$colname</th>"
+    }
+  }
+  puts $fout "</tr>"
+  puts $fout "</thead>"
+  #----------------------------------
+  # foreach row
+  #----------------------------------
+  foreach row $rows {
+    puts $fout "<tr>"
+    #----------------------------------
+    # foreach columns
+    #----------------------------------
+    foreach col $cols {
+      set cs [split $col ";"]
+      set col [lindex $cs 0]
+      regsub {\s+$} $col {} col
+      # proc
+      if [regexp {proc:} $col] {
+        regsub {proc:} $col {} col
+        set procname $col
+        eval $procname
+      # default
+      } else {
+        puts $fout "<td>$vars($row,$col)</td>"
+      }
+    }
+    puts $fout "</tr>"
+  }
+  puts $fout "</table>"
+}
+# value_table
 proc value_table {reflist} {
   upvar fout fout
 
@@ -13,12 +174,13 @@ proc value_table {reflist} {
 
   puts $fout "</table>"
 }
+# ghtm_dirls
 proc ghtm_dirls {name dir} {
   global env
   upvar fout fout
   genface -name $name -cmd "cd $dir; $env(GODEL_ROOT)/genface/lsa.tcl"
 }
-
+# setprompt
 proc setprompt {} {
   set tcl_prompt1 {puts -nonewline "\[0;32mkkkk> \[0m"; flush stdout}
 }

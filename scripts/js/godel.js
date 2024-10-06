@@ -1521,8 +1521,10 @@ function g_save() {
 
     if (tbltype === "atable") {
       cmds = cmds + save_atable(tables[k]);
-    } else {
+    } else if (tbltype === 'gtable') {
       cmds = cmds + save_gtable(tables[k]);
+    } else if (tbltype === 'stable') {
+      console.log('stable...')
     }
   }
   // KVP(Key-Value Pair)
@@ -2315,7 +2317,7 @@ function listen2tables () {
   // Add event to highlight modified cells in tables
   //var tables = document.getElementsByTagName('table');
   var tables = document.getElementsByClassName('table1');
-  console.log(tables)
+  //console.log(tables)
   if(typeof(tables) != 'undefined' && tables != null){
     for (var k = 0; k < tables.length; k++) {
     
@@ -2446,7 +2448,7 @@ function face (ghtm, targetid, cdpath) {
   .then(result => {
     const p = document.getElementById(targetid);
     p.innerHTML = result
-    listen2tables()
+    //listen2tables()
   })
   .catch(err => console.log(err))
 }
@@ -2455,7 +2457,7 @@ function genface (ghtm, targetid) {
   let url = ''
   url += 'http://localhost:5000/genface?path='+ginfo['cwd']
   url += '&ghtm='+ghtm
-  console.log(url)
+  //console.log(url)
 
   fetch(url)
   .then(res => res.text())
@@ -2497,4 +2499,37 @@ function cwdcmd(cmd) {
   .catch(err => console.log(err))
 }
 
+function toggle_switch (e, bgcolor) {
+  const cwd = dirname(window.location.pathname);
+  const dbpath  = cwd + '/dbfile.db'
+  const dbtable = 'dbtable'
+  const key     = e.getAttribute('key')
+  const value   = e.getAttribute('value')
+  const idname  = e.getAttribute('idname')
+  const idvalue = e.getAttribute('idvalue')
+
+  if (value === '1') {
+    e.style.backgroundColor = 'white'
+    var newvalue = 0
+    var newtxt   = ''
+  } else {
+    e.style.backgroundColor = bgcolor
+    var newvalue = 1
+    var newtxt   = '1'
+  }
+
+  e.setAttribute('value', newvalue)
+  e.innerText = newtxt
+
+  let url = ''
+  url += 'http://localhost:5000/sqlupdate?dbpath='+dbpath
+  url += '&dbtable='+dbtable
+  url += '&key='+key
+  url += '&value='+newvalue
+  url += '&idname='+idname
+  url += '&idvalue='+idvalue
+
+  fetch(url)
+  .catch(err => console.log(err))
+}
 // vim:fdm=marker
