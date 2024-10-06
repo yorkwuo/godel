@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # stbl_D
 proc stbl_D {} {
   upvar row row
@@ -159,7 +158,6 @@ proc sqltable {args} {
   }
   puts $fout "</table>"
 }
-=======
 # timeago
 proc timeago {timestamp} {
   set current_time [clock seconds]
@@ -178,7 +176,6 @@ proc timeago {timestamp} {
   return "${DD}D:${HH}H:${MM}M"
 
 }
->>>>>>> 2a7878b6a41c4f9d08710a54a6f05de9d207c3d1
 # value_table
 proc value_table {reflist} {
   upvar fout fout
