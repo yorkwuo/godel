@@ -5159,7 +5159,7 @@ proc gexe_button {args} {
   if {$opt(-flat) eq "1"} {
     puts $fout "<img"
     if {$opt(-nowin) eq "1"} {
-      puts $fout "onclick=\"execmd('$cwd','$cmd')\""
+      puts $fout "onclick=\"cwdcmd('$cmd')\""
     } else {
       puts $fout "onclick=\"execmd('$cwd','xterm -e \\\'$cmd\\\'')\""
     }
