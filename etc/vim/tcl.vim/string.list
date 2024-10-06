@@ -1,5 +1,34 @@
 
 
+
+
+-retention_supply_set
+-guard_band
+
+
+-power_domain
+
+-checkerboard
+
+
+
+-offset_start
+-y_pitch
+-x_pitch
+-snap_to_site_row
+-power_switch
+-floorplan_rule_std_cell_area
+-must_enclose
+-step
+-offset
+-to_object_types
+
+-from_object_types
+-description
+-object_types
+
+-add_def_dependencies
+-ack_port
 -late_temperature
 -early_temperature
 -hdl_library
