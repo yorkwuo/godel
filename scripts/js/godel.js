@@ -2485,7 +2485,8 @@ function execmd(dir, cmd) {
   .catch(err => console.log(err))
 }
 
-function cwdcmd(cmd) {
+// cwdcmd
+function cwdcmd(cmd, action='NA') {
 
   const dir = dirname(window.location.pathname);
 
@@ -2496,9 +2497,15 @@ function cwdcmd(cmd) {
   url += '&cmd='+cmd2
 
   fetch(url)
+  .then(result => {
+    if (action === 'reload') {
+      location.reload()
+    }
+  })
   .catch(err => console.log(err))
 }
 
+// toggle_switch
 function toggle_switch (e, bgcolor) {
   const cwd = dirname(window.location.pathname);
   const dbpath  = cwd + '/dbfile.db'
@@ -2532,4 +2539,42 @@ function toggle_switch (e, bgcolor) {
   fetch(url)
   .catch(err => console.log(err))
 }
+
+function sql_switch (e,action='NA') {
+  const cwd = dirname(window.location.pathname);
+  const dbpath  = cwd + '/dbfile.db'
+
+  const dbtable = 'dbtable'
+  const key     = e.getAttribute('key')
+  const value   = e.getAttribute('value')
+  const idname  = e.getAttribute('idname')
+  const idvalue = e.getAttribute('idvalue')
+
+  if (value === '1') {
+    e.className = "w3-btn w3-gray"
+    var newvalue = 0
+    var newtxt   = ''
+  } else {
+    e.className = "w3-btn w3-red"
+    var newvalue = 1
+    var newtxt   = '1'
+  }
+
+  e.setAttribute('value', newvalue)
+
+  let url = ''
+  url += 'http://localhost:5000/sqlupdate?dbpath='+dbpath
+  url += '&dbtable='+'ltable'
+  url += '&key='+ key
+  url += '&value='+newvalue
+
+  fetch(url)
+  .then(result => {
+    if (action === 'reload') {
+      location.reload()
+    }
+  })
+  .catch(err => console.log(err))
+}
+
 // vim:fdm=marker

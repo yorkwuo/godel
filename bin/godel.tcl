@@ -1,25 +1,80 @@
+# ghtm_sql_switch
+# {{{
+proc ghtm_sql_switch {args} {
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set val(-name) ""
+  }
+# }}}
+  # -key
+# {{{
+  set opt(-key) 0
+  set idx [lsearch $args {-key}]
+  if {$idx != "-1"} {
+    set key [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-key) 1
+  } else {
+    set val(-key) ""
+  }
+# }}}
+  upvar fout fout
+  upvar svars svars
+
+  if [info exist svars($key)] {
+    set key2 $svars($key)
+  } else {
+    set key2 0
+  }
+
+  if {$key2 eq "1"} {
+    puts $fout "<div class='w3-btn w3-red' key='$key' 
+                     value='1' onclick=\"sql_switch(this,'reload')\">$name</div>"
+  } else {
+    puts $fout "<div class='w3-btn w3-gray' key='$key' 
+                     value='0' onclick=\"sql_switch(this,'reload')\">$name</div>"
+  }
+}
+# }}}
 # stbl_D
+# {{{
 proc stbl_D {} {
   upvar row row
-  upvar vars vars
+  upvar svars svars
   upvar fout fout
 
-  puts $fout "<td rowid='$row' colname='DEL'>D</td>"
+  set rowid [gvar $row rowid]
+
+  puts $fout "<td rowid='$rowid' colname='DEL'
+  style='cursor:pointer'
+  >D</td>"
   
 }
+# }}}
 # stbl_ed
+# {{{
 proc stbl_ed {name} {
   upvar row row
-  upvar vars vars
+  upvar svars svars
   upvar fout fout
 
   set value [gvar $row $name]
+  set rowid [gvar $row rowid]
 
-  puts $fout "<td rowid='$row' colname='$name' contenteditable=\"true\">$value</td>"
+  puts $fout "<td rowid='$rowid' colname='$name' contenteditable=\"true\"><pre>$value</pre></td>"
 }
-# sql2vars
-proc sql2vars {args} {
-  upvar vars vars
+# }}}
+# sql2svars
+# {{{
+proc sql2svars {args} {
+  upvar svars svars
   upvar rows rows
   # -uname (unique name)
 # {{{
@@ -35,14 +90,19 @@ proc sql2vars {args} {
 # }}}
 
   package require sqlite3
+
+  if ![file exist dbfile.db] return
+
   sqlite3 db1 ./dbfile.db
 
+# dbtable
   set sql ""
   append sql "SELECT * FROM dbtable\n"
-  append sql "ORDER BY rowid\n"
+  append sql "ORDER BY bday\n"
+  append sql "DESC\n"
   #append sql "LIMIT 6 OFFSET 0\n"
   #append sql "ORDER BY RANDOM()\n"
-  append sql "LIMIT 5\n"
+  #append sql "LIMIT 5\n"
   
   #--------------------
   # get columns
@@ -52,25 +112,32 @@ proc sql2vars {args} {
   puts $cols
   
   #-------------------------
-  # create vars from sqlite3
+  # create svars from sqlite3
   #-------------------------
   set rows ""
   db1 eval $sql v {
-  
     foreach col $cols {
-      set vars($v($uname),$col) $v($col)
+      set svars($v($uname),$col) $v($col)
     }
-  
     lappend rows $v($uname)
   }
-  
+
+# ltable
+  set sql ""
+  append sql "SELECT * FROM ltable"
+  db1 eval $sql v {
+    set svars($v(key)) $v(value)
+  }
+
   db1 close
 
 }
+# }}}
 # stbl_toggle
+# {{{
 proc stbl_toggle {key bgcolor} {
   upvar row row
-  upvar vars vars
+  upvar svars svars
   upvar fout fout
 
   set value [gvar $row $key]
@@ -83,15 +150,19 @@ proc stbl_toggle {key bgcolor} {
     bgcolor='white' idvalue=\"$row\" onclick=\"toggle_switch(this,'$bgcolor')\"></td>"
   }
 }
+# }}}
 # gvar
+# {{{
 proc gvar {row key} {
-  upvar vars vars
-  return $vars($row,$key)
+  upvar svars svars
+  return $svars($row,$key)
 }
+# }}}
 # sqltable
+# {{{
 proc sqltable {args} {
   upvar fout fout
-  upvar vars vars
+  upvar svars svars
   upvar rows rows
   upvar cols cols
   # -num
@@ -135,11 +206,15 @@ proc sqltable {args} {
   #----------------------------------
   # foreach row
   #----------------------------------
+  set num 1
   foreach row $rows {
     puts $fout "<tr>"
     #----------------------------------
     # foreach columns
     #----------------------------------
+    if {$opt(-num) eq "1"} {
+      puts $fout "<td>$num</td>"
+    }
     foreach col $cols {
       set cs [split $col ";"]
       set col [lindex $cs 0]
@@ -151,14 +226,17 @@ proc sqltable {args} {
         eval $procname
       # default
       } else {
-        puts $fout "<td>$vars($row,$col)</td>"
+        puts $fout "<td>$svars($row,$col)</td>"
       }
     }
     puts $fout "</tr>"
+    incr num
   }
   puts $fout "</table>"
 }
+# }}}
 # timeago
+# {{{
 proc timeago {timestamp} {
   set current_time [clock seconds]
   if {$timestamp eq "NA"} {return ""}
@@ -176,7 +254,9 @@ proc timeago {timestamp} {
   return "${DD}D:${HH}H:${MM}M"
 
 }
+# }}}
 # value_table
+# {{{
 proc value_table {reflist} {
   upvar fout fout
 
@@ -192,16 +272,21 @@ proc value_table {reflist} {
 
   puts $fout "</table>"
 }
+# }}}
 # ghtm_dirls
+# {{{
 proc ghtm_dirls {name dir} {
   global env
   upvar fout fout
   genface -name $name -cmd "cd $dir; $env(GODEL_ROOT)/genface/lsa.tcl"
 }
+# }}}
 # setprompt
+# {{{
 proc setprompt {} {
   set tcl_prompt1 {puts -nonewline "\[0;32mkkkk> \[0m"; flush stdout}
 }
+# }}}
 # face
 # {{{
 proc face {args} {
@@ -327,6 +412,7 @@ proc genface {args} {
     set icon $env(GODEL_ROOT)/icons/folder.png
   }
 # }}}
+  file delete $env(HOME)/o.html
   puts $fout "<div class=\"w3-btn w3-round-large\" onclick=\"genface('$cmd','$resultid')\">$name<br>"
   puts $fout "<img src='$icon' height=50px>"
   puts $fout "</div>"
@@ -5039,13 +5125,16 @@ proc glize {args} {
 proc gexe_button {args} {
   upvar env env
   upvar fout fout
-  # -refresh
+  # -reload
 # {{{
-  set opt(-refresh) 0
-  set idx [lsearch $args {-refresh}]
+  set opt(-reload) 0
+  set idx [lsearch $args {-reload}]
   if {$idx != "-1"} {
     set args [lreplace $args $idx $idx]
-    set opt(-refresh) 1
+    set opt(-reload) 1
+    set action reload
+  } else {
+    set action NA
   }
 # }}}
   # -hold
@@ -5157,29 +5246,33 @@ proc gexe_button {args} {
 
 
   if {$opt(-flat) eq "1"} {
+# Execute
     puts $fout "<img"
     if {$opt(-nowin) eq "1"} {
-      puts $fout "onclick=\"cwdcmd('$cmd')\""
+      puts $fout "onclick=\"cwdcmd('$cmd','$action')\""
     } else {
-      puts $fout "onclick=\"cwdcmd('xterm -e \\\'$cmd\\\'')\""
+      puts $fout "onclick=\"cwdcmd('xterm -e \\\'$cmd\\\'','$action')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
+# Edit
     puts $fout "<div"
     puts $fout "onclick=\"cwdcmd('gvim $ifile')\""
     puts $fout "class=\"w3-btn w3-round-large\">$name</div>"
   } else {
     puts $fout "<div style='display:flex;flex-direction:column'>"
+# Edit
     puts $fout "<div"
     if {$opt(-f) eq "1"} {
       puts $fout "onclick=\"cwdcmd('gvim $ifile')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\">$name</div>"
+# Execute
     puts $fout "<div>"
     puts $fout "<img"
     if {$opt(-nowin) eq "1"} {
-      puts $fout "onclick=\"cwdcmd('$cmd')\""
+      puts $fout "onclick=\"cwdcmd('$cmd','$action')\""
     } else {
-      puts $fout "onclick=\"cwdcmd('xterm -e \\\'$cmd\\\'')\""
+      puts $fout "onclick=\"cwdcmd('xterm -e \\\'$cmd\\\'','$action')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
     puts $fout "</div>"
