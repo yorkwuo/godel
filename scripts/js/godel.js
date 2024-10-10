@@ -2518,6 +2518,10 @@ function toggle_switch (e, bgcolor) {
   const idname  = e.getAttribute('idname')
   const idvalue = e.getAttribute('idvalue')
 
+  console.log(key)
+  console.log(idname)
+  console.log(idvalue)
+
   if (value === '1') {
     e.style.backgroundColor = 'white'
     var newvalue = 0
@@ -2541,6 +2545,8 @@ function toggle_switch (e, bgcolor) {
 
   fetch(url)
   .catch(err => console.log(err))
+
+  cwdcmd(`lsetvar ${idvalue} ${key} ${newvalue}`)
 }
 // }}}
 // sql_switch
