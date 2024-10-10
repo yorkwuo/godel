@@ -1,3 +1,14 @@
+# slvar
+# {{{
+proc slvar {key} {
+  upvar svars svars
+  if [info exist svars($key)] {
+    return $svars($key)
+  } else {
+    return NA
+  }
+}
+# }}}
 # ghtm_sql_switch
 # {{{
 proc ghtm_sql_switch {args} {
@@ -43,6 +54,63 @@ proc ghtm_sql_switch {args} {
   }
 }
 # }}}
+# ghtm_sql_set
+# {{{
+proc ghtm_sql_set {args} {
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set val(-name) ""
+  }
+# }}}
+  # -key
+# {{{
+  set opt(-key) 0
+  set idx [lsearch $args {-key}]
+  if {$idx != "-1"} {
+    set key [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-key) 1
+  } else {
+    set val(-key) ""
+  }
+# }}}
+  # -value
+# {{{
+  set opt(-value) 0
+  set idx [lsearch $args {-value}]
+  if {$idx != "-1"} {
+    set value [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-value) 1
+  } else {
+    set val(-value) ""
+  }
+# }}}
+  upvar fout fout
+  upvar svars svars
+
+  if [info exist svars($key)] {
+    set svalue $svars($key)
+  } else {
+    set svalue NA
+  }
+
+  if {$svalue eq $value} {
+    puts $fout "<div class='w3-btn w3-red' key='$key' 
+                     value='$value' onclick=\"sql_set(this,'reload')\">$name</div>"
+  } else {
+    puts $fout "<div class='w3-btn w3-gray' key='$key' 
+                     value='$value' onclick=\"sql_set(this,'reload')\">$name</div>"
+  }
+}
+# }}}
 # stbl_D
 # {{{
 proc stbl_D {} {
@@ -68,7 +136,7 @@ proc stbl_ed {name} {
   set value [gvar $row $name]
   set rowid [gvar $row rowid]
 
-  puts $fout "<td rowid='$rowid' colname='$name' contenteditable=\"true\"><pre>$value</pre></td>"
+  puts $fout "<td rowid='$rowid' colname='$name' contenteditable=\"true\"><pre style=\"white-space:pre\">$value</pre></td>"
 }
 # }}}
 # sql2svars
@@ -88,6 +156,18 @@ proc sql2svars {args} {
     set uname rowid
   }
 # }}}
+  # -orderby
+# {{{
+  set opt(-orderby) 0
+  set idx [lsearch $args {-orderby}]
+  if {$idx != "-1"} {
+    set orderby [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-orderby) 1
+  } else {
+    set orderby rowid
+  }
+# }}}
 
   package require sqlite3
 
@@ -98,7 +178,9 @@ proc sql2svars {args} {
 # dbtable
   set sql ""
   append sql "SELECT * FROM dbtable\n"
-  append sql "ORDER BY bday\n"
+  if {$opt(-orderby) eq "1"} {
+    append sql "ORDER BY $orderby\n"
+  }
   append sql "DESC\n"
   #append sql "LIMIT 6 OFFSET 0\n"
   #append sql "ORDER BY RANDOM()\n"
@@ -155,7 +237,11 @@ proc stbl_toggle {key bgcolor} {
 # {{{
 proc gvar {row key} {
   upvar svars svars
-  return $svars($row,$key)
+  if [info exist svars($row,$key)] {
+    return $svars($row,$key)
+  } else {
+    return NA
+  }
 }
 # }}}
 # sqltable
@@ -2986,6 +3072,7 @@ proc ltable_exe {name exefile} {
 }
 # }}}
 # ltbl_cover
+# {{{
 proc ltbl_cover {height} {
   upvar row row
   upvar celltxt celltxt
@@ -2996,6 +3083,7 @@ proc ltbl_cover {height} {
     set celltxt "<td></td>"
   }
 }
+# }}}
 # ltbl_exe
 # {{{
 proc ltbl_exe {name exefile} {
@@ -4047,11 +4135,16 @@ proc ghtm_lsa {args} {
     } else {
       set fsize [num_symbol $fsize]
     }
+
+    set str [UrlEncode "openfile.tcl \"$ifile\""]
+
     puts $fout "<tr>"
     puts $fout "<td>$count</td>"
     puts $fout "<td>$timestamp</td>"
     puts $fout "<td style=text-align:right>$fsize</td>"
-    puts $fout "<td><div style='cursor:pointer' onclick=\"cwdcmd('gvim $ifile')\">$ifile</div></td>"
+    #puts $fout "<td><div style='cursor:pointer' onclick=\"cwdcmd('gvim $ifile')\">$ifile</div></td>"
+    #puts $fout "<td><div style='cursor:pointer' onclick=\"cwdcmd('openfile.tcl \\\'$ifile\\\'')\">$ifile</div></td>"
+    puts $fout "<td><div style='cursor:pointer' onclick=\"cwdcmd('$str')\">$ifile</div></td>"
     puts $fout "</tr>"
 
     incr count
@@ -6320,6 +6413,7 @@ proc ghtm_list_files {pattern {description ""}} {
 }
 # }}}
 # ghtm_top_bar
+# {{{
 proc ghtm_top_bar {args} {
   upvar fout fout
   upvar env env
@@ -6400,7 +6494,7 @@ proc ghtm_top_bar {args} {
   </dialog>
   "
 }
-
+# }}}
 # ghtm_top_bar2
 # {{{
 proc ghtm_top_bar2 {args} {

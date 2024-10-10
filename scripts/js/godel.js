@@ -2138,6 +2138,7 @@ function jsplay(fpath, code) {
 
   const url = 'http://127.0.0.1:5000/play1?filepath='+ff+'&code='+code;
   //const url = 'http://127.0.0.1:5000/mpvplay?filepath='+fpath;
+  console.log(url)
 
   fetch(url)
   .catch(err => console.log(err))
@@ -2490,7 +2491,8 @@ function cwdcmd(cmd, action='NA') {
 
   const dir = dirname(window.location.pathname);
 
-  var cmd2 = encodeURIComponent(cmd)
+  //var cmd2 = encodeURIComponent(cmd)
+  var cmd2 = cmd
 
   let url = ''
   url += 'http://localhost:5000/execmd?path='+dir
@@ -2506,6 +2508,7 @@ function cwdcmd(cmd, action='NA') {
 }
 
 // toggle_switch
+// {{{
 function toggle_switch (e, bgcolor) {
   const cwd = dirname(window.location.pathname);
   const dbpath  = cwd + '/dbfile.db'
@@ -2539,7 +2542,9 @@ function toggle_switch (e, bgcolor) {
   fetch(url)
   .catch(err => console.log(err))
 }
-
+// }}}
+// sql_switch
+// {{{
 function sql_switch (e,action='NA') {
   const cwd = dirname(window.location.pathname);
   const dbpath  = cwd + '/dbfile.db'
@@ -2576,5 +2581,33 @@ function sql_switch (e,action='NA') {
   })
   .catch(err => console.log(err))
 }
+// }}}
+// sql_set
+// {{{
+function sql_set (e,action='NA') {
+  const cwd = dirname(window.location.pathname);
+  const dbpath  = cwd + '/dbfile.db'
+
+  const dbtable = 'dbtable'
+  const key     = e.getAttribute('key')
+  const value   = e.getAttribute('value')
+  const idname  = e.getAttribute('idname')
+  const idvalue = e.getAttribute('idvalue')
+
+  let url = ''
+  url += 'http://localhost:5000/sqlupdate?dbpath='+dbpath
+  url += '&dbtable='+'ltable'
+  url += '&key='+ key
+  url += '&value='+value
+
+  fetch(url)
+  .then(result => {
+    if (action === 'reload') {
+      location.reload()
+    }
+  })
+  .catch(err => console.log(err))
+}
+// }}}
 
 // vim:fdm=marker
