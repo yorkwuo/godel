@@ -4156,13 +4156,7 @@ proc ghtm_lsa {args} {
     puts $fout "<td>$count</td>"
     puts $fout "<td>$timestamp</td>"
     puts $fout "<td style=text-align:right>$fsize</td>"
-<<<<<<< HEAD
     puts $fout "<td><div style='cursor:pointer' onclick=\"execmd('$cwd','gvim $ifile')\">$ifile</div></td>"
-=======
-    #puts $fout "<td><div style='cursor:pointer' onclick=\"cwdcmd('gvim $ifile')\">$ifile</div></td>"
-    #puts $fout "<td><div style='cursor:pointer' onclick=\"cwdcmd('openfile.tcl \\\'$ifile\\\'')\">$ifile</div></td>"
-    puts $fout "<td><div style='cursor:pointer' onclick=\"cwdcmd('$str')\">$ifile</div></td>"
->>>>>>> 3943678d17e9d9431adfcf1c4e982ebca7c502d8
     puts $fout "</tr>"
 
     incr count
