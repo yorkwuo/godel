@@ -168,6 +168,18 @@ proc sql2svars {args} {
     set orderby rowid
   }
 # }}}
+  # -limit
+# {{{
+  set opt(-limit) 0
+  set idx [lsearch $args {-limit}]
+  if {$idx != "-1"} {
+    set limit [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-limit) 1
+  } else {
+    set limit rowid
+  }
+# }}}
 
   package require sqlite3
 
@@ -177,12 +189,14 @@ proc sql2svars {args} {
 
 # dbtable
   set sql ""
-  append sql "SELECT * FROM dbtable\n"
+    append sql "SELECT * FROM dbtable\n"
   if {$opt(-orderby) eq "1"} {
     append sql "ORDER BY $orderby\n"
   }
-  append sql "DESC\n"
-  #append sql "LIMIT 6 OFFSET 0\n"
+    append sql "DESC\n"
+  if {$opt(-limit) eq "1"} {
+    append sql "LIMIT $limit OFFSET 0\n"
+  }
   #append sql "ORDER BY RANDOM()\n"
   #append sql "LIMIT 5\n"
   
