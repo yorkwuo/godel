@@ -337,13 +337,18 @@ proc sqltable {args} {
 # }}}
 # timeago
 # {{{
-proc timeago {timestamp} {
+proc timeago {fname} {
   set current_time [clock seconds]
-  if {$timestamp eq "NA"} {return ""}
 
-  set given_time [clock scan $timestamp -format "%Y-%m-%d_%H:%M"]
+  if ![file exist $fname] {
+    return ""
+  } 
+  set mtime [file mtime $fname]
+  #set timestamp [clock format $mtime -format {%y-%m-%d_%H:%M}]
 
-  set time_diff [expr {$current_time - $given_time}]
+  #set given_time [clock scan $timestamp -format "%Y-%m-%d_%H:%M"]
+
+  set time_diff [expr {$current_time - $mtime}]
   
   set DD [expr {int($time_diff / 86400)}]
   set HH [expr {int(($time_diff % 86400) / 3600)}]
@@ -5246,9 +5251,11 @@ proc gexe_button {args} {
 # {{{
   set opt(-hold) 0
   set idx [lsearch $args {-hold}]
+  set holdopt ""
   if {$idx != "-1"} {
     set args [lreplace $args $idx $idx]
     set opt(-hold) 1
+    set holdopt "-hold"
   }
 # }}}
   # -nowin
@@ -5356,7 +5363,7 @@ proc gexe_button {args} {
     if {$opt(-nowin) eq "1"} {
       puts $fout "onclick=\"cwdcmd('$cmd','$action')\""
     } else {
-      puts $fout "onclick=\"cwdcmd('xterm -e \\\'$cmd\\\'','$action')\""
+      puts $fout "onclick=\"cwdcmd('xterm $holdopt -e \\\'$cmd\\\'','$action')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
 # Edit
@@ -5377,7 +5384,7 @@ proc gexe_button {args} {
     if {$opt(-nowin) eq "1"} {
       puts $fout "onclick=\"cwdcmd('$cmd','$action')\""
     } else {
-      puts $fout "onclick=\"cwdcmd('xterm -e \\\'$cmd\\\'','$action')\""
+      puts $fout "onclick=\"cwdcmd('xterm $holdopt -e \\\'$cmd\\\'','$action')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
     puts $fout "</div>"
@@ -6447,10 +6454,10 @@ proc ghtm_top_bar {args} {
 
   set cwd [pwd]
   set timestamp [clock format [clock seconds] -format {%y.%W.%u_%H:%M}]
-  puts $fout "<a style='display:none' id=\"idexec\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/exec.tcl')\"  class=\"w3-bar-item w3-button\"></a>"
+  puts $fout "<a style='display:none' id=\"idexec\" onclick=\"cmdline('$cwd','$env(TCLSH)','$env(GODEL_ROOT)/tools/server/tcl/exec.tcl')\"  class=\"w3-bar-item w3-button\"></a>"
   puts $fout ""
   puts $fout "<nav class=\"header\">"
-  puts $fout "  <div id=\"iddraw\" class=\"header-item\" onclick=\"cwdcmd('tclsh $env(GODEL_ROOT)/tools/server/tcl/draw.tcl')\">Draw</div>"
+  puts $fout "  <div id=\"iddraw\" class=\"header-item\" onclick=\"cwdcmd('$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/draw.tcl')\">Draw</div>"
   puts $fout "  <div class=\"header-item\" id=\"idbutton\" onclick=\"g_save()\" >Save</div>"
   puts $fout "  <a   class=\"header-item\" href=\"../.index.htm\" style='text-decoration:none'>Up</a>"
   puts $fout "  <div class=\"header-item\" onclick=\"topFunction()\">Top</div>"
@@ -6470,10 +6477,10 @@ proc ghtm_top_bar {args} {
                           linkbox -target $env(GODEL_ROOT)/etc/css/w3.css -ed -name CSS
   puts $fout "         </div>"
   puts $fout "         <div class=\"dropdown-links\">"
-                          gexe_button -flat "tclsh $env(GODEL_ROOT)/tools/server/tcl/xterm.tcl" -name Xterm -nowin -f $env(GODEL_ROOT)/tools/server/tcl/xterm.tcl
-                          gexe_button -flat "tclsh $env(GODEL_ROOT)/tools/server/tcl/win.tcl" -name Win -nowin -f $env(GODEL_ROOT)/tools/server/tcl/win.tcl
-                          gexe_button -flat "tclsh $env(GODEL_ROOT)/tools/server/tcl/newpage.tcl" -name New -nowin -f $env(GODEL_ROOT)/tools/server/tcl/newpage.tcl
-                          gexe_button -flat "tclsh $env(GODEL_ROOT)/tools/server/tcl/opensvg.tcl" -name SVG -nowin -f $env(GODEL_ROOT)/tools/server/tcl/opensvg.tcl
+                          gexe_button -flat "$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/xterm.tcl" -name Xterm -nowin -f $env(GODEL_ROOT)/tools/server/tcl/xterm.tcl
+                          gexe_button -flat "$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/win.tcl" -name Win -nowin -f $env(GODEL_ROOT)/tools/server/tcl/win.tcl
+                          gexe_button -flat "$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/newpage.tcl" -name New -nowin -f $env(GODEL_ROOT)/tools/server/tcl/newpage.tcl
+                          gexe_button -flat "$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/opensvg.tcl" -name SVG -nowin -f $env(GODEL_ROOT)/tools/server/tcl/opensvg.tcl
   puts $fout "         </div>"
   puts $fout "     </div>"
   puts $fout "  </div>"
@@ -6484,7 +6491,7 @@ proc ghtm_top_bar {args} {
   puts $fout "
   <dialog data-modal>
     <pre>$srcpath</pre>
-    <button onclick=\"cwdcmd(''tclsh $env(GODEL_ROOT)/tools/server/tcl/fd-co.tcl')\">co</button>
+    <button onclick=\"cwdcmd(''$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/fd-co.tcl')\">co</button>
     <button onclick=\"goglobal()\">GoGlobal</button>
     <br>
     <button onclick=\"cwdcmd('obless flow fln')\">fln</button>
@@ -6498,9 +6505,9 @@ proc ghtm_top_bar {args} {
             <div class=\"link\" onclick=\"cwdcmd('gvim .godel/ghtm.tcl')\">Edit</div>
             <div class=\"link\" onclick=\"cwdcmd('gvim .godel/vars.tcl')\">Value</div>
             <div class=\"link\" onclick=\"cwdcmd('gvim $env(GODEL_ROOT)/etc/css/w3.css')\">CSS</div>
-            <div class=\"link\" onclick=\"cwdcmd('tclsh $env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\">Xterm</div>
-            <div class=\"link\" onclick=\"cwdcmd('tclsh $env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
-            <div class=\"link\" onclick=\"cwdcmd('tclsh $env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\">New</div>
+            <div class=\"link\" onclick=\"cwdcmd('$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\">Xterm</div>
+            <div class=\"link\" onclick=\"cwdcmd('$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
+            <div class=\"link\" onclick=\"cwdcmd('$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\">New</div>
 
     <button onclick=\"genface('$env(GODEL_ROOT)/genface/lsa.tcl','maindiv')\">ls-la</button>
   </dialog>
