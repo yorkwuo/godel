@@ -180,6 +180,15 @@ proc sql2svars {args} {
     set limit rowid
   }
 # }}}
+  # -random
+# {{{
+  set opt(-random) 0
+  set idx [lsearch $args {-random}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set opt(-random) 1
+  }
+# }}}
 
   package require sqlite3
 
@@ -197,8 +206,9 @@ proc sql2svars {args} {
   if {$opt(-limit) eq "1"} {
     append sql "LIMIT $limit OFFSET 0\n"
   }
-  #append sql "ORDER BY RANDOM()\n"
-  #append sql "LIMIT 5\n"
+  if {$opt(-random) eq "1"} {
+    append sql "ORDER BY RANDOM()\n"
+  }
   
   #--------------------
   # get columns
