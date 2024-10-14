@@ -2615,5 +2615,32 @@ function sql_set (e,action='NA') {
   .catch(err => console.log(err))
 }
 // }}}
+// save_td
+function save_td(e) {
+  const cwd = dirname(window.location.pathname);
+  const dbpath  = cwd + '/dbfile.db'
+
+  const dbtable = 'dbtable'
+  const key     = e.getAttribute('colname')
+  const value   = e.innerText
+  const idname  = e.getAttribute('wherecol')
+  const idvalue = e.getAttribute('whereval')
+  var   changed = e.getAttribute('changed')
+
+  if (changed) {
+    let url = ''
+    url += 'http://localhost:5000/sqlupdate?dbpath='+dbpath
+    url += '&dbtable='+dbtable
+    url += '&key='+key
+    url += '&value='+value
+    url += '&idname='+idname
+    url += '&idvalue='+idvalue
+
+    fetch(url)
+    .catch(err => console.log(err))
+
+    cwdcmd(`lsetvar ${idvalue} ${key} '${value}'`)
+  }
+}
 
 // vim:fdm=marker

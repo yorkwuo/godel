@@ -136,7 +136,9 @@ proc stbl_ed {name} {
   set value [gvar $row $name]
   set rowid [gvar $row rowid]
 
-  puts $fout "<td rowid='$rowid' colname='$name' contenteditable=\"true\"><pre style=\"white-space:pre\">$value</pre></td>"
+  puts $fout "<td rowid='$rowid' colname='$name' wherecol='code' whereval='$row'
+  onblur=\"save_td(this)\"
+  contenteditable=\"true\"><pre style=\"white-space:pre\">$value</pre></td>"
 }
 # }}}
 # sql2svars
@@ -323,7 +325,7 @@ proc sqltable {args} {
     # foreach columns
     #----------------------------------
     if {$opt(-num) eq "1"} {
-      puts $fout "<td>$num</td>"
+      puts $fout "<td colname=\"num\" gname=\"$row\"><a style=text-decoration:none href=\"$row/.index.htm\">$num</a></td>"
     }
     foreach col $cols {
       set cs [split $col ";"]
