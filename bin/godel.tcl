@@ -3940,7 +3940,7 @@ proc var_table {} {
   upvar rows rows
 
   set cwd [pwd]
-  puts $fout "<table class=table1 id=tbl1>"
+  puts $fout "<table class=table1 id=tbl1 tbltype=gtable>"
   foreach row $rows {
     set cols [split $row ";"]
     set name [lindex $cols 0]
