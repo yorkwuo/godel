@@ -1,6 +1,12 @@
 ghtm_top_bar -save -js -svg
 pathbar 4
 #mod_links
+puts $fout {
+<div style="display:flex; gap: 10px;font-size:28px">
+<div style="cursor:pointer" onclick=scores()>Scores: </div>
+<div id="results" ></div>
+</div>
+}
 
 
 if [file exist 1.svg] {

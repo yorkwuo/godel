@@ -1,3 +1,13 @@
+  proc addcols {sw cofunc} {
+    upvar svars svars
+    upvar cols cols
+
+    set sw [slvar $sw]
+    
+    if {$sw eq "1"} {
+      lappend cols $cofunc
+    }
+  }
 # slvar
 # {{{
 proc slvar {key} {
@@ -136,6 +146,9 @@ proc stbl_ed {name} {
   set value [gvar $row $name]
   set rowid [gvar $row rowid]
 
+  if {$value eq "NA"} {
+    set value ""
+  }
   puts $fout "<td rowid='$rowid' colname='$name' wherecol='code' whereval='$row'
   onblur=\"save_td(this)\"
   contenteditable=\"true\"><pre style=\"white-space:pre\">$value</pre></td>"
@@ -205,19 +218,21 @@ proc sql2svars {args} {
     append sql "ORDER BY $orderby\n"
   }
     append sql "DESC\n"
-  if {$opt(-limit) eq "1"} {
-    append sql "LIMIT $limit OFFSET 0\n"
-  }
   if {$opt(-random) eq "1"} {
     append sql "ORDER BY RANDOM()\n"
   }
+  if {$opt(-limit) eq "1"} {
+    #append sql "LIMIT $limit OFFSET 0\n"
+    append sql "LIMIT $limit\n"
+  }
+  #set sql "SELECT * FROM dbtable ORDER BY age LIMIT 10"
+  puts $sql
   
   #--------------------
   # get columns
   #--------------------
   db1 eval $sql columns break
   set cols $columns(*)
-  puts $cols
   
   #-------------------------
   # create svars from sqlite3
@@ -227,6 +242,7 @@ proc sql2svars {args} {
     foreach col $cols {
       set svars($v($uname),$col) $v($col)
     }
+    #puts $v($uname)
     lappend rows $v($uname)
   }
 
@@ -6513,6 +6529,7 @@ proc ghtm_top_bar {args} {
     <br>
     <button onclick=\"cwdcmd('obless flow svg')\">svg</button>
     <button onclick=\"cwdcmd('obless flow hide')\">hide</button>
+    <button onclick=\"cwdcmd('obless flow zoomsvg')\">zoomsvg</button>
 
             <div class=\"link\" onclick=\"cwdcmd('gvim .godel/ghtm.tcl')\">Edit</div>
             <div class=\"link\" onclick=\"cwdcmd('gvim .godel/vars.tcl')\">Value</div>
