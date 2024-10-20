@@ -293,6 +293,7 @@ proc sqltable {args} {
   upvar svars svars
   upvar rows rows
   upvar cols cols
+  global env env
   # -num
 # {{{
   set opt(-num) 0
@@ -306,7 +307,7 @@ proc sqltable {args} {
   #----------------------------------
   # Create table
   #----------------------------------
-  puts $fout "<table class=table1 tbltype=stable>"
+  puts $fout "<table id=sqltable class=table1 tbltype=stable>"
   puts $fout "<thead>"
   puts $fout "<tr>"
   if {$opt(-num) eq "1"} {
@@ -361,6 +362,20 @@ proc sqltable {args} {
     incr num
   }
   puts $fout "</table>"
+
+  #set opt(-dataTables) 1
+  #if {$opt(-dataTables) eq "1"} {
+  #        puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+  #        puts $fout "<script>"
+  #        puts $fout "    \$(document).ready(function() {"
+  #        puts $fout "    \$('#sqltable').DataTable({"
+  #        puts $fout "       \"paging\": false,"
+  #        puts $fout "       \"info\": false,"
+  #        puts $fout "       \"order\": \[\],"
+  #        puts $fout "    });"
+  #        puts $fout "} );"
+  #        puts $fout "</script>"
+  #}
 }
 # }}}
 # timeago
