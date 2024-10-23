@@ -2469,6 +2469,8 @@ function genface (ghtm, targetid, callback, name) {
     listen2tables()
     if (typeof callback === 'function') {
       callback(name);
+    } else {
+      console.log(callback)
     }
   })
   .catch(err => console.log(err))
@@ -2647,4 +2649,13 @@ function save_td(e) {
   }
 }
 
+function datatable(tbid) {
+  $(document).ready(function() {
+    $(tbid).DataTable({
+       paging: false,
+       info: false,
+       order: [],
+    });
+  })
+}
 // vim:fdm=marker

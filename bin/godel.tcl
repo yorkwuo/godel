@@ -6553,7 +6553,7 @@ proc ghtm_top_bar {args} {
             <div class=\"link\" onclick=\"cwdcmd('$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
             <div class=\"link\" onclick=\"cwdcmd('$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\">New</div>
 
-    <button onclick=\"genface('$env(GODEL_ROOT)/genface/lsa.tcl','maindiv')\">ls-la</button>
+    <button onclick=\"genface('$env(GODEL_ROOT)/genface/lsa.tcl','maindiv', 'datatable', '#tbl')\">ls-la</button>
   </dialog>
   "
 }
