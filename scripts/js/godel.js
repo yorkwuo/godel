@@ -24,7 +24,8 @@
       modal.showModal()
   // PAUSE
     } else if (e.code == 'Pause') { 
-      modal.showModal()
+      //modal.showModal()
+      location.reload()
   // SCRLK
     } else if (e.which === 145) { 
       document.getElementById('iddraw').click();
@@ -2454,7 +2455,7 @@ function face (ghtm, targetid, cdpath) {
   .catch(err => console.log(err))
 }
 // genface
-function genface (ghtm, targetid) {
+function genface (ghtm, targetid, callback) {
   let url = ''
   url += 'http://localhost:5000/genface?path='+ginfo['cwd']
   url += '&ghtm='+ghtm
@@ -2466,6 +2467,9 @@ function genface (ghtm, targetid) {
     const p = document.getElementById(targetid);
     p.innerHTML = result
     listen2tables()
+    if (typeof callback === 'function') {
+      callback();
+    }
   })
   .catch(err => console.log(err))
 }
