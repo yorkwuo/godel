@@ -2455,7 +2455,7 @@ function face (ghtm, targetid, cdpath) {
   .catch(err => console.log(err))
 }
 // genface
-function genface (ghtm, targetid, callback) {
+function genface (ghtm, targetid, callback, name) {
   let url = ''
   url += 'http://localhost:5000/genface?path='+ginfo['cwd']
   url += '&ghtm='+ghtm
@@ -2468,7 +2468,7 @@ function genface (ghtm, targetid, callback) {
     p.innerHTML = result
     listen2tables()
     if (typeof callback === 'function') {
-      callback();
+      callback(name);
     }
   })
   .catch(err => console.log(err))
