@@ -1,13 +1,13 @@
-  proc addcols {sw cofunc} {
-    upvar svars svars
-    upvar cols cols
+proc addcols {sw cofunc} {
+  upvar svars svars
+  upvar cols cols
 
-    set sw [slvar $sw]
-    
-    if {$sw eq "1"} {
-      lappend cols $cofunc
-    }
+  set sw [slvar $sw]
+  
+  if {$sw eq "1"} {
+    lappend cols $cofunc
   }
+}
 # slvar
 # {{{
 proc slvar {key} {
@@ -225,7 +225,10 @@ proc sql2svars {args} {
     #append sql "LIMIT $limit OFFSET 0\n"
     append sql "LIMIT $limit\n"
   }
-  #set sql "SELECT * FROM dbtable ORDER BY age LIMIT 10"
+  
+  #set sql "SELECT * FROM dbtable WHERE date IS NOT NULL AND date != '' AND date != '1000-01-01' AND date != 'NA' ORDER BY date DESC LIMIT 500"
+  #set sql "SELECT * FROM dbtable WHERE date IS NOT NULL AND date != '' AND date != 'NA' ORDER BY date LIMIT 500"
+
   puts $sql
   
   #--------------------
