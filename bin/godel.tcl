@@ -310,7 +310,7 @@ proc sqltable {args} {
   #----------------------------------
   # Create table
   #----------------------------------
-  puts $fout "<table id=sqltable class=table1 tbltype=stable>"
+  puts $fout "<table id=sqltbl class=table1 tbltype=stable>"
   puts $fout "<thead>"
   puts $fout "<tr>"
   if {$opt(-num) eq "1"} {
@@ -365,20 +365,6 @@ proc sqltable {args} {
     incr num
   }
   puts $fout "</table>"
-
-  #set opt(-dataTables) 1
-  #if {$opt(-dataTables) eq "1"} {
-  #        puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
-  #        puts $fout "<script>"
-  #        puts $fout "    \$(document).ready(function() {"
-  #        puts $fout "    \$('#sqltable').DataTable({"
-  #        puts $fout "       \"paging\": false,"
-  #        puts $fout "       \"info\": false,"
-  #        puts $fout "       \"order\": \[\],"
-  #        puts $fout "    });"
-  #        puts $fout "} );"
-  #        puts $fout "</script>"
-  #}
 }
 # }}}
 # timeago
@@ -6556,7 +6542,7 @@ proc ghtm_top_bar {args} {
             <div class=\"link\" onclick=\"cwdcmd('$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/win.tcl')\">Win</div>
             <div class=\"link\" onclick=\"cwdcmd('$env(TCLSH) $env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\">New</div>
 
-    <button onclick=\"genface('$env(GODEL_ROOT)/genface/lsa.tcl','maindiv', 'datatable', '#tbl')\">ls-la</button>
+    <button onclick=\"genface('$env(GODEL_ROOT)/genface/lsa.tcl','maindiv', datatable, '#tbl')\">ls-la</button>
   </dialog>
   "
 }
@@ -9453,6 +9439,7 @@ proc godel_draw {args} {
     puts $fout "<link rel=\"stylesheet\" type=\"text/css\" href=\"$env(GODEL_ROOT)/etc/css/w3.css\">"
   }
   puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
+  puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
   puts $fout "<body>"
@@ -9490,7 +9477,6 @@ proc godel_draw {args} {
 
       puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/godel.js></script>"
       if {[info exist dataTables]} {
-        puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
         puts $fout "<script>"
         puts $fout "    \$(document).ready(function() {"
         puts $fout "    \$('#tbl').DataTable({"
