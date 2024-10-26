@@ -2497,8 +2497,8 @@ function cwdcmd(cmd, action='NA') {
 
   const dir = dirname(window.location.pathname);
 
-  //var cmd2 = encodeURIComponent(cmd)
-  var cmd2 = cmd
+  var cmd2 = encodeURIComponent(cmd)
+  //var cmd2 = cmd
 
   let url = ''
   url += 'http://localhost:5000/execmd?path='+dir
