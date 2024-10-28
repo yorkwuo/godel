@@ -622,7 +622,7 @@ proc genface {args} {
   }
 # }}}
   file delete $env(HOME)/o.html
-  puts $fout "<div class=\"w3-btn w3-round-large\" onclick=\"genface('$cmd','$resultid')\">$name<br>"
+  puts $fout "<div class=\"w3-btn w3-round-large\" onclick=\"genface('$cmd','$resultid',datatable,'#tbl')\">$name<br>"
   puts $fout "<img src='$icon' height=50px>"
   puts $fout "</div>"
 }
@@ -5467,7 +5467,7 @@ proc gexe_button {args} {
     if {$opt(-nowin) eq "1"} {
       puts $fout "onclick=\"cwdcmd('$cmd','$action')\""
     } else {
-      puts $fout "onclick=\"cwdcmd('xterm $holdopt -e \\\'$cmd\\\'','$action')\""
+      puts $fout "onclick=\"cwdcmd('xterm $holdopt -geometry 130x25+0+0 -e \\\'$cmd\\\'','$action')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
 # Edit
@@ -5488,7 +5488,7 @@ proc gexe_button {args} {
     if {$opt(-nowin) eq "1"} {
       puts $fout "onclick=\"cwdcmd('$cmd','$action')\""
     } else {
-      puts $fout "onclick=\"cwdcmd('xterm $holdopt -e \\\'$cmd\\\'','$action')\""
+      puts $fout "onclick=\"cwdcmd('xterm $holdopt -geometry 130x25+0+0 -e \\\'$cmd\\\'','$action')\""
     }
     puts $fout "class=\"w3-btn w3-round-large\" src=$icon height=50px>"
     puts $fout "</div>"
