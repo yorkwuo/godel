@@ -1698,18 +1698,6 @@ function copy_path() {
 }
 // }}}
 
-var flows = {
-    //"flow": ['fln','hide','notes','anotes', 'checklist', 'dict', 'docs', 'exebutt', 'filebrowser', 'flist', 'issues'],
-    "flow": ['fln','zoomsvg','hide','simple','notes','anotes', 'checklist','filebrowser', 'flist', 'issues', 'hcj', 'toc'],
-    //"sch": ['field', 'hide'],
-    //"tpl": ['pst','nocode','book','nation','cmic']
-};
-
-var cur_flow1 = "";
-var cur_flow2 = "";
-    
-
-     
 // fdstatus
 // {{{
 function fdstatus () {
@@ -1785,6 +1773,8 @@ function flow2_click () {
   }
 }
 // }}}
+// goglobal
+// {{{
 function goglobal () {
 
   let url = ""
@@ -1794,57 +1784,6 @@ function goglobal () {
 
   fetch(url)
 
-}
-// flow1_click
-// {{{
-function flow1_click () {
-  var data = '';
-  data += '<input class=w3-input type="text" id=newpage_name>\n';
-  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="gui_newpage()">New</button>';
-  data += '<pre>' + ginfo["srcpath"] + '</pre>\n';
-  data += '<pre>' + ginfo["last_updated"] + '</pre>\n';
-  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="obless()">Bless</button>';
-  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="fdco()">Pull</button>';
-  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="fdstatus()">Status</button>';
-  data += '<button class="w3-ripple w3-btn w3-white w3-border w3-border-blue w3-round-large" onclick="goglobal()">Global</button><br>';
-  Object.keys(flows).forEach(function(k){
-    data += '<button class=\"gbtn_flow1 w3-button w3-round w3-light-gray w3-normal\" onoff=0>' + k + '</button>';
-  })
-  document.getElementById("flow1_section").innerHTML = data;
-
-  var gbtns = document.getElementsByClassName("gbtn_flow1");
-  if (typeof(gbtns) != 'undefined' && gbtns != null) {
-    for (var k = 0; k < gbtns.length; k++) {
-  
-        gbtns[k].addEventListener('click', function(){
-  
-          var data = "";
-          var kk = this.innerText;
-          cur_flow1 = kk;
-          var btns = document.getElementsByClassName("gbtn_flow1");
-          for (var k = 0; k < btns.length; k++) {
-            var flow1 = btns[k].innerText;
-            if (flow1 == kk) {
-              btns[k].className = "gbtn_flow1 w3-button w3-round w3-light-blue w3-large";
-              btns[k].setAttribute("onoff","1");
-  
-              flows[flow1].forEach(function(flow2){
-                data += '<button class=\"gbtn_flow2 w3-button w3-round w3-light-gray w3-normal\" onoff=0>' + flow2 + '</button>';
-              });
-  
-              document.getElementById("flow2_section").innerHTML = data;
-              
-              flow2_click();
-            } else {
-              btns[k].className = "gbtn_flow1 w3-button w3-round w3-light-gray w3-normal";
-              btns[k].setAttribute("onoff","0");
-            }
-          }
-  
-  
-        })
-    }
-  }
 }
 // }}}
 // mailout
@@ -2274,7 +2213,8 @@ function xcmdline(fullpath, cmd, param) {
 
   fetch(url);
 }
-
+// lsearch
+// {{{
 function lsearch() {
 
   const input = document.getElementById('sinput');
@@ -2304,7 +2244,7 @@ function lsearch() {
   })
   .catch(err => console.log(err))
 }
-
+// }}}
 
 function basename(path) {
    return path.split('/').reverse()[0];
@@ -2314,7 +2254,8 @@ function dirname(path) {
   return path.match(/(.*)[\/\\]/)[1]||'';
 }
 
-// add event listener to tables
+// listen2tables:add event listener to tables
+// {{{
 function listen2tables () {
   // Add event to highlight modified cells in tables
   //var tables = document.getElementsByTagName('table');
@@ -2439,7 +2380,9 @@ function listen2tables () {
     }
   }
 }
+// }}}
 // face
+// {{{
 function face (ghtm, targetid, cdpath) {
   let url = ''
   url += 'http://localhost:5000/face?path='+cdpath
@@ -2454,7 +2397,9 @@ function face (ghtm, targetid, cdpath) {
   })
   .catch(err => console.log(err))
 }
+// }}}
 // genface
+// {{{
 function genface (ghtm, targetid, callback, name) {
   let url = ''
   url += 'http://localhost:5000/genface?path='+ginfo['cwd']
@@ -2470,12 +2415,14 @@ function genface (ghtm, targetid, callback, name) {
     if (typeof callback === 'function') {
       callback(name);
     } else {
-      console.log(callback)
+      console.log('No callback function.')
     }
   })
   .catch(err => console.log(err))
 }
+// }}}
 // execmd
+// {{{
 function execmd(dir, cmd) {
 
   var cmd2 = encodeURIComponent(cmd)
@@ -2491,8 +2438,9 @@ function execmd(dir, cmd) {
   fetch(url)
   .catch(err => console.log(err))
 }
-
+// }}}
 // cwdcmd
+// {{{
 function cwdcmd(cmd, action='NA') {
 
   const dir = dirname(window.location.pathname);
@@ -2512,7 +2460,7 @@ function cwdcmd(cmd, action='NA') {
   })
   .catch(err => console.log(err))
 }
-
+// }}}
 // toggle_switch
 // {{{
 function toggle_switch (e, bgcolor) {
@@ -2603,8 +2551,32 @@ function sql_set (e,action='NA') {
   const dbtable = 'dbtable'
   const key     = e.getAttribute('key')
   const value   = e.getAttribute('value')
-  const idname  = e.getAttribute('idname')
-  const idvalue = e.getAttribute('idvalue')
+
+  let url = ''
+  url += 'http://localhost:5000/sqlupdate?dbpath='+dbpath
+  url += '&dbtable='+'ltable'
+  url += '&key='+ key
+  url += '&value='+value
+
+  fetch(url)
+  .then(result => {
+    if (action === 'reload') {
+      location.reload()
+    }
+  })
+  .catch(err => console.log(err))
+}
+// }}}
+// sql_lsv
+// {{{
+function sql_lsv (e,action='NA') {
+  const cwd = dirname(window.location.pathname);
+  const dbpath  = cwd + '/dbfile.db'
+
+  const dbtable = 'dbtable'
+  const key     = e.getAttribute('key')
+  //const value   = e.getAttribute('value')
+  const value   = e.innerText;
 
   let url = ''
   url += 'http://localhost:5000/sqlupdate?dbpath='+dbpath
@@ -2622,6 +2594,7 @@ function sql_set (e,action='NA') {
 }
 // }}}
 // save_td
+// {{{
 function save_td(e) {
   const cwd = dirname(window.location.pathname);
   const dbpath  = cwd + '/dbfile.db'
@@ -2631,7 +2604,14 @@ function save_td(e) {
   const value   = e.innerText
   const idname  = e.getAttribute('wherecol')
   const idvalue = e.getAttribute('whereval')
+  const row     = e.getAttribute('row')
+  //const rowid   = e.getAttribute('rowid')
   var   changed = e.getAttribute('changed')
+
+  console.log('key:'+key)
+  console.log('idname:'+idname)
+  console.log('idvalue:'+idvalue)
+  console.log('row:'+row)
 
   if (changed) {
     let url = ''
@@ -2645,10 +2625,12 @@ function save_td(e) {
     fetch(url)
     .catch(err => console.log(err))
 
-    cwdcmd(`lsetvar ${idvalue} ${key} '${value}'`)
+    cwdcmd(`lsetvar ${row} ${key} '${value}'`)
   }
 }
-
+// }}}
+// datatable
+// {{{
 function datatable(tbid) {
   $(document).ready(function() {
     $(tbid).DataTable({
@@ -2658,4 +2640,5 @@ function datatable(tbid) {
     });
   })
 }
+// }}}
 // vim:fdm=marker

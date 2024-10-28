@@ -1,3 +1,60 @@
+proc ghtm_keyvalue {args} {
+  upvar fout fout
+  upvar svars svars
+  # -width
+# {{{
+  set opt(-width) 0
+  set idx [lsearch $args {-width}]
+  if {$idx != "-1"} {
+    set width [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-width) 1
+  } else {
+    set width 20px
+  }
+# }}}
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name NA
+  }
+# }}}
+  # -class
+# {{{
+  set opt(-class) 0
+  set idx [lsearch $args {-class}]
+  if {$idx != "-1"} {
+    set class [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-class) 1
+  } else {
+    set class NA
+  }
+# }}}
+
+  set key [lindex $args 0]
+  if {$name eq "NA"} {
+    set name $key
+  }
+
+  set value [slvar $key]
+  if {$value eq "NA"} {
+    set value ""
+  }
+
+  puts $fout "<div style='display:flex;margin-top:5px'>"
+    puts $fout "<div class='key w3-round $class' style='min-width:$width'>\($key)$name</div>"
+    puts $fout "<div class=value key=$key onblur=\"sql_lsv(this)\" 
+    style='min-width:50px' contenteditable=true><pre>$value</pre></div>"
+  puts $fout "</div>"
+}
+
 proc addcols {sw cofunc} {
   upvar svars svars
   upvar cols cols
@@ -130,7 +187,8 @@ proc stbl_D {} {
 
   set rowid [gvar $row rowid]
 
-  puts $fout "<td rowid='$rowid' colname='DEL'
+  puts $fout "<td rowid='$rowid'
+  onclick=\"\"
   style='cursor:pointer'
   >D</td>"
   
@@ -138,18 +196,32 @@ proc stbl_D {} {
 # }}}
 # stbl_ed
 # {{{
-proc stbl_ed {name} {
+proc stbl_ed {args} {
   upvar row row
   upvar svars svars
   upvar fout fout
+  # -pkey (primary key)
+# {{{
+  set opt(-pkey) 0
+  set idx [lsearch $args {-pkey}]
+  if {$idx != "-1"} {
+    set pkey [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-pkey) 1
+  } else {
+    set pkey rowid
+  }
+# }}}
+
+  set name [lindex $args 0]
 
   set value [gvar $row $name]
-  set rowid [gvar $row rowid]
+  set v_rowid [gvar $row rowid]
 
   if {$value eq "NA"} {
     set value ""
   }
-  puts $fout "<td rowid='$rowid' colname='$name' wherecol='code' whereval='$row'
+  puts $fout "<td v_rowid='$v_rowid' colname='$name' wherecol='$pkey' whereval='$v_rowid' row='$row'
   onblur=\"save_td(this)\"
   contenteditable=\"true\"><pre style=\"white-space:pre\">$value</pre></td>"
 }
@@ -310,7 +382,7 @@ proc sqltable {args} {
   #----------------------------------
   # Create table
   #----------------------------------
-  puts $fout "<table id=sqltbl class=table1 tbltype=stable>"
+  puts $fout "<table id=tbl class=table1 tbltype=stable>"
   puts $fout "<thead>"
   puts $fout "<tr>"
   if {$opt(-num) eq "1"} {
