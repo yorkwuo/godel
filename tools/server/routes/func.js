@@ -19,8 +19,9 @@ router.get('/face', (req, res) => {
   console.log(homedir)
 
 // change directory
-  const { exec } = require("child_process");
   process.chdir(path);
+
+  const { exec } = require("child_process");
 
   const scriptPath = 'adhoc_draw.tcl';
   const outputPath = `${homedir}/o.html`;
@@ -110,28 +111,104 @@ router.get('/execmd', (req, res) => {
   const path = req.query.path;
   const cmd  = req.query.cmd;
 
+  
+  console.log(path)
   console.log(cmd)
 
 // change directory
-  const { exec } = require("child_process");
   process.chdir(path);
 
-  // Execute the script with parameters
-  exec(`${cmd}`, (error, stdout, stderr) => {
-      if (error) {
-          console.error(`Error executing script: ${error.message}`);
-          //return res.status(500).send(`Error executing script: ${error.message}`);
-      }
-      if (stderr) {
-          console.error(`Script error output: ${stderr}`);
-          //return res.status(500).send(`Script error output: ${stderr}`);
-      }
+  //const { exec } = require("child_process");
 
-      return res.json({ status: 'success' });
-  });
+  //// Execute the script with parameters
+  //exec(`${cmd}`, (error, stdout, stderr) => {
+  //    if (error) {
+  //        console.error(`Error executing script: ${error.message}`);
+  //        //return res.status(500).send(`Error executing script: ${error.message}`);
+  //    }
+  //    if (stderr) {
+  //        console.error(`Script error output: ${stderr}`);
+  //        //return res.status(500).send(`Script error output: ${stderr}`);
+  //    }
+
+  //    return res.json({ status: 'success' });
+  //});
+  const { spawn } = require('child_process');
+  const script = spawn(cmd, {
+    shell: true,
+    detached: true,
+    stdio: 'ignore'
+  })
+
+  script.unref()
+
 });
 // }}}
+//--------------------
+// base64img
+//--------------------
+// {{{
+router.post('/base64img', (req, res) => {
+    const base64Data = req.body.image;
+    const dir        = req.body.dir;
+    console.log(dir)
 
+    // change directory
+    process.chdir(dir);
+
+    // Specify the image file path (e.g., save to /uploads/image.png)
+    //const filePath = path.join(__dirname, 'uploads', 'image.png');
+    const filePath = 'image.png'
+
+    // Convert base64 to binary data
+    const imageBuffer = Buffer.from(base64Data, 'base64');
+
+    // Write the binary data to a file
+    fs.writeFile(filePath, imageBuffer, (err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Failed to save image', error: err });
+        }
+        res.json({ message: 'Image uploaded successfully', path: filePath });
+    });
+});
+// }}}
+//-------------------------------------------------
+// sqlupdate
+//-------------------------------------------------
+// {{{
+router.get('/sqlupdate', (req, res) => {
+  const dbpath  = req.query.dbpath;
+  const dbtable = req.query.dbtable;
+  const key     = req.query.key;
+  const value   = req.query.value;
+  const idname  = req.query.idname;
+  const idvalue = req.query.idvalue;
+
+  const sqlite3 = require("sqlite3").verbose();
+  console.log(dbpath)
+  var db =  new sqlite3.Database(dbpath);
+
+  if (idname === undefined) {
+    console.log('sqlupdate: set ltable')
+    db.run(`INSERT OR IGNORE INTO ${dbtable} (key) VALUES ('${key}')`);
+    db.run(`UPDATE ${dbtable} SET value='${value}' WHERE key='${key}'`);
+    console.log(`INSERT OR IGNORE INTO ${dbtable} (key) VALUES ('${key}')`)
+    console.log(`UPDATE ${dbtable} SET value='${value}' WHERE key='${key}'`)
+  } else {
+    console.log('sqlupdate: update where')
+    var sql = `UPDATE ${dbtable} SET '${key}'='${value}' WHERE ${idname}='${idvalue}'`
+    console.log(sql)
+    db.all(sql, (err) => {
+      if (err) {
+        return res.status(500).json({ status: 'error', message: err.message });
+      }
+    });
+  }
+
+
+  return res.json({status: 'success'})
+});
+// }}}
 
 module.exports = router;
 
