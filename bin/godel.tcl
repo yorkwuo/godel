@@ -113,10 +113,10 @@ proc ghtm_sql_switch {args} {
   }
 
   if {$key2 eq "1"} {
-    puts $fout "<div class='w3-btn w3-red' key='$key' 
+    puts $fout "<div class='w3-btn w3-red w3-round' key='$key' 
                      value='1' onclick=\"sql_switch(this,'reload')\">$name</div>"
   } else {
-    puts $fout "<div class='w3-btn w3-gray' key='$key' 
+    puts $fout "<div class='w3-btn w3-gray w3-round' key='$key' 
                      value='0' onclick=\"sql_switch(this,'reload')\">$name</div>"
   }
 }
@@ -430,7 +430,7 @@ proc sqltable {args} {
         eval $procname
       # default
       } else {
-        puts $fout "<td>$svars($row,$col)</td>"
+        puts $fout "<td><pre style='white-space:pre'>$svars($row,$col)</pre></td>"
       }
     }
     puts $fout "</tr>"

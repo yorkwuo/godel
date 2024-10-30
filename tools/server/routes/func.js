@@ -79,7 +79,7 @@ router.get('/genface', (req, res) => {
 
 
   // Execute the script with parameters
-  exec(`${ghtm}`, (error, stdout, stderr) => {
+  exec(`${ghtm}`,{ maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
       if (error) {
           console.error(`Error executing script: ${error.message}`);
           //return res.status(500).send(`Error executing script: ${error.message}`);
