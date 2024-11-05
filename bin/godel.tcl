@@ -1,3 +1,5 @@
+# ghtm_keyvalue
+# {{{
 proc ghtm_keyvalue {args} {
   upvar fout fout
   upvar svars svars
@@ -54,7 +56,9 @@ proc ghtm_keyvalue {args} {
     style='min-width:50px' contenteditable=true><pre>$value</pre></div>"
   puts $fout "</div>"
 }
-
+# }}}
+# addcols 
+# {{{
 proc addcols {sw cofunc} {
   upvar svars svars
   upvar cols cols
@@ -65,6 +69,7 @@ proc addcols {sw cofunc} {
     lappend cols $cofunc
   }
 }
+# }}}
 # slvar
 # {{{
 proc slvar {key} {
@@ -276,6 +281,17 @@ proc sql2svars {args} {
     set opt(-random) 1
   }
 # }}}
+  # -incr
+# {{{
+  set opt(-incr) 0
+  set idx [lsearch $args {-incr}]
+  if {$idx != "-1"} {
+    set args [lreplace $args $idx $idx]
+    set direction ASC
+  } else {
+    set direction DESC
+  }
+# }}}
 
   package require sqlite3
 
@@ -289,7 +305,7 @@ proc sql2svars {args} {
   if {$opt(-orderby) eq "1"} {
     append sql "ORDER BY $orderby\n"
   }
-    append sql "DESC\n"
+    append sql "$direction\n"
   if {$opt(-random) eq "1"} {
     append sql "ORDER BY RANDOM()\n"
   }
@@ -298,7 +314,7 @@ proc sql2svars {args} {
     append sql "LIMIT $limit\n"
   }
   
-  #set sql "SELECT * FROM dbtable WHERE date IS NOT NULL AND date != '' AND date != '1000-01-01' AND date != 'NA' ORDER BY date DESC LIMIT 500"
+ # set sql "SELECT * FROM dbtable WHERE date IS NOT NULL AND date != '' AND date != '1000-01-01' AND date != 'NA' ORDER BY date DESC LIMIT 500"
   #set sql "SELECT * FROM dbtable WHERE date IS NOT NULL AND date != '' AND date != 'NA' ORDER BY date LIMIT 500"
 
   puts $sql
@@ -9538,7 +9554,7 @@ proc godel_draw {args} {
       source .godel/ghtm.tcl
     } else {
       set kout [open .godel/ghtm.tcl w]
-        puts $kout "ghtm_top_bar -save"
+        puts $kout "ghtm_top_bar"
         puts $kout "pathbar 2"
         puts $kout "gmd 1.md"
       close $kout
