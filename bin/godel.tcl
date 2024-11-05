@@ -108,6 +108,32 @@ proc ghtm_sql_switch {args} {
     set val(-key) ""
   }
 # }}}
+  # -oncolor
+# {{{
+  set opt(-oncolor) 0
+  set idx [lsearch $args {-oncolor}]
+  if {$idx != "-1"} {
+    set oncolor [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-oncolor) 1
+  } else {
+    set val(-oncolor) ""
+    set oncolor w3-red
+  }
+# }}}
+  # -offcolor
+# {{{
+  set opt(-offcolor) 0
+  set idx [lsearch $args {-offcolor}]
+  if {$idx != "-1"} {
+    set offcolor [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-offcolor) 1
+  } else {
+    set val(-offcolor) ""
+    set offcolor w3-gray
+  }
+# }}}
   upvar fout fout
   upvar svars svars
 
@@ -118,10 +144,10 @@ proc ghtm_sql_switch {args} {
   }
 
   if {$key2 eq "1"} {
-    puts $fout "<div class='w3-btn w3-red w3-round' key='$key' 
+    puts $fout "<div class='w3-btn $oncolor w3-round' key='$key' 
                      value='1' onclick=\"sql_switch(this,'reload')\">$name</div>"
   } else {
-    puts $fout "<div class='w3-btn w3-gray w3-round' key='$key' 
+    puts $fout "<div class='w3-btn $offcolor w3-round' key='$key' 
                      value='0' onclick=\"sql_switch(this,'reload')\">$name</div>"
   }
 }
@@ -4748,12 +4774,12 @@ proc linkbox {args} {
   }
 
   if {$opt(-name) eq "1"} {
-    set dispname  $val(-name)<br>
+    set dispname  $val(-name)
   } else {
     if {$opt(-icon) eq "1"} {
       set dispname  ""
     } else {
-      set dispname  "$name<br>"
+      set dispname  "$name"
     }
   }
 
@@ -4772,9 +4798,11 @@ proc linkbox {args} {
     if {$opt(-icon) ne "1"} {
       set icon $env(GODEL_ROOT)/icons/file.png
     }
-    puts $fout "<div class=\"w3-btn w3-round-large\"
+    puts $fout "<div style='display:flex;flex-direction:column;text-align:center'>"
+    puts $fout "<div>$dispname</div><div class=\"w3-btn w3-round-large\"
     onclick=\"cmdline('$cwd','gvim','$target')\">
-    $dispname<img src=$icon height=$height></div>"
+    <img src=$icon height=$height></div>"
+    puts $fout "</div>"
   } else {
     if {$opt(-icon) ne "1"} {
       set coverfile [glob -nocomplain $dir/cover.*]
@@ -4784,9 +4812,12 @@ proc linkbox {args} {
         set icon $coverfile
       }
     }
-    puts $fout "<a class=\"w3-btn w3-round-large w3-hover-red\"
-    style=\"text-decoration:none;\" href=\"$target\">
-    $dispname<img src=$icon height=$height></a>"
+    puts $fout "<div style='display:flex;flex-direction:column;text-align:left'>"
+    puts $fout "<div>$dispname</div>"
+    puts $fout "<a class=\"w3-hover-red w3-round\"
+    href=\"$target\">
+    <img src=$icon height=$height></a>"
+    puts $fout "</div>"
   }
 }
 # }}}
