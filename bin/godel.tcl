@@ -4812,7 +4812,7 @@ proc linkbox {args} {
         set icon $coverfile
       }
     }
-    puts $fout "<div style='display:flex;flex-direction:column;text-align:left'>"
+    puts $fout "<div style='display:flex;flex-direction:column;text-align:center'>"
     puts $fout "<div>$dispname</div>"
     puts $fout "<a class=\"w3-hover-red w3-round\"
     href=\"$target\">
