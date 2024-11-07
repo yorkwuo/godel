@@ -1,3 +1,69 @@
+# flowbox
+# {{{
+proc flowbox {args} {
+  upvar fout fout
+  global env
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name "NA"
+  }
+# }}}
+  # -icon
+# {{{
+  set opt(-icon) 0
+  set idx [lsearch $args {-icon}]
+  if {$idx != "-1"} {
+    set icon [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-icon) 1
+  } else {
+    set icon $env(GODEL_ROOT)/icons/folder.png
+  }
+# }}}
+  # -target
+# {{{
+  set opt(-target) 0
+  set idx [lsearch $args {-target}]
+  if {$idx != "-1"} {
+    set target [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-target) 1
+  } else {
+    set target $name
+  }
+# }}}
+  # -cmd
+# {{{
+  set opt(-cmd) 0
+  set idx [lsearch $args {-cmd}]
+  if {$idx != "-1"} {
+    set cmd [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-cmd) 1
+  } else {
+    set cmd NA
+  }
+# }}}
+
+  puts $fout "<div style='display:flex'>"
+  if [file exist $target] {
+    puts $fout "<a href=$target/.index.htm><img src=$icon height=50px width=50px></img></a>"
+    puts $fout "<div class='w3-btn' style='align-content:center'><a class='w3-indigo w3-large w3-round' style='padding:5px;text-decoration:none' href=$target/.index.htm>$name</a></div>"
+  } else {
+    puts $fout "<img src=$icon height=50px width=50px></img>"
+    puts $fout "<div style='align-content:center' class='w3-btn' onclick=\"cwdcmd('$cmd')\"><div style='color:gray'>$name</div></div>"
+  }
+  puts $fout "</div>"
+
+}
+# }}}
 # ghtm_keyvalue
 # {{{
 proc ghtm_keyvalue {args} {
@@ -4800,7 +4866,7 @@ proc linkbox {args} {
     }
     puts $fout "<div style='display:flex;flex-direction:column;text-align:center'>"
     puts $fout "<div>$dispname</div><div class=\"w3-btn w3-round-large\"
-    onclick=\"cmdline('$cwd','gvim','$target')\">
+    onclick=\"cwdcmd('gvim $target')\">
     <img src=$icon height=$height></div>"
     puts $fout "</div>"
   } else {
