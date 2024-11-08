@@ -8056,6 +8056,7 @@ proc local_table {tableid args} {
         #set rows [read_as_list $listfile]
         set kin [open $listfile r]
 
+        set flistrows ""
         while {[gets $kin line] >= 0} {
           if {[regexp {^\s*#} $line]} {
           } elseif {[regexp {^\s*$} $line]} {
@@ -8065,7 +8066,11 @@ proc local_table {tableid args} {
           }
         }
         close $kin
-        set rows $flistrows
+        if {$flistrows eq ""} {
+          set rows [glob -nocomplain -type d *]
+        } else {
+          set rows $flistrows
+        }
       }
     } elseif {$opt(-f)} {
       if [file exist $listfile] {

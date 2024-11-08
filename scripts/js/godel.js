@@ -23,9 +23,11 @@
     } else if (e.altKey && e.key === '[') {
       modal.showModal()
   // PAUSE
-    } else if (e.code == 'Pause') { 
-      //modal.showModal()
+    } else if (e.which == 19) { 
       location.reload()
+  // DEL
+    } else if (e.which == 46) { 
+      modal.showModal()
   // SCRLK
     } else if (e.which === 145) { 
       document.getElementById('iddraw').click();
