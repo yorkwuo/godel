@@ -27,7 +27,13 @@
       location.reload()
   // DEL
     } else if (e.which == 46) { 
+      location.reload()
+  // INS
+    } else if (e.which == 45) { 
       modal.showModal()
+  // HOME
+    } else if (e.which == 36) { 
+      history.back()
   // SCRLK
     } else if (e.which === 145) { 
       document.getElementById('iddraw').click();
