@@ -5,7 +5,7 @@ exec xdotool search --name "Mozilla" windowactivate --sync key Alt+d
 after 100
 exec xdotool key Ctrl+c
 after 100
-#exec xdotool key Tab
+exec xdotool key F6
 
 catch {exec xclip -o} pp
 
