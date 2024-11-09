@@ -948,7 +948,7 @@ proc ghtm_kvp {args} {
     set args [lreplace $args $idx [expr $idx + 1]]
     set opt(-type) 1
   } else {
-    set type "100px"
+    set type "NA"
   }
 # }}}
   # -lpath
@@ -6678,6 +6678,7 @@ proc ghtm_top_bar {args} {
   puts $fout "  <div class=\"header-item\" id=\"idbutton\" onclick=\"g_save()\" >Save</div>"
   puts $fout "  <a   class=\"header-item\" href=\"../.index.htm\" style='text-decoration:none'>Up</a>"
   puts $fout "  <div class=\"header-item\" onclick=\"topFunction()\">Top</div>"
+  puts $fout "  <div class=\"header-item\" onclick=\"cwdcmd('$env(GODEL_ROOT)/bin/goto.tcl')\">Goto</div>"
   puts $fout "  <div style='flex-grow:1;'></div>"
   puts $fout "  <div class=\"dropdown\" data-dropdown>"
   puts $fout "     <div class=\"link\" style='padding: .0rem .8rem .0rem .8rem; border: 1px none;' data-dropdown-button>"
