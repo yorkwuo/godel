@@ -35,17 +35,12 @@
     } else if (e.which == 36) { 
       history.back()
   // SCRLK
-    } else if (e.which === 145) { 
-      document.getElementById('iddraw').click();
+    } else if (e.which == 145) { 
+      //document.getElementById('iddraw').click();
+      console.log('scrlk')
   // PRTSC
-    } else if (e.which === 42) { 
+    } else if (e.which == 42) { 
       document.getElementById('idbutton').click();
-  // Alt 3
-  //  } else if (e.altKey && e.which == 51) {
-  //    document.getElementById('idbutton').click();
-  // Alt 1
-  //  } else if (e.altKey && e.which == 49) {
-  //    document.getElementById('idplay').click();
     }
   };
   

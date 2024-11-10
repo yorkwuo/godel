@@ -54,8 +54,9 @@ proc flowbox {args} {
 
   puts $fout "<div style='display:flex'>"
   if [file exist $target] {
-    puts $fout "<a href=$target/.index.htm><img src=$icon height=50px width=50px></img></a>"
-    puts $fout "<div class='w3-btn' style='align-content:center'><a class='w3-indigo w3-large w3-round' style='padding:5px;text-decoration:none' href=$target/.index.htm>$name</a></div>"
+    puts $fout "<a href=$target/.index.htm><img src=$icon height=50px width=50px ></img></a>"
+    puts $fout "<div class='w3-btn' style='align-content:center'><a class='w3-large w3-round'
+    style='background-color:#a47cd2;color:white;padding:5px;text-decoration:none' href=$target/.index.htm>$name</a></div>"
   } else {
     puts $fout "<img src=$icon height=50px width=50px></img>"
     puts $fout "<div style='align-content:center' class='w3-btn' onclick=\"cwdcmd('$cmd')\"><div style='color:gray'>$name</div></div>"
@@ -4833,12 +4834,6 @@ proc linkbox {args} {
   set cwd [pwd]
   set name [lindex $args 0]
 
-  if {$opt(-chk) eq "1"} {
-    if ![file exist $name] {
-      return
-    }
-  }
-
   if {$opt(-name) eq "1"} {
     set dispname  $val(-name)
   } else {
@@ -4853,6 +4848,13 @@ proc linkbox {args} {
     set target $val(-target)
   } else {
     set target $name/.index.htm
+  }
+
+  if {$opt(-chk) eq "1"} {
+    puts $target
+    if ![file exist $target] {
+      return
+    }
   }
 
   set dir [file dirname $target]
