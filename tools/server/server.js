@@ -160,7 +160,9 @@ app.use('/', require('./routes/func.js'));
 const port = process.env.GODEL_SERVER_PORT;
 
 // Server setup
-app.listen(port, () => `Server running on port ${port}`);
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`)
+});
 
 
 // vim:fdm=marker
