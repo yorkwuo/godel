@@ -1,4 +1,11 @@
 
+  if (typeof GODEL_SERVER_PORT === 'undefined') {
+    var GODEL_SERVER = 'http://localhost:5000'
+  } else {
+    var GODEL_SERVER = 'http://localhost:'+GODEL_SERVER_PORT
+  }
+  console.log(GODEL_SERVER)
+
   const modal       = document.querySelector("[data-modal]")
   
   // Key binded to edit and draw
@@ -1357,8 +1364,12 @@ function at_open (atfname,id) {
 // openfile
 // {{{
 function openfile (pp) {
-  console.log(pp)
-  const url = 'http://127.0.0.1:5000/openfile?filepath='+pp;
+  if (typeof GODEL_SERVER_PORT === 'undefined') {
+    var port = 5000
+  } else {
+    var port = GODEL_SERVER_PORT
+  }
+  const url = `http://127.0.0.1:${port}/openfile?filepath=`+pp;
 
   fetch(url)
   .catch(err => console.log(err))
@@ -1780,8 +1791,13 @@ function flow2_click () {
 // {{{
 function goglobal () {
 
+  if (typeof GODEL_SERVER_PORT === 'undefined') {
+    var port = 5000
+  } else {
+    var port = GODEL_SERVER_PORT
+  }
   let url = ""
-  url += 'http://127.0.0.1:5000/goglobal?cwd='+ginfo['cwd']
+  url += GODEL_SERVER + '/goglobal?cwd='+ginfo['cwd']
 
   console.log(url)
 
@@ -2064,7 +2080,12 @@ function mpvplay(fpath, code) {
 
   console.log(fpath)
 
-  const url = 'http://127.0.0.1:5000/mpvplay?filepath='+fpath;
+  if (typeof GODEL_SERVER_PORT === 'undefined') {
+    var port = 5000
+  } else {
+    var port = GODEL_SERVER_PORT
+  }
+  const url = GODEL_SERVER + '/mpvplay?filepath='+fpath;
 
   fetch(url)
   .catch(err => console.log(err))
@@ -2079,8 +2100,8 @@ function jsplay(fpath, code) {
 
   var ff = encodeURIComponent(fpath)
 
-  const url = 'http://127.0.0.1:5000/play1?filepath='+ff+'&code='+code;
-  //const url = 'http://127.0.0.1:5000/mpvplay?filepath='+fpath;
+  const url = GODEL_SERVER + '/play1?filepath='+ff+'&code='+code;
+  //const url = GODEL_SERVER + '/mpvplay?filepath='+fpath;
   console.log(url)
 
   fetch(url)
@@ -2091,7 +2112,7 @@ function jsplay(fpath, code) {
 // {{{
 function delfile(fpath) {
   console.log(fpath)
-  const url = 'http://127.0.0.1:5000/delfile?filepath='+fpath;
+  const url = GODEL_SERVER + '/delfile?filepath='+fpath;
 
   fetch(url)
   .catch(err => console.log(err))
@@ -2204,15 +2225,25 @@ function zoom(e){
 function cmdline(fullpath, cmd, param) {
   //const encodedParam = encodeURIComponent(param)
   //console.log(encodedParam)
-  const url = 'http://127.0.0.1:5000/cmdline?fullpath='+fullpath+'&cmd='+cmd+'&param='+param;
-  //const url = 'http://127.0.0.1:5000/cmdline?fullpath='+fullpath+'&cmd='+cmd+'&param='+encodedParam;
+  if (typeof GODEL_SERVER_PORT === 'undefined') {
+    var port = 5000
+  } else {
+    var port = GODEL_SERVER_PORT
+  }
+  const url = GODEL_SERVER + '/cmdline?fullpath='+fullpath+'&cmd='+cmd+'&param='+param;
+  //const url = GODEL_SERVER + '/cmdline?fullpath='+fullpath+'&cmd='+cmd+'&param='+encodedParam;
 
   fetch(url);
 }
 // xcmdline
 function xcmdline(fullpath, cmd, param) {
   console.log('kk')
-  const url = 'http://127.0.0.1:5000/xcmdline?fullpath='+fullpath+'&cmd='+cmd+'&param='+param;
+  if (typeof GODEL_SERVER_PORT === 'undefined') {
+    var port = 5000
+  } else {
+    var port = GODEL_SERVER_PORT
+  }
+  const url = GODEL_SERVER + '/xcmdline?fullpath='+fullpath+'&cmd='+cmd+'&param='+param;
 
   fetch(url);
 }
@@ -2222,8 +2253,13 @@ function lsearch() {
 
   const input = document.getElementById('sinput');
   //var ff = encodeURIComponent(fpath)
+  if (typeof GODEL_SERVER_PORT === 'undefined') {
+    var port = 5000
+  } else {
+    var port = GODEL_SERVER_PORT
+  }
   let txt = ""
-  txt += 'http://127.0.0.1:5000/lsearch?keywords='+input.value
+  txt += GODEL_SERVER + '/lsearch?keywords='+input.value
   txt += '&dbpath='+ginfo['cwd']+'/.dbfile.db'
   const url = txt
 
@@ -2387,8 +2423,13 @@ function listen2tables () {
 // face
 // {{{
 function face (ghtm, targetid, cdpath) {
+  if (typeof GODEL_SERVER_PORT === 'undefined') {
+    var port = 5000
+  } else {
+    var port = GODEL_SERVER_PORT
+  }
   let url = ''
-  url += 'http://localhost:5000/face?path='+cdpath
+  url += GODEL_SERVER + '/face?path='+cdpath
   url += '&ghtm='+ghtm
 
   fetch(url)
@@ -2404,8 +2445,13 @@ function face (ghtm, targetid, cdpath) {
 // genface
 // {{{
 function genface (ghtm, targetid, callback, name) {
+  if (typeof GODEL_SERVER_PORT === 'undefined') {
+    var port = 5000
+  } else {
+    var port = GODEL_SERVER_PORT
+  }
   let url = ''
-  url += 'http://localhost:5000/genface?path='+ginfo['cwd']
+  url += GODEL_SERVER + '/genface?path='+ginfo['cwd']
   url += '&ghtm='+ghtm
   //console.log(url)
 
@@ -2431,7 +2477,7 @@ function execmd(dir, cmd) {
   var cmd2 = encodeURIComponent(cmd)
 
   let url = ''
-  url += 'http://localhost:5000/execmd?path='+dir
+  url += GODEL_SERVER + '/execmd?path='+dir
   url += '&cmd='+cmd2
 
   //console.log(dir)
@@ -2449,10 +2495,9 @@ function cwdcmd(cmd, action='NA') {
   const dir = dirname(window.location.pathname);
 
   var cmd2 = encodeURIComponent(cmd)
-  //var cmd2 = cmd
 
   let url = ''
-  url += 'http://localhost:5000/execmd?path='+dir
+  url += GODEL_SERVER+'/execmd?path='+dir
   url += '&cmd='+cmd2
 
   fetch(url)
@@ -2493,7 +2538,7 @@ function toggle_switch (e, bgcolor) {
   e.innerText = newtxt
 
   let url = ''
-  url += 'http://localhost:5000/sqlupdate?dbpath='+dbpath
+  url += GODEL_SERVER + '/sqlupdate?dbpath='+dbpath
   url += '&dbtable='+dbtable
   url += '&key='+key
   url += '&value='+newvalue
@@ -2531,7 +2576,7 @@ function sql_switch (e,action='NA') {
   e.setAttribute('value', newvalue)
 
   let url = ''
-  url += 'http://localhost:5000/sqlupdate?dbpath='+dbpath
+  url += GODEL_SERVER + '/sqlupdate?dbpath='+dbpath
   url += '&dbtable='+'ltable'
   url += '&key='+ key
   url += '&value='+newvalue
@@ -2556,7 +2601,7 @@ function sql_set (e,action='NA') {
   const value   = e.getAttribute('value')
 
   let url = ''
-  url += 'http://localhost:5000/sqlupdate?dbpath='+dbpath
+  url += GODEL_SERVER + '/sqlupdate?dbpath='+dbpath
   url += '&dbtable='+'ltable'
   url += '&key='+ key
   url += '&value='+value
@@ -2582,7 +2627,7 @@ function sql_lsv (e,action='NA') {
   const value   = e.innerText;
 
   let url = ''
-  url += 'http://localhost:5000/sqlupdate?dbpath='+dbpath
+  url += GODEL_SERVER + '/sqlupdate?dbpath='+dbpath
   url += '&dbtable='+'ltable'
   url += '&key='+ key
   url += '&value='+value
@@ -2618,7 +2663,7 @@ function save_td(e) {
 
   if (changed) {
     let url = ''
-    url += 'http://localhost:5000/sqlupdate?dbpath='+dbpath
+    url += GODEL_SERVER + '/sqlupdate?dbpath='+dbpath
     url += '&dbtable='+dbtable
     url += '&key='+key
     url += '&value='+value

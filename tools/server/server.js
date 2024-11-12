@@ -156,8 +156,9 @@ app.get('/lsearch', (req, res) => {
 app.use('/', require('./routes/func.js'));
 
 // Port Number
-const port = 5000;
-  
+//const port = 5000;
+const port = process.env.GODEL_SERVER_PORT;
+
 // Server setup
 app.listen(port, () => `Server running on port ${port}`);
 
