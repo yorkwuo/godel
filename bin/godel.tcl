@@ -1772,7 +1772,7 @@ proc pathbar {args} {
     set name [lvars . g:pagename]
   }
 
-  set pathhier "<div class=w3-btn>$name</div>"
+  set pathhier "<div class='w3-btn' style='font-size:20px'>$name</div>"
   set relative_path "../"
 
   for {set i 1} {$i <= $depth} {incr i} {
@@ -1780,9 +1780,9 @@ proc pathbar {args} {
     set name [lvars $relative_path g:pagename]
     if {$name eq "NA" || $name eq ""} {
       set name [file tail [file normalize $relative_path]]
-      set pathhier "<div class=w3-btn>$name</div> / $pathhier"
+      set pathhier "<div class='w3-btn' style='font-size:20px'>$name</div> / $pathhier"
     } else {
-      set pathhier "<a style=\"text-decoration:none;font-size:16px;cursor:pointer\" class=w3-btn href=\"$relative_path.index.htm\">$name</a> / $pathhier"
+      set pathhier "<a style=\"text-decoration:none;font-size:20px;cursor:pointer\" class=w3-btn href=\"$relative_path.index.htm\">$name</a> / $pathhier"
     }
     append relative_path "../"
 
