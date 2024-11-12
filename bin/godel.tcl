@@ -6902,10 +6902,10 @@ proc ghtm_top_bar2 {args} {
     puts $fout "<button onclick=\"copy_path()\"     class=\"w3-bar-item w3-button w3-darkblue w3-right\">Path</button>"
     puts $fout "<button onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/xterm.tcl')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Open</button>"
     puts $fout "<button onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/win.tcl')\"   class=\"w3-bar-item w3-button w3-darkblue w3-right\">Win</button>"
-    if [info exist env(GODEL_noMAIL)] {
-    } else {
-      puts $fout "<button onclick=\"mailout()\"       class=\"w3-bar-item w3-button w3-darkblue w3-right\">Mail</button>"
-    }
+    #if [info exist env(GODEL_noMAIL)] {
+    #} else {
+    #  puts $fout "<button onclick=\"mailout()\"       class=\"w3-bar-item w3-button w3-darkblue w3-right\">Mail</button>"
+    #}
     if {$opt(-svg) eq "1"} {
       puts $fout "<div onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/opensvg.tcl')\"  class=\"w3-bar-item w3-button w3-right\">SVG</div>"
     }
@@ -9633,6 +9633,7 @@ proc godel_draw {args} {
   }
   puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
   puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+  puts $fout "<script src=$env(HOME)/.ev.js></script>"
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
   puts $fout "<body>"
