@@ -54,10 +54,11 @@ puts $fout "<div id=pages class=scrolltop style='cursor:pointer' onclick=\"cmdli
 
 set cols ""
 lappend cols "proc:bton_delete     ; D"
-lappend cols "proc:ltbl_cover 80px ; cover"
+lappend cols "ed:type              ; Type"
+lappend cols "proc:ltbl_cover 80px ; Cover"
 lappend cols "ed:g:pagename        ; g:pagename"
 lappend cols "ed:notes             ; Notes"
-lappend cols "ed:g:keywords        ; Keywords"
+#lappend cols "ed:g:keywords        ; Keywords"
 
 local_table tbl -c $cols -serial
 
