@@ -539,7 +539,11 @@ proc sqltable {args} {
         eval $procname
       # default
       } else {
-        puts $fout "<td><pre style='white-space:pre'>$svars($row,$col)</pre></td>"
+        if {$svars($row,$col) eq "NA"} {
+          puts $fout "<td><pre style='white-space:pre'></pre></td>"
+        } else {
+          puts $fout "<td><pre style='white-space:pre'>$svars($row,$col)</pre></td>"
+        }
       }
     }
     puts $fout "</tr>"
