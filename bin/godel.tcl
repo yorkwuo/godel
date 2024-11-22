@@ -1,3 +1,72 @@
+# ghtm_varbox
+# {{{
+proc ghtm_varbox {args} {
+  upvar fout fout
+  # -width
+# {{{
+  set opt(-width) 0
+  set idx [lsearch $args {-width}]
+  if {$idx != "-1"} {
+    set width [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-width) 1
+  } else {
+    set width 20px
+  }
+# }}}
+  # -name
+# {{{
+  set opt(-name) 0
+  set idx [lsearch $args {-name}]
+  if {$idx != "-1"} {
+    set name [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-name) 1
+  } else {
+    set name NA
+  }
+# }}}
+  # -class
+# {{{
+  set opt(-class) 0
+  set idx [lsearch $args {-class}]
+  if {$idx != "-1"} {
+    set class [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-class) 1
+  } else {
+    set class NA
+  }
+# }}}
+  # -key
+# {{{
+  set opt(-key) 0
+  set idx [lsearch $args {-key}]
+  if {$idx != "-1"} {
+    set key [lindex $args [expr $idx + 1]]
+    set args [lreplace $args $idx [expr $idx + 1]]
+    set opt(-key) 1
+  } else {
+    set key NA
+  }
+# }}}
+
+  if {$name eq "NA"} {
+    set name $key
+  }
+
+  set value [lvars . $key]
+  if {$value eq "NA"} {
+    set value ""
+  }
+
+  puts $fout "<div style='display:flex;margin-top:5px'>"
+    puts $fout "<div class='key w3-round $class' style='min-width:$width'>$name</div>"
+    puts $fout "<div class='value' key=$key onblur=\"jsetvar(this)\" 
+    style='min-width:50px' contenteditable=true><pre>$value</pre></div>"
+  puts $fout "</div>"
+}
+# }}}
 # flowbox
 # {{{
 proc flowbox {args} {

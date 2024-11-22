@@ -2649,24 +2649,26 @@ function save_td(e) {
 
   const dbtable = 'dbtable'
   const key     = e.getAttribute('colname')
-  const value   = e.innerText
+  var   value   = e.innerText
   const idname  = e.getAttribute('wherecol')
   const idvalue = e.getAttribute('whereval')
   const row     = e.getAttribute('row')
   //const rowid   = e.getAttribute('rowid')
   var   changed = e.getAttribute('changed')
 
+  var value2 = encodeURIComponent(value)
   console.log('key:'+key)
   console.log('idname:'+idname)
   console.log('idvalue:'+idvalue)
   console.log('row:'+row)
+  console.log('value:'+value)
 
   if (changed) {
     let url = ''
     url += GODEL_SERVER + '/sqlupdate?dbpath='+dbpath
     url += '&dbtable='+dbtable
     url += '&key='+key
-    url += '&value='+value
+    url += '&value='+value2
     url += '&idname='+idname
     url += '&idvalue='+idvalue
 
@@ -2689,4 +2691,42 @@ function datatable(tbid) {
   })
 }
 // }}}
+function jsetvar(e,target='.') {
+  const cwd = dirname(window.location.pathname);
+  const dbpath  = cwd + '/dbfile.db'
+  const key     = e.getAttribute('key')
+  const idname  = e.getAttribute('idname')
+  const idvalue = e.getAttribute('idvalue')
+
+  let value   = e.innerText
+  value = value.replace(/\n$/, "");
+
+  var value2 = encodeURIComponent(value)
+
+  cwdcmd(`lsetvar ${target} ${key} '${value}'`)
+
+  //let url = ''
+  //url += GODEL_SERVER + '/sqlupdate?dbpath='+dbpath
+  //url += '&dbtable='+'ltable'
+  //url += '&key='+ key
+  //url += '&value='+value
+
+    let url = ''
+    url += GODEL_SERVER + '/sqlupdate?dbpath='+dbpath
+    url += '&dbtable='+'dbtable'
+    url += '&key='+key
+    url += '&value='+value2
+    url += '&idname='+idname
+    url += '&idvalue='+idvalue
+
+  fetch(url)
+  .catch(err => console.log(err))
+
+  console.log(target)
+  console.log(key)
+  console.log(value)
+}
+
+
+
 // vim:fdm=marker
