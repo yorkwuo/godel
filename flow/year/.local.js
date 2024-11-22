@@ -1,0 +1,1 @@
+genface('wwday.tcl','result')
