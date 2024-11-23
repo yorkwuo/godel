@@ -84,6 +84,9 @@ puts $fout {
 </style>
 }
 
+#set today [exec date "+%Y/%m/%d"]
+set today [clock format [clock seconds] -format {%m-%d}]
+puts $today
 
 while {[llength $rows] > 0} {
   puts $fout "<div style='display:flex;flex-wrap:wrap;gap:2px;margin-bottom:5px;'>"
@@ -99,18 +102,26 @@ while {[llength $rows] > 0} {
       regexp {\d\d\d\d\-(\d\d\-\d\d)} $svars($row,date) -> day
       set ww $svars($row,ww)
 
+# day color
+      if {$day eq $today} {
+        set bgcolor lightblue
+      } elseif {$i eq "0" || $i eq "6"} {
+        set bgcolor lightpink
+      } else {
+        set bgcolor lightgrey
+      }
 
       puts $fout "<div class='dbox'>"
 # ww(day)
         puts $fout "<a href=$row/.index.htm style='text-decoration:none'>"
-        if {$i eq "0" || $i eq "6"} {
-          puts $fout "<div style='background-color:lightpink'><pre>$ww\($day)</pre></div>"
-        } else {
-          puts $fout "<div style='background-color:lightgrey'><pre>$ww\($day)</pre></div>"
-        }
+        puts $fout "<div style='background-color:$bgcolor'><pre>$ww\($day)</pre></div>"
         puts $fout "</a>"
 # notes
-        puts $fout "<div><pre>$notes</pre></div>"
+        puts $fout "<div style='min-height:24px;
+        white-space:pre;font-size:14px;font-family:monospace'
+        contenteditable=true
+        key='notes' idname='code' idvalue='$row' onblur=\"jsetvar(this,'$row')\"
+        >$notes</div>"
       puts $fout "</div>"
 
 
