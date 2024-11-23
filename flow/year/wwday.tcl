@@ -79,7 +79,9 @@ puts $fout {
 .dbox {
   min-width:150px;
   max-width:150px;
-  border: solid 1px;
+  border-right: solid 1px;
+  border-bottom: solid 1px;
+  border-color:#c8b7a6;
 }
 </style>
 }
@@ -89,7 +91,8 @@ set today [clock format [clock seconds] -format {%m-%d}]
 puts $today
 
 while {[llength $rows] > 0} {
-  puts $fout "<div style='display:flex;flex-wrap:wrap;gap:2px;margin-bottom:5px;'>"
+  puts $fout "<div style='display:flex;flex-wrap:wrap;gap:0px;margin-bottom:0px;'>"
+
   foreach i [list 1 2 3 4 5 6 0] {
     regexp {\.(\d)} [lindex $rows 0] -> wday
 
@@ -103,18 +106,24 @@ while {[llength $rows] > 0} {
       set ww $svars($row,ww)
 
 # day color
-      if {$day eq $today} {
-        set bgcolor lightblue
-      } elseif {$i eq "0" || $i eq "6"} {
-        set bgcolor lightpink
-      } else {
-        set bgcolor lightgrey
+      set bgcolor white
+
+      if {$notes ne ""} {
+        set bgcolor #f6f6f6
       }
 
-      puts $fout "<div class='dbox'>"
+      if {$i eq "0" || $i eq "6"} {
+        set bgcolor #ffe2e2
+      } 
+      if {$day eq $today} {
+        set bgcolor lightblue
+      }
+
+      #puts $fout "<div class='dbox' style='display:flex;flex-wrap:column'>"
+      puts $fout "<div class='dbox' style='display:flex;flex-direction:column;background-color:$bgcolor'>"
 # ww(day)
         puts $fout "<a href=$row/.index.htm style='text-decoration:none'>"
-        puts $fout "<div style='background-color:$bgcolor'><pre>$ww\($day)</pre></div>"
+        puts $fout "<div><pre>$day</pre></div>"
         puts $fout "</a>"
 # notes
         puts $fout "<div style='min-height:24px;
