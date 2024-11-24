@@ -83,6 +83,18 @@ puts $fout {
   border-bottom: solid 1px;
   border-color:#c8b7a6;
 }
+.wwbox {
+  min-width:40px;
+  max-width:150px;
+  border-right: solid 1px;
+  border-left: solid 1px;
+  border-bottom: solid 1px;
+  border-color:#c8b7a6;
+  text-align:center;
+  align-content:center;
+  background-color:#8785a2;
+  color:white;
+}
 </style>
 }
 
@@ -93,6 +105,8 @@ puts $today
 while {[llength $rows] > 0} {
   puts $fout "<div style='display:flex;flex-wrap:wrap;gap:0px;margin-bottom:0px;'>"
 
+  regexp {\d\d\d\d\-\d\d\-\d\d\_(\d\d)} [lindex $rows 0] -> workweek
+  puts $fout "<div class='wwbox'>$workweek</div>"
   foreach i [list 1 2 3 4 5 6 0] {
     regexp {\.(\d)} [lindex $rows 0] -> wday
 
