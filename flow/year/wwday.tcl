@@ -26,8 +26,8 @@ proc date {} {
   if {$bgcolor eq "NA"} {
     set bgcolor ""
   }
-  set date    [gvar $row date]
-  set today [clock format [clock seconds] -format {%Y-%m-%d}]
+  set date   [gvar $row date]
+  set today  [clock format [clock seconds] -format {%Y-%m-%d}]
   if {$date eq $today} {
     regsub {\d\d\d\d-} $date {} date
     puts $fout "<td bgcolor=w3-pale-blue>$date</td>"
@@ -46,39 +46,53 @@ file delete $env(HOME)/o.html
 
 set fout [open "$env(HOME)/o.html" w]
 
+#ghtm_sql_switch -name more1 -key more1
+
 set trows ""
 foreach i $rows {
-  #if [regexp {\-} $i] {
-  #  #puts $svars($i,notes)
-  #  lappend trows $i
-  #}
+  if {[lvars . Q1] eq "1"} {
+    if [regexp {\-01\-|\-02\-|\-03\-} $i] {
+      lappend trows $i
+    }
+  }
 
-  #if [regexp {\-01\-|\-02\-|\-03\-} $i] {
-  #  lappend trows $i
-  #}
+  if {[lvars . Q2] eq "1"} {
+    if [regexp {\-04\-|\-05\-|\-06\-} $i] {
+      lappend trows $i
+    }
+  }
 
-  #if [regexp {\-10\-|\-11\-|\-12\-} $i] {
-  #  lappend trows $i
-  #}
-  lappend trows $i
+  if {[lvars . Q3] eq "1"} {
+    if [regexp {\-07\-|\-08\-|\-09\-} $i] {
+      lappend trows $i
+    }
+  }
+
+  if {[lvars . Q4] eq "1"} {
+    if [regexp {\-10\-|\-11\-|\-12\-} $i] {
+      lappend trows $i
+    }
+  }
+
+  #lappend trows $i
 
 }
 
 set rows $trows
-
-#foreach row $rows {
-#  regexp {\.(\d)} $row -> wday
-#  puts $wday
-#  puts $fout "<div>"
-#  puts $fout "$row"
-#  puts $fout "</div>"
-#}
 
 puts $fout {
 <style>
 .dbox {
   min-width:150px;
   max-width:150px;
+  border-right: solid 1px;
+  border-bottom: solid 1px;
+  border-color:#c8b7a6;
+}
+.dbox_1ww {
+  min-width:150px;
+  max-width:150px;
+  border-top: solid 1px;
   border-right: solid 1px;
   border-bottom: solid 1px;
   border-color:#c8b7a6;
@@ -98,15 +112,26 @@ puts $fout {
 </style>
 }
 
-#set today [exec date "+%Y/%m/%d"]
-set today [clock format [clock seconds] -format {%m-%d}]
-puts $today
+set today  [clock format [clock seconds] -format {%m-%d}]
+set cur_ww [clock format [clock seconds] -format {%V}]
 
+set wcount 1
 while {[llength $rows] > 0} {
+  if {$wcount eq "1"} {
+    set boxclass dbox_1ww
+  } else {
+    set boxclass dbox
+  }
   puts $fout "<div style='display:flex;flex-wrap:wrap;gap:0px;margin-bottom:0px;'>"
 
+# workweek
   regexp {\d\d\d\d\-\d\d\-\d\d\_(\d\d)} [lindex $rows 0] -> workweek
-  puts $fout "<div class='wwbox'>$workweek</div>"
+  if {$workweek eq $cur_ww} {
+    puts $fout "<div class='wwbox' style='background-color:darkblue'>$workweek</div>"
+  } else {
+    puts $fout "<div class='wwbox'>$workweek</div>"
+  }
+
   foreach i [list 1 2 3 4 5 6 0] {
     regexp {\.(\d)} [lindex $rows 0] -> wday
 
@@ -133,8 +158,7 @@ while {[llength $rows] > 0} {
         set bgcolor lightblue
       }
 
-      #puts $fout "<div class='dbox' style='display:flex;flex-wrap:column'>"
-      puts $fout "<div class='dbox' style='display:flex;flex-direction:column;background-color:$bgcolor'>"
+      puts $fout "<div class='$boxclass' style='display:flex;flex-direction:column;background-color:$bgcolor'>"
 # ww(day)
         puts $fout "<a href=$row/.index.htm style='text-decoration:none'>"
         puts $fout "<div><pre>$day</pre></div>"
@@ -149,10 +173,12 @@ while {[llength $rows] > 0} {
 
 
     } else {
-      puts $fout "<div class='dbox'></div>"
+      puts $fout "<div class='$boxclass'></div>"
     }
   }
   puts $fout "</div>"
+  
+  incr wcount
 }
 
 
