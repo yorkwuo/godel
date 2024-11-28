@@ -1496,7 +1496,7 @@ proc mod_flist {} {
   #lappend atcols "last;last"
   #lappend atcols "mtime;mtime"
   lappend atcols "ed:notes;notes"
-  lappend atcols "proc:at_open flist.tcl ; &#128210;"
+  lappend atcols "proc:at_open flist.tcl ;&#128212;"
   lappend atcols "name;name"
 
   #atable flist.tcl -tableid tbl1 -noid -num -dataTables
@@ -1516,9 +1516,9 @@ proc mod_links {} {
   set atcols ""
   lappend atcols "proc:bton_delete ; D"
   lappend atcols "ed:type           ; type"
+  lappend atcols "proc:alinkurl    ; url"
   lappend atcols "proc:alinkname ; name"
   lappend atcols "ed:notes           ; notes"
-  lappend atcols "proc:alinkurl    ; url"
 
   atable links.tcl -noid -sortby id -tableid tbl2
   #atable flist.tcl -tableid tbl1 -noid -num
@@ -1551,6 +1551,7 @@ proc build_flist {} {
   if {$kws eq "" || $kws eq "NA"} {
     set kws ""
   }
+  lappend kws ".col.tcl"
   lappend kws "1.svg"
   lappend kws ".index.htm"
   lappend kws ".tmp"
@@ -3294,7 +3295,7 @@ proc at_open {{atfile at.tcl}} {
 
   regsub -all {'} $row {\'} txt
 
-  set celltxt "<td style=\"cursor:pointer;font-size:28px\" bgcolor=\"\" onclick=\"at_open('$atfile','$txt')\">&#128210;</td>"
+  set celltxt "<td style=\"cursor:pointer;font-size:28px\" bgcolor=\"\" onclick=\"at_open('$atfile','$txt')\">&#128212;</td>"
 }
 # }}}
 # at_remote_open
@@ -3980,9 +3981,9 @@ proc alinkurl {} {
     set celltxt "<td style=\"font-size:8px\" gname=\"$row\" colname=\"url\" contenteditable=\"true\"></td>"
   } else {
     if {[info exist env(GODEL_WSL)] && $env(GODEL_WSL) eq "1"} {
-      set celltxt "<td><div class=\"w3-button w3-round \" style=\"margin:0px;padding:0px\" onclick=\"chrome_open('$value')\">Link</div></td>"
+      set celltxt "<td><div class=\"w3-button w3-round \" style=\"margin:0px;padding:0px\" onclick=\"chrome_open('$value')\">&#128279;</div></td>"
     } else {
-      set celltxt "<td><a href=$value target=blank>Link</a></td>"
+      set celltxt "<td><a href=$value target=blank style='text-decoration:none;font-size:28px'>&#128279;</a></td>"
     }
   }
 
