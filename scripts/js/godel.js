@@ -2445,13 +2445,14 @@ function face (ghtm, targetid, cdpath) {
 // genface
 // {{{
 function genface (ghtm, targetid, callback, name) {
+  const cwd = dirname(window.location.pathname);
   if (typeof GODEL_SERVER_PORT === 'undefined') {
     var port = 5000
   } else {
     var port = GODEL_SERVER_PORT
   }
   let url = ''
-  url += GODEL_SERVER + '/genface?path='+ginfo['cwd']
+  url += GODEL_SERVER + '/genface?path='+cwd
   url += '&ghtm='+ghtm
   //console.log(url)
 
