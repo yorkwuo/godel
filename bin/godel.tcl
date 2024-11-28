@@ -1551,6 +1551,7 @@ proc build_flist {} {
   if {$kws eq "" || $kws eq "NA"} {
     set kws ""
   }
+  lappend kws Makefile
   lappend kws ".col.tcl"
   lappend kws "1.svg"
   lappend kws ".index.htm"
@@ -5472,14 +5473,14 @@ proc bton_tick {{save ""}} {
 # glize
 # {{{
 proc glize {args} {
-  # -l (level)
+  # -d (depth)
 # {{{
-  set opt(-l) 0
-  set idx [lsearch $args {-l}]
+  set opt(-d) 0
+  set idx [lsearch $args {-d}]
   if {$idx != "-1"} {
     set level [lindex $args [expr $idx + 1]]
     set args [lreplace $args $idx [expr $idx + 1]]
-    set opt(-l) 1
+    set opt(-d) 1
   } else {
     set level NA
   }
@@ -5505,7 +5506,7 @@ proc glize {args} {
   
   if {$opt(-r)} {
     catch {exec tree -f -i -d} result
-  } elseif ($opt(-l)) {
+  } elseif ($opt(-d)) {
     puts $level
     catch {exec tree -f -i -d -L $level} result
   }

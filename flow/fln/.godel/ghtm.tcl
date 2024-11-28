@@ -61,15 +61,22 @@ mod_links
 
 # Notes
 set cwd [pwd]
+puts $fout "<div style='display:flex'>"
 puts $fout "<div id=pages class=scrolltop style='cursor:pointer' onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/newpage.tcl')\">Pages</div>"
+#linkbox -ed -name col -target .col.tcl -chk
+puts $fout "</div>"
 
-set cols ""
-lappend cols "proc:bton_delete     ; D"
-lappend cols "ed:type              ; Type"
-lappend cols "proc:ltbl_cover 80px ; Cover"
-lappend cols "ed:g:pagename        ; g:pagename"
-lappend cols "ed:notes             ; Notes"
-#lappend cols "ed:g:keywords        ; Keywords"
+if [file exist .col.tcl] {
+  source .col.tcl
+} else {
+  set cols ""
+  lappend cols "proc:bton_delete     ; D"
+  lappend cols "ed:type              ; Type"
+  lappend cols "proc:ltbl_cover 80px ; Cover"
+  lappend cols "ed:g:pagename        ; g:pagename"
+  lappend cols "ed:notes             ; Notes"
+  #lappend cols "ed:g:keywords        ; Keywords"
+}
 
 local_table tbl -c $cols -serial
 
