@@ -2727,6 +2727,10 @@ function jsetvar(e,target='.') {
   console.log(key)
   console.log(value)
 }
+function jumpto(row) {
+  console.log(row)
+  window.location.href = row + '/.index.htm'
+}
 
 
 

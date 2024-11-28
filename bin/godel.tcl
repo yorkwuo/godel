@@ -1491,12 +1491,12 @@ proc mod_flist {} {
   puts $fout "<div id=filelist class=scrolltop style=\"cursor:pointer;\" onclick=\"cmdline('$cwd','tclsh','$env(GODEL_ROOT)/tools/server/tcl/build_flist.tcl')\">Filelist</div>"
 
   set atcols  ""
-  lappend atcols "proc:bton_fdelete flist.tcl ; FD"
-  lappend atcols "Vs;Vs"
-  lappend atcols "last;last"
-  lappend atcols "mtime;mtime"
+  #lappend atcols "proc:bton_fdelete flist.tcl ; FD"
+  #lappend atcols "Vs;Vs"
+  #lappend atcols "last;last"
+  #lappend atcols "mtime;mtime"
   lappend atcols "ed:notes;notes"
-  lappend atcols "proc:at_open flist.tcl ; O"
+  lappend atcols "proc:at_open flist.tcl ; &#128210;"
   lappend atcols "name;name"
 
   #atable flist.tcl -tableid tbl1 -noid -num -dataTables
@@ -1551,6 +1551,7 @@ proc build_flist {} {
   if {$kws eq "" || $kws eq "NA"} {
     set kws ""
   }
+  lappend kws "1.svg"
   lappend kws ".index.htm"
   lappend kws ".tmp"
   lappend kws ".local.js"
@@ -3293,7 +3294,7 @@ proc at_open {{atfile at.tcl}} {
 
   regsub -all {'} $row {\'} txt
 
-  set celltxt "<td style=\"cursor:pointer;\" bgcolor=\"\" onclick=\"at_open('$atfile','$txt')\">O</td>"
+  set celltxt "<td style=\"cursor:pointer;font-size:28px\" bgcolor=\"\" onclick=\"at_open('$atfile','$txt')\">&#128210;</td>"
 }
 # }}}
 # at_remote_open
@@ -3385,7 +3386,7 @@ proc ltbl_cover {height} {
   if [file exist "$cover"] {
     set celltxt "<td><a href=$row/.index.htm><img src=\"$cover\" height=$height></a></td>"
   } else {
-    set celltxt "<td></td>"
+    set celltxt "<td onclick=\"jumpto('$row')\" style='cursor:pointer;font-size:30px;text-align:center;color:pink'>&#128193;</td>"
   }
 }
 # }}}
