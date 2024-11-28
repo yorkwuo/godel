@@ -1,20 +1,29 @@
 ghtm_top_bar
 pathbar 3
-if [file exist "cover.png"] {
-  puts $fout {<img src=cover.png height=120px style=float:right>}
+
+if ![file exist "1.svg"] {
+  set kout [open "1.svg" w]
+    puts $kout {<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1000" height="10">}
+    puts $kout {</svg>}
+  close $kout
 }
+
+set pagename [lvars . g:pagename]
 
 puts $fout {<div class=top>}
 
-puts $fout {
-<div id=toc-container>
-  <div id=toc>
-  <div><a style="text-decoration:none" href=#notes>Notes</a></div>
-  <div><a style="text-decoration:none" href=#filelist>Filelist</a></div>
-  <div><a style="text-decoration:none" href=#links>Links</a></div>
-  <div><a style="text-decoration:none" href=#pages>Pages</a></div>
-    <ol id=toc-list>
+puts $fout {<div id=toc-container>}
+puts $fout {  <div id=toc>}
+if [file exist cover.png] {
+  puts $fout {  <div><img src=cover.png width=180px></div>}
+} else {
+  puts $fout "<div style='font-size:40px;text-align:center'>$pagename</div>"
 }
+#puts $fout {  <div><a style="text-decoration:none" href=#notes>Notes</a></div>}
+#puts $fout {  <div><a style="text-decoration:none" href=#filelist>Filelist</a></div>}
+#puts $fout {  <div><a style="text-decoration:none" href=#links>Links</a></div>}
+#puts $fout {  <div><a style="text-decoration:none" href=#pages>Pages</a></div>}
+puts $fout {  <ol id=toc-list>}
 set dirs [lsort [glob -nocomplain -type d *]]
 foreach dir $dirs {
   set pagename [lvars $dir g:pagename]
@@ -30,16 +39,18 @@ puts $fout {
 puts $fout {<div id="content">}
 
 #ghtm_kvp g:pagename
-set rows ""
-lappend rows g:pagename
-var_table
+#set rows ""
+#lappend rows g:pagename
+#var_table
 
-if ![file exist "1.md"] {
-  set kout [open "1.md" w]
-    puts $kout "# Notes"
-  close $kout
-}
-gmd 1.md
+#if ![file exist "1.md"] {
+#  set kout [open "1.md" w]
+#    puts $kout "# Notes"
+#  close $kout
+#}
+#gmd 1.md
+
+list_svg 1.svg
 
 if [file exist "pretxt.tcl"] {
   puts $fout "<a href=pretxt.tcl type=text/txt>pretxt.tcl</a>"

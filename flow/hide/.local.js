@@ -15,6 +15,15 @@ if(typeof(rects) != 'undefined' && rects != null){
   }
 }
 
+function blurmode() {
+  var rects = document.getElementsByTagName('rect');
+  if(typeof(rects) != 'undefined' && rects != null){
+    for (var k = 0; k < rects.length; k++) {
+      rects[k].style.opacity = "0.20";
+    }
+  }
+}
+
 function readmode() {
   var rects = document.getElementsByTagName('rect');
   if(typeof(rects) != 'undefined' && rects != null){
