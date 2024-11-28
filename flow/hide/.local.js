@@ -24,6 +24,15 @@ function readmode() {
   }
 }
 
+function hidemode() {
+  var rects = document.getElementsByTagName('rect');
+  if(typeof(rects) != 'undefined' && rects != null){
+    for (var k = 0; k < rects.length; k++) {
+      rects[k].style.opacity = "1";
+    }
+  }
+}
+
 // scores
 function scores() {
 

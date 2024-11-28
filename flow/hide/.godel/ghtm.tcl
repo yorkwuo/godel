@@ -3,6 +3,7 @@ pathbar 3
 
 puts $fout "<div style='display:flex; gap: 10px;font-size:28px'>"
   puts $fout "<div class='w3-btn' onclick=readmode()>Read</div>"
+  puts $fout "<div class='w3-btn' onclick=hidemode()>Hide</div>"
   puts $fout "<div class='w3-btn' style='cursor:pointer' onclick=scores()>Scores</div>"
   puts $fout "<div id='results' ></div>"
 puts $fout "</div>"
