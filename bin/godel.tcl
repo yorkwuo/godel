@@ -479,7 +479,7 @@ proc sql2svars {args} {
  # set sql "SELECT * FROM dbtable WHERE date IS NOT NULL AND date != '' AND date != '1000-01-01' AND date != 'NA' ORDER BY date DESC LIMIT 500"
   #set sql "SELECT * FROM dbtable WHERE date IS NOT NULL AND date != '' AND date != 'NA' ORDER BY date LIMIT 500"
 
-  puts $sql
+  #puts $sql
   
   #--------------------
   # get columns

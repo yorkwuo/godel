@@ -40,6 +40,10 @@ proc date {} {
 
 sql2svars -uname code
 
+set Q1 [lvars . Q1]
+set Q2 [lvars . Q2]
+set Q3 [lvars . Q3]
+set Q4 [lvars . Q4]
 #parray svars
 
 file delete $env(HOME)/o.html
@@ -50,25 +54,25 @@ set fout [open "$env(HOME)/o.html" w]
 
 set trows ""
 foreach i $rows {
-  if {[lvars . Q1] eq "1"} {
+  if {$Q1 eq "1"} {
     if [regexp {\-01\-|\-02\-|\-03\-} $i] {
       lappend trows $i
     }
   }
 
-  if {[lvars . Q2] eq "1"} {
+  if {$Q2 eq "1"} {
     if [regexp {\-04\-|\-05\-|\-06\-} $i] {
       lappend trows $i
     }
   }
 
-  if {[lvars . Q3] eq "1"} {
+  if {$Q3 eq "1"} {
     if [regexp {\-07\-|\-08\-|\-09\-} $i] {
       lappend trows $i
     }
   }
 
-  if {[lvars . Q4] eq "1"} {
+  if {$Q4 eq "1"} {
     if [regexp {\-10\-|\-11\-|\-12\-} $i] {
       lappend trows $i
     }
