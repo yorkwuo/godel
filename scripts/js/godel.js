@@ -45,6 +45,12 @@
     } else if (e.which == 145) { 
       //document.getElementById('iddraw').click();
       console.log('scrlk')
+    } else if (e.which == 49) { 
+      hidemode()
+    } else if (e.which == 50) { 
+      blurmode()
+    } else if (e.which == 51) { 
+      readmode()
   // PRTSC
     } else if (e.which == 42) { 
       document.getElementById('idbutton').click();
