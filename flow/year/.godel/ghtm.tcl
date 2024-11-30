@@ -1,5 +1,9 @@
 ghtm_top_bar -save -js
 
+if [file exist local.tcl] {
+  source local.tcl
+}
+
 ghtm_varbox -name Year -key year
 
 puts $fout "<div style='display:flex;gap:20px'>"
