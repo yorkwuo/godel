@@ -1,4 +1,7 @@
 
+-reference_name
+-supply_group
+-reference_names
 -restore_condition
 -save_condition
 
@@ -9,7 +12,7 @@
 -power_domain
 
 -checkerboard
-
+-sms_scenarios
 
 
 -offset_start

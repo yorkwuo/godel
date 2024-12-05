@@ -2460,7 +2460,7 @@ function genface (ghtm, targetid, callback, name) {
   let url = ''
   url += GODEL_SERVER + '/genface?path='+cwd
   url += '&ghtm='+ghtm
-  //console.log(url)
+  console.log(url)
 
   fetch(url)
   .then(res => res.text())

@@ -1,7 +1,11 @@
 #!/usr/bin/tclsh
 source $env(GODEL_ROOT)/bin/godel.tcl
 
-set title [lvars $env(GONSOLE) firefox_title]
+if [info exist env(GONSOLE)] {
+  set title [lvars $env(GONSOLE) firefox_title]
+} else {
+  set title NA
+}
 puts $title
 if {$title eq "NA" || $title eq ""} {
   exec xdotool search --name "Mozilla" windowactivate --sync key Alt+d

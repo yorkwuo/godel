@@ -1,3 +1,11 @@
+proc devmode {} {
+  upvar fout fout
+  puts $fout "<div style='display:flex'>"
+  linkbox -ed -name ghtm -target .godel/ghtm.tcl
+  linkbox -ed -name js -target .local.js
+  linkbox -ed -name vars -target .godel/vars.tcl
+  puts $fout "</div>"
+}
 # ghtm_varbox
 # {{{
 proc ghtm_varbox {args} {

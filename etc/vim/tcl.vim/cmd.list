@@ -1,7 +1,7 @@
 
-
-
-
+get_sms_scenarios
+set_voltage_levels
+get_supply_groups
 create_power_switch_array
 
 report_floorplan_rules
