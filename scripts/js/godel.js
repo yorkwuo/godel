@@ -2465,6 +2465,7 @@ function genface (ghtm, targetid, callback, name) {
   fetch(url)
   .then(res => res.text())
   .then(result => {
+    //console.log(result)
     const p = document.getElementById(targetid);
     p.innerHTML = result
     listen2tables()
