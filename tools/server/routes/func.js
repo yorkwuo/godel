@@ -3,6 +3,7 @@ const router = express.Router();
 const fs = require('fs');
 const os = require('os')
 const godel_root = process.env.GODEL_ROOT
+const gtmp       = process.env.GTMP
 
 //--------------------
 // face (adhoc_draw.tcl)
@@ -75,9 +76,9 @@ router.get('/genface', (req, res) => {
   process.chdir(path);
 
   //const scriptPath = 'adhoc_draw.tcl';
-  const outputPath = `${homedir}/o.html`;
+  const outputPath = `${gtmp}/o.html`;
 
-
+  console.log(ghtm)
   // Execute the script with parameters
   exec(`${ghtm}`,{ maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
       if (error) {
