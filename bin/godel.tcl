@@ -811,7 +811,7 @@ proc genface {args} {
     set icon $env(GODEL_ROOT)/icons/folder.png
   }
 # }}}
-  file delete $env(HOME)/o.html
+  file delete $env(GTMP)/o.html
   puts $fout "<div class=\"w3-btn w3-round-large\" onclick=\"genface('$cmd','$resultid',datatable,'#tbl')\">$name<br>"
   puts $fout "<img src='$icon' height=50px>"
   puts $fout "</div>"

@@ -4,6 +4,7 @@ const fs = require('fs');
 const os = require('os')
 const godel_root = process.env.GODEL_ROOT
 const gtmp       = process.env.GTMP
+const username   = process.env.USER
 
 //--------------------
 // face (adhoc_draw.tcl)
@@ -65,11 +66,13 @@ router.get('/face', (req, res) => {
 // {{{
 router.get('/genface', (req, res) => {
 
-  const path = req.query.path;
+  var path = req.query.path;
   const ghtm = req.query.ghtm;
 
-  const homedir = os.homedir()
+  console.log('jjj')
+  path = path.replace(/\/home\/[^/]+/, `/home/${username}`);
 
+  console.log(path)
 
 // change directory
   const { exec } = require("child_process");

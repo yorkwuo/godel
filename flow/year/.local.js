@@ -1,1 +1,1 @@
-genface('wwday.tcl','result')
+genface('./wwday.tcl','result')

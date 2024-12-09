@@ -46,9 +46,9 @@ set Q3 [lvars . Q3]
 set Q4 [lvars . Q4]
 #parray svars
 
-file delete $env(HOME)/o.html
+file delete $env(GTMP)/o.html
 
-set fout [open "$env(HOME)/o.html" w]
+set fout [open "$env(GTMP)/o.html" w]
 
 #ghtm_sql_switch -name more1 -key more1
 
