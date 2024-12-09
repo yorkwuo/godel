@@ -69,8 +69,8 @@ router.get('/genface', (req, res) => {
   var path = req.query.path;
   const ghtm = req.query.ghtm;
 
-  console.log('jjj')
-  path = path.replace(/\/home\/[^/]+/, `/home/${username}`);
+  //console.log('jjj')
+  //path = path.replace(/\/home\/[^/]+/, `/home/${username}`);
 
   console.log(path)
 
