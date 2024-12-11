@@ -4,7 +4,17 @@ if [file exist local.tcl] {
   source local.tcl
 }
 
-ghtm_varbox -name Year -key year
+puts $fout "<div style='font-size:50px'>$vars(g:pagename)</div>"
+
+set cur_year [lvars . year]
+set pre_year [expr $cur_year - 1]
+set nxt_year [expr $cur_year + 1]
+
+puts $fout "<div style='display:flex;gap:10px'>"
+puts $fout "<a href=../$pre_year/.index.htm>$pre_year</a>"
+puts $fout "<a href=../$nxt_year/.index.htm>$nxt_year</a>"
+puts $fout "</div>"
+#ghtm_varbox -name Year -key year
 
 puts $fout "<div style='display:flex;gap:20px'>"
   ghtm_onoff Q1 -name Q1

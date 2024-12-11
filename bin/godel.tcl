@@ -9717,7 +9717,7 @@ proc godel_draw {args} {
   }
   puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery-3.3.1.min.js></script>"
   puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
-  puts $fout "<script src=$env(HOME)/.ev.js></script>"
+  #puts $fout "<script src=$env(HOME)/.ev.js></script>"
   puts $fout "<meta charset=utf-8>"
   puts $fout "</head>"
   puts $fout "<body>"
