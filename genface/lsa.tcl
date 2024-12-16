@@ -4,7 +4,7 @@ source $env(GODEL_ROOT)/bin/godel.tcl
 set cwd [pwd]
 set title [file tail $cwd]
 
-set fout [open $env(HOME)/o.html w]
+set fout [open $env(GTMP)/o.html w]
 
   puts $fout "<div onclick=\"location.reload()\" class=\"w3-btn w3-round-large\">
   <img src=$env(GODEL_ROOT)/icons/back.png height=50px></div>"
