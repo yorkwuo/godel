@@ -1684,11 +1684,9 @@ proc ghtm_card {name value args} {
 # }}}
 
   set cwd [pwd]
-  puts $fout "
-  <div class=\"w3-bar-item\">
-    <div class=\"w3-card\" style=\"width:auto;\">
-      <header class=\"w3-container\" style=\"font-size:$header;\">
-  "
+  puts $fout "  <div class=\"\" style=\"width:auto;\">"
+  puts $fout "    <div class=\"\" style=\"font-size:$header; background-color:lightgray; padding: 5px\">"
+
   if {$opt(-ed) eq "1"} {
     puts $fout "<a style=\"font-size:$header;\" onclick=\"cmdline('$cwd','gvim','$edfile')\">$name</a>"
   } elseif {$opt(-link) eq "1"} {
@@ -1703,15 +1701,15 @@ proc ghtm_card {name value args} {
       set value [format_3digit $value]
     }
   }
+  if {$value eq "NA"} {
+    set value " "
+  }
 
-  puts $fout "
-      </header>
-      <div class=\"w3-container\">
-        <pre style=\"font-size:$body;\">$value</pre>
-      </div>
-    </div>
-  </div>
-  "
+  puts $fout "    </div>"
+  puts $fout "    <div class=\"\">"
+  puts $fout "      <pre style=\"font-size:$body; padding: 5px\">$value</pre>"
+  puts $fout "    </div>"
+  puts $fout "  </div>"
 }
 # }}}
 # bar_begin
