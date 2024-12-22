@@ -38,6 +38,7 @@ function hidemode() {
   if(typeof(rects) != 'undefined' && rects != null){
     for (var k = 0; k < rects.length; k++) {
       rects[k].style.opacity = "1";
+      rects[k].style.fillOpacity = "1";
     }
   }
 }
