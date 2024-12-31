@@ -13,12 +13,12 @@ if ![file exist style.css] {
 
 puts $fout "<br>"
 
+puts $fout "<div style='display:flex'>"
 linkbox -height 60px -target index.html     -icon $env(GODEL_ROOT)/icons/webpage.png
 linkbox -height 60px -target index.html -ed -icon $env(GODEL_ROOT)/icons/html.png -bgcolor white
 linkbox -height 60px -target style.css  -ed -icon $env(GODEL_ROOT)/icons/css.png  -bgcolor white
 linkbox -height 60px -target scripts.js -ed -icon $env(GODEL_ROOT)/icons/js.png   -bgcolor white
-
-ghtm_padding 50px
+puts $fout "</div>"
 
 if [file exist app.js] {
   linkbox -height 60px -target app.js -ed -icon $env(GODEL_ROOT)/icons/ex.png -bgcolor white

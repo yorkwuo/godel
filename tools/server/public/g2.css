@@ -1,0 +1,20 @@
+﻿.flex1 {
+  display:flex;
+  gap:10px;
+}
+.table1 {
+  font-family:monospace,Consolas,sans-serif;
+  border-collapse: collapse;
+  margin-top:5px;
+}
+.table1 tr {
+  font-size     : 14px;
+}
+.table1 td, .table1 th{
+  padding       : 5px;
+  text-align    : left;
+  border-bottom : 1px solid #ddd;
+  border        : 1px solid black;
+  border-color  : #d8b1d4 #ccc;  
+}
+
