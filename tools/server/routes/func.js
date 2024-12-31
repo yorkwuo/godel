@@ -213,7 +213,42 @@ router.get('/sqlupdate', (req, res) => {
   return res.json({status: 'success'})
 });
 // }}}
+//-------------------------------------------------
+// sqlupdate
+//-------------------------------------------------
+router.post("/save", (req, res) => {
+  const postdata = req.body.postdata;
 
+  var dir = postdata.dir
+  console.log(postdata.cmds)
+  console.log(dir)
+
+
+  var txts = ""
+  postdata.cmds.forEach(({ page, key, value }) => {
+      var txt = `gset ${page} ${key} "${value}"\n`
+      txts = txts + txt;
+  });
+
+  fs.writeFile(`${gtmp}/cmdfile.tcl`, txts, function (err) {
+      if (err)
+          console.log(err);
+      else
+          console.log('Write operation complete.');
+  });
+
+// change directory
+  process.chdir(dir);
+
+  const { spawn } = require('child_process');
+  const script = spawn('g2commit.tcl', {
+    shell: true,
+    detached: true,
+    stdio: 'ignore'
+  })
+
+
+});
 module.exports = router;
 
 // vim:fdm=marker
