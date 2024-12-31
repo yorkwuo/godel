@@ -8,7 +8,7 @@ const app = express();
 // CORS is enabled for all origins
 app.use(cors());
 app.use(express.static('public'));
-  
+app.use(express.json())  
 // Example api 
 //app.get('/flisting', 
 //    (req, res) => res.json('test 1 2 3.... '));
