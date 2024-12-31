@@ -4,8 +4,9 @@ const fs = require('fs');
 const os = require('os')
 const godel_root = process.env.GODEL_ROOT
 const gtmp       = process.env.GTMP
-const username   = process.env.USER
-
+//const fs = require("fs");
+//const path = require("path");
+//const DATA_FILE = path.join(__dirname, "data.json");
 //--------------------
 // face (adhoc_draw.tcl)
 //--------------------
@@ -66,13 +67,11 @@ router.get('/face', (req, res) => {
 // {{{
 router.get('/genface', (req, res) => {
 
-  var path = req.query.path;
+  const path = req.query.path;
   const ghtm = req.query.ghtm;
 
-  //console.log('jjj')
-  //path = path.replace(/\/home\/[^/]+/, `/home/${username}`);
+  const homedir = os.homedir()
 
-  console.log(path)
 
 // change directory
   const { exec } = require("child_process");
@@ -249,6 +248,7 @@ router.post("/save", (req, res) => {
 
 
 });
+
 module.exports = router;
 
 // vim:fdm=marker
