@@ -1,4 +1,8 @@
 
+-mirror_right_boundary_cell
+-automatic
+-separator
+-target_objects
 -reference_name
 -supply_group
 -reference_names
