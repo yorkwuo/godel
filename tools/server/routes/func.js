@@ -121,29 +121,29 @@ router.get('/execmd', (req, res) => {
 // change directory
   process.chdir(path);
 
-  //const { exec } = require("child_process");
+  const { exec } = require("child_process");
 
-  //// Execute the script with parameters
-  //exec(`${cmd}`, (error, stdout, stderr) => {
-  //    if (error) {
-  //        console.error(`Error executing script: ${error.message}`);
-  //        //return res.status(500).send(`Error executing script: ${error.message}`);
-  //    }
-  //    if (stderr) {
-  //        console.error(`Script error output: ${stderr}`);
-  //        //return res.status(500).send(`Script error output: ${stderr}`);
-  //    }
+  // Execute the script with parameters
+  exec(`${cmd}`, (error, stdout, stderr) => {
+      if (error) {
+          console.error(`Error executing script: ${error.message}`);
+          //return res.status(500).send(`Error executing script: ${error.message}`);
+      }
+      if (stderr) {
+          console.error(`Script error output: ${stderr}`);
+          //return res.status(500).send(`Script error output: ${stderr}`);
+      }
 
-  //    return res.json({ status: 'success' });
-  //});
-  const { spawn } = require('child_process');
-  const script = spawn(cmd, {
-    shell: true,
-    detached: true,
-    stdio: 'ignore'
-  })
+      return res.json({ status: 'success' });
+  });
+  //const { spawn } = require('child_process');
+  //const script = spawn(cmd, {
+  //  shell: true,
+  //  detached: true,
+  //  stdio: 'ignore'
+  //})
 
-  script.unref()
+  //script.unref()
 
 });
 // }}}
