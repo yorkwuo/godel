@@ -619,25 +619,30 @@ function filter_table(tname, column_no, e) {
 // set_value
 // {{{
 function set_value(key, value) {
-// Save
-    var data =   "g." + "|#|" +  key + "|#|" +  value + "|E|\n";
-    const textToBLOB = new Blob([data], { type: 'text/plain' });
-    const sFileName = 'gtcl.tcl';	   // The file to save the data.
+  const dir = dirname(window.location.pathname);
+  console.log(key)
+  console.log(value)
+  var postdata = {
+    "dir" : dir,
+    "cmds" : [{
+      page : ".",
+      key  : key,
+      value : value,
+    }]
+  }
+  console.log(postdata.cmds)
 
-    var newLink = document.createElement("a");
-    newLink.download = sFileName;
+  // Send updated data to the server
+  const url = GODEL_SERVER + '/save';
+  fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ postdata }),
+  })
+  .then((response) => response.json())
+  .then((result) => alert(result.message))
+  .catch((error) => console.error("Error:", error));
 
-    if (window.webkitURL != null) {
-        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
-    }
-    else {
-        newLink.href = window.URL.createObjectURL(textToBLOB);
-        newLink.style.display = "none";
-        document.body.appendChild(newLink);
-    }
-
-    newLink.click(); 
-    document.getElementById('iddraw').click();
 
 
 }
@@ -645,27 +650,29 @@ function set_value(key, value) {
 // onoff
 // {{{
 function onoff(key, value) {
-// Save
-    var data =   "g." + "|#|" +  key + "|#|" +  value + "|E|\n";
-    const textToBLOB = new Blob([data], { type: 'text/plain' });
-    const sFileName = 'gtcl.tcl';	   // The file to save the data.
+  const dir = dirname(window.location.pathname);
+  console.log(key)
+  console.log(value)
+  var postdata = {
+    "dir" : dir,
+    "cmds" : [{
+      page : ".",
+      key  : key,
+      value : value,
+    }]
+  }
+  console.log(postdata.cmds)
 
-    var newLink = document.createElement("a");
-    newLink.download = sFileName;
-
-    if (window.webkitURL != null) {
-        newLink.href = window.webkitURL.createObjectURL(textToBLOB);
-    }
-    else {
-        newLink.href = window.URL.createObjectURL(textToBLOB);
-        newLink.style.display = "none";
-        document.body.appendChild(newLink);
-    }
-
-    newLink.click(); 
-    document.getElementById('iddraw').click();
-
-
+  // Send updated data to the server
+  const url = GODEL_SERVER + '/save';
+  fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ postdata }),
+  })
+  .then((response) => response.json())
+  .then((result) => alert(result.message))
+  .catch((error) => console.error("Error:", error));
 }
 // }}}
 // filter_table_reset
@@ -1387,56 +1394,6 @@ function chrome_open (link) {
     document.getElementById('iddraw').click();
 }
 // }}}
-// save_gtable
-// {{{
-function save_gtable(tableobj) {
-  //console.log("gtabe");
-  var cells = tableobj.getElementsByTagName('td');
-
-  var cmds = "";
-  const changes = [];
-  for (var i = 0; i < cells.length; i++) {
-    var value   = cells[i].innerText
-    var gname   = cells[i].getAttribute("gname");
-    var colname = cells[i].getAttribute("colname");
-    var changed = cells[i].getAttribute("changed");
-    var onoff   = cells[i].getAttribute("onoff");
-    var gclass  = cells[i].getAttribute("gclass");
-
-
-    if (typeof gname === 'undefined') {
-      return; // equal to continue
-    } else {
-        if (changed) {
-          if (typeof gname === 'undefined') {
-            return; // equal to continue
-          } else {
-            if (colname === 'MOVE') {
-              var target  = cells[i].getAttribute("target");
-              var cmd =  "g" + gname + "|#|" +  colname + "|#|" + target + "|E|\n";
-              cmds = cmds + cmd;
-            } else {
-              if (gclass === "onoff") {
-                var cmd =  "g" + gname + "|#|" +  colname + "|#|" + onoff + "|E|\n";
-                cmds = cmds + cmd;
-              } else {
-                //var cmd =  "g" + gname + "|#|" +  colname + "|#|" + value + "|E|\n";
-                //cmds = cmds + cmd;
-                changes.push({
-                  page : gname,
-                  key  : colname,
-                  value : value, 
-                });
-              }
-              cells[i].style.backgroundColor = "";
-            }
-          }
-        }
-    }
-  }
-  return changes;
-}
-// }}}
 // save_atable
 // {{{
 function save_atable(tableobj) {
@@ -1478,52 +1435,52 @@ function save_atable(tableobj) {
   return cmds;
 }
 // }}}
-// g_save
+// save_gtable
 // {{{
-function g_save() {
-  // Tables
-  var tables = document.getElementsByTagName('table');
+function save_gtable(tableobj) {
+  //console.log("gtabe");
+  var cells = tableobj.getElementsByTagName('td');
 
   var cmds = "";
+  const changes = [];
+  for (var i = 0; i < cells.length; i++) {
+    var value   = cells[i].innerText
+    var gname   = cells[i].getAttribute("gname");
+    var colname = cells[i].getAttribute("colname");
+    var changed = cells[i].getAttribute("changed");
+    var onoff   = cells[i].getAttribute("onoff");
+    var gclass  = cells[i].getAttribute("gclass");
 
-  for (var k = 0; k < tables.length; k++) {
-    var tbltype = tables[k].getAttribute('tbltype');
 
-    if (tbltype === "atable") {
-      cmds = cmds + save_atable(tables[k]);
-    } else if (tbltype === 'gtable') {
-      cmds = cmds + save_gtable(tables[k]);
-    } else if (tbltype === 'stable') {
-      console.log('stable...')
+    if (typeof gname === 'undefined') {
+      return; // equal to continue
+    } else {
+        if (changed) {
+          if (typeof gname === 'undefined') {
+            return; // equal to continue
+          } else {
+            if (colname === 'MOVE') {
+              var target  = cells[i].getAttribute("target");
+              var cmd =  "g" + gname + "|#|" +  colname + "|#|" + target + "|E|\n";
+              cmds = cmds + cmd;
+            } else {
+              if (gclass === "onoff") {
+                var cmd =  "g" + gname + "|#|" +  colname + "|#|" + onoff + "|E|\n";
+                cmds = cmds + cmd;
+              } else {
+                changes.push({
+                  page : gname,
+                  key  : colname,
+                  value : value, 
+                });
+              }
+              cells[i].style.backgroundColor = "";
+            }
+          }
+        }
     }
   }
-  // KVP(Key-Value Pair)
-  var kvpvs = document.querySelectorAll("[data-kvpValue]")
-  if(typeof(kvpvs) != 'undefined' && kvpvs != null){
-    kvpvs.forEach(kvpv => {
-      var modi  = kvpv.dataset.kvpvalue
-      var key   = kvpv.dataset.kvpkey
-      var value = kvpv.innerText
-      if (modi === '1') {
-        var cmd =  "g" + '.' + "|#|" +  key + "|#|" + value + "|E|\n";
-        cmds = cmds + cmd;
-      }
-    })
-  }
-
-  var data = cmds;
-  
-  data = data + save_gbtn_onoff();
-
-  dload(data,'gtcl.tcl');
-
-  //document.getElementById('iddraw').click();
-  setTimeout(function() {
-      // Code to execute after 1 second
-      //console.log("1 second has passed");
-      document.getElementById('iddraw').click();
-  }, 600);
-
+  return changes;
 }
 // }}}
 // g2_save
@@ -1556,7 +1513,7 @@ function g2_save() {
   console.log(postdata.cmds)
   console.log('save...')
 
-        // Send updated data to the server
+  // Send updated data to the server
   const url = GODEL_SERVER + '/save';
 
   fetch(url, {
@@ -1564,36 +1521,9 @@ function g2_save() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ postdata }),
   })
-      .then((response) => response.json())
-      .then((result) => alert(result.message))
-      .catch((error) => console.error("Error:", error));
-
-  // KVP(Key-Value Pair)
-  //var kvpvs = document.querySelectorAll("[data-kvpValue]")
-  //if(typeof(kvpvs) != 'undefined' && kvpvs != null){
-  //  kvpvs.forEach(kvpv => {
-  //    var modi  = kvpv.dataset.kvpvalue
-  //    var key   = kvpv.dataset.kvpkey
-  //    var value = kvpv.innerText
-  //    if (modi === '1') {
-  //      var cmd =  "g" + '.' + "|#|" +  key + "|#|" + value + "|E|\n";
-  //      cmds = cmds + cmd;
-  //    }
-  //  })
-  //}
-
-  //var data = cmds;
-  //
-  //data = data + save_gbtn_onoff();
-
-  //dload(data,'gtcl.tcl');
-
-  ////document.getElementById('iddraw').click();
-  //setTimeout(function() {
-  //    // Code to execute after 1 second
-  //    //console.log("1 second has passed");
-  //    document.getElementById('iddraw').click();
-  //}, 600);
+  .then((response) => response.json())
+  .then((result) => alert(result.message))
+  .catch((error) => console.error("Error:", error));
 
 }
 // }}}

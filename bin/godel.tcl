@@ -132,11 +132,11 @@ proc flowbox {args} {
   puts $fout "<div style='display:flex'>"
   if [file exist $target] {
     puts $fout "<img onclick=\"cwdcmd('gvim $cmd')\" src=$icon height=50px width=50px ></img>"
-    puts $fout "<div class='w3-btn' style='align-content:center'><a class='w3-large w3-round'
-    style='background-color:#a47cd2;color:white;padding:5px;text-decoration:none' href=$target/.index.htm>$name</a></div>"
+    puts $fout "<div style='align-content:center'><a style='background-color:#a47cd2;color:white;padding:5px;text-decoration:none;cursor:pointer' 
+    href=$target/.index.htm>$name</a></div>"
   } else {
     puts $fout "<img onclick=\"cwdcmd('gvim $cmd')\" src=$icon height=50px width=50px></img>"
-    puts $fout "<div style='align-content:center' class='w3-btn' onclick=\"cwdcmd('$cmd')\"><div style='color:gray'>$name</div></div>"
+    puts $fout "<div style='align-content:center;cursor:pointer' onclick=\"cwdcmd('$cmd')\"><div style='color:gray'>$name</div></div>"
   }
   puts $fout "</div>"
 
