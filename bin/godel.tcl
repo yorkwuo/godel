@@ -4477,6 +4477,41 @@ proc ghtm_lsa {args} {
   #puts $fout "</script>"
 } ;# ghtm_lsa
 # }}}
+# ghtm_lstable
+# {{{
+proc ghtm_lstable {args} {
+# ghtm ls -a
+  upvar fout fout
+  upvar env env
+
+  set cwd [pwd]
+
+  set val(-id) tbl
+
+  set ifiles [lsort [glob -nocomplain -type f *]]
+  set dirs   [lsort [glob -nocomplain -type d *]]
+
+
+  puts $fout "<div style='display:flex;flex-direction:column;flex-wrap:wrap;height:700px'>"
+  foreach ifile $ifiles {
+    puts $fout "<div style='border:solid 1px;cursor:pointer;font-size:18px;padding:5px'
+    onclick=\"execmd('$cwd','gvim $ifile')\"
+    >$ifile</div>"
+  }
+  puts $fout "</div>"
+
+  #puts $fout "<script src=$env(GODEL_ROOT)/scripts/js/jquery.dataTables.min.js></script>"
+  #puts $fout "<script>"
+  #puts $fout "    \$(document).ready(function() {"
+  #puts $fout "    \$('#$val(-id)').DataTable({"
+  #puts $fout "       \"paging\": false,"
+  #puts $fout "       \"info\": false,"
+  #puts $fout "       \"order\": \[\],"
+  #puts $fout "    });"
+  #puts $fout "} );"
+  #puts $fout "</script>"
+} ;# ghtm_lsa
+# }}}
 # ghtm_ls_table
 # {{{
 proc ghtm_ls_table {args} {
