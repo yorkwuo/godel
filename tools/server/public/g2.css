@@ -18,7 +18,6 @@
   border-color  : #d8b1d4 #ccc;  
 }
 .kvp {
-  display: inline-block;
   font-family:monospace,Consolas,sans-serif;
   font-size     : 15px;
 }

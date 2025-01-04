@@ -127,6 +127,27 @@ DFs.forEach(df => {
   })
 })
 
+//------------------------------
+// DableFolder
+//------------------------------
+//const DFs = document.querySelectorAll('img.DableFolder');
+//
+//DFs.forEach(df => {
+//  df.addEventListener('dragstart', () => {
+//    df.classList.toggle('RemoveIt')
+//  })
+//})
+// Add event to highlight midification in kvpvalue
+const kvps = document.querySelectorAll("[data-kvpvalue]")
+//console.log(kvps)
+if(typeof(kvps) != 'undefined' && kvps != null){
+  kvps.forEach(kvp => {
+    kvp.addEventListener('input', () => {
+      kvp.style.backgroundColor = "lightblue"
+      kvp.dataset.kvpvalue = '1'
+    })
+  })
+}
 
 document.addEventListener("click", e => {
   const isDropdownButton = e.target.matches("[data-dropdown-button]")
@@ -164,16 +185,6 @@ if (typeof(gbtns) != 'undefined' && gbtns != null) {
   }
 }
 
-// Add event to highlight midification in kvpvalue
-const kvpvs = document.querySelectorAll("[data-kvpValue]")
-if(typeof(kvpvs) != 'undefined' && kvpvs != null){
-  kvpvs.forEach(kvpv => {
-    kvpv.addEventListener('input', () => {
-      kvpv.style.backgroundColor = "lightblue"
-      kvpv.dataset.kvpvalue = '1'
-    })
-  })
-}
 
 
 // Add event to highlight modified cells in tables
@@ -1514,6 +1525,26 @@ function g2_save() {
     }
   })
 
+  var kvpcmds = []
+  const kvps = document.querySelectorAll("[data-kvpvalue]")
+  if(typeof(kvps) != 'undefined' && kvps != null){
+    kvps.forEach(kvp => {
+      var kvpvalue = kvp.dataset.kvpvalue
+      //console.log(kvpvalue)
+      if (kvpvalue === "1") {
+        var key = kvp.getAttribute('keyname')
+        var value = kvp.innerText
+        kvpcmds.push({
+          page  : ".",
+          key   : key,
+          value : value
+        })
+      }
+    })
+  }
+  console.log(kvpcmds.length)
+
+
   if (dnames.length > 0) {
     //-------------------------------------
     // Remove Folder
@@ -1522,6 +1553,23 @@ function g2_save() {
     console.log(postdata)
     // Send updated data to the server
     const url = GODEL_SERVER + '/removeit';
+
+    fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postdata }),
+    })
+    .then((response) => response.json())
+    .then((result) => alert(result.message))
+    .catch((error) => console.error("Error:", error));
+  } else if (kvpcmds.length > 0) {
+    //-------------------------------------
+    // Save KVP
+    //-------------------------------------
+    postdata.cmds = kvpcmds
+    console.log(postdata)
+    // Send updated data to the server
+    const url = GODEL_SERVER + '/save';
 
     fetch(url, {
         method: "POST",
@@ -1550,18 +1598,18 @@ function g2_save() {
       }
       console.log(postdata.cmds)
       console.log('save table...')
-    }
-    // Send updated data to the server
-    const url = GODEL_SERVER + '/save';
+      // Send updated data to the server
+      const url = GODEL_SERVER + '/save';
 
-    fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ postdata }),
-    })
-    .then((response) => response.json())
-    .then((result) => alert(result.message))
-    .catch((error) => console.error("Error:", error));
+      fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ postdata }),
+      })
+      .then((response) => response.json())
+      .then((result) => alert(result.message))
+      .catch((error) => console.error("Error:", error));
+    }
   }
 
 
