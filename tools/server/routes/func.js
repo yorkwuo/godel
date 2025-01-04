@@ -213,8 +213,9 @@ router.get('/sqlupdate', (req, res) => {
 });
 // }}}
 //-------------------------------------------------
-// sqlupdate
+// save
 //-------------------------------------------------
+// {{{
 router.post("/save", (req, res) => {
   const postdata = req.body.postdata;
 
@@ -248,6 +249,45 @@ router.post("/save", (req, res) => {
 
 
 });
+// }}}
+//-------------------------------------------------
+// removeit
+//-------------------------------------------------
+// {{{
+router.post("/removeit", (req, res) => {
+  const postdata = req.body.postdata;
+
+  var dir = postdata.dir
+  console.log(postdata.cmds)
+  console.log(dir)
+
+
+  var txts = ""
+  postdata.cmds.forEach(({dname}) => {
+      var txt = `exec rm -rf ${dname}\n`
+      txts = txts + txt;
+  });
+
+  fs.writeFile(`${gtmp}/cmdfile.tcl`, txts, function (err) {
+      if (err)
+          console.log(err);
+      else
+          console.log('Write operation complete.');
+  });
+
+// change directory
+  process.chdir(dir);
+
+  const { spawn } = require('child_process');
+  const script = spawn('g2commit.tcl', {
+    shell: true,
+    detached: true,
+    stdio: 'ignore'
+  })
+
+
+});
+// }}}
 
 module.exports = router;
 

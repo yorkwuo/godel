@@ -116,6 +116,18 @@ if (typeof(boxes) != 'undefined' && boxes != null) {
   }
 }
 
+//------------------------------
+// DableFolder
+//------------------------------
+const DFs = document.querySelectorAll('img.DableFolder');
+
+DFs.forEach(df => {
+  df.addEventListener('dragstart', () => {
+    df.classList.toggle('RemoveIt')
+  })
+})
+
+
 document.addEventListener("click", e => {
   const isDropdownButton = e.target.matches("[data-dropdown-button]")
   if (!isDropdownButton && e.target.closest("[data-dropdown]") != null) return
@@ -1486,44 +1498,74 @@ function save_gtable(tableobj) {
 // g2_save
 // {{{
 function g2_save() {
-
   const dir = dirname(window.location.pathname);
-
-  // Tables
-  var tables = document.getElementsByTagName('table');
-
   var postdata = {
     "dir" : dir,
     "cmds" : []
   }
+  // DableFolder
+  const DFs = document.querySelectorAll('img.DableFolder');
 
-  for (var k = 0; k < tables.length; k++) {
-    var tbltype = tables[k].getAttribute('tbltype');
-
-    //if (tbltype === "atable") {
-    //  console.log('atable...')
-    //  cmds = cmds + save_atable(tables[k]);
-    //} else if (tbltype === 'gtable') {
-    //  console.log('gtable...')
-      postdata.cmds = save_gtable(tables[k]);
-    //} else if (tbltype === 'stable') {
-    //  console.log('stable...')
-    //}
-  }
-  console.log(postdata.cmds)
-  console.log('save...')
-
-  // Send updated data to the server
-  const url = GODEL_SERVER + '/save';
-
-  fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ postdata }),
+  var dnames = []
+  DFs.forEach(df => {
+    if (df.classList.contains('RemoveIt')) {
+      var dname = df.getAttribute('dname')
+      dnames.push({dname : dname})      
+    }
   })
-  .then((response) => response.json())
-  .then((result) => alert(result.message))
-  .catch((error) => console.error("Error:", error));
+
+  if (dnames.length > 0) {
+    //-------------------------------------
+    // Remove Folder
+    //-------------------------------------
+    postdata.cmds = dnames
+    console.log(postdata)
+    // Send updated data to the server
+    const url = GODEL_SERVER + '/removeit';
+
+    fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postdata }),
+    })
+    .then((response) => response.json())
+    .then((result) => alert(result.message))
+    .catch((error) => console.error("Error:", error));
+  } else {
+    //-------------------------------------
+    // Tables Saving
+    //-------------------------------------
+    var tables = document.getElementsByTagName('table');
+    if (tables.length === 0) {
+      console.log('No table found....')
+    } else {
+      var postdata = {
+        "dir" : dir,
+        "cmds" : []
+      }
+
+      for (var k = 0; k < tables.length; k++) {
+          postdata.cmds = save_gtable(tables[k]);
+
+      }
+      console.log(postdata.cmds)
+      console.log('save table...')
+    }
+    // Send updated data to the server
+    const url = GODEL_SERVER + '/save';
+
+    fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postdata }),
+    })
+    .then((response) => response.json())
+    .then((result) => alert(result.message))
+    .catch((error) => console.error("Error:", error));
+  }
+
+
+
 
 }
 // }}}
