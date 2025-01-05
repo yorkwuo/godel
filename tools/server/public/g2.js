@@ -44,12 +44,6 @@
     } else if (e.which == 145) { 
       //document.getElementById('iddraw').click();
       console.log('scrlk')
-    } else if (e.which == 49) { 
-      hidemode()
-    } else if (e.which == 50) { 
-      blurmode()
-    } else if (e.which == 51) { 
-      readmode()
   // PRTSC
     } else if (e.which == 42) { 
       document.getElementById('idbutton').click();
@@ -1553,7 +1547,6 @@ function g2_save() {
     console.log(postdata)
     // Send updated data to the server
     const url = GODEL_SERVER + '/removeit';
-
     fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1570,7 +1563,6 @@ function g2_save() {
     console.log(postdata)
     // Send updated data to the server
     const url = GODEL_SERVER + '/save';
-
     fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1584,19 +1576,12 @@ function g2_save() {
     // Tables Saving
     //-------------------------------------
     var tables = document.getElementsByTagName('table');
-    if (tables.length === 0) {
-      console.log('No table found....')
-    } else {
-      var postdata = {
-        "dir" : dir,
-        "cmds" : []
-      }
 
-      for (var k = 0; k < tables.length; k++) {
-          postdata.cmds = save_gtable(tables[k]);
+    for (var k = 0; k < tables.length; k++) {
+        postdata.cmds = save_gtable(tables[k]);
 
-      }
-      console.log(postdata.cmds)
+    }
+    if (postdata.cmds.length > 0) {
       console.log('save table...')
       // Send updated data to the server
       const url = GODEL_SERVER + '/save';
