@@ -2,6 +2,11 @@
   display:flex;
   gap:10px;
 }
+.flex-column {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
 .table1 {
   font-family:monospace,Consolas,sans-serif;
   border-collapse: collapse;
@@ -31,3 +36,6 @@
 .w3-indigo,.w3-hover-indigo:hover{color:#fff!important;background-color:#3f51b5!important}
 .w3-round-small{border-radius:2px}.w3-round,.w3-round-medium{border-radius:4px}.w3-round-large{border-radius:8px}.w3-round-xlarge{border-radius:16px}.w3-round-xxlarge{border-radius:32px}
 
+.hover-blue:hover {
+  background-color:#d6e6f2;
+}
