@@ -1,4 +1,18 @@
-﻿.flex1 {
+﻿
+
+
+.card1 {
+  border-radius:10px;
+  background-color:white;
+  box-shadow:1px 1px 3px #f6f6f6;
+}
+.ppacard {
+  margin:10px;
+  background-color:white;
+  width:220px;
+}
+
+.flex1 {
   display:flex;
   gap:10px;
 }
@@ -38,4 +52,5 @@
 
 .hover-blue:hover {
   background-color:#d6e6f2;
+  cursor:pointer;
 }
