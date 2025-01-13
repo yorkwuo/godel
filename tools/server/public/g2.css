@@ -54,3 +54,8 @@
   background-color:#d6e6f2;
   cursor:pointer;
 }
+.hover-purple:hover {
+  background-color:#dde7f2;
+  color:#ffffff;
+  cursor:pointer;
+}
