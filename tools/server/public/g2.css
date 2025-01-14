@@ -1,5 +1,11 @@
 ﻿
 
+.blkcard {
+  margin:10px;
+  background-color:white;
+  width:320px;
+  height:620px;
+}
 
 .card1 {
   border-radius:10px;
