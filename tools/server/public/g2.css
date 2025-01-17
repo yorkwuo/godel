@@ -10,10 +10,11 @@
 }
 
 .blkcard {
+  border-radius    : 10px;
   margin:10px;
   background-color:white;
-  width:320px;
-  height:620px;
+  width:180px;
+  height:180px;
 }
 
 .card1 {
