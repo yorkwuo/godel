@@ -52,6 +52,22 @@
   border        : 1px solid black;
   border-color  : #d8b1d4 #ccc;  
 }
+
+.table-nobo {
+  font-family:monospace,Consolas,sans-serif;
+  border-collapse: collapse;
+  margin-top:5px;
+}
+.table-nobo tr {
+  font-size     : 14px;
+}
+.table-nobo td, .table-nobo th{
+  padding       : 5px;
+  text-align    : left;
+  border-bottom : 0px solid #ddd;
+  border        : 0px solid black;
+}
+
 .kvp {
   font-family:monospace,Consolas,sans-serif;
   font-size     : 15px;
