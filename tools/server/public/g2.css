@@ -45,13 +45,21 @@
 .table1 tr {
   font-size     : 14px;
 }
-.table1 td, .table1 th{
+.table1 td {
   padding       : 5px;
   text-align    : left;
-  border-bottom : 1px solid #ddd;
   border        : 1px solid black;
   border-color  : #d8b1d4 #ccc;  
 }
+.table1 th {
+  color         : #35477d;
+  padding       : 5px;
+  text-align    : left;
+  border        : 1px solid black;
+  border-bottom : 3px solid black;
+  border-color  : #d8b1d4;  
+}
+
 
 .table-nobo {
   font-family:monospace,Consolas,sans-serif;

@@ -1084,7 +1084,7 @@ proc ghtm_kvp {args} {
     if {$value eq "" || $value eq "NA"} {
       puts $fout " <div data-kvpvalue data-kvpkey=\"$key\" class=\"kvp\" style=\"padding-left:5px;min-width:30px;border-bottom: 1px solid green\" contenteditable=\"true\"></div> "
     } else {
-      puts $fout " <div data-kvpvalue data-kvpkey=\"$key\" class=\"kvp\" style=\"min-width:30px\" contenteditable=\"true\">$value</div> "
+      puts $fout " <div data-kvpvalue data-kvpkey=\"$key\" class=\"kvp\" style=\"padding-left:5px;padding-right:10px;min-width:30px\" contenteditable=\"true\">$value</div> "
     }
   }
   puts $fout {</div>}
